@@ -4,8 +4,8 @@ from abc import ABCMeta, abstractmethod
 import mne
 import numpy as np
 import pandas as pd
-
-
+from collections import OrderedDict
+import os
 log = logging.getLogger(__name__)
 
 
@@ -163,22 +163,22 @@ class BaseParadigm(metaclass=ABCMeta):
                 )
                 # epoch data
                 baseline = self.baseline
-                if baseline is not None:
-                    baseline = (
-                        self.baseline[0] + dataset.interval[0],
-                        self.baseline[1] + dataset.interval[0],
-                    )
-                    bmin = baseline[0] if baseline[0] < tmin else tmin
-                    bmax = baseline[1] if baseline[1] > tmax else tmax
-                else:
-                    bmin = tmin
-                    bmax = tmax
+                # if baseline is not None:
+                #     baseline = (
+                #         self.baseline[0] + dataset.interval[0],
+                #         self.baseline[1] + dataset.interval[0],
+                #     )
+                #     bmin = baseline[0] if baseline[0] < tmin else tmin
+                #     bmax = baseline[1] if baseline[1] > tmax else tmax
+                # else:
+                #     bmin = tmin
+                #     bmax = tmax
                 epochs = mne.Epochs(
                     raw_f,
                     events,
                     event_id=event_id,
-                    tmin=bmin,
-                    tmax=bmax,
+                    tmin=tmin,
+                    tmax=tmax,
                     proj=False,
                     baseline=baseline,
                     preload=True,
@@ -187,8 +187,9 @@ class BaseParadigm(metaclass=ABCMeta):
                     event_repeated="drop",
                     on_missing="ignore",
                 )
-                if bmin < tmin or bmax > tmax:
-                    epochs.crop(tmin=tmin, tmax=tmax)
+                # if bmin < tmin or bmax > tmax:
+                #     epochs.crop(tmin=tmin, tmax=tmax)
+
                 #if self.resample is not None:
                  #   epochs = epochs.resample(self.resample)
                 # rescale to work with uV
@@ -249,8 +250,7 @@ class BaseParadigm(metaclass=ABCMeta):
         metadata: pd.DataFrame
             A dataframe containing the metadata.
         """
-        print("Avinash")
-        print("dataset_path", dataset.dataset_path)
+        
         if not self.is_valid(dataset):
             message = f"Dataset {dataset.code} is not valid for paradigm"
             raise AssertionError(message)
@@ -260,39 +260,120 @@ class BaseParadigm(metaclass=ABCMeta):
             raise ValueError(message)
 
         data = dataset.get_data(subjects)
-        #print(data)
+        epochs_directory=os.path.join(dataset.dataset_path, "Epochs")
+        if not os.path.exists(epochs_directory):
+            os.makedirs(epochs_directory)
+        else:
+            print("Epochs folders already created!")
+
         self.prepare_process(dataset)
 
         X = [] if (return_epochs or return_raws) else np.array([])
         labels = []
         metadata = []
+        subject_dict=OrderedDict()
         for subject, sessions in data.items():
+            subject_directory=os.path.join(epochs_directory,str(subject))
+            if not os.path.exists(subject_directory):
+                os.makedirs(subject_directory)
+            subject_dict[subject]={}
+
             for session, runs in sessions.items():
-                print("runs", runs)
+                session_directory=os.path.join(subject_directory, session)
+                if not os.path.exists(session_directory):
+                    os.makedirs(session_directory)
+                subject_dict[subject][session]={}
                 for run, raw in runs.items():
-                    proc = self.process_raw(raw, dataset, return_epochs, return_raws)
+                    subject_dict[subject][session][run]={}
+                    pre_processed_epochs=os.path.join(session_directory, f"{run}_epochs.fif")
 
-                    if proc is None:
-                        # this mean the run did not contain any selected event
-                        # go to next
-                        continue
-
-                    x, lbs, met = proc
-                    met["subject"] = subject
-                    met["session"] = session
-                    met["run"] = run
-                    metadata.append(met)
-
-                    # grow X and labels in a memory efficient way. can be slow
                     if return_epochs:
-                        X.append(x)
-                    elif return_raws:
-                        X.append(x)
-                    else:
-                        X = np.append(X, x, axis=0) if len(X) else x
-                    labels = np.append(labels, lbs, axis=0)
+                        if not os.path.exists(pre_processed_epochs):
+                            proc = self.process_raw(raw, dataset, return_epochs, return_raws)
+                            if proc is None:
+                            # this mean the run did not contain any selected event
+                            # go to next
+                                continue
+                            x, lbs = proc
+                            x.save(pre_processed_epochs, overwrite=True)
+                            X.append(x)
+                            labels = np.append(labels, lbs, axis=0)
 
-        metadata = pd.concat(metadata, ignore_index=True)
+                        else:
+                            x=mne.read_epochs(pre_processed_epochs, preload=True, verbose=False)
+                            X.append(x)
+                            #labels = np.append(labels, lbs, axis=0)
+                    elif return_raws:
+                        x=raw
+                        X.append(x)
+                        #labels = np.append(labels, lbs, axis=0)
+
+                    else:
+                        if not os.path.exists(pre_processed_epochs):
+                            proc = self.process_raw(raw, dataset, return_epochs, return_raws)
+                            if proc is None:
+                                # this mean the run did not contain any selected event
+                                # go to next
+                                continue
+                            x, lbs = proc
+                            x.save(pre_processed_epochs, overwrite=True)
+                            
+                            x=x.get_data()
+                            X = np.append(X, x, axis=0) if len(X) else x
+                            labels = np.append(labels, lbs, axis=0)
+                        else:
+                            x=mne.read_epochs(pre_processed_epochs, preload=True, verbose=False).get_data()
+                            X = np.append(X, x, axis=0) if len(X) else x
+                    subject_dict[subject][session][run]=x
+                    
+
+
+
+
+                    # if not os.path.exists(pre_processed_epochs | pre_processed_epochs_data):
+                    #     print("Inside loop")
+                    #     proc = self.process_raw(raw, dataset, return_epochs, return_raws)
+
+                    #     if proc is None:
+                    #     # this mean the run did not contain any selected event
+                    #     # go to next
+                    #         continue
+
+                    #     x, lbs = proc
+                    #     #print(x.shape)
+                    #     if isinstance(x, np.ndarray):
+                    #         np.save('my_array.npy', x)
+                    #     elif isinstance(x, mne.Epochs):
+                    #         x.save(pre_processed_epochs, overwrite=True)
+                    #     else:
+                    #         #raise ValueError('Invalid input type')
+                    #         continue
+                    #     #if isinstance(x, mne.Epochs):
+                    #      #   x.save(run_data, overwrite=True)
+
+                    # # met["subject"] = subject
+                    # # met["session"] = session
+                    # # met["run"] = run
+                    # # metadata.append(met)
+                    
+                    # # grow X and labels in a memory efficient way. can be slow
+                    #     if return_epochs:
+                    #         X.append(x)
+                    #     elif return_raws:
+                    #         X.append(x)
+                    #     else:
+                    #         X = np.append(X, x, axis=0) if len(X) else x
+                        
+                    # else:
+                    #     x=mne.read_epochs(run_data, preload=True, verbose=False)
+                    #     if return_epochs:
+                    #         X.append(x)
+                    #     elif return_raws:
+                    #         X.append(x)
+                    #     else:
+                    #         X = np.append(X, x, axis=0) if len(X) else x
+                    
+       # metadata = pd.concat(metadata, ignore_index=True)
         if return_epochs:
             X = mne.concatenate_epochs(X)
-        return X, labels, metadata
+        return X, labels, subject_dict
