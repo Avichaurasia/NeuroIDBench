@@ -249,7 +249,8 @@ class BaseParadigm(metaclass=ABCMeta):
         metadata: pd.DataFrame
             A dataframe containing the metadata.
         """
-
+        print("Avinash")
+        print("dataset_path", dataset.dataset_path)
         if not self.is_valid(dataset):
             message = f"Dataset {dataset.code} is not valid for paradigm"
             raise AssertionError(message)
