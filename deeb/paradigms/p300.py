@@ -6,10 +6,6 @@ import logging
 import mne
 import numpy as np
 import pandas as pd
-
-#from moabb.datasets import utils
-#from moabb.datasets.fake import FakeDataset
-#from moabb.paradigms.base import BaseParadigm
 from deeb.paradigms.base import BaseParadigm
 from deeb.datasets.brainInvaders15a import BrainInvaders2015a
 from deeb.datasets import utils
@@ -65,7 +61,7 @@ class BaseP300(BaseParadigm):
         events=None,
         tmin=0.0,
         tmax=None,
-        baseline=None,
+        baseline=(None,0),
         channels=None,
         resample=None,
     ):
@@ -199,22 +195,22 @@ class BaseP300(BaseParadigm):
                 )
                 # epoch data
                 baseline = self.baseline
-                if baseline is not None:
-                    baseline = (
-                        self.baseline[0] + dataset.interval[0],
-                        self.baseline[1] + dataset.interval[0],
-                    )
-                    bmin = baseline[0] if baseline[0] < tmin else tmin
-                    bmax = baseline[1] if baseline[1] > tmax else tmax
-                else:
-                    bmin = tmin
-                    bmax = tmax
+                # if baseline is not None:
+                #     baseline = (
+                #         self.baseline[0] + dataset.interval[0],
+                #         self.baseline[1] + dataset.interval[0],
+                #     )
+                #     bmin = baseline[0] if baseline[0] < tmin else tmin
+                #     bmax = baseline[1] if baseline[1] > tmax else tmax
+                # else:
+                #     bmin = tmin
+                #     bmax = tmax
                 epochs = mne.Epochs(
                     raw_f,
                     events,
                     event_id=event_id,
-                    tmin=bmin,
-                    tmax=bmax,
+                    tmin=tmin,
+                    tmax=tmax,
                     proj=False,
                     baseline=baseline,
                     preload=True,
@@ -223,8 +219,8 @@ class BaseP300(BaseParadigm):
                     event_repeated="drop",
                     on_missing="ignore",
                 )
-                if bmin < tmin or bmax > tmax:
-                    epochs.crop(tmin=tmin, tmax=tmax)
+                # if bmin < tmin or bmax > tmax:
+                #     epochs.crop(tmin=tmin, tmax=tmax)
                 #if self.resample is not None:
                 #   epochs = epochs.resample(self.resample)
                 # rescale to work with uV
@@ -355,10 +351,3 @@ if __name__ == "__main__":
     print("label",label)
     print("meta", meta)
     #print(bi15a.get_data())
-    
-
-
-
-
-
-
