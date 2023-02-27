@@ -265,6 +265,7 @@ class BaseParadigm(metaclass=ABCMeta):
             os.makedirs(epochs_directory)
         else:
             print("Epochs folders already created!")
+        #print("dataset events", dataset.event_id)
 
         self.prepare_process(dataset)
 
@@ -283,10 +284,11 @@ class BaseParadigm(metaclass=ABCMeta):
                 if not os.path.exists(session_directory):
                     os.makedirs(session_directory)
                 subject_dict[subject][session]={}
+                
                 for run, raw in runs.items():
                     subject_dict[subject][session][run]={}
                     pre_processed_epochs=os.path.join(session_directory, f"{run}_epochs.fif")
-
+                    #met=pd.DataFrame()
                     if return_epochs:
                         if not os.path.exists(pre_processed_epochs):
                             proc = self.process_raw(raw, dataset, return_epochs, return_raws)
@@ -298,16 +300,19 @@ class BaseParadigm(metaclass=ABCMeta):
                             x.save(pre_processed_epochs, overwrite=True)
                             X.append(x)
                             labels = np.append(labels, lbs, axis=0)
-
                         else:
                             x=mne.read_epochs(pre_processed_epochs, preload=True, verbose=False)
                             X.append(x)
                             #labels = np.append(labels, lbs, axis=0)
                     elif return_raws:
-                        x=raw
+                        proc = self.process_raw(raw, dataset, return_epochs, return_raws)
+                        if proc is None:
+                            # this mean the run did not contain any selected event
+                            # go to next
+                            continue
+                        x, lbs = proc
                         X.append(x)
-                        #labels = np.append(labels, lbs, axis=0)
-
+                        labels = np.append(labels, lbs, axis=0)
                     else:
                         if not os.path.exists(pre_processed_epochs):
                             proc = self.process_raw(raw, dataset, return_epochs, return_raws)
@@ -317,14 +322,19 @@ class BaseParadigm(metaclass=ABCMeta):
                                 continue
                             x, lbs = proc
                             x.save(pre_processed_epochs, overwrite=True)
-                            
                             x=x.get_data()
                             X = np.append(X, x, axis=0) if len(X) else x
                             labels = np.append(labels, lbs, axis=0)
                         else:
                             x=mne.read_epochs(pre_processed_epochs, preload=True, verbose=False).get_data()
                             X = np.append(X, x, axis=0) if len(X) else x
+
                     subject_dict[subject][session][run]=x
+                    met = pd.DataFrame(index=range(len(x)))
+                    met["subject"] = subject
+                    met["session"] = session
+                    met["run"] = run
+                    metadata.append(met)
                     
 
 
@@ -373,7 +383,27 @@ class BaseParadigm(metaclass=ABCMeta):
                     #     else:
                     #         X = np.append(X, x, axis=0) if len(X) else x
                     
-       # metadata = pd.concat(metadata, ignore_index=True)
+        metadata = pd.concat(metadata, ignore_index=True)
         if return_epochs:
             X = mne.concatenate_epochs(X)
-        return X, labels, subject_dict
+
+            # Getting the AR and PSD coeffecients for the dataset 
+            features=extract_features(dataset, subject_dict, labels, return_epochs)
+            return X, features, metadata
+
+        elif return_raws:
+           return X, features, metadata
+        
+        else:
+            features=extract_features(dataset, subject_dict, labels)
+            return X, features, metadata
+
+
+
+
+
+            
+
+
+        
+        #return X, subject_dict, metadata
