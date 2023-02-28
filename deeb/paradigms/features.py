@@ -120,48 +120,48 @@ class Features():
     #     return df
 
 
-    def PSD(subject_dict):
-        print("in PSD")
+    # def PSD(subject_dict):
+    #     print("in PSD")
 
-        df_psd = pd.DataFrame()
-        # specific frequency bands
-        FREQ_BANDS = {"delta" : [1,4],
-                    "theta" : [4,8],
-                    "alpha" : [8, 12],
-                    "beta" : [12,30],
-                    "gamma" : [30, 50]}
+    #     df_psd = pd.DataFrame()
+    #     # specific frequency bands
+    #     FREQ_BANDS = {"delta" : [1,4],
+    #                 "theta" : [4,8],
+    #                 "alpha" : [8, 12],
+    #                 "beta" : [12,30],
+    #                 "gamma" : [30, 50]}
         
-        for subject, sessions in subject_dict.items():
-            for session, runs in sessions.items():
-                for run, epochs in runs.items():
-                    #epochs=subject_dict[subject]
-                    tmax = epochs.tmax
-                    tmin = epochs.tmin
-                    sfreq = epochs.info['sfreq']
+    #     for subject, sessions in subject_dict.items():
+    #         for session, runs in sessions.items():
+    #             for run, epochs in runs.items():
+    #                 #epochs=subject_dict[subject]
+    #                 tmax = epochs.tmax
+    #                 tmin = epochs.tmin
+    #                 sfreq = epochs.info['sfreq']
                     
-                    spectrum = epochs.compute_psd(method="welch", n_fft=int(sfreq * (tmax - tmin)),
-                                                n_overlap=0, n_per_seg=None, fmin=1, fmax=50, tmin=tmin, tmax=tmax, verbose=False)
-                    psds, freqs = spectrum.get_data(return_freqs=True)
-                    n_channels = len(psds[0])
-                    for i, event in enumerate(epochs):
-                        event_id = list(epochs.event_id.values())[0]
-                        features = {'Subject': subject, 'Event_id_PSD': event_id}
-                        for j in range(n_channels):
-                            welch_psd = psds[i][j]
-                            X = []
-                            for fmin, fmax in FREQ_BANDS.values():
-                                psds_band = welch_psd[(freqs >= fmin) & (freqs < fmax)].mean()
-                                X.append(psds_band)
+    #                 spectrum = epochs.compute_psd(method="welch", n_fft=int(sfreq * (tmax - tmin)),
+    #                                             n_overlap=0, n_per_seg=None, fmin=1, fmax=50, tmin=tmin, tmax=tmax, verbose=False)
+    #                 psds, freqs = spectrum.get_data(return_freqs=True)
+    #                 n_channels = len(psds[0])
+    #                 for i, event in enumerate(epochs):
+    #                     event_id = list(epochs.event_id.values())[0]
+    #                     features = {'Subject': subject, 'Event_id_PSD': event_id}
+    #                     for j in range(n_channels):
+    #                         welch_psd = psds[i][j]
+    #                         X = []
+    #                         for fmin, fmax in FREQ_BANDS.values():
+    #                             psds_band = welch_psd[(freqs >= fmin) & (freqs < fmax)].mean()
+    #                             X.append(psds_band)
 
-                            channel = epochs.ch_names[j]
-                            for d in range(len(X)):
-                                band_name = [*FREQ_BANDS][d]
-                                column_name = channel + "-" + band_name
-                                features[column_name] = X[d]
-                        data_step = [features]
-                        df_psd = df_psd.append(data_step, ignore_index=True)
+    #                         channel = epochs.ch_names[j]
+    #                         for d in range(len(X)):
+    #                             band_name = [*FREQ_BANDS][d]
+    #                             column_name = channel + "-" + band_name
+    #                             features[column_name] = X[d]
+    #                     data_step = [features]
+    #                     df_psd = df_psd.append(data_step, ignore_index=True)
 
-        return df_psd
+    #     return df_psd
 
     
     
