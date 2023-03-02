@@ -1,0 +1,392 @@
+"""P300 Paradigms"""
+
+import abc
+import logging
+
+import mne
+import numpy as np
+import pandas as pd
+from deeb.paradigms.base import BaseParadigm
+from deeb.datasets.brainInvaders15a import BrainInvaders2015a
+from deeb.datasets import utils
+from autoreject import AutoReject, get_rejection_threshold
+#from .features import AR, PSD
+
+
+
+log = logging.getLogger(__name__)
+
+
+class BaseERP(BaseParadigm):
+    """Base P300 paradigm.
+
+    Please use one of the child classes
+
+    Parameters
+    ----------
+
+    filters: list of list (defaults [[7, 35]])
+        bank of bandpass filter to apply.
+
+    events: List of str | None (default None)
+        event to use for epoching. If None, default to all events defined in
+        the dataset.
+
+    tmin: float (default 0.0)
+        Start time (in second) of the epoch, relative to the dataset specific
+        task interval e.g. tmin = 1 would mean the epoch will start 1 second
+        after the beginning of the task as defined by the dataset.
+
+    tmax: float | None, (default None)
+        End time (in second) of the epoch, relative to the beginning of the
+        dataset specific task interval. tmax = 5 would mean the epoch will end
+        5 second after the beginning of the task as defined in the dataset. If
+        None, use the dataset value.
+
+    baseline: None | tuple of length 2
+            The time interval to consider as “baseline” when applying baseline
+            correction. If None, do not apply baseline correction.
+            If a tuple (a, b), the interval is between a and b (in seconds),
+            including the endpoints.
+            Correction is applied by computing the mean of the baseline period
+            and subtracting it from the data (see mne.Epochs)
+
+    channels: list of str | None (default None)
+        list of channel to select. If None, use all EEG channels available in
+        the dataset.
+
+    resample: float | None (default None)
+        If not None, resample the eeg data with the sampling rate provided.
+    """
+
+    def __init__(
+        self,
+        filters=([1, 50],),
+        events=None,
+        tmin=0.0,
+        tmax=None,
+        baseline=(None,0),
+        channels=None,
+        resample=None,
+    ):
+        super().__init__()
+        self.filters = filters
+        self.events = events
+        self.channels = channels
+        self.baseline = baseline
+        self.resample = resample
+
+        if tmax is not None:
+            if tmin >= tmax:
+                raise (ValueError("tmax must be greater than tmin"))
+
+        self.tmin = tmin
+        self.tmax = tmax
+
+    def is_valid(self, dataset):
+        ret = True
+        if not ((dataset.paradigm == "p300") | (dataset.paradigm == "n400")) :
+            ret = False
+
+        # check if dataset has required events
+        if self.events:
+            if not set(self.events) <= set(dataset.event_id.keys()):
+                ret = False
+
+        # we should verify list of channels, somehow
+        return ret
+
+    @abc.abstractmethod
+    def used_events(self, dataset):
+        pass
+
+    # def process_raw(  # noqa: C901
+    #     self, raw, dataset, return_epochs=False, return_raws=False
+    # ):
+    #     """
+    #     Process one raw data file.
+
+    #     This function apply the preprocessing and eventual epoching on the
+    #     individual run, and return the data, labels and a dataframe with
+    #     metadata.
+
+    #     metadata is a dataframe with as many row as the length of the data
+    #     and labels.
+
+    #     Parameters
+    #     ----------
+    #     raw: mne.Raw instance
+    #         the raw EEG data.
+    #     dataset : dataset instance
+    #         The dataset corresponding to the raw file. mainly use to access
+    #         dataset specific information.
+    #     return_epochs: boolean
+    #         This flag specifies whether to return only the data array or the
+    #         complete processed mne.Epochs
+    #     return_raws: boolean
+    #         To return raw files and events, to ensure compatibility with braindecode.
+    #         Mutually exclusive with return_epochs
+
+    #     returns
+    #     -------
+    #     X : Union[np.ndarray, mne.Epochs]
+    #         the data that will be used as features for the model
+    #         Note: if return_epochs=True,  this is mne.Epochs
+    #         if return_epochs=False, this is np.ndarray
+    #     labels: np.ndarray
+    #         the labels for training / evaluating the model
+    #     metadata: pd.DataFrame
+    #         A dataframe containing the metadata
+
+    #     """
+
+    #     if return_epochs and return_raws:
+    #         message = "Select only return_epochs or return_raws, not both"
+    #         raise ValueError(message)
+
+    #     # get events id
+    #     event_id = self.used_events(dataset)
+
+    #     # find the events, first check stim_channels then annotations
+    #     stim_channels = mne.utils._get_stim_channel(None, raw.info, raise_error=False)
+    #     if len(stim_channels) > 0:
+    #         events = mne.find_events(raw, shortest_event=0, verbose=False)
+    #     else:
+    #         try:
+    #             events, _ = mne.events_from_annotations(
+    #                 raw, event_id=event_id, verbose=False
+    #             )
+    #         except ValueError:
+    #             log.warning(f"No matching annotations in {raw.filenames}")
+    #             return
+
+    #     # picks channels
+    #     if self.channels is None:
+    #         picks = mne.pick_types(raw.info, eeg=True, stim=False)
+    #     else:
+    #         picks = mne.pick_channels(
+    #             raw.info["ch_names"], include=self.channels, ordered=True
+    #         )
+
+    #     # pick events, based on event_id
+    #     try:
+    #         if type(event_id["Target"]) is list and type(event_id["NonTarget"]) == list:
+    #             event_id_new = dict(Target=1, NonTarget=0)
+    #             events = mne.merge_events(events, event_id["Target"], 1)
+    #             events = mne.merge_events(events, event_id["NonTarget"], 0)
+    #             event_id = event_id_new
+    #         events = mne.pick_events(events, include=list(event_id.values()))
+    #     except RuntimeError:
+    #         # skip raw if no event found
+    #         return
+
+    #     if return_raws:
+    #         raw = raw.pick(picks)
+    #     else:
+    #         # get interval
+    #         tmin = self.tmin + dataset.interval[0]
+    #         if self.tmax is None:
+    #             tmax = dataset.interval[1]
+    #         else:
+    #             tmax = self.tmax + dataset.interval[0]
+
+    #         X = []
+    #         for bandpass in self.filters:
+    #             fmin, fmax = bandpass
+    #             # filter data
+    #             raw_f = raw.copy().filter(
+    #                 fmin, fmax, method="iir", picks=picks, verbose=False
+    #             )
+    #             # epoch data
+    #             baseline = self.baseline
+    #             # if baseline is not None:
+    #             #     baseline = (
+    #             #         self.baseline[0] + dataset.interval[0],
+    #             #         self.baseline[1] + dataset.interval[0],
+    #             #     )
+    #             #     bmin = baseline[0] if baseline[0] < tmin else tmin
+    #             #     bmax = baseline[1] if baseline[1] > tmax else tmax
+    #             # else:
+    #             #     bmin = tmin
+    #             #     bmax = tmax
+    #             epochs = mne.Epochs(
+    #                 raw_f,
+    #                 events,
+    #                 event_id=event_id,
+    #                 tmin=tmin,
+    #                 tmax=tmax,
+    #                 proj=False,
+    #                 baseline=None,
+    #                 preload=True,
+    #                 verbose=False,
+    #                 picks=picks,
+    #                 event_repeated="drop",
+    #                 on_missing="ignore",
+    #             )
+    #             # if bmin < tmin or bmax > tmax:
+    #             #     epochs.crop(tmin=tmin, tmax=tmax)
+    #             #if self.resample is not None:
+    #             #   epochs = epochs.resample(self.resample)
+    #             # rescale to work with uV
+
+    #             #ar = AutoReject(picks=picks, thresh_method='random_search')
+    #             #cleaned_epochs = ar.fit_transform(epochs.copy())
+    #             #cleaned_epochs.apply_baseline(baseline)
+
+    #             # if return_epochs:
+    #             #     X.append(epochs)
+    #             # else:
+    #             #     X.append(dataset.unit_factor * epochs.get_data())
+
+    #     #print("Extracted epochs", epochs)
+    #     inv_events = {k: v for v, k in event_id.items()}
+    #     labels = np.array([inv_events[e] for e in events[:, -1]])
+    #     #print("++++++++++++++Labels+++++++++++++++++++++++++=", len(labels))
+
+    #     if return_epochs:
+    #         #X = mne.concatenate_epochs(X)
+    #         X=epochs
+    #     elif return_raws:
+    #         X = raw
+
+    #     # elif len(self.filters) == 1:
+    #     #     # if only one band, return a 3D array
+    #     #     X = X[0]
+
+    #     else:
+    #         # otherwise return a 4D
+    #         #X = np.array(X).transpose((1, 2, 3, 0))
+    #         X=epochs
+
+    #     #metadata = pd.DataFrame(index=range(len(labels)))
+    #     return X, labels
+
+    @property
+    def datasets(self):
+        if self.tmax is None:
+            interval = None
+        else:
+            interval = self.tmax - self.tmin
+        return utils.dataset_search(
+            paradigm="erp", events=self.events, interval=interval, has_all_events=True
+        )
+
+    @property
+    def scoring(self):
+        return "roc_auc"
+
+
+class SinglePass(BaseERP):
+    """Single Bandpass filter P300
+
+    P300 paradigm with only one bandpass filter (default 1 to 24 Hz)
+
+    Parameters
+    ----------
+    fmin: float (default 1)
+        cutoff frequency (Hz) for the high pass filter
+
+    fmax: float (default 24)
+        cutoff frequency (Hz) for the low pass filter
+
+    events: List of str | None (default None)
+        event to use for epoching. If None, default to all events defined in
+        the dataset.
+
+    tmin: float (default 0.0)
+        Start time (in second) of the epoch, relative to the dataset specific
+        task interval e.g. tmin = 1 would mean the epoch will start 1 second
+        after the beginning of the task as defined by the dataset.
+
+    tmax: float | None, (default None)
+        End time (in second) of the epoch, relative to the beginning of the
+        dataset specific task interval. tmax = 5 would mean the epoch will end
+        5 second after the beginning of the task as defined in the dataset. If
+        None, use the dataset value.
+
+    baseline: None | tuple of length 2
+            The time interval to consider as “baseline” when applying baseline
+            correction. If None, do not apply baseline correction.
+            If a tuple (a, b), the interval is between a and b (in seconds),
+            including the endpoints.
+            Correction is applied by computing the mean of the baseline period
+            and subtracting it from the data (see mne.Epochs)
+
+    channels: list of str | None (default None)
+        list of channel to select. If None, use all EEG channels available in
+        the dataset.
+
+    resample: float | None (default None)
+        If not None, resample the eeg data with the sampling rate provided.
+
+    """
+
+    def __init__(self, fmin=1, fmax=50, **kwargs):
+        if "filters" in kwargs.keys():
+            raise (ValueError("P300 does not take argument filters"))
+        super().__init__(filters=[[fmin, fmax]], **kwargs)
+
+
+class P300(SinglePass):
+    """P300 for Target/NonTarget classification
+
+    Metric is 'roc_auc'
+
+    """
+
+    def __init__(self, **kwargs):
+        if "events" in kwargs.keys():
+            raise (ValueError("P300 dont accept events"))
+        super().__init__(events=["Target", "NonTarget"], **kwargs)
+
+    def used_events(self, dataset):
+        print("Show event id's", {ev: dataset.event_id[ev] for ev in self.events})
+        return {ev: dataset.event_id[ev] for ev in self.events}
+
+    @property
+    def scoring(self):
+        return "roc_auc"
+    
+class N400(SinglePass):
+    """N400 for Consistent/Inconsistent classification
+
+    Metric is 'roc_auc'
+
+    """
+
+    def __init__(self, **kwargs):
+        if "events" in kwargs.keys():
+            raise (ValueError("N400 dont accept events"))
+        super().__init__(events=["Consistent", "Inconsistent"], **kwargs)
+
+    def used_events(self, dataset):
+        return {ev: dataset.event_id[ev] for ev in self.events}
+
+@property
+def scoring(self):
+    return "roc_auc"
+
+
+# class FakeP300Paradigm(P300):
+#     """Fake P300 for Target/NonTarget classification."""
+
+#     @property
+#     def datasets(self):
+#         return [FakeDataset(["Target", "NonTarget"], paradigm="p300")]
+
+#     def is_valid(self, dataset):
+#         return True
+
+if __name__ == "__main__":
+    dset = BrainInvaders2015a()
+    dset.subject_list = dset.subject_list[0:5] 
+    #datasets = [dataset]
+    #print("BrainInvaders path", dset.dataset_path)
+    paradigm=P300()
+    #subject=0
+    X, features, meta=paradigm.get_data(dset)
+    #print("data",X)
+    #print("label",label)
+    print("features", features)
+    #print("subject_dict", type(subject_dict[1]['session_1']['run_1']))
+    #print(bi15a.get_data())
