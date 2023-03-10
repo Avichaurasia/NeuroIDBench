@@ -16,7 +16,7 @@ from deeb.datasets import download as dl
 from deeb.datasets.base import BaseDataset
 from collections import OrderedDict
 #import patoolib
-import patoolib
+#import patoolib
 #from pyunpack import Archive
 from mne.utils import _url_to_local_path, verbose
 import shutil
@@ -34,11 +34,12 @@ class Draschkow2018(BaseDataset):
         super().__init__(
             subjects=list(range(1, 41)),
             sessions_per_subject=1,
-            events=dict(Target=2, NonTarget=1),
+            events=dict(Consistent=111, Inconsistent=112),
             code="draschkow 2018",
             interval=[-0.1, 0.9],
             paradigm="n400",
             doi="https://doi.org/10.5281/zenodo.3266929",
+            dataset_path=None,
             )
 
     def fix_overlapping_events(self, events):
@@ -76,7 +77,26 @@ class Draschkow2018(BaseDataset):
             rows_incongruent = np.where(events[:,2] == 10004)[0]
             events[rows_incongruent,2] = 112
 
-        events=self.fix_overlapping_events(events)
+        #events=self.fix_overlapping_events(events)
+        #print("before fixing events events", len(np.where(events==111)[0]))
+        # raw.set_annotations(mne.Annotations(onset=events[:, 0], duration=np.zeros(len(events)), 
+        #                           description=events[:, 2]))
+
+        # #events=self.fix_overlapping_events(events)
+        # # events, _ = mne.events_from_annotations(
+        # #             raw, event_id=event_id, verbose=False
+        # #         )
+        # events, events_id=mne.events_from_annotations(raw, verbose=False)
+        # print("After fixing the events", len(np.where(events==111)[0]))
+        #print("Raw annotations", raw.annotations)
+        # raw.set_annotations(None)
+        # desc = [str(e) for e in events[:, 2]]
+        # onset = events[:, 0] / raw.info['sfreq']
+        # duration = np.zeros(len(events))
+        # annot = mne.Annotations(onset=onset, duration=duration, description=desc)
+        # raw.set_annotations(annot)
+        # events, events_id=mne.events_from_annotations(raw, verbose=False)
+        # print("After fixing the events", len(np.where(events==10003)[0]))
         sessions[session_name][run]=raw, events
         return sessions
     
@@ -109,7 +129,8 @@ class Draschkow2018(BaseDataset):
             Draschkow2018.path_to_dataset=path_zip
         else:
             path_zip=Draschkow2018.path_to_dataset
-            
+
+        self.dataset_path=os.path.dirname(os.path.dirname(Path(path_zip.strip(zip_filename))))   
         #other_dataset_zip="Raw_EEG_Data.zip"
         print("path zip", path_zip)
         subject_dir = Path(path_zip.strip(zip_filename))/main_directory
