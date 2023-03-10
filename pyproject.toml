@@ -1,15 +1,5 @@
 [tool.poetry]
 name = "deeb"
-version = "0.4.6"
-description = "Mother of All BCI Benchmarks"
-authors = ["Alexandre Barachant", "Vinay Jayaram"]
-maintainers = ["Sylvain Chevallier <sylvain.chevallier@universite-paris-saclay.fr>"]
-readme = "README.md"
-repository = "https://github.com/NeuroTechX/moabb"
-documentation = "https://neurotechx.github.io/moabb"
-keywords = ["eeg", "datasets", "reproducibility", "bci", "benchmark"]
-license = "BSD-3-Clause"
-
 
 [tool.poetry.dependencies]
 python = ">=3.8, <3.11"
