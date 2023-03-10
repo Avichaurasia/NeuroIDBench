@@ -39,10 +39,13 @@ def get_dataset_path(sign: str, path: str = None) -> str:
     print(f'sign: {sign}')
     sign = sign.upper()
     key = f"MNE_DATASETS_{sign}_PATH"
+    #key="MNE_DATASETS_{}_PATH".format(sign)
     
     # Set default path if MNE_DATA not already configured
     if os.getenv("MNE_DATA") is None:
-        path_def = Path.home() / "mne_data"
+        #print("path is ", Path)
+        path_def = Path.home()/ "mne_data"
+        #print("path", path_def)
         print(f"MNE_DATA is not already configured. It will be set to "
               f"default location in the home directory - {path_def}\n"
               f"All datasets will be downloaded to this location, if anything is "
@@ -52,6 +55,8 @@ def get_dataset_path(sign: str, path: str = None) -> str:
         os.environ["MNE_DATA"] = str(path_def)
     
     # Set MNE_DATASETS_(sign)_PATH to MNE_DATA if not already set
+    print("key", key)
+    print("os.getenv", os.getenv('MNE_DATA'))
     if os.getenv(key) is None:
         os.environ[key] = os.getenv("MNE_DATA")
         
@@ -59,7 +64,6 @@ def get_dataset_path(sign: str, path: str = None) -> str:
     return _get_path(path, key, sign)
 
 @verbose
-
 def data_dl(url, sign, path=None, force_update=False, verbose=None):
     """Download file from url to specified path
     This function should replace data_path as the MNE will not support the download

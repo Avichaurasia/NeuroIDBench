@@ -10,7 +10,6 @@ from deeb.paradigms.base import BaseParadigm
 from deeb.datasets.brainInvaders15a import BrainInvaders2015a
 from deeb.datasets import utils
 from autoreject import AutoReject, get_rejection_threshold
-#from .features import AR, PSD
 
 
 
@@ -229,9 +228,9 @@ class BaseP300(BaseParadigm):
                 #   epochs = epochs.resample(self.resample)
                 # rescale to work with uV
 
-                ar = AutoReject(picks=picks, thresh_method='random_search')
-                cleaned_epochs = ar.fit_transform(epochs.copy())
-                cleaned_epochs.apply_baseline(baseline)
+                # ar = AutoReject(picks=[picks], thresh_method='random_search')
+                # cleaned_epochs = ar.fit_transform(epochs.copy())
+                #cleaned_epochs.apply(baseline)
 
                 # if return_epochs:
                 #     X.append(epochs)
@@ -245,7 +244,7 @@ class BaseP300(BaseParadigm):
 
         if return_epochs:
             #X = mne.concatenate_epochs(X)
-            X=cleaned_epochs
+            X=epochs
         elif return_raws:
             X = raw
 
@@ -256,7 +255,8 @@ class BaseP300(BaseParadigm):
         else:
             # otherwise return a 4D
             #X = np.array(X).transpose((1, 2, 3, 0))
-            X=cleaned_epochs
+            X=epochs
+
         #metadata = pd.DataFrame(index=range(len(labels)))
         return X, labels
 
@@ -344,25 +344,6 @@ class P300(SinglePass):
     @property
     def scoring(self):
         return "roc_auc"
-    
-    class N400(SinglePass):
-        """N400 for Consistent/Inconsistent classification
-
-        Metric is 'roc_auc'
-
-        """
-
-        def __init__(self, **kwargs):
-            if "events" in kwargs.keys():
-                raise (ValueError("N400 dont accept events"))
-            super().__init__(events=["Consistent", "Inconsistent"], **kwargs)
-
-        def used_events(self, dataset):
-            return {ev: dataset.event_id[ev] for ev in self.events}
-
-    @property
-    def scoring(self):
-        return "roc_auc"
 
 
 # class FakeP300Paradigm(P300):
@@ -376,15 +357,13 @@ class P300(SinglePass):
 #         return True
 
 if __name__ == "__main__":
-    dset = BrainInvaders2015a()
-    dset.subject_list = dset.subject_list[0:5] 
-    #datasets = [dataset]
+    dset=BrainInvaders2015a()
     #print("BrainInvaders path", dset.dataset_path)
     paradigm=P300()
     #subject=0
-    X, features, meta=paradigm.get_data(dset)
-    #print("data",X)
-    #print("label",label)
-    print("features", features)
-    #print("subject_dict", type(subject_dict[1]['session_1']['run_1']))
+    X,label, subject_dict=paradigm.get_data(dset, return_epochs=True)
+    print("data",X)
+    print("label",label)
+    #print("meta", meta)
+    print("subject_dict", type(subject_dict[1]['session_1']['run_1']))
     #print(bi15a.get_data())

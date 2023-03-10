@@ -49,9 +49,10 @@ class BrainInvaders2015a(BaseDataset):
             sessions_per_subject=3,
             events=dict(Target=2, NonTarget=1),
             code="Brain Invaders 2015a",
-            interval=[-0.1, 0.9],
+            interval=[-0.1,0.9],
             paradigm="p300",
             doi="https://doi.org/10.5281/zenodo.3266929",
+            dataset_path=None,
             )
             
     def _get_single_subject_data(self, subject):
@@ -90,40 +91,18 @@ class BrainInvaders2015a(BaseDataset):
             #sessions[session_name][run_name] = raw
 
         # Concetenating the three sessions data since there was no break between each session
-        sessions[session_name][run_name]=mne.concatenate_raws(all_sessions_data, preload=True, verbose=True)
+
+        raw_combined=mne.concatenate_raws(all_sessions_data, preload=True, verbose=True)
+        events = mne.find_events(raw_combined, shortest_event=0, verbose=False)
+
+        sessions[session_name][run_name]=raw_combined, events
+        print("sessions", sessions)
+        
         return sessions
 
     
     def data_path(self, subject, path=None, force_update=False,
                   update_path=None, verbose=None): 
-        ############### Original Code from Moabb Github  #################################
-        # if subject not in self.subject_list:
-        #     raise (ValueError("Invalid subject number"))
-
-        # subject_paths = []
-        # url = f"{BI2015a_URL}subject_{subject:02}_mat.zip"
-        # path_zip = dl.data_dl(url, "BRAININVADERS2015A")
-        # path_folder = path_zip.strip(f"subject_{subject:02}.zip")
-
-        # # check if has to unzip
-        # path_folder_subject = f"{path_folder}subject_{subject:02}"
-        # if not (osp.isdir(path_folder_subject)):
-        #     os.mkdir(path_folder_subject)
-        #     zip_ref = z.ZipFile(path_zip, "r")
-        #     zip_ref.extractall(path_folder_subject)
-
-        # # filter the data regarding the experimental conditions
-        # subject_paths = []
-        # for session in [1, 2, 3]:
-        #     subject_paths.append(
-        #         osp.join(
-        #             path_folder_subject, f"subject_{subject:02}_session_{session:02}.mat"
-        #         )
-        #     )                    
-        # return subject_paths
-
-
-        ############### Rephrased Code  #################################
         if subject not in self.subject_list:
             raise ValueError("Invalid subject number")
 
@@ -137,6 +116,12 @@ class BrainInvaders2015a(BaseDataset):
 
         # download and extract data if needed
         path_zip = dl.data_dl(url, "BRAININVADERS2015A")
+        #path=
+        #print(os.path.dirname(os.path.dirname(Path(path_zip.strip(zip_filename)))))
+        self.dataset_path=os.path.dirname(os.path.dirname(Path(path_zip.strip(zip_filename))))
+        #print(self.dataset_path)
+        #os.path.dirname(os.path.dirname(path)))
+        #self.dataset_path=Path(path_zip.strip(zip_filename))
         subject_dir = Path(path_zip.strip(zip_filename)) / subject_str
         # #print("subject directory:", subject_dir)
         # with open(path_zip, 'rb') as f:
@@ -147,7 +132,7 @@ class BrainInvaders2015a(BaseDataset):
             with z.ZipFile(path_zip, "r") as zip_ref:
                 #print("zip ref:",zip_ref.read(4))
                 zip_ref.extractall(subject_dir)
-
+        
         # get paths to relevant files
         session_paths = [
             subject_dir / f"{subject_str}_session_{session:02}.mat" for session in [1, 2, 3]
