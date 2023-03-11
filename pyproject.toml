@@ -1,5 +1,9 @@
 [tool.poetry]
 name = "deeb"
+version = "0.4.6"
+description = "Design and Evaluation of Electroencephalogram(EEG) - based Brain-Computer Interfaces"
+authors = ["Avinash Kumar Chaurasia"]
+#supervisor = "Prof. Dr. Patricia Arias Cabarcos"
 
 [tool.poetry.dependencies]
 python = ">=3.8, <3.11"
