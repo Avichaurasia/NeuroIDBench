@@ -20,5 +20,5 @@ dset = Won2022()
 dset.subject_list = dset.subject_list[0:5]
 paradigm=P300()
 print(paradigm.used_events(dset))
-X, features, meta=paradigm.get_data(dset)
+X, features, meta=paradigm.get_data(dset, ar_order=2)
 print("features", features)

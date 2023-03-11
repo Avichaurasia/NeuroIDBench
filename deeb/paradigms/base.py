@@ -241,7 +241,7 @@ class BaseParadigm(metaclass=ABCMeta):
         return X, labels
 
 
-    def get_data(self, dataset, subjects=None, return_epochs=False, return_raws=False):
+    def get_data(self, dataset, subjects=None, return_epochs=False, return_raws=False, ar_order=None):
         if not self.is_valid(dataset):
             message = f"Dataset {dataset.code} is not valid for paradigm"
             raise AssertionError(message)
@@ -348,7 +348,7 @@ class BaseParadigm(metaclass=ABCMeta):
             # if not os.path.exists(features_directory):
             #     os.makedirs(features_directory)
                 # Getting the AR and PSD coeffecients for the dataset 
-            features=feat.extract_features(dataset, subject_dict, labels)
+            features=feat.extract_features(dataset, subject_dict, labels, ar_order)
             features['Event_id']=features['Event_id'].map(replacement_dict)
                 #features.to_csv(os.path.join(features_directory, fname), index=False)
             #else:
@@ -366,7 +366,7 @@ class BaseParadigm(metaclass=ABCMeta):
             #     os.makedirs(features_directory)
 
             # Getting the AR and PSD coeffecients for the dataset 
-            features=feat.extract_features(dataset, subject_dict, labels)
+            features=feat.extract_features(dataset, subject_dict, labels, ar_order)
             features['Event_id']=features['Event_id'].map(replacement_dict)
 
                 # features.to_csv(os.path.join(features_directory, fname), index=False)

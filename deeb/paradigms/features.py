@@ -22,9 +22,9 @@ log = logging.getLogger(__name__)
 
 class Features():
 
-    def auto_regressive_coeffecients(self, subject_dict):
+    def auto_regressive_coeffecients(self, subject_dict, order=6):
         df_list = []
-        order = 6
+        #order = 6
         for subject, sessions in tqdm(subject_dict.items(), desc="Computing AR Coeff"):
             for session, runs in sessions.items():
                 for run, epochs in runs.items():
@@ -88,9 +88,9 @@ class Features():
 
         return df_psd
     
-    def extract_features(self, dataset, subject_dict, labels):
+    def extract_features(self, dataset, subject_dict, labels, ar_order):
         df=pd.DataFrame()
-        df_AR=self.auto_regressive_coeffecients(subject_dict)
+        df_AR=self.auto_regressive_coeffecients(subject_dict, ar_order)
         df_PSD=self.average_band_power(subject_dict)
         df=pd.concat([df_AR,df_PSD], axis=1)
         #print(df.head())

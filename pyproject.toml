@@ -1,7 +1,7 @@
 [tool.poetry]
 name = "deeb"
 version = "0.4.6"
-description = "Design and Evaluation of Electroencephalogram(EEG) - based Brain-Computer Interfaces"
+description = "Design and Evaluation of Electroencephalogram(EEG) - based Authentication Systems"
 authors = ["Avinash Kumar Chaurasia"]
 #supervisor = "Prof. Dr. Patricia Arias Cabarcos"
 
