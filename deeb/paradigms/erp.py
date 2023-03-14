@@ -340,7 +340,7 @@ class P300(SinglePass):
         super().__init__(events=["Target", "NonTarget"], **kwargs)
 
     def used_events(self, dataset):
-        print("Show event id's", {ev: dataset.event_id[ev] for ev in self.events})
+        #print("Show event id's", {ev: dataset.event_id[ev] for ev in self.events})
         return {ev: dataset.event_id[ev] for ev in self.events}
 
     @property
@@ -377,16 +377,16 @@ def scoring(self):
 #     def is_valid(self, dataset):
 #         return True
 
-if __name__ == "__main__":
-    dset = BrainInvaders2015a()
-    dset.subject_list = dset.subject_list[0:5] 
-    #datasets = [dataset]
-    #print("BrainInvaders path", dset.dataset_path)
-    paradigm=P300()
-    #subject=0
-    X, features, meta=paradigm.get_data(dset)
-    #print("data",X)
-    #print("label",label)
-    print("features", features)
-    #print("subject_dict", type(subject_dict[1]['session_1']['run_1']))
-    #print(bi15a.get_data())
+# if __name__ == "__main__":
+#     dset = BrainInvaders2015a()
+#     dset.subject_list = dset.subject_list[0:5] 
+#     #datasets = [dataset]
+#     #print("BrainInvaders path", dset.dataset_path)
+#     paradigm=P300()
+#     #subject=0
+#     X, features, meta=paradigm.get_data(dset)
+#     #print("data",X)
+#     #print("label",label)
+#     print("features", features)
+#     #print("subject_dict", type(subject_dict[1]['session_1']['run_1']))
+#     #print(bi15a.get_data())

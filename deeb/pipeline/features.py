@@ -1,6 +1,8 @@
 import mne
 import matplotlib.pyplot as plt
 #from sklearn.externals import joblib
+from abc import ABCMeta, abstractmethod
+
 import sys
 sys.path.append('.')
 import collections
@@ -23,9 +25,25 @@ from sklearn.preprocessing import StandardScaler
 
 log = logging.getLogger(__name__)
 
-class Features(Basepipeline):
+class AutoRegressive(Basepipeline):
 
-    def auto_regressive_coeffecients(self, subject_dict, order=6):
+    def __init__(self):
+        super().__init__(feature_type='AR')
+
+    def is_valid(self, dataset):
+        ret = True
+        if not ((dataset.paradigm == "p300") | (dataset.paradigm == "n400")) :
+            ret = False
+
+        # # check if dataset has required events
+        # if self.events:
+        #     if not set(self.events) <= set(dataset.event_id.keys()):
+        #         ret = False
+
+        # we should verify list of channels, somehow
+        return ret
+    
+    def _get_features(self, subject_dict, order=6):
         df_list = []
         #order = 6
         for subject, sessions in tqdm(subject_dict.items(), desc="Computing AR Coeff"):
@@ -43,6 +61,31 @@ class Features(Basepipeline):
                         df_list.append(dictemp)
         df = pd.DataFrame(df_list)
         return df
+    
+    # @abstractmethod
+    # def _get_siamese_features(self, subject_dict):
+    #     pass
+
+        #return super()._get_siamese_features(subject_dict)
+    
+class PowerSpectralDensity(Basepipeline):
+
+    def __init__(self):
+        super().__init__(feature_type='bandpower')
+
+    def is_valid(self, dataset):
+        ret = True
+        if not ((dataset.paradigm == "p300") | (dataset.paradigm == "n400")) :
+            ret = False
+
+        # # check if dataset has required events
+        # if self.events:
+        #     if not set(self.events) <= set(dataset.event_id.keys()):
+        #         ret = False
+
+        # we should verify list of channels, somehow
+        return ret
+
 
     def computing_psd(self, epochs):
         tmax=epochs.tmax
@@ -54,7 +97,7 @@ class Features(Basepipeline):
             n_overlap=0, n_per_seg=None, fmin=1, fmax=50, tmin=tmin, tmax=tmax, verbose=False)
         return spectrum.get_data(return_freqs=True)
     
-    def average_band_power(self, subject_dict):
+    def _get_features(self, subject_dict):
         df_psd=pd.DataFrame()
         FREQ_BANDS = {"delta" : [1,4],
                         "theta" : [4,8],
@@ -63,13 +106,13 @@ class Features(Basepipeline):
                         "gamma" : [30, 50]}
         
         results = []
-        for subject, sessions in subject_dict.items():
+        for subject, sessions in tqdm(subject_dict.items(), desc="Computing PSD"):
             for session, runs in sessions.items():
                 for run, epochs in runs.items():
                     result = self.computing_psd(epochs)
                     results.append((result, subject, epochs))
 
-        for result, subject, epochs in tqdm(results, desc="Computing PSD"):
+        for result, subject, epochs in results:
             psds, freqs = result
             for i in range(len(psds)):
                 features={}

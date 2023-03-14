@@ -250,7 +250,7 @@ class BaseParadigm(metaclass=ABCMeta):
             message = "Select only return_epochs or return_raws, not both"
             raise ValueError(message)
 
-        data = dataset.get_data(dataset.subject_list)
+        data = dataset.get_data(subjects)
         #del data
         epochs_directory=os.path.join(dataset.dataset_path, "Epochs")
         if not os.path.exists(epochs_directory):
@@ -278,14 +278,12 @@ class BaseParadigm(metaclass=ABCMeta):
                 for run, raw_events in runs.items():
                     raw=raw_events[0]
                     events=raw_events[1]
-                    
                     subject_dict[subject][session][run]={}
                     pre_processed_epochs=os.path.join(session_directory, f"{run}_epochs.fif")
                     #met=pd.DataFrame()
 
                     if return_epochs:
                         if not os.path.exists(pre_processed_epochs):
-                            
                             proc = self.process_raw(raw, events, dataset, return_epochs, return_raws)
                             if proc is None:
                             # this mean the run did not contain any selected event
@@ -297,8 +295,6 @@ class BaseParadigm(metaclass=ABCMeta):
                             labels = np.append(labels, lbs, axis=0)
                             #del proc
                         else:
-                            # print("target events", len(np.where(events[:,2]==1)[0]))
-                            # print("non-target events", len(np.where(events[:,2]==2)[0]))
                             x=mne.read_epochs(pre_processed_epochs, preload=True, verbose=False)
                             X.append(x)
                             #labels = np.append(labels, lbs, axis=0)
@@ -328,16 +324,14 @@ class BaseParadigm(metaclass=ABCMeta):
                         else:
                             x=mne.read_epochs(pre_processed_epochs, preload=True, verbose=False)
                             X.append(x)
-
-                    subject_dict[subject][session][run]=x
                             #del proc
                             #X = np.append(X, x, axis=0) if len(X) else x
-                    
-                    # if(dataset.paradigm=='p300'):
-                    #     erp_paradigm=x['Target']
-                    # elif(dataset.paradigm=='n400'):
-                    #     erp_paradigm=x['Inconsistent']
-                    # subject_dict[subject][session][run]=erp_paradigm
+
+                    if(dataset.paradigm=='p300'):
+                        erp_paradigm=x['Target']
+                    elif(dataset.paradigm=='n400'):
+                        erp_paradigm=x['Inconsistent']
+                    subject_dict[subject][session][run]=erp_paradigm
                     met = pd.DataFrame(index=range(len(x)))
                     met["subject"] = subject
                     met["session"] = session
@@ -347,25 +341,24 @@ class BaseParadigm(metaclass=ABCMeta):
         
        
         metadata = pd.concat(metadata, ignore_index=True)
-
-        # feat=Features()
-        # replacement_dict = {v: k for k, v in dataset.event_id.items()}
+        feat=Features()
+        replacement_dict = {v: k for k, v in dataset.event_id.items()}
         if return_epochs:
             X = mne.concatenate_epochs(X, verbose=False)
             # if not os.path.exists(features_directory):
             #     os.makedirs(features_directory)
                 # Getting the AR and PSD coeffecients for the dataset 
-            # features=feat.extract_features(dataset, subject_dict, labels, ar_order)
-            # features['Event_id']=features['Event_id'].map(replacement_dict)
+            features=feat.extract_features(dataset, subject_dict, labels, ar_order)
+            features['Event_id']=features['Event_id'].map(replacement_dict)
                 #features.to_csv(os.path.join(features_directory, fname), index=False)
             #else:
              #   features=pd.read_csv(os.path.join(features_directory, fname))
             # print(features['Event_id'].unique())
             # print(dataset.events)
-            return X, subject_dict, metadata
+            return X, features, metadata
 
         elif return_raws:
-           return X, subject_dict, metadata
+           return X, metadata
         
         else:
             X = mne.concatenate_epochs(X, verbose=False).get_data()
@@ -373,8 +366,8 @@ class BaseParadigm(metaclass=ABCMeta):
             #     os.makedirs(features_directory)
 
             # Getting the AR and PSD coeffecients for the dataset 
-            # features=feat.extract_features(dataset, subject_dict, labels, ar_order)
-            # features['Event_id']=features['Event_id'].map(replacement_dict)
+            features=feat.extract_features(dataset, subject_dict, labels, ar_order)
+            features['Event_id']=features['Event_id'].map(replacement_dict)
 
                 # features.to_csv(os.path.join(features_directory, fname), index=False)
             #print(features['Event_id'].unique())
@@ -384,7 +377,7 @@ class BaseParadigm(metaclass=ABCMeta):
             #     print(features['Event_id'].unique())
             #     print(dataset.event_id)
             #gc.collect()
-            return X, subject_dict, metadata
+            return X, features, metadata
 
                     
 

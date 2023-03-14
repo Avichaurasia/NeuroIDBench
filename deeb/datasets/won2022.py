@@ -49,7 +49,7 @@ class Won2022(BaseDataset):
         super().__init__(
             subjects=list(range(1, 56)),
             sessions_per_subject=1,
-            events=dict(Target=1, NonTarget=0),
+            events=dict(Target=1, NonTarget=2),
             code="won 2022",
             interval=[-0.1, 0.9],
             paradigm="p300",
@@ -115,8 +115,10 @@ class Won2022(BaseDataset):
         ch_types=[ch_type]*len(ch_names)+['stim']
         info = mne.create_info(ch_names=chnames, sfreq=sfreq, ch_types=ch_types, 
                                verbose=False)
-        stim=markers
-        X=np.concatenate((eeg_data, stim[None, :]), axis=0)
+        #stim=markers
+        #print("markers shape", markers.shape)
+        X=np.concatenate((eeg_data, markers[None, :]), axis=0)
+        #print("X shape", X.shape)
 
         # make standard montage before read raw data
         montage=mne.channels.make_standard_montage('biosemi32')
@@ -125,11 +127,11 @@ class Won2022(BaseDataset):
         return raw
     
     def _get_single_run(self, data):
-
         eeg_data=np.asarray(data['data'])
         ch_names=[channel['labels'] for channel in data['chanlocs']]
         sfreq=data['srate']
         markers=data['markers_target']
+        #print("markers", markers)
         raw=self._make_raw_array(eeg_data, markers, ch_names, "eeg", sfreq)
         #montage=make_standard_montage('standard_1020')
         #raw.set_montage(montage)
@@ -151,9 +153,9 @@ class Won2022(BaseDataset):
             #sessions[session_name][run_name]={} 
             raw=self._get_single_run(EEG_train[run])
             events=mne.find_events(raw, shortest_event=0, verbose=False)
-            #print("raw data shape", raw.get_data().shape)
-            #print("events shape", events.shape)
-            events=mne.find_events(raw, shortest_event=0, verbose=False)
+
+            # print("target events", len(np.where(events[:,2]==1)[0]))
+            # print("non-target events", len(np.where(events[:,2]==2)[0]))
             sessions[session_name][run_name] = raw, events       
         return sessions
     
@@ -175,14 +177,16 @@ class Won2022(BaseDataset):
 
         # download and extract data if needed
         subject_dir = self.download_dataset(base_url, "Won2022", subject_str)
-        self.dataset_path=os.path.dirname(os.path.dirname(Path(subject_dir.strip(subject_str))))
+        #self.dataset_path=os.path.dirname(os.path.dirname(Path(subject_dir.strip(subject_str))))
+        self.dataset_path=os.path.dirname(Path(subject_dir.strip(subject_str)))
+        print("dataset path", os.path.dirname(Path(subject_dir.strip(subject_str))))
         return subject_dir
 
-if __name__ == "__main__":
-    won=Won2022()
-    #print("Subject list", won.subject_list)
-    won.subject_list=won.subject_list
-    print(won.get_data())
+# if __name__ == "__main__":
+#     won=Won2022()
+#     #print("Subject list", won.subject_list)
+#     won.subject_list=won.subject_list
+#     print(won.get_data())
        
         
     

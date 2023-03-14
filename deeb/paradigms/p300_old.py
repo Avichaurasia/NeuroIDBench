@@ -6,7 +6,7 @@ import logging
 import mne
 import numpy as np
 import pandas as pd
-from deeb.paradigms.base import BaseParadigm
+from deeb.paradigms.base_old import BaseParadigm
 from deeb.datasets.brainInvaders15a import BrainInvaders2015a
 from deeb.datasets import utils
 from autoreject import AutoReject, get_rejection_threshold
