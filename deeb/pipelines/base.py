@@ -16,7 +16,8 @@ log = logging.getLogger(__name__)
 class Basepipeline(metaclass=ABCMeta):
      
     @abstractmethod
-    def __init__(self, feature_type, ar_order=None):
+    def __init__(self):
+        pass
         #pass
         # #print("subjects", subjects)
         # self.subject_list = subjects
@@ -33,8 +34,8 @@ class Basepipeline(metaclass=ABCMeta):
         # self.paradigm = paradigm
         # self.dataset = dataset
         # self.dataset_code = dataset_code
-        self.feature_type=feature_type         
-        self.ar_order=ar_order
+        #self.feature_type=feature_type         
+        #self.ar_order=ar_order
 
         
 

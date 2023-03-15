@@ -343,9 +343,7 @@ class BaseParadigm(metaclass=ABCMeta):
                     met["session"] = session
                     met["run"] = run
                     metadata.append(met)
-        
-        
-       
+                    
         metadata = pd.concat(metadata, ignore_index=True)
 
         # feat=Features()

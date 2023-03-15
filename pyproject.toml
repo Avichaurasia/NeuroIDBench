@@ -5,6 +5,7 @@ description = "Design and Evaluation of Electroencephalogram(EEG) - based Authen
 authors = ["Avinash Kumar Chaurasia"]
 #supervisor = "Prof. Dr. Patricia Arias Cabarcos"
 
+
 [tool.poetry.dependencies]
 python = ">=3.8, <3.11"
 #python = "^3.9.15"
@@ -29,6 +30,8 @@ python-magic = "^0.4.27"
 autoreject = "^0.4.1"
 statsmodels="^0.13.5"
 mat73 = "^0.60"
+tensorflow-macos = {version = "2.9", platform = "darwin"}
+#tensorflow = ">=2.9.0rc0, <3.0.0"
 
 [tool.poetry.group.deeplearning]
 optional = true

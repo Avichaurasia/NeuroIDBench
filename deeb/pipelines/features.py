@@ -2,7 +2,7 @@ import mne
 import matplotlib.pyplot as plt
 #from sklearn.externals import joblib
 from abc import ABCMeta, abstractmethod
-
+import tensorflow as tf
 import sys
 sys.path.append('.')
 import collections
@@ -19,7 +19,7 @@ from collections import OrderedDict
 import logging
 from tqdm import tqdm
 from mne.utils import _url_to_local_path, verbose
-from deeb.pipeline.base import Basepipeline
+from deeb.pipelines.base import Basepipeline
 from sklearn.base import BaseEstimator, TransformerMixin
 from sklearn.preprocessing import StandardScaler
 
@@ -27,8 +27,9 @@ log = logging.getLogger(__name__)
 
 class AutoRegressive(Basepipeline):
 
-    def __init__(self):
-        super().__init__(feature_type='AR')
+    def __init__(self, order=6):
+        #super().__init__(feature_type='AR')
+        self.order = order
 
     def is_valid(self, dataset):
         ret = True
@@ -43,19 +44,20 @@ class AutoRegressive(Basepipeline):
         # we should verify list of channels, somehow
         return ret
     
-    def _get_features(self, subject_dict, order=6):
+    def _get_features(self, subject_dict):
         df_list = []
         #order = 6
+        print("order", self.order)
         for subject, sessions in tqdm(subject_dict.items(), desc="Computing AR Coeff"):
             for session, runs in sessions.items():
                 for run, epochs in runs.items():
-                    epochs_data = epochs.get_data()
+                    epochs_data = epochs['Target'].get_data()
                     for i in range(len(epochs_data)):
                         dictemp = {'Subject': subject, 'Event_id': list(epochs[i].event_id.values())[0]}
                         for j in range(len(epochs_data[i])):
-                            rho, sigma = sm.regression.yule_walker(epochs_data[i][j], order=order, method="mle")
+                            rho, sigma = sm.regression.yule_walker(epochs_data[i][j], order=self.order, method="mle")
                             first = epochs.ch_names[j]
-                            for d in range(order):
+                            for d in range(self.order):
                                 column_name = f"{first}-AR{d+1}"
                                 dictemp[column_name] = rho[d]
                         df_list.append(dictemp)
@@ -71,7 +73,8 @@ class AutoRegressive(Basepipeline):
 class PowerSpectralDensity(Basepipeline):
 
     def __init__(self):
-        super().__init__(feature_type='bandpower')
+        pass
+
 
     def is_valid(self, dataset):
         ret = True
@@ -99,6 +102,7 @@ class PowerSpectralDensity(Basepipeline):
     
     def _get_features(self, subject_dict):
         df_psd=pd.DataFrame()
+        df_list = []
         FREQ_BANDS = {"delta" : [1,4],
                         "theta" : [4,8],
                         "alpha" : [8, 12],
@@ -109,10 +113,17 @@ class PowerSpectralDensity(Basepipeline):
         for subject, sessions in tqdm(subject_dict.items(), desc="Computing PSD"):
             for session, runs in sessions.items():
                 for run, epochs in runs.items():
+                    #print("run", run) 
+                    epochs=epochs['Target']
+                    #print("epochs size", epochs.get_data().shape)
+
+                    # Computing PSD for each epoch
                     result = self.computing_psd(epochs)
                     results.append((result, subject, epochs))
 
+        # Computing average band power for each channel
         for result, subject, epochs in results:
+            #print("subject", subject)
             psds, freqs = result
             for i in range(len(psds)):
                 features={}
@@ -130,6 +141,10 @@ class PowerSpectralDensity(Basepipeline):
                         features[colum_name]=X[d]
                 data_step = [features]
                 df_psd=df_psd.append(data_step,ignore_index=True)
+
+        return df_psd
+
+                    #df_psd=df_psd.append(data_step,ignore_index=True)
 
         return df_psd
     

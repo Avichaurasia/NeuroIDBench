@@ -96,7 +96,7 @@ class BrainInvaders2015a(BaseDataset):
         events = mne.find_events(raw_combined, shortest_event=0, verbose=False)
 
         sessions[session_name][run_name]=raw_combined, events
-        print("sessions", sessions)
+        #print("sessions", sessions)
         
         return sessions
 
