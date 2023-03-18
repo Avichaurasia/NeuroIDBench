@@ -94,10 +94,23 @@ class PowerSpectralDensity(Basepipeline):
         tmax=epochs.tmax
         tmin=epochs.tmin
         sfreq=epochs.info['sfreq']
+        N_FFT=int(sfreq * (tmax - tmin))
+
+        # setting 4 time windows for PSD calculation
+        window_duration = (tmax - tmin) / 4
+        samples_per_window = int(window_duration * sfreq)
+
 
         # Using mne.Epochs in-built method compute_psd to calculate PSD using welch's method
-        spectrum=epochs.compute_psd(method="welch", n_fft=int(sfreq * (tmax - tmin)),
+        spectrum=epochs.compute_psd(method="welch", n_fft=N_FFT,
             n_overlap=0, n_per_seg=None, fmin=1, fmax=50, tmin=tmin, tmax=tmax, verbose=False)
+        
+        # Later Need to check how it gives the results
+        # Computing PSD with 4 time windows and 50% overlap
+        # spectrum=epochs.compute_psd(method="welch", n_fft=samples_per_window,
+        #     n_overlap=int(samples_per_window*0.5), n_per_seg=None, fmin=1, fmax=50, tmin=tmin, tmax=tmax, verbose=False)
+        
+
         return spectrum.get_data(return_freqs=True)
     
     def _get_features(self, subject_dict):
