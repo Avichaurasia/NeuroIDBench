@@ -104,7 +104,7 @@ class Basepipeline(metaclass=ABCMeta):
         # self.prepare_process(dataset)
 
         #data = pd.DataFrame()
-        data, threshold=self._get_features(subjects_dict)
+        data=self._get_features(subjects_dict)
         # if (self.feature_type=="ar"):
         #     data = self._get_ar_coeffecients(subject_dict=subjects_dict, ar_order=self.ar_order)
 
@@ -113,7 +113,8 @@ class Basepipeline(metaclass=ABCMeta):
 
         # elif (self.feature_type=="siamese"):
         #     data = self._get_siamese_features(subject_dict=subjects_dict)
-        return data, threshold 
+        return data
+ 
 
     @abstractmethod
     def _get_features(self, subject_dict):

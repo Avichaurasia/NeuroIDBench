@@ -12,24 +12,40 @@ from deeb.paradigms.erp import P300
 from deeb.datasets.brainInvaders15a import BrainInvaders2015a
 from deeb.datasets.draschkow2018 import Draschkow2018
 from deeb.datasets.won2022 import Won2022
-from deeb.pipelines.features import AutoRegressive
-from deeb.pipelines.features import PowerSpectralDensity
+from deeb.pipelines.features import AutoRegressive as AR
+from deeb.pipelines.features import PowerSpectralDensity as PSD
 from deeb.pipelines.siamese import Siamese
 from deeb.pipelines.base import Basepipeline
+from deeb.Evaluation.evaluation import CloseSetEvaluation
 from deeb.datasets import utils
 from autoreject import AutoReject, get_rejection_threshold
+from sklearn.pipeline import make_pipeline
+from sklearn.preprocessing import StandardScaler 
+from sklearn.discriminant_analysis import LinearDiscriminantAnalysis as LDA
 #import tensorflow as tf
 #from .features import AR, PSD
 
 dset = BrainInvaders2015a()
-dset.subject_list = dset.subject_list[0:5]
+dset.subject_list = dset.subject_list[0:3]
 paradigm=P300()
+pipeline={}
+pipeline['AR+LDA']=make_pipeline(AR(order=6), LDA(solver='lsqr', shrinkage='auto'))
+pipeline['PSD+LDA']=make_pipeline(PSD(), LDA(solver='lsqr', shrinkage='auto'))
+evaluation=CloseSetEvaluation(paradigm, dset)
+results=evaluation.process(pipeline)
+
+# for name, clf in pipeline.items():
+#     #print(name)
+#     #print(clf[0])
+#     featiures=clf[0].get_data(dset, paradigm)
+#     print(featiures)
+#print(pipeline['AR+LDA']['autoregressive'])
 #psd=PowerSpectralDensity()
 #ar=AutoRegressive(order=4)
-print(dset.subject_list)
-snn=Siamese(optimizer='Adam')
+#print(dset.subject_list)
+#snn=Siamese(optimizer='Adam')
 #print(paradigm.used_events(dset))
 #X, sub, meta=paradigm.get_data(dset, return_epochs=False, return_raws=False)
 #print("X", sub)
-preds, threshold=snn.get_data(dset, paradigm, return_epochs=True, return_raws=False)
-print("Threshold", threshold)
+#preds, threshold=snn.get_data(dset, paradigm, return_epochs=True, return_raws=False)
+#print("Threshold", threshold)

@@ -3,7 +3,7 @@ from abc import ABC, abstractmethod
 
 from sklearn.base import BaseEstimator
 
-from deeb.analysis import Results
+#from deeb.Evaluation. import Results
 from deeb.datasets.base import BaseDataset
 from deeb.paradigms.base import BaseParadigm
 

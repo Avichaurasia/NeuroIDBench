@@ -28,7 +28,7 @@ from keras import backend as K
 
 from keras.constraints import max_norm
 from keras.layers import (
-    Input, Dense, Multiply, Activation, Lambda, Reshape, BatchNormalization,
+    Input, TimeDistributed, Dense, Multiply, Activation, Lambda, Reshape, BatchNormalization,
   LeakyReLU, Flatten, Dropout, Concatenate, Add,
   Conv1D, MaxPooling1D, Conv2D, MaxPooling2D, GlobalAveragePooling2D, AveragePooling2D)
 from keras.models import Sequential, Model, load_model, save_model
@@ -56,8 +56,8 @@ class Siamese(Basepipeline):
     def __init__(
         self,
         optimizer="Adam",
-        EPOCHS=25,
-        batch_size=16,
+        EPOCHS=10,
+        batch_size=100,
         verbose=0,
         random_state=None,
         validation_split=0.2,
@@ -338,34 +338,98 @@ class Siamese(Basepipeline):
     def custom_acc(self, y_true, y_pred):
         return K.mean(K.equal(y_true, K.cast(y_pred > 0.5, y_true.dtype)))
     
-    def build_sequential(self, cnn_input):
-    #     x = Conv2D(filters=64, kernel_size=(3,3), padding="same", activation="relu")(cnn_input)
-    #     x = BatchNormalization()(x)
+    def build_sequential(self, channels, cnn_input):
 
-    #     x = MaxPooling2D(pool_size=(2,2), strides=(2,2))(x)
+          # Using 2D CNN for spectrogram
+        x = Conv2D(filters=32, kernel_size=(3,3), padding="same", activation="relu")(cnn_input)
+        x = BatchNormalization()(x)
+        x = MaxPooling2D(pool_size=(2,2), strides=(2,2))(x)
+        x = Conv2D(filters=64, kernel_size=(3,3), padding="same", activation="relu")(x)
+        x = BatchNormalization()(x)
+        x = MaxPooling2D(pool_size=(2,2), strides=(2,2))(x)
+        x = Conv2D(filters=128, kernel_size=(3,3), padding="same", activation="relu")(x)
+        x = BatchNormalization()(x)
+        x = GlobalAveragePooling2D()(x)
+        x = Dropout(0.2)(x)
+        x = Activation("sigmoid")(x)
+        # return x
 
-    #     x = Conv2D(filters=128, kernel_size=(3,3), padding="same", activation="relu")(x)
-    #     x = BatchNormalization()(x)
+            # Using Cov1D for 1D CNN
+        # x = Conv1D(32, kernel_size=3, activation='relu')(cnn_input)
+        # x = MaxPooling1D(pool_size=2)(x)
+        # x = Conv1D(64, kernel_size=3, activation='relu')(x)
+        # x = MaxPooling1D(pool_size=2)(x)
+        # x = Flatten()(x)
+        # x = Dense(128, activation='relu')(x)
+        
+            # Using TimeDistributed for 1D CNN
+        # x = TimeDistributed(Conv1D(32, kernel_size=3, activation='relu'))(cnn_input)
+        # x = TimeDistributed(MaxPooling1D(pool_size=2))(x)
+        # x = TimeDistributed(Conv1D(64, kernel_size=3, activation='relu'))(x)
+        # x = TimeDistributed(MaxPooling1D(pool_size=2))(x)
+        # x = TimeDistributed(Flatten())(x)
+        # x = TimeDistributed(Dense(128, activation='relu'))(x)
+        # x = Flatten()(x)
+        # #x = Dense(128, activation='relu')(x)
 
-    #     x = MaxPooling2D(pool_size=(2,2), strides=(2,2))(x)
 
-    #     x = Conv2D(filters=256, kernel_size=(3,3), padding="same", activation="relu")(x)
-    #     x = BatchNormalization()(x)
+        # Differece bwteeen Kernel size (1,3) and (3,3) is that using (1,3) we are using 3 filters in the vertical direction
+        # which means that the time series data of each channel is convolved independently and there qould not be any 
+        # dependenecy from one channel to another. Howevere, If you use a kernel size of (3, 3), the convolutional filters will cover a 
+        # larger area of the input, which allows the model to capture relationships between neighboring channels and time steps simultaneously.
+        # kernel size (3,3) This can help the model learn more complex patterns and better exploit the spatial structure in the data, 
+        # which might be beneficial in cases where the relationship between channels is important.
 
-    #     x = GlobalAveragePooling2D()(x)
+            # Using Conv2D for 2D CNN with height 1 and width 3 means it will 
+            # convolve the data with 3 filters in the vertical direction and learns the information along 
+            # 3 time steps.
+        # x = Conv2D(32, kernel_size=(1, 3), activation='relu')(cnn_input)
+        # x = BatchNormalization()(x)
+        # x = MaxPooling2D(pool_size=(1, 2))(x)
+        # x = Conv2D(64, kernel_size=(1, 3), activation='relu')(x)
+        # x = BatchNormalization()(x)
+        # x = MaxPooling2D(pool_size=(1, 2))(x)
+        # x = Flatten()(x)
+        # x = Dense(128, activation='relu')(x)
 
-    #     x = Dropout(0.2)(x)
+        # Using Conv2D for 2D CNN with height 32 means along all the 
+        # channels and width 3 means it will
+        # convolve the data with 3 filters in the vertical direction and learns the information along
+        # 3 time steps. Tested with 32 channels and 3 time steps and it is bad and randomly giving 
+        # accuracy of 50%.
 
-    #     x = Activation("sigmoid")(x)
-    #     return x
+        # # Conv2D(32, kernel_size=(1, 3), activation='relu')(cnn_input) is also giving bad results of 50% accuracy.
+        # x = Conv2D(32, kernel_size=(1, 3), activation='relu')(cnn_input)
+        # #x = Conv2D(32, kernel_size=(channels, 1), activation='relu')(x)
+        # #x = Conv2D(32, kernel_size=(channels, 3), activation='relu')(cnn_input)
+        # x = BatchNormalization()(x)
+        # x = MaxPooling2D(pool_size=(1, 2))(x)
+        # x = Conv2D(64, kernel_size=(1, 3), activation='relu')(x)
+        # x = BatchNormalization()(x)
+        # x = MaxPooling2D(pool_size=(1, 2))(x)
+        # x = Flatten()(x)
+        # x = Dense(128, activation='relu')(x)
+#return x
 
+   # return x
+        # it is giving very good results of 99% accuracy with x = Conv2D(32, kernel_size=(1, 3), activation='relu')(cnn_input)
+        # and x = Conv2D(32, kernel_size=(3, 3), activation='relu')(cnn_input)
+       # x = Conv2D(32, kernel_size=(1, 3), activation='relu')(cnn_input)
 
-        x = Conv1D(32, kernel_size=3, activation='relu')(cnn_input)
-        x = MaxPooling1D(pool_size=2)(x)
-        x = Conv1D(64, kernel_size=3, activation='relu')(x)
-        x = MaxPooling1D(pool_size=2)(x)
-        x = Flatten()(x)
-        x = Dense(128, activation='relu')(x)
+        # x = Conv2D(32, kernel_size=(3, 3), activation='relu')(cnn_input)
+        # x = BatchNormalization()(x)
+        # x = MaxPooling2D(pool_size=(2, 2))(x)
+        # x = Conv2D(64, kernel_size=(3, 3), activation='relu')(x)
+        # x = BatchNormalization()(x)
+        # x = MaxPooling2D(pool_size=(2, 2))(x)
+        # x = Conv2D(128, kernel_size=(3,3), activation="relu")(x)
+        # x = BatchNormalization()(x)
+        # x = GlobalAveragePooling2D()(x)
+        # #x = Flatten()(x)
+        # #x = Dense(256, activation='relu')(x)
+        # x = Dropout(0.2)(x)
+        # x = Activation("sigmoid")(x)
+
         return x
     
     #def build_model(self, height, width, channels, model_type, distance_metric):
@@ -379,9 +443,9 @@ class Siamese(Basepipeline):
         "manhattan": self.manhattan_distance,
         "hellinger": self.hellinger_distance,
         }
-
+        channels = input_shape[0]
         #input_shape=(height, width, channels)
-    
+        #print("input_shape", input_shape[0])
     # Siamese Input ----------------------------------------------------------------------------
         siamese_left_input = Input(shape=input_shape)
         siamese_right_input = Input(shape=input_shape)
@@ -389,7 +453,7 @@ class Siamese(Basepipeline):
 
     # CNN --------------------------------------------------------------------------------------
         cnn_input = Input(shape=input_shape)
-        cnn_output = model_types[model_type](cnn_input)
+        cnn_output = model_types[model_type](channels, cnn_input)
         cnn_model = Model(inputs=cnn_input, outputs=cnn_output)
     # -------------------------------------------------------------------------------------------
 
@@ -418,8 +482,9 @@ class Siamese(Basepipeline):
 
         # Building the Siamese Network with 2 CNN's network of average time series of all channels
         #model, cnn_model = self.build_model(height, weight, 1, "sequential", "hellinger")
-        input_shape=(32,513)
+        input_shape=(32,513,1)
         model, cnn_model = self.build_model(input_shape, "sequential", "euclidean")
+        model.summary()
 
         # Compiling the model
         callbacks = [LearningRateScheduler(self.poly_decay)]
@@ -439,12 +504,16 @@ class Siamese(Basepipeline):
 
         print(" I am about to split the data")
         # Splitting the data into train and test
-        X_train, X_test, y_train, y_test=train_test_split(data, label, test_size=0.2, shuffle=True, random_state=42)
+        X_train, X_test, y_train, y_test=train_test_split(data, label, test_size=0.2, shuffle=False, random_state=42)
 
         print("I am about to make the pairs")
         # Making the pairs for training and testing
         (pair_train, label_train) = self.make_pairs(X_train, y_train)
         (pair_test, label_test) = self.make_pairs(X_test, y_test)
+        # pair_train=np.expand_dims(pair_train, axis=-1)
+        # pair_test=np.expand_dims(pair_test, axis=-1)
+        # label_train=np.expand_dims(label_train, axis=-1)
+        # label_test=np.expand_dims(label_test, axis=-1)
 
         # Creating the model
         #model, cnn_model, callbacks = self.model_creation()
@@ -452,7 +521,7 @@ class Siamese(Basepipeline):
         print("I am about to create the model")
         model, cnn_model, callbacks = self.model_creation(1, 513)
 
-        print("I am about to train the model")
+        print("I am about to train the model and shape of training data is: ", pair_train.shape)
         # Training the model
         r = model.fit(
         [pair_train[:, 0], pair_train[:, 1]], label_train[:],
