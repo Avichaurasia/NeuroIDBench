@@ -55,8 +55,8 @@ def get_dataset_path(sign: str, path: str = None) -> str:
         os.environ["MNE_DATA"] = str(path_def)
     
     # Set MNE_DATASETS_(sign)_PATH to MNE_DATA if not already set
-    print("key", key)
-    print("os.getenv", os.getenv('MNE_DATA'))
+    #print("key", key)
+    #print("os.getenv", os.getenv('MNE_DATA'))
     if os.getenv(key) is None:
         os.environ[key] = os.getenv("MNE_DATA")
         

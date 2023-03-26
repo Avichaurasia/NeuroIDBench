@@ -1,11 +1,12 @@
 import logging
 from abc import ABC, abstractmethod
-
+import os
 from sklearn.base import BaseEstimator
 
 #from deeb.Evaluation. import Results
 from deeb.datasets.base import BaseDataset
 from deeb.paradigms.base import BaseParadigm
+from deeb.analysis.results import Results as res
 
 
 log = logging.getLogger(__name__)
@@ -69,6 +70,7 @@ class BaseEvaluation(ABC):
         self.mne_labels = mne_labels
 
         # check paradigm
+        print(type(paradigm))
         if not isinstance(paradigm, BaseParadigm):
             raise (ValueError("paradigm must be an Paradigm instance"))
         self.paradigm = paradigm
@@ -116,14 +118,14 @@ class BaseEvaluation(ABC):
             and evaluation checks"""
             )
 
-        self.results = Results(
-            type(self),
-            type(self.paradigm),
-            overwrite=overwrite,
-            suffix=suffix,
-            hdf5_path=self.hdf5_path,
-            additional_columns=additional_columns,
-        )
+        # self.results = Results(
+        #     type(self),
+        #     type(self.paradigm),
+        #     overwrite=overwrite,
+        #     suffix=suffix,
+        #     hdf5_path=self.hdf5_path,
+        #     additional_columns=additional_columns,
+        # )
 
     def process(self, pipelines, param_grid=None):
         """Runs all pipelines on all datasets.
@@ -151,20 +153,28 @@ class BaseEvaluation(ABC):
 
         for dataset in self.datasets:
             log.info("Processing dataset: {}".format(dataset.code))
-            results = self.evaluate(dataset, pipelines, param_grid)
-            for res in results:
-                self.push_result(res, pipelines)
+            results, results_path= self.evaluate(dataset, pipelines, param_grid)
+            #results_path = os.path.join(dataset.dataset_path, "results")
+            # if not os.path.exists(results_path):
+            #     os.makedirs(results_path)
+            #print(dataset.dataset_path)
+            #print(results.to_dataframe(pipelines=pipelines))
+            # for res in results:
+            #     print(res)
+            #     self.push_result(res, pipelines)
 
-        return self.results.to_dataframe(pipelines=pipelines)
+        #return self.results.to_dataframe(pipelines=pipelines)
+        get_results=res._add_results(results, results_path)
+        return get_results
 
-    def push_result(self, res, pipelines):
-        message = "{} | ".format(res["pipeline"])
-        message += "{} | {} | {}".format(
-            res["dataset"].code, res["subject"], res["session"]
-        )
-        message += ": Score %.3f" % res["score"]
-        log.info(message)
-        self.results.add({res["pipeline"]: res}, pipelines=pipelines)
+    # def push_result(self, res, pipelines):
+    #     message = "{} | ".format(res["pipeline"])
+    #     message += "{} | {} | {}".format(
+    #         res["dataset"].code, res["subject"], res["session"]
+    #     )
+    #     message += ": Score %.3f" % res["score"]
+    #     log.info(message)
+    #     self.results.add({res["pipeline"]: res}, pipelines=pipelines)
 
     def get_results(self):
         return self.results.to_dataframe()

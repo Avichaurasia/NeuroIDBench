@@ -44,16 +44,24 @@ class AutoRegressive(Basepipeline):
         # we should verify list of channels, somehow
         return ret
     
-    def _get_features(self, subject_dict):
+    def _get_features(self, subject_dict, dataset):
         df_list = []
         #order = 6
-        print("order", self.order)
+        #print("order", self.order)
         for subject, sessions in tqdm(subject_dict.items(), desc="Computing AR Coeff"):
             for session, runs in sessions.items():
                 for run, epochs in runs.items():
-                    epochs_data = epochs['Target'].get_data()
+
+                    if (dataset.paradigm == "p300"):
+                        epochs= epochs['Target']
+                        epochs_data = epochs.get_data()
+
+                    elif (dataset.paradigm == "n400"):
+                        epochs = epochs['Inconsistent']
+                        epochs_data = epochs.get_data()
+                        
                     for i in range(len(epochs_data)):
-                        dictemp = {'Subject': subject, 'Event_id': list(epochs[i].event_id.values())[0]}
+                        dictemp = {'Subject': subject, "Session": session, 'Event_id': list(epochs[i].event_id.values())[0]}
                         for j in range(len(epochs_data[i])):
                             rho, sigma = sm.regression.yule_walker(epochs_data[i][j], order=self.order, method="mle")
                             first = epochs.ch_names[j]
@@ -113,7 +121,7 @@ class PowerSpectralDensity(Basepipeline):
 
         return spectrum.get_data(return_freqs=True)
     
-    def _get_features(self, subject_dict):
+    def _get_features(self, subject_dict, dataset):
         df_psd=pd.DataFrame()
         df_list = []
         FREQ_BANDS = {"delta" : [1,4],
@@ -127,19 +135,27 @@ class PowerSpectralDensity(Basepipeline):
             for session, runs in sessions.items():
                 for run, epochs in runs.items():
                     #print("run", run) 
-                    epochs=epochs['Target']
+
+                    if (dataset.paradigm == "p300"):
+                        epochs = epochs['Target']
+                        
+                    elif (dataset.paradigm == "n400"):
+                        epochs = epochs['Inconsistent']
+
+                    #epochs=epochs['Target']
                     #print("epochs size", epochs.get_data().shape)
 
                     # Computing PSD for each epoch
                     result = self.computing_psd(epochs)
-                    results.append((result, subject, epochs))
+                    results.append((result, subject, session, epochs))
 
         # Computing average band power for each channel
-        for result, subject, epochs in results:
+        for result, subject, session, epochs in results:
             #print("subject", subject)
             psds, freqs = result
             for i in range(len(psds)):
-                features={}
+                #features={}
+                features = {'Subject': subject, 'Session': session, 'Event_id': list(epochs[i].event_id.values())[0]}
                 for j in range(len(psds[i])):
                     welch_psd=psds[i][j]
                     X=[]
@@ -159,7 +175,7 @@ class PowerSpectralDensity(Basepipeline):
 
                     #df_psd=df_psd.append(data_step,ignore_index=True)
 
-        return df_psd
+        #return df_psd
     
     # def extract_features(self, dataset, subject_dict, labels, ar_order):
     #     df=pd.DataFrame()

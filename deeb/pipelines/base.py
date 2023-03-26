@@ -77,7 +77,6 @@ class Basepipeline(metaclass=ABCMeta):
         pass
 
     def get_data(self, dataset, paradigm, subjects=None, return_epochs=False, return_raws=False):
-        #print("Avinash")
         if not self.is_valid(dataset):
             message = f"Dataset {dataset.code} is not valid for paradigm"
             raise AssertionError(message)
@@ -104,7 +103,7 @@ class Basepipeline(metaclass=ABCMeta):
         # self.prepare_process(dataset)
 
         #data = pd.DataFrame()
-        data=self._get_features(subjects_dict)
+        data=self._get_features(subjects_dict, dataset)
         # if (self.feature_type=="ar"):
         #     data = self._get_ar_coeffecients(subject_dict=subjects_dict, ar_order=self.ar_order)
 

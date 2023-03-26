@@ -66,7 +66,6 @@ class BrainInvaders2015a(BaseDataset):
             session_name = "session_1"
             if session_name not in sessions.keys():
                 sessions[session_name] = {}
-            #sessions[session_name] = {}
             run_name = 'run_1'
             chnames = [
                 'Fp1', 'Fp2', 'AFz', 'F7', 'F3', 'F4', 'F8', 'FC5', 'FC1', 'FC2', 'FC6',
@@ -88,16 +87,12 @@ class BrainInvaders2015a(BaseDataset):
             info.set_montage(montage, match_case=False)
             raw = mne.io.RawArray(data=X, info=info, verbose=False)
             all_sessions_data.append(raw)
-            #sessions[session_name][run_name] = raw
 
         # Concetenating the three sessions data since there was no break between each session
-
         raw_combined=mne.concatenate_raws(all_sessions_data, preload=True, verbose=True)
         events = mne.find_events(raw_combined, shortest_event=0, verbose=False)
 
-        sessions[session_name][run_name]=raw_combined, events
-        #print("sessions", sessions)
-        
+        sessions[session_name][run_name]=raw_combined, events        
         return sessions
 
     
@@ -109,28 +104,15 @@ class BrainInvaders2015a(BaseDataset):
         # define url and paths
         base_url = BI2015a_URL
         subject_str = f"subject_{subject:02}"
-        #print("Subject_str", subject_str)
         url = f"{base_url}{subject_str}_mat.zip"
         zip_filename = f"{subject_str}.zip"
-        #print("zip file dir:", zip_filename)
 
         # download and extract data if needed
         path_zip = dl.data_dl(url, "BRAININVADERS2015A")
-        #path=
-        #print(os.path.dirname(os.path.dirname(Path(path_zip.strip(zip_filename)))))
         self.dataset_path=os.path.dirname(os.path.dirname(Path(path_zip.strip(zip_filename))))
-        #print(self.dataset_path)
-        #os.path.dirname(os.path.dirname(path)))
-        #self.dataset_path=Path(path_zip.strip(zip_filename))
         subject_dir = Path(path_zip.strip(zip_filename)) / subject_str
-        # #print("subject directory:", subject_dir)
-        # with open(path_zip, 'rb') as f:
-        #     first_bytes = f.read(4)
-        #     print("First 4 bytes", first_bytes)
-
         if not subject_dir.exists():
             with z.ZipFile(path_zip, "r") as zip_ref:
-                #print("zip ref:",zip_ref.read(4))
                 zip_ref.extractall(subject_dir)
         
         # get paths to relevant files
@@ -140,9 +122,6 @@ class BrainInvaders2015a(BaseDataset):
 
         return session_paths
                                 
-#if __name__ == "__main__":
- #   bi15a=BrainInvaders2015a()
-  #  print(bi15a.get_data())
 
 
 

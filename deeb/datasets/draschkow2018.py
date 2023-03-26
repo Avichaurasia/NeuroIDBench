@@ -214,11 +214,5 @@ class Draschkow2018(BaseDataset):
               #      Zip.extract(ZipMember, path=subject_dir)
                 #zip_ref.extractall(subject_dir)
                                 
-if __name__ == "__main__":
-    d=Draschkow2018()
-   #bi15a.download()
-    print(d.get_data())
-
-    #print(g._get_single_subject_data(2))
 
 

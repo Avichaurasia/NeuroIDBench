@@ -45,8 +45,6 @@ class Mantegna2019(BaseDataset):
         
     @verbose
     def download_dataset(self, url, sign, path=None, force_update=False, verbose=None):
-        #print("sign in download dataset", sign)
-        #print("url in download dataset", url)
         path = Path(dl.get_dataset_path(sign, path))
         print(f"path: {path}")
 
@@ -81,7 +79,7 @@ class Mantegna2019(BaseDataset):
         """return data for a single subject"""
 
         file_path_list = self.data_path(subject)
-        print("file path list", file_path_list)
+        #print("file path list", file_path_list)
         sessions = {}
         session_name = 'session_1'
         sessions[session_name] = {}
@@ -91,12 +89,13 @@ class Mantegna2019(BaseDataset):
 
         raw.rename_channels({'LEOG':'LO1','LBEOG':'IO1','REOG':'LO2','C64':'SO1','RM':'A2'})
         raw.set_channel_types({'LO1':'eog','IO1':'eog','LO2':'eog','SO1':'misc',"A2":'misc'})
+        events, events_id=mne.events_from_annotations(raw, verbose=False)
         #montage = mne.channels.make_standard_montage('standard_1020')
 
         #stim_channels = mne.utils._get_stim_channel(None, raw.info, raise_error=False)        
         #raw.set_montage(montage, on_missing='ignore')
 
-        sessions[session_name][run_name] = raw
+        sessions[session_name][run_name] = raw, events
         return sessions
     
     def data_path(self, subject, path=None, force_update=False,
@@ -114,27 +113,24 @@ class Mantegna2019(BaseDataset):
         url = Mantegna2019_URL
         zip_filename = f"raw_data.zip"
         main_directory='raw_data'
-        if(Mantegna2019.path_to_dataset==" "):
-            path_zip = self.download_dataset(url, "Mantegna2019")
-            Mantegna2019.path_to_dataset=path_zip
-        else:
-            path_zip=Mantegna2019.path_to_dataset
-            
-        #print("path zip", path_zip)
+        path_zip = self.download_dataset(url, "Mantegna2019")
+        # if(Mantegna2019.path_to_dataset==" "):
+        #     path_zip = self.download_dataset(url, "Mantegna2019")
+        #     Mantegna2019.dataset_path=path_zip
+        # else:
+        #     path_zip=Mantegna2019.dataset_path
+
+        #self.dataset_path=os.path.dirname(Path(path_zip.strip(zip_filename)))
+        self.dataset_path=os.path.dirname(Path(path_zip))
+        print("dataset path", self.dataset_path)
         subject_dir = Path(path_zip.strip(zip_filename))/main_directory
         print("")
         if not subject_dir.exists():
             with z.ZipFile(path_zip, "r") as zip_ref:
                 zip_ref.extractall(subject_dir)
 
-        subject_dict=OrderedDict()
-        ##unprocessed_data_path=os.path.join(subject_dir, "unprocessed")
         raw_data_path = os.listdir(subject_dir)
         for sub in raw_data_path:
             if sub.endswith(".vhdr") and sub.split("_")[0] == subject:
                 return os.path.join(subject_dir, sub)
             
-
-# if __name__ == "__main__":
-#     mantegna=Mantegna2019()
-#     print(mantegna.get_data())

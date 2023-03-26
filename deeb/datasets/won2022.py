@@ -182,22 +182,6 @@ class Won2022(BaseDataset):
         print("dataset path", os.path.dirname(Path(subject_dir.strip(subject_str))))
         return subject_dir
 
-# if __name__ == "__main__":
-#     won=Won2022()
-#     #print("Subject list", won.subject_list)
-#     won.subject_list=won.subject_list
-#     print(won.get_data())
-       
-        
-    
-
-# filelist = fs_get_file_list(32398631)
-# print(len(filelist))
-# for file in filelist:
-#     print(file)
-# print(filelist)
-
-
 # https://ndownloader.figstatic.com/files/3413851
 # Subject 1: https://ndownloader.figstatic.com/files/32407757
 # Subject 2: https://ndownloader.figstatic.com/files/32398637

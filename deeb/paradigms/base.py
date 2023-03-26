@@ -263,7 +263,7 @@ class BaseParadigm(metaclass=ABCMeta):
         labels = []
         metadata = []
         subject_dict=OrderedDict()
-        for subject, sessions in data.items():
+        for subject, sessions in tqdm(data.items(), desc="Extracting epochs"):
             subject_directory=os.path.join(epochs_directory,str(subject))
             if not os.path.exists(subject_directory):
                 os.makedirs(subject_directory)
