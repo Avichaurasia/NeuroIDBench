@@ -6,7 +6,8 @@ from sklearn.base import BaseEstimator
 #from deeb.Evaluation. import Results
 from deeb.datasets.base import BaseDataset
 from deeb.paradigms.base import BaseParadigm
-from deeb.analysis.results import Results as res
+from deeb.analysis.results import Results
+import pandas as pd
 
 
 log = logging.getLogger(__name__)
@@ -118,7 +119,8 @@ class BaseEvaluation(ABC):
             and evaluation checks"""
             )
 
-        # self.results = Results(
+        # Adding results object from deeb.analysis.results module to the current instance of BaseEvaluation
+        self.results = Results()
         #     type(self),
         #     type(self.paradigm),
         #     overwrite=overwrite,
@@ -150,22 +152,21 @@ class BaseEvaluation(ABC):
         for _, pipeline in pipelines.items():
             if not (isinstance(pipeline, BaseEstimator)):
                 raise (ValueError("pipelines must only contains Pipelines " "instance"))
-
+        dataframe=pd.DataFrame()
         for dataset in self.datasets:
             log.info("Processing dataset: {}".format(dataset.code))
             results, results_path= self.evaluate(dataset, pipelines, param_grid)
-            #results_path = os.path.join(dataset.dataset_path, "results")
-            # if not os.path.exists(results_path):
-            #     os.makedirs(results_path)
-            #print(dataset.dataset_path)
+            #print(results)
+
             #print(results.to_dataframe(pipelines=pipelines))
             # for res in results:
             #     print(res)
             #     self.push_result(res, pipelines)
 
         #return self.results.to_dataframe(pipelines=pipelines)
-        get_results=res._add_results(results, results_path)
-        return get_results
+            get_results=self.results._add_results(results, results_path)
+            dataframe=dataframe.append(get_results, ignore_index=True)
+        return dataframe
 
     # def push_result(self, res, pipelines):
     #     message = "{} | ".format(res["pipeline"])

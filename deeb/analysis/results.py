@@ -11,21 +11,80 @@ import pandas as pd
 from mne import get_config, set_config
 from mne.datasets.utils import _get_path
 from sklearn.base import BaseEstimator
+import h5py
+import json
+from numpyencoder import NumpyEncoder
+import datetime
+
+#from deeb.evaluation.evaluation import CloseSetEvaluation, OpenSetEvaluation
 
 
 class Results():
 
-    def _add_results(results, results_path):
-        """Add results to the hdf5 file."""
-        if(not osp.exists(results_path)):
+    """
+        class that will abstract result storage
+    """
+
+    def _add_results(self, results, results_path):
+        """Add results dataframe to path dataset.datasetpath as json file."""
+
+        if not os.path.exists(results_path):
             os.makedirs(results_path)
-            results.to_csv(osp.join(results_path, "results.csv"), index=False)
-            res=results
-        else:
-            res=pd.read_csv(osp.join(results_path, "results.csv"))
-            #print(res)
-        result_df=res[['dataset', 'pipeline', 'subject', 'auc', 'eer']]
-        return result_df
+
+
+
+        # # Iterate over the results and save each pipeline dictionary to a separate file
+        # for result in results:
+        #     # Generate a unique filename using the pipeline name and current date and time
+        #     pipeline_name = result['pipeline']
+        #     current_time = datetime.datetime.now().strftime('%Y-%m-%d-%H-%M-%S')
+        #     filename = f'{pipeline_name}-{current_time}.json'
+            
+        #     # Open the file with the unique filename and write the contents of the dictionary to it
+        #     with open(os.path.join(results_path, filename), 'w') as f:
+        #         json.dump(result, f, cls=NumpyEncoder)
+
+        # Interate over the results, fetch the pipeline dictionary and save them to path results_path
+        # for result in results:
+        #     with open(os.path.join(results_path, result['pipeline'] + '.json'), 'w') as f:
+        #         json.dump(result, f, cls=NumpyEncoder)
+
+        with open(os.path.join(results_path, "results.json"), 'w') as f:
+            json.dump(results, f, cls=NumpyEncoder)
+
+        # getting average results across subjects
+        average_results = self._add_dataframe(results_path)
+        return average_results
+    
+    def _add_dataframe(self, results_path):
+        """Average results across subjects."""
+
+        # # Read all the json files in the results_path, merge them into a single list and convert it to a dataframe
+        # results_list = []
+        # for file in os.listdir(results_path):
+        #     if file.endswith(".json"):
+        #         with open(os.path.join(results_path, file), 'r') as f:
+        #             results_list.append(json.load(f))
+
+
+        with open(os.path.join(results_path, "results.json"), 'r') as f:
+            results_list = json.load(f) 
+        df_results=pd.DataFrame(results_list)
+
+        # getting average results across subjects
+        # averaged_results = df_results.groupby(['dataset', 'pipeline']).agg({
+        #     'accuracy': 'mean',
+        #     'auc': 'mean',
+        #     'eer': 'mean',
+        #     'tpr': lambda x: np.mean(np.vstack(x), axis=0),  # average across numpy arrays
+        #     'tprs_lower': lambda x: np.mean(np.vstack(x), axis=0),  # average across numpy arrays
+        #     'tprs_upper': lambda x: np.mean(np.vstack(x), axis=0),  # average across numpy arrays
+        #     'std_auc':'mean',
+        #     'n_samples': 'mean'
+        # }).reset_index()
+        
+        # getting the average tpr, tpr_lower, tpr_upper
+        return df_results
 
 
 # def get_string_rep(obj):

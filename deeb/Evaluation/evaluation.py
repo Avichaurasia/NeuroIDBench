@@ -65,10 +65,13 @@ class CloseSetEvaluation(BaseEvaluation):
         tpr_list=[]
         thresholds_list=[]
         fnr_list=[] 
+        frr_1_far_list=[]
 
         # Defining the Stratified KFold
         skfold = StratifiedKFold(n_splits=4,shuffle=True,random_state=42)
-        clf=pipeline[1:]
+        classifer=pipeline[1:]
+        #classifier=pipeline.steps[1:]
+        #print("classifer",classifer)
         mean_fpr = np.linspace(0, 1, 100)
 
         # Splitting the dataset into the Training set and Test set
@@ -85,6 +88,8 @@ class CloseSetEvaluation(BaseEvaluation):
             oversampler = RandomOverSampler()
             X_train, y_train = oversampler.fit_resample(X_train, y_train)
 
+            clf=clone(classifer)
+            #print("cloned classifer", clf)
             # Training the model
             model=clf.fit(X_train,y_train)
 
@@ -93,20 +98,25 @@ class CloseSetEvaluation(BaseEvaluation):
             y_pred_proba=model.predict_proba(X_test)[:,-1]
 
             # calculating auc, eer, eer_threshold, fpr, tpr, thresholds for each k-fold
-            auc, eer, eer_theshold, inter_tpr, tpr, fnr=score._calculate_scores(y_pred_proba,y_test, mean_fpr)
+            auc, eer, eer_theshold, inter_tpr, tpr, fnr, frr_1_far=score._calculate_scores(y_pred_proba,y_test, mean_fpr)
 
             accuracy_list.append(accuracy_score(y_test,y_pred))
             auc_list.append(auc)
             eer_list.append(eer)
             tpr_list.append(inter_tpr)
             fnr_list.append(fnr)
-        mean_accuracy, mean_auc, mean_eer, mean_tpr, tprs_upper, tprr_lower, std_auc=score._calculate_average_scores(
-                                                                                    accuracy_list, tpr_list, eer_list, mean_fpr, auc_list)
-        return (mean_accuracy, mean_auc, mean_eer, mean_tpr, tprs_upper, tprr_lower, std_auc)
+            frr_1_far_list.append(frr_1_far)
+        mean_accuracy, mean_auc, mean_eer, mean_tpr, tprs_upper, tprr_lower, std_auc, mean_frr_1_far=score._calculate_average_scores(
+                                                                                    accuracy_list, tpr_list, eer_list, mean_fpr, auc_list, frr_1_far_list)
+        return (mean_accuracy, mean_auc, mean_eer, mean_tpr, tprs_upper, tprr_lower, std_auc, mean_frr_1_far)
          
     def _evaluate(self, dataset, pipelines, param_grid):
         results=[]
+        #dict_results_list = []
+        
         for key, features in pipelines.items():
+            #dict_results={}
+            #print("Items inside idctionary", features)
             data=features[0].get_data(dataset, self.paradigm)
             for subject in tqdm(dataset.subject_list, desc=f"{dataset.code}-CloseSetEvaulation"):
                 df=data.copy(deep=True)
@@ -115,15 +125,16 @@ class CloseSetEvaluation(BaseEvaluation):
                 df.loc[df['Subject'] == subject, 'Label'] = 1
                 labels=np.array(df['Label'])
                 X=np.array(df.drop(['Label','Event_id','Subject','Session'],axis=1))
-                mean_accuracy, mean_auc, mean_eer, mean_tpr, tprs_upper, tprr_lower, std_auc=self._authenticate_single_subject(
+                mean_accuracy, mean_auc, mean_eer, mean_tpr, tprs_upper, tprr_lower, std_auc, mean_frr_1_far=self._authenticate_single_subject(
                                                                                                                 X,labels, pipelines[key], param_grid)
-                #mean_accuracy, mean_auc, mean_eer, mean_tpr, tprs_upper, tprr_lower, std_auc=predictions
+                
                 res = {
                        # "time": duration / 5.0,  # 5 fold CV
                         "dataset": dataset.code,
                         "pipeline": key,
                         "subject": subject,
                        "session": 1,
+                       "frr_1_far": mean_frr_1_far,
                        "accuracy": mean_accuracy,
                         "auc": mean_auc,
                         "eer": mean_eer,
@@ -135,31 +146,44 @@ class CloseSetEvaluation(BaseEvaluation):
                         #"n_channels": data.columns.size
                         
                     }
-                results.append(res)
-                # #print(res)
-                # print("mean_auc", mean_auc)
-                # print("mean_eer", mean_eer)
-        #print(pd.DataFrame.from_dict(results)['subject'])
                 
+                # print environment variables
+                #print(f"Environment variables: {os.environ}") 
 
-        #file_name=os.path.join(
-        
+                # dict_results=OrderedDict()
+                # dict_results["dataset"]=dataset.code
+                # dict_results["pipeline"]=key
+                # dict_results["subject"]=subject
+                # dict_results["session"]=1
+                # dict_results["accuracy"]=mean_accuracy
+                # dict_results["auc"]=mean_auc
+                # dict_results["eer"]=mean_eer
+                # dict_results["tpr"]=mean_tpr
+                # dict_results["tprs_upper"]=tprs_upper
+                # dict_results["tprs_lower"]=tprr_lower
+                # dict_results["std_auc"]=std_auc
+                # dict_results["n_samples"]=len(data)
+                # #dict_results["n_channels"]=data.columns.size
 
-        #)
-        
-        #print(pd.DataFrame(results))
+                #dict_results_list.append(dict_results)
+                results.append(res)
         return results
 
     def evaluate(self, dataset, pipelines, param_grid):
         #yield from self._evaluate(dataset, pipelines, param_grid)
         results=self._evaluate(dataset, pipelines, param_grid)
+        #print(type(results))
         results_path=os.path.join(
             dataset.dataset_path,
             "Results",
-            "CloseSetEvaluation",
-            f"{dataset.code}_CloseSetEvaluation")
+            "CloseSetEvaluation"
+            #f"{dataset.code}_CloseSetEvaluation")
+        )
 
-        return pd.DataFrame(results), results_path
+
+        #print(results)
+        return results, results_path
+        #return pd.DataFrame(results), results_path, dict_results_list
 
     def is_valid(self, dataset):
         return True
@@ -179,7 +203,7 @@ class OpenSetEvaluation(BaseEvaluation):
         self.calculate_learning_curve = self.data_size is not None
         super().__init__(**kwargs)
 
-    def _build_model(self, train_set, test_set, pipeline, mean_fpr, param_grid=None):
+    def _build_model(self, train_set, test_set, classifier, mean_fpr, param_grid=None):
         X_train=train_set.drop(['Subject', 'Event_id',"Session",'Label'], axis=1)
         X_train=np.array(X_train)
         y_train=np.array(train_set['Label'])
@@ -197,17 +221,18 @@ class OpenSetEvaluation(BaseEvaluation):
         # Resampling the data using RandomOverSampler
         oversampler = RandomOverSampler()
         X_train, y_train = oversampler.fit_resample(X_train, y_train)
-        model=pipeline.fit(X_train, y_train)
+        #model=pipeline.fit(X_train, y_train)
 
+        clf=clone(classifier)
         # Training the model
-        model=pipeline.fit(X_train,y_train)
+        model=clf.fit(X_train,y_train)
 
         # Predicting the test set result
         y_pred=model.predict(X_test)
         y_pred_proba=model.predict_proba(X_test)[:,-1]
         accuracy=accuracy_score(y_test,y_pred)
-        auc, eer, eer_theshold, inter_tpr, tpr, fnr=score._calculate_scores(y_pred_proba,y_test, mean_fpr)
-        return (accuracy, auc, eer, eer_theshold, inter_tpr, tpr, fnr)
+        auc, eer, eer_theshold, inter_tpr, tpr, fnr, frr_1_far=score._calculate_scores(y_pred_proba,y_test, mean_fpr)
+        return (accuracy, auc, eer, eer_theshold, inter_tpr, tpr, fnr, frr_1_far)
 
     def _authenticate_single_subject(self, df, df_authenticated, df_rejected, subject_ids, pipeline, param_grid=None, k=4):
         accuracy_list=[]
@@ -218,56 +243,75 @@ class OpenSetEvaluation(BaseEvaluation):
         tpr_list=[]
         thresholds_list=[]
         fnr_list=[] 
+        frr_1_far_list=[]
+
         mean_fpr = np.linspace(0, 1, 100)
-        pipeline=pipeline[1:]
+        classifier=pipeline[1:]
         for fold in range(k):
-            #Assigining 75% subjects subject_ids for training data
+
+            #Randomly selecing 75% subjects from the rejected subjects
             train_subject_ids = random.sample(subject_ids, k=int(len(subject_ids) * 0.75))
 
-            #Assigining 25% subjects subject_ids for training data
+            #Selecting the remaining subjects as test subjects which are not part of training data
             test_subject_ids=df[~df['Subject'].isin(train_subject_ids)]['Subject'].unique()
             test_subject_ids=list(test_subject_ids)
             
-            # Divide the dataset into training and testing sets based on subject id
+            # Divide the dataframe of rejected subjects into training and testing sets based on subject id
             train_set = df_rejected[df_rejected['Subject'].isin(train_subject_ids)]
             test_set = df_rejected[df_rejected['Subject'].isin(test_subject_ids)]
             
             # Adding Authenticated subjects data in the training as well testing
+
+            # Assigning 75% samples of authenticated subject to training set
             num_rows = int(len(df_authenticated) * 0.75)
+            # Assigning the remaining 25% samples of authenticated subject to testing set
             df_authenticated_train=df_authenticated.sample(n=num_rows)
             df_authenticated_test=df_authenticated.drop(df_authenticated_train.index)
             
             train_set=pd.concat([df_authenticated_train, train_set], axis=0)
             test_set=pd.concat([df_authenticated_test, test_set], axis=0)
-            accuracy, auc, eer, eer_theshold, inter_tpr, tpr, fnr=self._build_model(train_set, test_set, pipeline, mean_fpr, param_grid)
+            accuracy, auc, eer, eer_theshold, inter_tpr, tpr, fnr, frr_1_far=self._build_model(train_set, test_set, classifier, mean_fpr, param_grid)
             accuracy_list.append(accuracy)
             auc_list.append(auc)
             eer_list.append(eer)
             tpr_list.append(inter_tpr)
             fnr_list.append(fnr)
-        mean_accuracy, mean_auc, mean_eer, mean_tpr, tprs_upper, tprr_lower, std_auc=score._calculate_average_scores(
-                                                                                    accuracy_list, tpr_list, eer_list, mean_fpr, auc_list)
-        return (mean_accuracy, mean_auc, mean_eer, mean_tpr, tprs_upper, tprr_lower, std_auc)
+            frr_1_far_list.append(frr_1_far)
+        mean_accuracy, mean_auc, mean_eer, mean_tpr, tprs_upper, tprr_lower, std_auc, mean_frr_1_far=score._calculate_average_scores(
+                                                                                    accuracy_list, tpr_list, eer_list, mean_fpr, auc_list, frr_1_far_list)
+        
+        # print("before dictionary", type(tprr_lower))
+        # print(type(tprs_upper))
+        return (mean_accuracy, mean_auc, mean_eer, mean_tpr, tprs_upper, tprr_lower, std_auc, mean_frr_1_far)
          
     def _evaluate(self, dataset, pipelines, param_grid):
         results=[]
         for key, features in pipelines.items():
             data=features[0].get_data(dataset, self.paradigm)
+            
             for subject in tqdm(dataset.subject_list, desc=f"{dataset.code}-OpenSetEvaulation"):
                 df=data.copy(deep=True)
                 df['Label']=0
                 df.loc[df['Subject'] == subject, 'Label'] = 1
+
                 df_authenticated=df[df['Subject']==subject]
+
+                # getting the dataframe for rejected subjects
                 df_rejected=df.drop(df_authenticated.index)
+
+                # getting the subject IDs of the rejected subjects
                 subject_ids = list(set(df_rejected['Subject']))
-                mean_accuracy, mean_auc, mean_eer, mean_tpr, tprs_upper, tprr_lower, std_auc=self._authenticate_single_subject(df, 
+                mean_accuracy, mean_auc, mean_eer, mean_tpr, tprs_upper, tprr_lower, std_auc, mean_frr_1_far=self._authenticate_single_subject(df, 
                                                                 df_authenticated, df_rejected, subject_ids, pipelines[key], param_grid, k=4) 
+                
+                
                 res = {
                         "dataset": dataset.code,
                         "pipeline": key,
                         "subject": subject,
-                       "session": 1,
-                       "accuracy": mean_accuracy,
+                    "session": 1,
+                    "frr_1_far": mean_frr_1_far,
+                    "accuracy": mean_accuracy,
                         "auc": mean_auc,
                         "eer": mean_eer,
                         "tpr": mean_tpr,
@@ -279,9 +323,18 @@ class OpenSetEvaluation(BaseEvaluation):
                     }
                 # print("mean_auc", mean_auc)
                 # print("mean_eer", mean_eer)
+                # print("After dictionary", type(res['tprr_lower']))
+                # print(type(res['tprr_upper']))
+
+
                 results.append(res)
 
+            # except Exception as e:
+            #     print(f"An error occurred: {e}")
+            #     #continue
+
         #print(pd.DataFrame(results))
+        #print(results[0])
         return results
 
     def evaluate(self, dataset, pipelines, param_grid):
@@ -294,11 +347,11 @@ class OpenSetEvaluation(BaseEvaluation):
         results_path=os.path.join(
             dataset.dataset_path,
             "Results",
-            "CloseSetEvaluation",
-            f"{dataset.code}_OpenSetEvaluation")
-
-        return pd.DataFrame(results), results_path
-        #return results
+            "OpenSetEvaluation",
+            #f"{dataset.code}_OpenSetEvaluation")
+        )
+        
+        return results, results_path
 
     def is_valid(self, dataset):
         return True

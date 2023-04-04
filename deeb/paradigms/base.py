@@ -9,9 +9,10 @@ import os
 from deeb.paradigms.features import Features
 from tqdm import tqdm
 import warnings
+from joblib import Parallel, delayed
 import gc
 
-warnings.filterwarnings("ignore", message="resource_tracker: There appear to be \\d+ leaked semaphore objects to clean up at shutdown")
+#warnings.filterwarnings("ignore", message="resource_tracker: There appear to be \\d+ leaked semaphore objects to clean up at shutdown")
 
 log = logging.getLogger(__name__)
 
@@ -77,8 +78,7 @@ class BaseParadigm(metaclass=ABCMeta):
             pass
 
     def process_raw(  # noqa: C901
-        self, raw, events, dataset, return_epochs=False, return_raws=False
-    ):
+        self, raw, events, dataset, return_epochs=False):
         """
         Process one raw data file.
 
@@ -116,9 +116,9 @@ class BaseParadigm(metaclass=ABCMeta):
 
         """
 
-        if return_epochs and return_raws:
-            message = "Select only return_epochs or return_raws, not both"
-            raise ValueError(message)
+        # if return_epochs and return_raws:
+        #     message = "Select only return_epochs or return_raws, not both"
+        #     raise ValueError(message)
 
         # get events id
         event_id = self.used_events(dataset)
@@ -159,49 +159,50 @@ class BaseParadigm(metaclass=ABCMeta):
             # skip raw if no event found
             return
 
-        if return_raws:
-            raw = raw.pick(picks)
-        else:
+        # if return_raws:
+        #     raw = raw.pick(picks)
+        # else:
             # get interval
-            tmin = self.tmin + dataset.interval[0]
-            if self.tmax is None:
-                tmax = dataset.interval[1]
-            else:
-                tmax = self.tmax + dataset.interval[0]
+        tmin = self.tmin + dataset.interval[0]
+        if self.tmax is None:
+            tmax = dataset.interval[1]
+        else:
+            tmax = self.tmax + dataset.interval[0]
 
-            X = []
-            for bandpass in self.filters:
-                fmin, fmax = bandpass
-                # filter data
-                raw_f = raw.copy().filter(
-                    fmin, fmax, method="iir", picks=picks, verbose=False
-                )
-                # epoch data
-                baseline = self.baseline
-                # if baseline is not None:
-                #     baseline = (
-                #         self.baseline[0] + dataset.interval[0],
-                #         self.baseline[1] + dataset.interval[0],
-                #     )
-                #     bmin = baseline[0] if baseline[0] < tmin else tmin
-                #     bmax = baseline[1] if baseline[1] > tmax else tmax
-                # else:
-                #     bmin = tmin
-                #     bmax = tmax
-                epochs = mne.Epochs(
-                    raw_f,
-                    events,
-                    event_id=event_id,
-                    tmin=tmin,
-                    tmax=tmax,
-                    proj=False,
-                    baseline=None,
-                    preload=True,
-                    verbose=False,
-                    picks=picks,
-                    event_repeated="drop",
-                    on_missing="ignore",
-                )
+        X = []
+        for bandpass in self.filters:
+            fmin, fmax = bandpass
+            # filter data
+            raw_f = raw.copy().filter(
+                fmin, fmax, method="iir", picks=picks, verbose=False
+            )
+            # epoch data
+            baseline = self.baseline
+            # if baseline is not None:
+            #     baseline = (
+            #         self.baseline[0] + dataset.interval[0],
+            #         self.baseline[1] + dataset.interval[0],
+            #     )
+            #     bmin = baseline[0] if baseline[0] < tmin else tmin
+            #     bmax = baseline[1] if baseline[1] > tmax else tmax
+            # else:
+            #     bmin = tmin
+            #     bmax = tmax
+            epochs = mne.Epochs(
+                raw_f,
+                events,
+                event_id=event_id,
+                tmin=tmin,
+                tmax=tmax,
+                proj=False,
+                baseline=baseline,
+                preload=True,
+                verbose=False,
+                picks=picks,
+                event_repeated="drop",
+                on_missing="ignore",
+            )
+                #print(epochs.info)
                 # if bmin < tmin or bmax > tmax:
                 #     epochs.crop(tmin=tmin, tmax=tmax)
                 #if self.resample is not None:
@@ -222,33 +223,34 @@ class BaseParadigm(metaclass=ABCMeta):
         labels = np.array([inv_events[e] for e in events[:, -1]])
         #print("++++++++++++++Labels+++++++++++++++++++++++++=", len(labels))
 
-        if return_epochs:
-            #X = mne.concatenate_epochs(X)
-            X=epochs
-        elif return_raws:
-            X = raw
+        # if return_epochs:
+        #     #X = mne.concatenate_epochs(X)
+        #     X=epochs
+        # elif return_raws:
+        #     X = raw
 
-        # elif len(self.filters) == 1:
-        #     # if only one band, return a 3D array
-        #     X = X[0]
+        # # elif len(self.filters) == 1:
+        # #     # if only one band, return a 3D array
+        # #     X = X[0]
 
-        else:
-            # otherwise return a 4D
-            #X = np.array(X).transpose((1, 2, 3, 0))
-            X=epochs
+        # else:
+        #     # otherwise return a 4D
+        #     #X = np.array(X).transpose((1, 2, 3, 0))
+        #     X=epochs
 
         #metadata = pd.DataFrame(index=range(len(labels)))
+        X=epochs
         return X, labels
 
 
-    def get_data(self, dataset, subjects=None, return_epochs=False, return_raws=False, ar_order=None):
+    def get_data(self, dataset, subjects=None, return_epochs=False):
         if not self.is_valid(dataset):
             message = f"Dataset {dataset.code} is not valid for paradigm"
             raise AssertionError(message)
 
-        if return_epochs and return_raws:
-            message = "Select only return_epochs or return_raws, not both"
-            raise ValueError(message)
+        # if return_epochs and return_raws:
+        #     message = "Select only return_epochs or return_raws, not both"
+        #     raise ValueError(message)
 
         data = dataset.get_data(dataset.subject_list)
         #del data
@@ -281,69 +283,65 @@ class BaseParadigm(metaclass=ABCMeta):
                     
                     subject_dict[subject][session][run]={}
                     pre_processed_epochs=os.path.join(session_directory, f"{run}_epochs.fif")
-                    #met=pd.DataFrame()
 
-                    if return_epochs:
-                        if not os.path.exists(pre_processed_epochs):
-                            
-                            proc = self.process_raw(raw, events, dataset, return_epochs, return_raws)
-                            if proc is None:
-                            # this mean the run did not contain any selected event
-                            # go to next
-                                continue
-                            x, lbs = proc
-                            x.save(pre_processed_epochs, overwrite=True)
-                            X.append(x)
-                            labels = np.append(labels, lbs, axis=0)
-                            #del proc
-                        else:
-                            # print("target events", len(np.where(events[:,2]==1)[0]))
-                            # print("non-target events", len(np.where(events[:,2]==2)[0]))
-                            x=mne.read_epochs(pre_processed_epochs, preload=True, verbose=False)
-                            X.append(x)
-                            #labels = np.append(labels, lbs, axis=0)
-
-                    elif return_raws:
-                        proc = self.process_raw(raw, events, dataset, return_epochs, return_raws)
+                    #if return_epochs:
+                    if not os.path.exists(pre_processed_epochs):
+                        
+                        proc = self.process_raw(raw, events, dataset, return_epochs)
                         if proc is None:
-                            # this mean the run did not contain any selected event
-                            # go to next
+                        # this mean the run did not contain any selected event
+                        # go to next
                             continue
                         x, lbs = proc
+                        x.save(pre_processed_epochs, overwrite=True)
+                        subject_dict[subject][session][run]=x
                         X.append(x)
                         labels = np.append(labels, lbs, axis=0)
+                        
+                        #del proc
+                    else:
+                        # print("target events", len(np.where(events[:,2]==1)[0]))
+                        # print("non-target events", len(np.where(events[:,2]==2)[0]))
+                        x=mne.read_epochs(pre_processed_epochs, preload=True, verbose=False)
+                        subject_dict[subject][session][run]=x
+                        X.append(x)
+                            #labels = np.append(labels, lbs, axis=0)
+
+                    # elif return_raws:
+                    #     proc = self.process_raw(raw, events, dataset, return_epochs, return_raws)
+                    #     if proc is None:
+                    #         # this mean the run did not contain any selected event
+                    #         # go to next
+                    #         continue
+                    #     x, lbs = proc
+                    #     X.append(x)
+                    #     labels = np.append(labels, lbs, axis=0)
                         #del proc
 
-                    else:
-                        if not os.path.exists(pre_processed_epochs):
-                            proc = self.process_raw(raw, events, dataset, return_epochs, return_raws)
-                            if proc is None:
-                                # this mean the run did not contain any selected event
-                                # go to next
-                                continue
-                            x, lbs = proc
-                            x.save(pre_processed_epochs, overwrite=True)
-                            X.append(x)
-                            labels = np.append(labels, lbs, axis=0)
-                        else:
-                            x=mne.read_epochs(pre_processed_epochs, preload=True, verbose=False)
-                            X.append(x)
+                    # else:
+                    #     if not os.path.exists(pre_processed_epochs):
+                    #         proc = self.process_raw(raw, events, dataset, return_epochs)
+                    #         if proc is None:
+                    #             # this mean the run did not contain any selected event
+                    #             # go to next
+                    #             continue
+                    #         x, lbs = proc
+                    #         x.save(pre_processed_epochs, overwrite=True)
+                    #         X.append(x)
+                    #         labels = np.append(labels, lbs, axis=0)
+                    #     else:
+                    #         x=mne.read_epochs(pre_processed_epochs, preload=True, verbose=False)
+                    #         X.append(x)
 
-                    subject_dict[subject][session][run]=x
+                    
                             #del proc
                             #X = np.append(X, x, axis=0) if len(X) else x
-                    
-                    # if(dataset.paradigm=='p300'):
-                    #     erp_paradigm=x['Target']
-                    # elif(dataset.paradigm=='n400'):
-                    #     erp_paradigm=x['Inconsistent']
-                    # subject_dict[subject][session][run]=erp_paradigm
                     met = pd.DataFrame(index=range(len(x)))
                     met["subject"] = subject
                     met["session"] = session
                     met["run"] = run
                     metadata.append(met)
-                    
+        #print("Avinash")    
         metadata = pd.concat(metadata, ignore_index=True)
 
         # feat=Features()
@@ -362,8 +360,8 @@ class BaseParadigm(metaclass=ABCMeta):
             # print(dataset.events)
             return X, subject_dict, metadata
 
-        elif return_raws:
-           return X, subject_dict, metadata
+        # elif return_raws:
+        #    return X, subject_dict, metadata
         
         else:
             X = mne.concatenate_epochs(X, verbose=False).get_data()
@@ -433,3 +431,149 @@ class BaseParadigm(metaclass=ABCMeta):
                     #         X = np.append(X, x, axis=0) if len(X) else x
                             
         #return X, subject_dict, metadata
+
+    #from joblib import Parallel, delayed
+
+    # def process_run(self, run, raw_events, dataset, return_epochs):
+    #     raw = raw_events[0]
+    #     events = raw_events[1]
+    #     proc = self.process_raw(raw, events, dataset, return_epochs)
+    #     if proc is not None:
+    #         x, lbs = proc
+    #         return (x, lbs, run, True)
+    #     else:
+    #         return (None, None, run, False)
+
+    # def get_data_old(self, dataset, subjects=None, return_epochs=False, n_jobs=-1):
+    #     if not self.is_valid(dataset):
+    #         message = f"Dataset {dataset.code} is not valid for paradigm"
+    #         raise AssertionError(message)
+
+    #     data = dataset.get_data(dataset.subject_list)
+    #     epochs_directory = os.path.join(dataset.dataset_path, "Epochs")
+    #     if not os.path.exists(epochs_directory):
+    #         os.makedirs(epochs_directory)
+    #     else:
+    #         print("Epochs folders already created!")
+
+    #     self.prepare_process(dataset)
+    #     X = []
+    #     labels = []
+    #     metadata = []
+    #     subject_dict = OrderedDict()
+
+    #     for subject, sessions in tqdm(data.items(), desc="Extracting epochs"):
+    #         subject_directory = os.path.join(epochs_directory, str(subject))
+    #         if not os.path.exists(subject_directory):
+    #             os.makedirs(subject_directory)
+    #         subject_dict[subject] = {}
+
+    #         for session, runs in sessions.items():
+    #             session_directory = os.path.join(subject_directory, session)
+    #             if not os.path.exists(session_directory):
+    #                 os.makedirs(session_directory)
+    #             subject_dict[subject][session] = {}
+
+    #             pre_processed_epochs = []
+    #             batch_data = []
+
+    #             # Process runs in parallel
+    #             results = Parallel(n_jobs=n_jobs)(
+    #                 delayed(self.process_run)(run, raw_events, dataset, return_epochs) for run, raw_events in runs.items())
+
+    #             # Save and append valid epochs
+    #             for x, lbs, run, is_valid in results:
+    #                 if is_valid:
+    #                     pre_processed_epoch = os.path.join(session_directory, f"{run}_epochs.fif")
+    #                     pre_processed_epochs.append(pre_processed_epoch)
+    #                     if not os.path.exists(pre_processed_epoch):
+    #                         x.save(pre_processed_epoch, overwrite=True)
+    #                     X.append(x)
+    #                     labels = np.append(labels, lbs, axis=0)
+    #                     subject_dict[subject][session][run] = x
+
+    #             # Add batch metadata
+    #             batch_metadata = pd.DataFrame(index=range(len(X)))
+    #             batch_metadata["subject"] = subject
+    #             batch_metadata["session"] = session
+    #             batch_metadata["run"] = list(runs.keys())
+    #             metadata.append(batch_metadata)
+
+    #     metadata = pd.concat(metadata, ignore_index=True)
+
+    #     if return_epochs:
+    #         X = mne.concatenate_epochs(X, verbose=False)
+    #         return X, subject_dict, metadata
+
+    #     else:
+    #         X = mne.concatenate_epochs(X, verbose=False).get_data()
+    #         return X, subject_dict, metadata
+        
+
+    # def get_data(self, dataset, subjects=None, return_epochs=False, n_jobs=-1):
+    #     if not self.is_valid(dataset):
+    #         message = f"Dataset {dataset.code} is not valid for paradigm"
+    #         raise AssertionError(message)
+
+    #     data = dataset.get_data(dataset.subject_list)
+    #     epochs_directory = os.path.join(dataset.dataset_path, "Epochs")
+    #     if not os.path.exists(epochs_directory):
+    #         os.makedirs(epochs_directory)
+    #     else:
+    #         print("Epochs folders already created!")
+
+    #     self.prepare_process(dataset)
+    #     X = []
+    #     labels = []
+    #     metadata = []
+    #     subject_dict = OrderedDict()
+
+    #     for subject, sessions in tqdm(data.items(), desc="Extracting epochs"):
+    #         subject_directory = os.path.join(epochs_directory, str(subject))
+    #         if not os.path.exists(subject_directory):
+    #             os.makedirs(subject_directory)
+    #         subject_dict[subject] = {}
+
+    #         for session, runs in sessions.items():
+    #             session_directory = os.path.join(subject_directory, session)
+    #             if not os.path.exists(session_directory):
+    #                 os.makedirs(session_directory)
+    #             subject_dict[subject][session] = {}
+
+    #             pre_processed_epochs = []
+    #             batch_data = []
+
+    #             # Process runs in parallel
+    #             results = Parallel(n_jobs=n_jobs)(
+    #                 delayed(self.process_run)(run, raw_events, dataset, return_epochs) for run, raw_events in runs.items())
+
+    #             # Save and append valid epochs
+    #             for x, lbs, run, is_valid in results:
+    #                 if is_valid:
+    #                     pre_processed_epoch = os.path.join(session_directory, f"{run}_epochs.fif")
+    #                     pre_processed_epochs.append(pre_processed_epoch)
+    #                     if not os.path.exists(pre_processed_epoch):
+    #                         x.save(pre_processed_epoch, overwrite=True)
+    #                     X.append(x)
+    #                     labels = np.append(labels, lbs, axis=0)
+    #                     subject_dict[subject][session][run] = x
+
+    #             # Add batch metadata
+    #             if len(pre_processed_epochs) > 0:
+    #                 batch_metadata = pd.DataFrame(index=range(len(pre_processed_epochs)))
+    #                 batch_metadata["subject"] = subject
+    #                 batch_metadata["session"] = session
+    #                 batch_metadata["run"] = [os.path.basename(p).split('_')[0] for p in pre_processed_epochs]
+    #                 metadata.append(batch_metadata)
+
+    #     metadata = pd.concat(metadata, ignore_index=True)
+
+    #     if return_epochs:
+    #         X = mne.concatenate_epochs(X, verbose=False)
+    #         return X, subject_dict, metadata
+
+    #     else:
+    #         X = mne.concatenate_epochs(X, verbose=False).get_data()
+    #         return X, subject_dict, metadata
+
+

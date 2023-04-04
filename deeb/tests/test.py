@@ -15,7 +15,7 @@ from deeb.datasets.draschkow2018 import Draschkow2018
 from deeb.datasets.won2022 import Won2022
 from deeb.pipelines.features import AutoRegressive as AR
 from deeb.pipelines.features import PowerSpectralDensity as PSD
-from deeb.pipelines.siamese import Siamese
+from deeb.pipelines.siamese_old import Siamese
 from deeb.pipelines.base import Basepipeline
 from deeb.evaluation.evaluation import CloseSetEvaluation, OpenSetEvaluation
 from deeb.datasets import utils
@@ -30,19 +30,25 @@ from sklearn.svm import SVC
 
 dest = Won2022()
 #dest=[dset]
-brain=BrainInvaders2015a()
+brain=Mantegna2019()
 dest.subject_list = dest.subject_list[0:3]
 brain.subject_list = brain.subject_list[0:5]
-dest=[dest]
-paradigm=P300()
-pipeline={}
-pipeline['AR+SVM']=make_pipeline(AR(), SVC(kernel='rbf', probability=True))
-pipeline['PSD+NB']=make_pipeline(PSD(), GaussianNB())
-pipeline['AR+LDA']=make_pipeline(AR(order=4), LDA(solver='lsqr', shrinkage='auto'))
-#evaluation=CloseSetEvaluation(paradigm=paradigm, datasets=dset, overwrite=False)
-evaluation=OpenSetEvaluation(paradigm=paradigm, datasets=dest, overwrite=False)
-results=evaluation.process(pipeline)
-print(results)
+
+# Downloading the dataset
+dest.download()
+
+# getting the raw data for the dataset
+print(dest.get_data())
+# dest=[dest, brain]
+# paradigm=P300()
+# pipeline={}
+# pipeline['AR+SVM']=make_pipeline(AR(), SVC(kernel='rbf', probability=True))
+# pipeline['PSD+NB']=make_pipeline(PSD(), GaussianNB())
+# pipeline['AR+LDA']=make_pipeline(AR(order=4), LDA(solver='lsqr', shrinkage='auto'))
+# #evaluation=CloseSetEvaluation(paradigm=paradigm, datasets=dset, overwrite=False)
+# evaluation=OpenSetEvaluation(paradigm=paradigm, datasets=dest, overwrite=False)
+# results=evaluation.process(pipeline)
+# print(results)
 
 # for name, clf in pipeline.items():
 #     #print(name)

@@ -76,14 +76,14 @@ class Basepipeline(metaclass=ABCMeta):
         """
         pass
 
-    def get_data(self, dataset, paradigm, subjects=None, return_epochs=False, return_raws=False):
+    def get_data(self, dataset, paradigm, subjects=None, return_epochs=False):
         if not self.is_valid(dataset):
             message = f"Dataset {dataset.code} is not valid for paradigm"
             raise AssertionError(message)
 
-        if return_epochs and return_raws:
-            message = "Select only return_epochs or return_raws, not both"
-            raise ValueError(message)
+        # if return_epochs and return_raws:
+        #     message = "Select only return_epochs or return_raws, not both"
+        #     raise ValueError(message)
 
         # # Getting the data for the given subjects
         # data = dataset.get_data(subjects)

@@ -56,12 +56,14 @@ class Won2022(BaseDataset):
             doi=None,
             dataset_path=None,
             )
-        #subject_url_dict=OrderedDict
-        #updated_url=urls[0:len(self.subject_list)]
-          
-            
+        
+    # This function has been sourced from the BDS-3 licensed repository at https://github.com/NeuroTechX/moabb          
     @verbose
     def download_dataset(self, url, sign, subject_str, path=None, force_update=False, verbose=None):
+        """
+        Download a file from a given URL to a local folder.
+        """
+
         path = Path(dl.get_dataset_path(sign, path))
         print(f"path: {path}")
 
@@ -118,7 +120,6 @@ class Won2022(BaseDataset):
         #stim=markers
         #print("markers shape", markers.shape)
         X=np.concatenate((eeg_data, markers[None, :]), axis=0)
-        #print("X shape", X.shape)
 
         # make standard montage before read raw data
         montage=mne.channels.make_standard_montage('biosemi32')
@@ -131,7 +132,6 @@ class Won2022(BaseDataset):
         ch_names=[channel['labels'] for channel in data['chanlocs']]
         sfreq=data['srate']
         markers=data['markers_target']
-        #print("markers", markers)
         raw=self._make_raw_array(eeg_data, markers, ch_names, "eeg", sfreq)
         #montage=make_standard_montage('standard_1020')
         #raw.set_montage(montage)
@@ -141,7 +141,7 @@ class Won2022(BaseDataset):
         """return data for a single subject"""
 
         file_path_list = self.data_path(subject)
-        print("file path list", file_path_list)
+        #print("file path list", file_path_list)
         sessions = {}
         session_name = 'session_1'
         sessions[session_name] = {}
@@ -169,7 +169,7 @@ class Won2022(BaseDataset):
         subject_url_dict={k: v for k, v in zip(self.subject_list, urls)}
         base_url = WON2022_BASE_URL+subject_url_dict[subject]
         subject_str = f"s{subject:02}.mat"
-        print('subject dir', subject_str)
+        #print('subject dir', subject_str)
         #print("Subject_str", subject_str)
         #url = base_url
         #zip_filename = f"{subject_str}.zip"
@@ -177,9 +177,7 @@ class Won2022(BaseDataset):
 
         # download and extract data if needed
         subject_dir = self.download_dataset(base_url, "Won2022", subject_str)
-        #self.dataset_path=os.path.dirname(os.path.dirname(Path(subject_dir.strip(subject_str))))
         self.dataset_path=os.path.dirname(Path(subject_dir.strip(subject_str)))
-        print("dataset path", os.path.dirname(Path(subject_dir.strip(subject_str))))
         return subject_dir
 
 # https://ndownloader.figstatic.com/files/3413851

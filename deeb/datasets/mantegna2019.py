@@ -27,7 +27,6 @@ import io
 from pooch import Unzip, retrieve
 
 Mantegna2019_URL = "https://files.de-1.osf.io/v1/resources/rp4jy/providers/osfstorage/5c7651cf62c82a0018dc5cf7/?zip="
-
 class Mantegna2019(BaseDataset):
 
     path_to_dataset=" "
@@ -42,9 +41,17 @@ class Mantegna2019(BaseDataset):
             doi=None,
             dataset_path=None
             )
-        
+    # This function has been sourced from the BDS-3 licensed repository at https://github.com/NeuroTechX/moabb    
     @verbose
     def download_dataset(self, url, sign, path=None, force_update=False, verbose=None):
+        """
+        This function has been sourced from the BDS-3 licensed repository at https://github.com/NeuroTechX/moabb
+
+        References
+        ----------
+        [1] Vinay Jayaram and Alexandre Barachant. MOABB: trustworthy algorithm benchmarking for BCIs. 
+        Journal of neural engineering 15.6 (2018): 066011. DOI:10.1088/1741-2552
+        """
         path = Path(dl.get_dataset_path(sign, path))
         print(f"path: {path}")
 
@@ -79,7 +86,6 @@ class Mantegna2019(BaseDataset):
         """return data for a single subject"""
 
         file_path_list = self.data_path(subject)
-        #print("file path list", file_path_list)
         sessions = {}
         session_name = 'session_1'
         sessions[session_name] = {}
@@ -122,7 +128,6 @@ class Mantegna2019(BaseDataset):
 
         #self.dataset_path=os.path.dirname(Path(path_zip.strip(zip_filename)))
         self.dataset_path=os.path.dirname(Path(path_zip))
-        print("dataset path", self.dataset_path)
         subject_dir = Path(path_zip.strip(zip_filename))/main_directory
         print("")
         if not subject_dir.exists():

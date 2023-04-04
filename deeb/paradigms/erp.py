@@ -12,8 +12,6 @@ from deeb.datasets import utils
 from autoreject import AutoReject, get_rejection_threshold
 #from .features import AR, PSD
 
-
-
 log = logging.getLogger(__name__)
 
 

@@ -6,6 +6,14 @@ from tqdm import tqdm
 log = logging.getLogger(__name__)
 
 class BaseDataset(metaclass=abc.ABCMeta):
+    """
+        The Implementation of this class is based on MOABB (https://github.com/NeuroTechX/moabb) licened under BDS 3-Clause.
+
+        reference:
+        ----------
+        [1] Vinay Jayaram and Alexandre Barachant. MOABB: trustworthy algorithm benchmarking for BCIs. 
+        Journal of neural engineering 15.6 (2018): 066011. DOI:10.1088/1741-2552""
+    """
     def __init__(self, subjects, sessions_per_subject, events, code, interval, paradigm, doi=None, dataset_path=None, unit_factor=1e6):
         if not isinstance(subjects, list):
             raise ValueError("subjects must be a iterable, like a list")
