@@ -1,0 +1,15 @@
+name: AR+RF
+
+paradigms:
+  - P300
+  - N400
+
+pipeline: 
+  - name: AutoRegressive
+    from: deeb.pipelines.features
+
+  - name: RandomForestClassifier
+    from: sklearn.ensemble
+    parameters: 
+      n_estimators: 100
+    #   shrinkage: 'auto'

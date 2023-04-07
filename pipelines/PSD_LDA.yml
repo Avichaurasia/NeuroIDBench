@@ -1,0 +1,15 @@
+name: PSD+LDA
+
+paradigms:
+  - P300
+  - N400
+
+pipeline: 
+  - name: PowerSpectralDensity
+    from: deeb.pipelines.features
+
+  - name: LinearDiscriminantAnalysis
+    from: sklearn.discriminant_analysis 
+    parameters: 
+      solver: 'lsqr'
+      shrinkage: 'auto'

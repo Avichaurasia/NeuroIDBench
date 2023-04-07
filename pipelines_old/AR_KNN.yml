@@ -1,0 +1,19 @@
+name: AR+KNN
+
+paradigms:
+  - P300
+  - N400
+
+pipeline: 
+  - name: AutoRegressive
+    from: deeb.pipelines.features
+
+  - name: KNeighborsClassifier
+    from: sklearn.neighbors
+    parameters: 
+      n_neighbors: 3
+      # shrinkage: 'auto'
+
+
+
+

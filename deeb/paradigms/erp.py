@@ -70,6 +70,7 @@ class BaseERP(BaseParadigm):
         super().__init__()
         self.filters = filters
         self.events = events
+        #print("events",self.events)
         self.channels = channels
         self.baseline = baseline
         self.resample = resample
@@ -265,8 +266,10 @@ class BaseERP(BaseParadigm):
             interval = None
         else:
             interval = self.tmax - self.tmin
+        # print("events", self.events)
+        # print("interval", interval)
         return utils.dataset_search(
-            paradigm="erp", events=self.events, interval=interval, has_all_events=True
+            paradigm='p300', events=self.events, interval=interval, has_all_events=True
         )
 
     @property

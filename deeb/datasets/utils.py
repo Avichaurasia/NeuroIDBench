@@ -29,7 +29,7 @@ def dataset_search(  # noqa: C901
     Parameters
     ----------
     paradigm: str
-        'imagery', 'p300', 'ssvep'
+        'p300', 'n400'
 
     multi_session: bool
         if True only returns datasets with more than one session per subject.
@@ -51,16 +51,19 @@ def dataset_search(  # noqa: C901
     channels: list of str
         list or set of channels
     """
+
+    #print("avinash")
     channels = set(channels)
     out_data = []
     if events is not None and has_all_events:
         n_classes = len(events)
     else:
         n_classes = None
-    assert paradigm in ["imagery", "erp", "ssvep"]
+    assert paradigm in ["p300", "n400"]
 
     for type_d in dataset_list:
         d = type_d()
+        #print("d",d)
         skip_dataset = False
         if multi_session and d.n_sessions < 2:
             continue
@@ -91,6 +94,7 @@ def dataset_search(  # noqa: C901
                         skip_dataset = True
         if keep_event_dict and not skip_dataset:
             if len(channels) > 0:
+                #print("before dataset", d)
                 s1 = d.get_data([1])[1]
                 sess1 = s1[list(s1.keys())[0]]
                 raw = sess1[list(sess1.keys())[0]]
@@ -98,55 +102,8 @@ def dataset_search(  # noqa: C901
                 if channels <= set(raw.info["ch_names"]):
                     out_data.append(d)
             else:
+                #print("after dataset", d)
                 out_data.append(d)
     return out_data
 
 
-def find_intersecting_channels(datasets, verbose=False):
-    """
-    Given a list of dataset instances return a list of channels shared by all
-    datasets.
-    Skip datasets which have 0 overlap with the others
-
-    returns: set of common channels, list of datasets with valid channels
-    """
-    allchans = set()
-    dset_chans = []
-    keep_datasets = []
-    for d in datasets:
-        print("Searching dataset: {:s}".format(type(d).__name__))
-        s1 = d.get_data([1])[1]
-        sess1 = s1[list(s1.keys())[0]]
-        raw = sess1[list(sess1.keys())[0]]
-        raw.pick_types(eeg=True)
-        processed = []
-        for ch in raw.info["ch_names"]:
-            ch = ch.upper()
-            if ch.find("EEG") == -1:
-                # TODO: less hacky way of finding poorly labeled datasets
-                processed.append(ch)
-        allchans.update(processed)
-        if len(processed) > 0:
-            if verbose:
-                print("Found EEG channels: {}".format(processed))
-            dset_chans.append(processed)
-            keep_datasets.append(d)
-        else:
-            print(
-                "Dataset {:s} has no recognizable EEG channels".format(type(d).__name__)
-            )  # noqa
-    allchans.intersection_update(*dset_chans)
-    allchans = [s.replace("Z", "z") for s in allchans]
-    return allchans, keep_datasets
-
-
-def _download_all(update_path=True, verbose=None):
-    """Download all data.
-
-    This function is mainly used to generate the data cache.
-    """
-
-    # iterate over dataset
-    for ds in dataset_list:
-        # call download
-        ds().download(update_path=True, verbose=verbose, accept=True)

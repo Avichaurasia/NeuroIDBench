@@ -22,6 +22,7 @@ from mne.utils import _url_to_local_path, verbose
 from deeb.pipelines.base import Basepipeline
 from sklearn.base import BaseEstimator, TransformerMixin
 from sklearn.preprocessing import StandardScaler
+from scipy.signal import welch
 
 log = logging.getLogger(__name__)
 
@@ -102,33 +103,33 @@ class PowerSpectralDensity(Basepipeline):
         tmax=epochs.tmax
         tmin=epochs.tmin
         sfreq=epochs.info['sfreq']
-        N_FFT=int(sfreq * (tmax - tmin))
+        #N_FFT=int(sfreq * (tmax - tmin))
 
         # setting 4 time windows for PSD calculation
         window_duration = (tmax - tmin) / 4
         samples_per_window = int(window_duration * sfreq)
 
 
-        # Using mne.Epochs in-built method compute_psd to calculate PSD using welch's method
-        spectrum=epochs.compute_psd(method="welch", n_fft=N_FFT,
-            n_overlap=0, n_per_seg=None, fmin=1, fmax=50, tmin=tmin, tmax=tmax, verbose=False)
+        # # Using mne.Epochs in-built method compute_psd to calculate PSD using welch's method
+        # spectrum=epochs.compute_psd(method="welch", n_fft=N_FFT,
+        #     n_overlap=0, n_per_seg=None, fmin=1, fmax=50, tmin=tmin, tmax=tmax, verbose=False)
         
         # Later Need to check how it gives the results
         # Computing PSD with 4 time windows and 50% overlap
-        # spectrum=epochs.compute_psd(method="welch", n_fft=samples_per_window,
-        #     n_overlap=int(samples_per_window*0.5), n_per_seg=None, fmin=1, fmax=50, tmin=tmin, tmax=tmax, verbose=False)
+        spectrum=epochs.compute_psd(method="welch", n_fft=samples_per_window,
+            n_overlap=samples_per_window//2, n_per_seg=None, tmin=tmin, tmax=tmax, verbose=False)
         
-
         return spectrum.get_data(return_freqs=True)
     
     def _get_features(self, subject_dict, dataset):
         df_psd=pd.DataFrame()
         df_list = []
-        FREQ_BANDS = {"delta" : [1,4],
-                        "theta" : [4,8],
-                        "alpha" : [8, 12],
-                        "beta" : [12,30],
-                        "gamma" : [30, 50]}
+        FREQ_BANDS = {"low" : [1,10],
+                  #"theta" : [10,13],
+                  "alpha" : [10, 13],
+                  "beta" : [13,30],
+                  "gamma" : [30, 50]}
+    
         
         results = []
         for subject, sessions in tqdm(subject_dict.items(), desc="Computing PSD"):
@@ -172,6 +173,55 @@ class PowerSpectralDensity(Basepipeline):
                 df_psd=df_psd.append(data_step,ignore_index=True)
 
         return df_psd
+    
+
+
+
+    # def _get_features(self, subject_dict, dataset):
+    #     df_list = []
+    #     # specific frequency bands
+    #     FREQ_BANDS = {"low" : [1,10],
+    #                 #"theta" : [10,13],
+    #                 "alpha" : [10, 13],
+    #                 "beta" : [13,30],
+    #                 "gamma" : [30, 50]}
+    #     #order = 6
+    #     #print("order", self.order)
+    #     for subject, sessions in tqdm(subject_dict.items(), desc="Computing AR Coeff"):
+    #         for session, runs in sessions.items():
+    #             for run, epochs in runs.items():
+
+    #                 if (dataset.paradigm == "p300"):
+    #                     epochs= epochs['Target']
+    #                     epochs_data = epochs.get_data()
+
+    #                 elif (dataset.paradigm == "n400"):
+    #                     epochs = epochs['Inconsistent']
+    #                     epochs_data = epochs.get_data()
+                        
+    #                 tmax = epochs.tmax
+    #                 tmin = epochs.tmin
+    #                 sfreq = epochs.info['sfreq']
+    #                 window_duration = (tmax - tmin) / 4
+    #                 samples_per_window = int(window_duration * sfreq)
+    #                 for i in range(len(epochs_data)):
+    #                     features = {'Subject': subject, 'Session': session, 'Event_id': list(epochs[i].event_id.values())[0]}
+    #                     for j in range(len(epochs_data[i])):
+    #                         freqs, psd=welch(epochs_data[i][j], sfreq, nperseg=samples_per_window, noverlap=samples_per_window//2)
+    #                         X=[]
+    #                         for fmin, fmax in FREQ_BANDS.values():
+    #                             psds_band=psd[(freqs >= fmin) & (freqs < fmax)].mean()
+    #                             X.append(psds_band) 
+                            
+    #                         channel=epochs.ch_names[j]
+    #                         for d in range(len(X)):
+    #                             band_name=[*FREQ_BANDS][d]
+    #                             colum_name=channel+"-"+band_name
+    #                             features[colum_name]=X[d]
+
+    #                     data_step = [features]
+    #                     df_psd=df_psd.append(data_step,ignore_index=True)
+                            
 
                     #df_psd=df_psd.append(data_step,ignore_index=True)
 

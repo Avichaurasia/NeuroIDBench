@@ -1,0 +1,19 @@
+name: PSD+SVM
+
+paradigms:
+  - P300
+  - N400
+
+pipeline: 
+  - name: PowerSpectralDensity
+    from: deeb.pipelines.features
+
+  - name: SVC
+    from: sklearn.svm 
+    parameters: 
+      kernel: 'rbf'
+      probability: True
+
+
+
+
