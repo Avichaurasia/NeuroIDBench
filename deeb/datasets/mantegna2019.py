@@ -95,7 +95,10 @@ class Mantegna2019(BaseDataset):
 
         raw.rename_channels({'LEOG':'LO1','LBEOG':'IO1','REOG':'LO2','C64':'SO1','RM':'A2'})
         raw.set_channel_types({'LO1':'eog','IO1':'eog','LO2':'eog','SO1':'misc',"A2":'misc'})
-        events, events_id=mne.events_from_annotations(raw, verbose=False)
+        events, _=mne.events_from_annotations(raw, verbose=False)
+
+        # update event ids from 8 to 9
+        events[:, 2] = np.where(events[:, 2] == 8, 9, events[:, 2])
         #montage = mne.channels.make_standard_montage('standard_1020')
 
         #stim_channels = mne.utils._get_stim_channel(None, raw.info, raise_error=False)        

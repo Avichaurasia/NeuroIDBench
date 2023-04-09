@@ -6,8 +6,8 @@ import mne
 import numpy as np
 import pandas as pd
 from deeb.paradigms.base import BaseParadigm
-from deeb.paradigms.erp import N400
-from deeb.paradigms.erp import P300
+from deeb.paradigms.p300 import N400
+from deeb.paradigms.p300 import P300
 from deeb.datasets.brainInvaders15a import BrainInvaders2015a
 from deeb.datasets.mantegna2019 import Mantegna2019
 from deeb.datasets.draschkow2018 import Draschkow2018
@@ -56,17 +56,17 @@ def _evaluate():
     # Intializing the pipelines
     pipeline={}
     pipeline['AR+SVM']=make_pipeline(AutoRegressive(order=10), SVC(kernel='rbf', probability=True))
-    # pipeline['PSD+SVM']=make_pipeline(PowerSpectralDensity(), SVC(kernel='rbf', probability=True))
+    pipeline['PSD+SVM']=make_pipeline(PowerSpectralDensity(), SVC(kernel='rbf', probability=True))
     pipeline['AR+LR']=make_pipeline(AutoRegressive(order=10), LogisticRegression())
-    # pipeline['PSD+LR']=make_pipeline(PowerSpectralDensity(), LogisticRegression())
+    pipeline['PSD+LR']=make_pipeline(PowerSpectralDensity(), LogisticRegression())
     pipeline['AR+LDA']=make_pipeline(AutoRegressive(order=10), LDA(solver='lsqr', shrinkage='auto'))
-    # pipeline['PSD+LDA']=make_pipeline(PowerSpectralDensity(), LDA(solver='lsqr', shrinkage='auto'))
+    pipeline['PSD+LDA']=make_pipeline(PowerSpectralDensity(), LDA(solver='lsqr', shrinkage='auto'))
     pipeline['AR+NB']=make_pipeline(AutoRegressive(order=10), GaussianNB())
-    # pipeline['PSD+NB']=make_pipeline(PowerSpectralDensity(), GaussianNB())
+    pipeline['PSD+NB']=make_pipeline(PowerSpectralDensity(), GaussianNB())
     pipeline['AR+KNN']=make_pipeline(AutoRegressive(order=10), KNeighborsClassifier(n_neighbors=3))
-    # pipeline['PSD+KNN']=make_pipeline(PowerSpectralDensity(), KNeighborsClassifier(n_neighbors=3))
+    pipeline['PSD+KNN']=make_pipeline(PowerSpectralDensity(), KNeighborsClassifier(n_neighbors=3))
     pipeline['AR+RF']=make_pipeline(AutoRegressive(order=10), RandomForestClassifier(n_estimators=100))
-    # # pipeline['PSD+RF']=make_pipeline(PowerSpectralDensity(), RandomForestClassifier(n_estimators=100))
+    pipeline['PSD+RF']=make_pipeline(PowerSpectralDensity(), RandomForestClassifier(n_estimators=100))
 
     #pipeline['AR+NB']=make_pipeline(AutoRegressive(order=6), GaussianNB())
     #pipeline['AR+KNN']=make_pipeline(AutoRegressive(order=6), KNeighborsClassifier(n_neighbors=3))

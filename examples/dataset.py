@@ -6,8 +6,8 @@ import mne
 import numpy as np
 import pandas as pd
 from deeb.paradigms.base import BaseParadigm
-from deeb.paradigms.erp import N400
-from deeb.paradigms.erp import P300
+from deeb.paradigms.p300 import N400
+from deeb.paradigms.p300 import P300
 from deeb.datasets.brainInvaders15a import BrainInvaders2015a
 from deeb.datasets.mantegna2019 import Mantegna2019
 from deeb.datasets.draschkow2018 import Draschkow2018

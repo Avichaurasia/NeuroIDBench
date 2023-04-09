@@ -129,8 +129,8 @@ def benchmark(subjects=None,
             
             df_eval.append(paradigm_results)
 
-        df_eval = pd.concat(df_eval)
-        return df_eval
+        #df = pd.concat(df_eval)
+    return pd.concat(df_eval)
             
 
 # Creating main function
@@ -141,7 +141,7 @@ if __name__ == "__main__":
     #obj = CloseSetEvaluation()
     # Calling function
     #obj.run()
-    result=benchmark(subjects=5)
+    result=benchmark(subjects=3)
     print(result)
 
 

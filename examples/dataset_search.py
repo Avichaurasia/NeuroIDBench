@@ -8,8 +8,8 @@ from sklearn.svm import SVC
 
 from deeb.datasets import brainInvaders15a, mantegna2019, utils
 from deeb.evaluation.evaluation import CloseSetEvaluation
-from deeb.paradigms.erp import P300
-from deeb.paradigms.erp import N400
+from deeb.paradigms.p300 import P300
+from deeb.paradigms.p300 import N400
 import os
 from collections import OrderedDict
 from copy import deepcopy

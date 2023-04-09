@@ -1,5 +1,3 @@
-"""P300 Paradigms"""
-
 import abc
 import logging
 
@@ -7,16 +5,15 @@ import mne
 import numpy as np
 import pandas as pd
 from deeb.paradigms.base import BaseParadigm
+#from deeb.paradigms.erp import N400
 from deeb.datasets.brainInvaders15a import BrainInvaders2015a
+from deeb.datasets.mantegna2019 import Mantegna2019
 from deeb.datasets import utils
 from autoreject import AutoReject, get_rejection_threshold
-#from .features import AR, PSD
-
-log = logging.getLogger(__name__)
 
 
-class BaseERP(BaseParadigm):
-    """Base P300 paradigm.
+class BaseN400(BaseParadigm):
+    """Base N400 paradigm.
 
     Please use one of the child classes
 
@@ -70,7 +67,6 @@ class BaseERP(BaseParadigm):
         super().__init__()
         self.filters = filters
         self.events = events
-        #print("events",self.events)
         self.channels = channels
         self.baseline = baseline
         self.resample = resample
@@ -84,7 +80,7 @@ class BaseERP(BaseParadigm):
 
     def is_valid(self, dataset):
         ret = True
-        if not ((dataset.paradigm == "p300") | (dataset.paradigm == "n400")) :
+        if not (dataset.paradigm == "n400"):
             ret = False
 
         # check if dataset has required events
@@ -228,9 +224,9 @@ class BaseERP(BaseParadigm):
     #             #   epochs = epochs.resample(self.resample)
     #             # rescale to work with uV
 
-    #             #ar = AutoReject(picks=picks, thresh_method='random_search')
-    #             #cleaned_epochs = ar.fit_transform(epochs.copy())
-    #             #cleaned_epochs.apply_baseline(baseline)
+    #             ar = AutoReject(picks=picks, thresh_method='random_search')
+    #             cleaned_epochs = ar.fit_transform(epochs.copy())
+    #             cleaned_epochs.apply_baseline(baseline)
 
     #             # if return_epochs:
     #             #     X.append(epochs)
@@ -244,7 +240,7 @@ class BaseERP(BaseParadigm):
 
     #     if return_epochs:
     #         #X = mne.concatenate_epochs(X)
-    #         X=epochs
+    #         X=cleaned_epochs
     #     elif return_raws:
     #         X = raw
 
@@ -255,8 +251,7 @@ class BaseERP(BaseParadigm):
     #     else:
     #         # otherwise return a 4D
     #         #X = np.array(X).transpose((1, 2, 3, 0))
-    #         X=epochs
-
+    #         X=cleaned_epochs
     #     #metadata = pd.DataFrame(index=range(len(labels)))
     #     return X, labels
 
@@ -266,10 +261,8 @@ class BaseERP(BaseParadigm):
             interval = None
         else:
             interval = self.tmax - self.tmin
-        # print("events", self.events)
-        # print("interval", interval)
         return utils.dataset_search(
-            paradigm='p300', events=self.events, interval=interval, has_all_events=True
+            paradigm="n400", events=self.events, interval=interval, has_all_events=True
         )
 
     @property
@@ -277,7 +270,7 @@ class BaseERP(BaseParadigm):
         return "roc_auc"
 
 
-class SinglePass(BaseERP):
+class SinglePass(BaseN400):
     """Single Bandpass filter P300
 
     P300 paradigm with only one bandpass filter (default 1 to 24 Hz)
@@ -327,26 +320,6 @@ class SinglePass(BaseERP):
             raise (ValueError("P300 does not take argument filters"))
         super().__init__(filters=[[fmin, fmax]], **kwargs)
 
-
-class P300(SinglePass):
-    """P300 for Target/NonTarget classification
-
-    Metric is 'roc_auc'
-
-    """
-
-    def __init__(self, **kwargs):
-        if "events" in kwargs.keys():
-            raise (ValueError("P300 dont accept events"))
-        super().__init__(events=["Target", "NonTarget"], **kwargs)
-
-    def used_events(self, dataset):
-        #print("Show event id's", {ev: dataset.event_id[ev] for ev in self.events})
-        return {ev: dataset.event_id[ev] for ev in self.events}
-
-    @property
-    def scoring(self):
-        return "roc_auc"
     
 class N400(SinglePass):
     """N400 for Consistent/Inconsistent classification
@@ -367,27 +340,6 @@ class N400(SinglePass):
 def scoring(self):
     return "roc_auc"
 
-
-# class FakeP300Paradigm(P300):
-#     """Fake P300 for Target/NonTarget classification."""
-
-#     @property
-#     def datasets(self):
-#         return [FakeDataset(["Target", "NonTarget"], paradigm="p300")]
-
-#     def is_valid(self, dataset):
-#         return True
-
-# if __name__ == "__main__":
-#     dset = BrainInvaders2015a()
-#     dset.subject_list = dset.subject_list[0:5] 
-#     #datasets = [dataset]
-#     #print("BrainInvaders path", dset.dataset_path)
-#     paradigm=P300()
-#     #subject=0
-#     X, features, meta=paradigm.get_data(dset)
-#     #print("data",X)
-#     #print("label",label)
-#     print("features", features)
-#     #print("subject_dict", type(subject_dict[1]['session_1']['run_1']))
-#     #print(bi15a.get_data())
+if __name__ == "__main__":
+    dset = Mantegna2019()
+    dset.subject_list = dset.subject_list[0:5] 
