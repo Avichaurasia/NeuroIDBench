@@ -70,7 +70,6 @@ def benchmark(subjects=None,
 
     #print("Paradigms: ", prdgms)
     if len(context_params) == 0:
-        #print("Avinash")
         for paradigm in prdgms:
             context_params[paradigm] = {}
 
@@ -97,12 +96,6 @@ def benchmark(subjects=None,
                     datasets.append(data)
             else:
                 datasets = datasets_for_paradigm
-
-            # print("BrainInvaders15a",datasets[0].subject_list)
-            # print("Won2022",datasets[1].subject_list)
-            # for df in datasets:
-            #     print(df)
-            #     print("10 subjects",df.subject_list)
             ppl_with_epochs, ppl_with_array = {}, {}
             for pn, pv in prdgms[paradigm].items():
                 if "braindecode" in pn:

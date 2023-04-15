@@ -251,7 +251,7 @@ class BaseParadigm(metaclass=ABCMeta):
         # if return_epochs and return_raws:
         #     message = "Select only return_epochs or return_raws, not both"
         #     raise ValueError(message)
-
+        replacement_dict = {v: k for k, v in dataset.event_id.items()}
         data = dataset.get_data(dataset.subject_list)
         #del data
         epochs_directory=os.path.join(dataset.dataset_path, "Epochs")
@@ -340,6 +340,8 @@ class BaseParadigm(metaclass=ABCMeta):
                     met["subject"] = subject
                     met["session"] = session
                     met["run"] = run
+                    met["event_id"] = x.events[:, 2].astype(int).tolist()
+                    met["event_id"]=met["event_id"].map(replacement_dict)
                     metadata.append(met)
         #print("Avinash")    
         metadata = pd.concat(metadata, ignore_index=True)
@@ -347,6 +349,7 @@ class BaseParadigm(metaclass=ABCMeta):
         # feat=Features()
         # replacement_dict = {v: k for k, v in dataset.event_id.items()}
         if return_epochs:
+            #print("Avinash")
             X = mne.concatenate_epochs(X, verbose=False)
             # if not os.path.exists(features_directory):
             #     os.makedirs(features_directory)

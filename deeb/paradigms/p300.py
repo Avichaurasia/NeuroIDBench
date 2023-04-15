@@ -15,7 +15,7 @@ from autoreject import AutoReject, get_rejection_threshold
 log = logging.getLogger(__name__)
 
 
-class BaseERP(BaseParadigm):
+class BaseP300(BaseParadigm):
     """Base P300 paradigm.
 
     Please use one of the child classes
@@ -277,7 +277,7 @@ class BaseERP(BaseParadigm):
         return "roc_auc"
 
 
-class SinglePass(BaseERP):
+class SinglePass(BaseP300):
     """Single Bandpass filter P300
 
     P300 paradigm with only one bandpass filter (default 1 to 24 Hz)

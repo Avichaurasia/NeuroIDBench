@@ -64,7 +64,7 @@ class AutoRegressive(Basepipeline):
                     for i in range(len(epochs_data)):
                         dictemp = {'Subject': subject, "Session": session, 'Event_id': list(epochs[i].event_id.values())[0]}
                         for j in range(len(epochs_data[i])):
-                            rho, sigma = sm.regression.yule_walker(epochs_data[i][j], order=self.order, method="mle")
+                            rho, _ = sm.regression.yule_walker(epochs_data[i][j], order=self.order, method="mle")
                             first = epochs.ch_names[j]
                             for d in range(self.order):
                                 column_name = f"{first}-AR{d+1}"
@@ -114,8 +114,7 @@ class PowerSpectralDensity(Basepipeline):
         # spectrum=epochs.compute_psd(method="welch", n_fft=N_FFT,
         #     n_overlap=0, n_per_seg=None, fmin=1, fmax=50, tmin=tmin, tmax=tmax, verbose=False)
         
-        # Later Need to check how it gives the results
-        # Computing PSD with 4 time windows and 50% overlap
+        # Computing PSD with 4 time windows, 50% overlap using welch's method
         spectrum=epochs.compute_psd(method="welch", n_fft=samples_per_window,
             n_overlap=samples_per_window//2, n_per_seg=None, tmin=tmin, tmax=tmax, verbose=False)
         
@@ -135,7 +134,6 @@ class PowerSpectralDensity(Basepipeline):
         for subject, sessions in tqdm(subject_dict.items(), desc="Computing PSD"):
             for session, runs in sessions.items():
                 for run, epochs in runs.items():
-                    #print("run", run) 
 
                     if (dataset.paradigm == "p300"):
                         epochs = epochs['Target']
@@ -152,7 +150,6 @@ class PowerSpectralDensity(Basepipeline):
 
         # Computing average band power for each channel
         for result, subject, session, epochs in results:
-            #print("subject", subject)
             psds, freqs = result
             for i in range(len(psds)):
                 #features={}
@@ -161,6 +158,8 @@ class PowerSpectralDensity(Basepipeline):
                     welch_psd=psds[i][j]
                     X=[]
                     for fmin, fmax in FREQ_BANDS.values():
+
+                        # Calculating average power in each frequency band
                         psds_band=welch_psd[(freqs >= fmin) & (freqs < fmax)].mean()
                         X.append(psds_band)
             
@@ -174,66 +173,6 @@ class PowerSpectralDensity(Basepipeline):
 
         return df_psd
     
-
-
-
-    # def _get_features(self, subject_dict, dataset):
-    #     df_list = []
-    #     # specific frequency bands
-    #     FREQ_BANDS = {"low" : [1,10],
-    #                 #"theta" : [10,13],
-    #                 "alpha" : [10, 13],
-    #                 "beta" : [13,30],
-    #                 "gamma" : [30, 50]}
-    #     #order = 6
-    #     #print("order", self.order)
-    #     for subject, sessions in tqdm(subject_dict.items(), desc="Computing AR Coeff"):
-    #         for session, runs in sessions.items():
-    #             for run, epochs in runs.items():
-
-    #                 if (dataset.paradigm == "p300"):
-    #                     epochs= epochs['Target']
-    #                     epochs_data = epochs.get_data()
-
-    #                 elif (dataset.paradigm == "n400"):
-    #                     epochs = epochs['Inconsistent']
-    #                     epochs_data = epochs.get_data()
-                        
-    #                 tmax = epochs.tmax
-    #                 tmin = epochs.tmin
-    #                 sfreq = epochs.info['sfreq']
-    #                 window_duration = (tmax - tmin) / 4
-    #                 samples_per_window = int(window_duration * sfreq)
-    #                 for i in range(len(epochs_data)):
-    #                     features = {'Subject': subject, 'Session': session, 'Event_id': list(epochs[i].event_id.values())[0]}
-    #                     for j in range(len(epochs_data[i])):
-    #                         freqs, psd=welch(epochs_data[i][j], sfreq, nperseg=samples_per_window, noverlap=samples_per_window//2)
-    #                         X=[]
-    #                         for fmin, fmax in FREQ_BANDS.values():
-    #                             psds_band=psd[(freqs >= fmin) & (freqs < fmax)].mean()
-    #                             X.append(psds_band) 
-                            
-    #                         channel=epochs.ch_names[j]
-    #                         for d in range(len(X)):
-    #                             band_name=[*FREQ_BANDS][d]
-    #                             colum_name=channel+"-"+band_name
-    #                             features[colum_name]=X[d]
-
-    #                     data_step = [features]
-    #                     df_psd=df_psd.append(data_step,ignore_index=True)
-                            
-
-                    #df_psd=df_psd.append(data_step,ignore_index=True)
-
-        #return df_psd
-    
-    # def extract_features(self, dataset, subject_dict, labels, ar_order):
-    #     df=pd.DataFrame()
-    #     df_AR=self.auto_regressive_coeffecients(subject_dict, ar_order)
-    #     df_PSD=self.average_band_power(subject_dict)
-    #     df=pd.concat([df_AR,df_PSD], axis=1)
-    #     #print(df.head())
-    #     return df
     
 class StandardScaler_Epoch(BaseEstimator, TransformerMixin):
     """

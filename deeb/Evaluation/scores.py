@@ -13,7 +13,7 @@ class Scores():
     
     def _calculate_average_scores(accuracy_list, tpr_list, eer_list, mean_fpr, auc_list, frr_1_far_list):
         """Calculating average scores like mean accuracy, mean auc, mean eer, mean tpr, tpr_upper, tpr_lower, std_auc
-        for all k-folds"""
+        for all k-folds. The average scores are calculated for each subject"""
 
          # Averaging mean accuracy
         mean_accuracy=np.mean(accuracy_list, axis=0)

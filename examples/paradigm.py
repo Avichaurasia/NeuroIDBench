@@ -25,6 +25,7 @@ from sklearn.preprocessing import StandardScaler
 from sklearn.discriminant_analysis import LinearDiscriminantAnalysis as LDA
 from sklearn.naive_bayes import GaussianNB
 from sklearn.svm import SVC
+from deeb.pipelines.siamese import Siamese
 
 # Intiaizing the datasets
 won = Won2022()
@@ -34,19 +35,35 @@ mantegna=Mantegna2019()
 # # Selecting the first 3 subjects from the Won2022 dataset
 # won.subject_list = won.subject_list[0:10]
 
-# # Selecting the first 5 subjects from the brainInvaders2015a dataset
-# brain.subject_list = brain.subject_list[0:10]
+# Selecting the first 5 subjects from the brainInvaders2015a dataset
+brain.subject_list = brain.subject_list[0:10]
 
-# # selecting the first 3 subjects from the Mantegna dataset
-# mantegna.subject_list = mantegna.subject_list[0:10]
+# selecting the first 3 subjects from the Mantegna dataset
+mantegna.subject_list = mantegna.subject_list[0:10]
 
 # Initializing the p300 paradigm
 paradigm_p300=P300()
 paradigm_n400=N400()
 
 # Getting the pre-prpcessed data for the p300 paradigm
-# X, sub, meta=paradigm_p300.get_data(brain, return_epochs=True)
+X, sub, meta=paradigm_p300.get_data(brain, return_epochs=True)
 # print("BrainInvaders", sub)
+
+# for i, epochs in enumerate(X):
+#     print("event id", epochs.event_id.values)
+
+#print(meta[['subject', 'event_id']].value_counts())
+target_index=meta[meta['event_id']=="Target"].index.tolist()
+
+print("lenght of target index", len(target_index))
+
+target_epochs=X[target_index]
+
+print("length of target epochs", len(target_epochs))
+
+print("subject labels", meta.iloc[target_index]["subject"].value_counts())
+
+
 
 # # Getting the pre-prpcessed data for the p300 paradigm
 # X, sub, meta=paradigm_p300.get_data(won, return_epochs=True)
@@ -54,7 +71,10 @@ paradigm_n400=N400()
 
 
 # getting the pre-processed data from n400 paradigm
-X, sub, meta=paradigm_n400.get_data(mantegna, return_epochs=True)
-print("Mantegna", sub)
+# X, sub, meta=paradigm_n400.get_data(mantegna, return_epochs=True)
+#print("length of X", len(X))
+
+#print("length of meta", meta['subject'])
+#print("Mantegna", sub)
 
 

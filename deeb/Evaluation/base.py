@@ -154,6 +154,7 @@ class BaseEvaluation(ABC):
                 raise (ValueError("pipelines must only contains Pipelines " "instance"))
         dataframe=pd.DataFrame()
         for dataset in self.datasets:
+            #print("Avinash")
             log.info("Processing dataset: {}".format(dataset.code))
             results, results_path= self.evaluate(dataset, pipelines, param_grid)
             #print(results)

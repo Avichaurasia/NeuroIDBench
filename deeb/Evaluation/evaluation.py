@@ -256,7 +256,7 @@ class OpenSetEvaluation(BaseEvaluation):
             test_subject_ids=df[~df['Subject'].isin(train_subject_ids)]['Subject'].unique()
             test_subject_ids=list(test_subject_ids)
             
-            # Divide the dataframe of rejected subjects into training and testing sets based on subject id
+            # Divide the dataframe of rejected subjects into training and testing sets based on subject ids
             train_set = df_rejected[df_rejected['Subject'].isin(train_subject_ids)]
             test_set = df_rejected[df_rejected['Subject'].isin(test_subject_ids)]
             
