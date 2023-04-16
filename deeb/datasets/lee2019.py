@@ -1,14 +1,11 @@
 from functools import partialmethod
-
 import numpy as np
 from mne import create_info
 from mne.channels import make_standard_montage
 from mne.io import RawArray
 from scipy.io import loadmat
-
 from deeb.datasets import download as dl
 from deeb.datasets.base import BaseDataset
-
 
 Lee2019_URL = "ftp://parrot.genomics.cn/gigadb/pub/10.5524/100001_101000/100542/"
 
@@ -19,39 +16,31 @@ class Lee2019(BaseDataset):
         train_run=True,
         test_run=None,
         sessions=(1, 2),
+        code_suffix="ERP",
         ):
+        for s in sessions:
+            if s not in [1, 2]:
+                raise ValueError("inexistant session {}".format(s))
+        self.sessions = sessions
         super().__init__(
             subjects=list(range(1, 55)),
             sessions_per_subject=2,
-            #events=dict(Left=1, Right=2),
             events=dict(Target=1, NonTarget=2),
-            code="lee 2019",
+            code="Lee2019_" + code_suffix,
             interval=[-0.1, 0.9],
             paradigm="p300",
             doi="10.5524/100542",
             dataset_path=None,
             )
-        
-
-    def _check_mapping(self, file_mapping):
-        def raise_error():
-            raise ValueError(
-                "file_mapping ({}) different than events ({})".format(
-                    file_mapping, self.event_id
-                )
-            )
-
-        if len(file_mapping) != len(self.event_id):
-            raise_error()
-        for c, v in file_mapping.items():
-            v2 = self.event_id.get(self._translate_class(c), None)
-            if v != v2 or v2 is None:
-                raise_error()
+        self.train_run = train_run
+        self.code_suffix=code_suffix
+        self.test_run =  self.paradigm == "p300" if test_run is None else test_run
 
     _scalings = dict(eeg=1e-6, emg=1e-6, stim=1)  # to load the signal in Volts
     
     def _make_raw_array(self, signal, ch_names, ch_type, sfreq, verbose=False):
         ch_names = [np.squeeze(c).item() for c in np.ravel(ch_names)]
+        print("len of channels: ", len(ch_names))
         if len(ch_names) != signal.shape[1]:
             raise ValueError
         info = create_info(
@@ -64,7 +53,9 @@ class Lee2019(BaseDataset):
     def _get_single_run(self, data):
         sfreq = data["fs"].item()
         file_mapping = {c.item(): int(v.item()) for v, c in data["class"]}
-        self._check_mapping(file_mapping)
+        #self._check_mapping(file_mapping)
+
+        
 
         # Create RawArray
         raw = self._make_raw_array(data["x"], data["chan"], "eeg", sfreq)
@@ -72,7 +63,7 @@ class Lee2019(BaseDataset):
         raw.set_montage(montage)
 
         # Create EMG channels
-        emg_raw = self._make_raw_array(data["EMG"], data["EMG_index"], "emg", sfreq)
+        #emg_raw = self._make_raw_array(data["EMG"], data["EMG_index"], "emg", sfreq)
 
         # Create stim chan
         event_times_in_samples = data["t"].squeeze()
@@ -85,8 +76,28 @@ class Lee2019(BaseDataset):
         )
 
         # Add EMG and stim channels
-        raw = raw.add_channels([emg_raw, stim_raw])
+        raw = raw.add_channels([stim_raw])
         return raw
+    
+    def _get_single_subject_data(self, subject):
+        """return data for a single subejct"""
+
+        sessions = {}
+        file_path_list = self.data_path(subject)
+        for session in self.sessions:
+            if self.train_run or self.test_run:
+                mat = loadmat(file_path_list[self.sessions.index(session)])
+            session_name = "session_{}".format(session)
+            sessions[session_name] = {}
+            if self.train_run:
+                sessions[session_name]["train"] = self._get_single_run(
+                    mat["EEG_{}_train".format(self.code_suffix)][0, 0]
+                )
+            if self.test_run:
+                sessions[session_name]["test"] = self._get_single_run(
+                    mat["EEG_{}_test".format(self.code_suffix)][0, 0]
+                )
+        return sessions
 
     def data_path(
         self, subject, path=None, force_update=False, update_path=None, verbose=None
@@ -104,8 +115,4 @@ class Lee2019(BaseDataset):
 
         return subject_paths
     
-if __name__ == "__main__":
-    dataset = Lee2019()
-    dataset.download_dataset()
-    dataset.load_data()
         
