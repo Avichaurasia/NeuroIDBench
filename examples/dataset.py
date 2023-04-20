@@ -24,11 +24,24 @@ from sklearn.discriminant_analysis import LinearDiscriminantAnalysis as LDA
 from sklearn.naive_bayes import GaussianNB
 from sklearn.svm import SVC
 from deeb.datasets.lee2019 import Lee2019
+from deeb.datasets.erpCoreN400 import ERPCOREN400
+from deeb.paradigms.n400 import N400
+from deeb.paradigms.p300 import P300
 
 # Intializing the datasets 
-lee = Lee2019()
-lee.subject_list = lee.subject_list[0:1]
-print(lee.get_data()[1]['session_1']['train'].get_data().shape)
+erpcore = ERPCOREN400()
+
+n400=N400()
+
+_, sub, meta=n400.get_data(erpcore, return_epochs=True)
+print(sub)
+
+
+#print(erpcore.get_data())
+# data=erpcore.get_data()
+# print(data)
+#lee.subject_list = lee.subject_list[0:1]
+#print(lee.get_data()[1]['session_1']['train'].get_data().shape)
 
 # brainInvaders=BrainInvaders2015a()
 # mantegna=Mantegna2019()

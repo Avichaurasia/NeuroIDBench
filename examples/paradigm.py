@@ -15,7 +15,7 @@ from deeb.datasets.draschkow2018 import Draschkow2018
 from deeb.datasets.won2022 import Won2022
 from deeb.pipelines.features import AutoRegressive as AR
 from deeb.pipelines.features import PowerSpectralDensity as PSD
-from deeb.pipelines.siamese_old import Siamese
+#from deeb.pipelines.siamese_old import Siamese
 from deeb.pipelines.base import Basepipeline
 from deeb.evaluation.evaluation import CloseSetEvaluation, OpenSetEvaluation
 from deeb.datasets import utils
@@ -25,7 +25,11 @@ from sklearn.preprocessing import StandardScaler
 from sklearn.discriminant_analysis import LinearDiscriminantAnalysis as LDA
 from sklearn.naive_bayes import GaussianNB
 from sklearn.svm import SVC
-from deeb.pipelines.siamese import Siamese
+#from deeb.pipelines.siamese import Siamese
+from deeb.datasets.erpCoreN400 import ERPCOREN400
+
+# Intializing the datasets 
+erpcore = ERPCOREN400()
 
 # Intiaizing the datasets
 won = Won2022()

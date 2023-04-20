@@ -6,6 +6,7 @@ from mne.io import RawArray
 from scipy.io import loadmat
 from deeb.datasets import download as dl
 from deeb.datasets.base import BaseDataset
+import mne
 
 Lee2019_URL = "ftp://parrot.genomics.cn/gigadb/pub/10.5524/100001_101000/100542/"
 
@@ -77,7 +78,8 @@ class Lee2019(BaseDataset):
 
         # Add EMG and stim channels
         raw = raw.add_channels([stim_raw])
-        return raw
+        events=mne.find_events(raw, shortest_event=0, verbose=False)
+        return raw, events
     
     def _get_single_subject_data(self, subject):
         """return data for a single subejct"""
