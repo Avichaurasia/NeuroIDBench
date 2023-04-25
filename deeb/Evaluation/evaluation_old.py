@@ -14,6 +14,7 @@ from sklearn.model_selection import (
     LeaveOneGroupOut,
     StratifiedKFold,
     StratifiedShuffleSplit,
+    RepeatedStratifiedKFold,
     cross_val_score,
 )
 import pandas as pd
@@ -21,7 +22,7 @@ from sklearn.model_selection._validation import _fit_and_score, _score
 from sklearn.preprocessing import LabelEncoder
 from tqdm import tqdm
 from sklearn.preprocessing import StandardScaler
-from deeb.evaluation.base import BaseEvaluation
+from deeb.Evaluation.base import BaseEvaluation
 from imblearn.over_sampling import RandomOverSampler
 from imblearn.under_sampling import RandomUnderSampler
 from sklearn import metrics
@@ -29,7 +30,7 @@ from sklearn.metrics import accuracy_score
 import random
 from scipy.optimize import brentq
 from scipy.interpolate import interp1d
-from deeb.evaluation.scores import Scores as score
+from deeb.Evaluation.scores import Scores as score
 from collections import OrderedDict
 
 log = logging.getLogger(__name__)
@@ -68,7 +69,7 @@ class CloseSetEvaluation(BaseEvaluation):
         frr_1_far_list=[]
 
         # Defining the Stratified KFold
-        skfold = StratifiedKFold(n_splits=4,shuffle=True,random_state=42)
+        skfold = RepeatedStratifiedKFold(n_splits=4, n_repeats=3, random_state=42)
         classifer=pipeline[1:]
         #classifier=pipeline.steps[1:]
         #print("classifer",classifer)
@@ -85,7 +86,7 @@ class CloseSetEvaluation(BaseEvaluation):
             X_test=sc.transform(X_test)
 
             # Resampling the training data using RandomOverSampler
-            oversampler = RandomOverSampler()
+            oversampler = RandomOverSampler(random_state=42)
             X_train, y_train = oversampler.fit_resample(X_train, y_train)
 
             clf=clone(classifer)
@@ -219,7 +220,7 @@ class OpenSetEvaluation(BaseEvaluation):
         X_test=sc.transform(X_test)
 
         # Resampling the data using RandomOverSampler
-        oversampler = RandomOverSampler()
+        oversampler = RandomOverSampler(random_state=42)
         X_train, y_train = oversampler.fit_resample(X_train, y_train)
         #model=pipeline.fit(X_train, y_train)
 
@@ -234,7 +235,7 @@ class OpenSetEvaluation(BaseEvaluation):
         auc, eer, eer_theshold, inter_tpr, tpr, fnr, frr_1_far=score._calculate_scores(y_pred_proba,y_test, mean_fpr)
         return (accuracy, auc, eer, eer_theshold, inter_tpr, tpr, fnr, frr_1_far)
 
-    def _authenticate_single_subject(self, df, df_authenticated, df_rejected, subject_ids, pipeline, param_grid=None, k=4):
+    def _authenticate_single_subject(self, df, df_authenticated, df_rejected, subject_ids, pipeline, param_grid=None, k=6):
         accuracy_list=[]
         auc_list=[]
         eer_list=[]

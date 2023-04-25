@@ -25,7 +25,7 @@ class Results():
         class that will abstract result storage
     """
 
-    def _add_results(self, results, results_path):
+    def _add_results(self, results_close_set, results_open_set, results_path):
         """Add results dataframe to path dataset.datasetpath as json file."""
 
         if not os.path.exists(results_path):
@@ -49,8 +49,11 @@ class Results():
         #     with open(os.path.join(results_path, result['pipeline'] + '.json'), 'w') as f:
         #         json.dump(result, f, cls=NumpyEncoder)
 
-        with open(os.path.join(results_path, "results.json"), 'w') as f:
-            json.dump(results, f, cls=NumpyEncoder)
+        with open(os.path.join(results_path, "results_close_set.json"), 'w') as f:
+            json.dump(results_close_set, f, cls=NumpyEncoder)
+
+        with open(os.path.join(results_path, "results_open_set.json"), 'w') as f:
+            json.dump(results_open_set, f, cls=NumpyEncoder)
 
         # getting average results across subjects
         average_results = self._add_dataframe(results_path)
@@ -67,7 +70,7 @@ class Results():
         #             results_list.append(json.load(f))
 
 
-        with open(os.path.join(results_path, "results.json"), 'r') as f:
+        with open(os.path.join(results_path, "results_close_set.json"), 'r') as f:
             results_list = json.load(f) 
         df_results=pd.DataFrame(results_list)
 

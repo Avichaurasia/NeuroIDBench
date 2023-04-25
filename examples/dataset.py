@@ -1,5 +1,5 @@
 import sys
-sys.path.append('/Users/avinashkumarchaurasia/Master_Thesis/deeb/')
+sys.path.append('/Users/avinashkumarchaurasia/Master_Thesis/deeb/deeb')
 import abc
 import logging
 import mne
@@ -15,7 +15,7 @@ from deeb.datasets.won2022 import Won2022
 from deeb.pipelines.features import AutoRegressive as AR
 from deeb.pipelines.features import PowerSpectralDensity as PSD
 from deeb.pipelines.base import Basepipeline
-from deeb.evaluation.evaluation import CloseSetEvaluation, OpenSetEvaluation
+#from deeb.Evaluation.evaluation import CloseSetEvaluation, OpenSetEvaluation
 from deeb.datasets import utils
 from autoreject import AutoReject, get_rejection_threshold
 from sklearn.pipeline import make_pipeline
@@ -29,12 +29,16 @@ from deeb.paradigms.n400 import N400
 from deeb.paradigms.p300 import P300
 
 # Intializing the datasets 
-erpcore = ERPCOREN400()
+lee = Lee2019()
+lee.subject_list = lee.subject_list[0:5]
+
+lee.get_data()
+
 
 n400=N400()
 
-_, sub, meta=n400.get_data(erpcore, return_epochs=True)
-print(sub)
+# _, sub, meta=n400.get_data(erpcore, return_epochs=True)
+# print(sub)
 
 
 #print(erpcore.get_data())

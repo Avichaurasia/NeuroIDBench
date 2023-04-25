@@ -138,7 +138,6 @@ class Mantegna2019(BaseDataset):
                 zip_ref.extractall(subject_dir)
 
         raw_data_path = os.listdir(subject_dir)
-        raw_data_path.remove('graphs')
         for sub in raw_data_path:
             if sub.endswith(".vhdr") and sub.split("_")[0] == subject:
                 return os.path.join(subject_dir, sub)

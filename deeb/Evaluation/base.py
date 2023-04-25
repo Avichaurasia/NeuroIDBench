@@ -156,7 +156,7 @@ class BaseEvaluation(ABC):
         for dataset in self.datasets:
             #print("Avinash")
             log.info("Processing dataset: {}".format(dataset.code))
-            results, results_path= self.evaluate(dataset, pipelines, param_grid)
+            results_close_set, results_open_set, results_path= self.evaluate(dataset, pipelines, param_grid)
             #print(results)
 
             #print(results.to_dataframe(pipelines=pipelines))
@@ -165,7 +165,7 @@ class BaseEvaluation(ABC):
             #     self.push_result(res, pipelines)
 
         #return self.results.to_dataframe(pipelines=pipelines)
-            get_results=self.results._add_results(results, results_path)
+            get_results=self.results._add_results(results_close_set, results_open_set, results_path)
             dataframe=dataframe.append(get_results, ignore_index=True)
         return dataframe
 

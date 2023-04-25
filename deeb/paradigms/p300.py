@@ -66,6 +66,7 @@ class BaseP300(BaseParadigm):
         baseline=(None,0),
         channels=None,
         resample=None,
+        reject=False,
     ):
         super().__init__()
         self.filters = filters
@@ -74,6 +75,7 @@ class BaseP300(BaseParadigm):
         self.channels = channels
         self.baseline = baseline
         self.resample = resample
+        self.reject = reject
 
         if tmax is not None:
             if tmin >= tmax:

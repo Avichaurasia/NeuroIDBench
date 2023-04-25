@@ -16,8 +16,8 @@ from deeb.pipelines.features import AutoRegressive
 from deeb.pipelines.features import PowerSpectralDensity 
 
 # Importing the evaluation
-from deeb.evaluation.evaluation import CloseSetEvaluation
-from deeb.evaluation.evaluation import OpenSetEvaluation
+#from deeb.evaluation.evaluation import CloseSetEvaluation
+#from deeb.evaluation.evaluation import OpenSetEvaluation
 
 # Importing the classifiers
 from sklearn.discriminant_analysis import LinearDiscriminantAnalysis as LDA

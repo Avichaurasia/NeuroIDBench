@@ -1,5 +1,5 @@
 import sys
-sys.path.append('/Users/avinashkumarchaurasia/Master_Thesis/deeb/')
+sys.path.append('/Users/avinashkumarchaurasia/Master_Thesis/deeb/deeb')
 import abc
 import logging
 import mne
@@ -15,7 +15,8 @@ from deeb.datasets.won2022 import Won2022
 from deeb.pipelines.features import AutoRegressive 
 from deeb.pipelines.features import PowerSpectralDensity 
 from deeb.pipelines.base import Basepipeline
-from deeb.evaluation.evaluation import CloseSetEvaluation, OpenSetEvaluation
+from deeb.Evaluation.evaluation_old import CloseSetEvaluation, OpenSetEvaluation
+from deeb.Evaluation.within_session_evaluation import WithinSessionEvaluation
 from deeb.datasets import utils
 from autoreject import AutoReject, get_rejection_threshold
 from sklearn.pipeline import make_pipeline
@@ -26,6 +27,7 @@ from sklearn.naive_bayes import GaussianNB
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.svm import SVC
 from sklearn.ensemble import RandomForestClassifier
+from deeb.datasets.erpCoreN400 import ERPCOREN400
 from deeb.analysis.plotting import Plots 
 import os
 
@@ -36,6 +38,8 @@ def _evaluate():
     won = Won2022()
     brain=BrainInvaders2015a()
     mantegna=Mantegna2019()
+    erp_core=ERPCOREN400()
+    #erp_core.subject_list = erp_core.subject_list[0:5]
 
     # mantegna.subject_list = mantegna.subject_list[0:10]
 
@@ -54,18 +58,18 @@ def _evaluate():
 
     # Intializing the pipelines
     pipeline={}
-    pipeline['AR+SVM']=make_pipeline(AutoRegressive(order=10), SVC(kernel='rbf', probability=True))
-    pipeline['PSD+SVM']=make_pipeline(PowerSpectralDensity(), SVC(kernel='rbf', probability=True))
-    pipeline['AR+LR']=make_pipeline(AutoRegressive(order=10), LogisticRegression())
-    pipeline['PSD+LR']=make_pipeline(PowerSpectralDensity(), LogisticRegression())
-    pipeline['AR+LDA']=make_pipeline(AutoRegressive(order=10), LDA(solver='lsqr', shrinkage='auto'))
-    pipeline['PSD+LDA']=make_pipeline(PowerSpectralDensity(), LDA(solver='lsqr', shrinkage='auto'))
-    pipeline['AR+NB']=make_pipeline(AutoRegressive(order=10), GaussianNB())
-    pipeline['PSD+NB']=make_pipeline(PowerSpectralDensity(), GaussianNB())
-    pipeline['AR+KNN']=make_pipeline(AutoRegressive(order=10), KNeighborsClassifier(n_neighbors=3))
-    pipeline['PSD+KNN']=make_pipeline(PowerSpectralDensity(), KNeighborsClassifier(n_neighbors=3))
-    pipeline['AR+RF']=make_pipeline(AutoRegressive(order=10), RandomForestClassifier(n_estimators=100))
-    pipeline['PSD+RF']=make_pipeline(PowerSpectralDensity(), RandomForestClassifier(n_estimators=100))
+    pipeline['AR+PSD+SVM']=make_pipeline(AutoRegressive(order=6), PowerSpectralDensity(), SVC(kernel='rbf', probability=True))
+    #pipeline['PSD+SVM']=make_pipeline(AutoRegressive(order=6), PowerSpectralDensity(), SVC(kernel='rbf', probability=True))
+    pipeline['AR+PSD+LR']=make_pipeline(AutoRegressive(order=6), PowerSpectralDensity(), LogisticRegression())
+    # #pipeline['PSD+LR']=make_pipeline(AutoRegressive(order=6), PowerSpectralDensity(), LogisticRegression())
+    pipeline['AR+PSD+LDA']=make_pipeline(AutoRegressive(order=6), PowerSpectralDensity(), LDA(solver='lsqr', shrinkage='auto'))
+    # #pipeline['PSD+LDA']=make_pipeline(AutoRegressive(order=6), PowerSpectralDensity(), LDA(solver='lsqr', shrinkage='auto'))
+    pipeline['AR+PSD+NB']=make_pipeline(AutoRegressive(order=6), PowerSpectralDensity(), GaussianNB())
+    # #pipeline['PSD+NB']=make_pipeline(AutoRegressive(order=6), PowerSpectralDensity(), GaussianNB())
+    pipeline['AR+PSD+KNN']=make_pipeline(AutoRegressive(order=6), PowerSpectralDensity(), KNeighborsClassifier(n_neighbors=3))
+    #pipeline['PSD+KNN']=make_pipeline(AutoRegressive(order=6), PowerSpectralDensity(), KNeighborsClassifier(n_neighbors=3))
+    pipeline['AR+PSD+RF']=make_pipeline(AutoRegressive(order=6), PowerSpectralDensity(), RandomForestClassifier())
+    #pipeline['PSD+RF']=make_pipeline(AutoRegressive(order=6), PowerSpectralDensity(), RandomForestClassifier(n_estimators=100))
 
     #pipeline['AR+NB']=make_pipeline(AutoRegressive(order=6), GaussianNB())
     #pipeline['AR+KNN']=make_pipeline(AutoRegressive(order=6), KNeighborsClassifier(n_neighbors=3))
@@ -73,20 +77,24 @@ def _evaluate():
     # Getting the results for the open set evaluation
     # evaluation=OpenSetEvaluation(paradigm=paradigm, datasets=dest, overwrite=False)
 
-    # Getting the results for the close set evaluation
-    open_set=CloseSetEvaluation(paradigm=paradigm_n400, datasets=mantegna, overwrite=False)
-    results=open_set.process(pipeline)
-    #print(os.environ)
+    # # # Getting the results for the close set evaluation
+    # open_set=CloseSetEvaluation(paradigm=paradigm_n400, datasets=erp_core, overwrite=False)
+    # results=open_set.process(pipeline)
+    # # # #print(os.environ)
+    # plot=Plots()
+    # plot._roc_curve_single_dataset(results, evaluation_type="Close-Set", dataset=erp_core)
 
-    plot=Plots()
-    plot._roc_curve_single_dataset(results, evaluation_type="Close-Set", dataset=mantegna)
+    # close_set=OpenSetEvaluation(paradigm=paradigm_n400, datasets=erp_core, overwrite=False)
+    # results_close_set=close_set.process(pipeline)
+    # # # #print(results_close_set['frr_1_far'])
+    # plot._roc_curve_single_dataset(results_close_set, evaluation_type="Open-Set", dataset=erp_core)
+    # # # # #print(datasets[0].dataset_path)
+    #return results
 
-    close_set=OpenSetEvaluation(paradigm=paradigm_n400, datasets=mantegna, overwrite=False)
-    results_close_set=close_set.process(pipeline)
-    #print(results_close_set['frr_1_far'])
-    plot._roc_curve_single_dataset(results_close_set, evaluation_type="Open-Set", dataset=mantegna)
-    # #print(datasets[0].dataset_path)
-    return results
+    # Getting the results for the within session evaluation
+    within_session=WithinSessionEvaluation(paradigm=paradigm_n400, datasets=erp_core, overwrite=False)
+    results_within_session=within_session.process(pipeline)
+    return results_within_session
 
 
 if __name__ == '__main__':

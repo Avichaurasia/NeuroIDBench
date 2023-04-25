@@ -11,6 +11,7 @@ from tqdm import tqdm
 import warnings
 from joblib import Parallel, delayed
 import gc
+from autoreject import AutoReject, get_rejection_threshold
 
 #warnings.filterwarnings("ignore", message="resource_tracker: There appear to be \\d+ leaked semaphore objects to clean up at shutdown")
 
@@ -169,15 +170,19 @@ class BaseParadigm(metaclass=ABCMeta):
         else:
             tmax = self.tmax + dataset.interval[0]
 
+        #if self.reject:
+        #peak_to_peak_reject=dict(eeg=150e-6) 
+        #else:
+        #    peak_to_peak_reject=None
+
         X = []
         for bandpass in self.filters:
             fmin, fmax = bandpass
+            #print("fmin, fmax", fmin, fmax)
             # filter data
-            raw_f = raw.copy().filter(
-                fmin, fmax, method="iir", picks=picks, verbose=False
-            )
+            raw_f = raw.copy().filter(fmin, fmax, method="iir", picks=picks, verbose=False)
             # epoch data
-            baseline = self.baseline
+            #baseline = self.baseline
             # if baseline is not None:
             #     baseline = (
             #         self.baseline[0] + dataset.interval[0],
@@ -195,9 +200,10 @@ class BaseParadigm(metaclass=ABCMeta):
                 tmin=tmin,
                 tmax=tmax,
                 proj=False,
-                baseline=baseline,
+                baseline=self.baseline,
+                #reject=peak_to_peak_reject,
                 preload=True,
-                verbose=False,
+                verbose=True,
                 picks=picks,
                 event_repeated="drop",
                 on_missing="ignore",
@@ -209,7 +215,9 @@ class BaseParadigm(metaclass=ABCMeta):
                 #   epochs = epochs.resample(self.resample)
                 # rescale to work with uV
 
-                #ar = AutoReject(picks=picks, thresh_method='random_search')
+            ar = AutoReject(picks=picks, thresh_method='random_search')
+            epochs=ar.fit_transform(epochs)
+            
                 #cleaned_epochs = ar.fit_transform(epochs.copy())
                 #cleaned_epochs.apply_baseline(baseline)
 

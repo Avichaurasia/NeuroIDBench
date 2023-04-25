@@ -1,5 +1,5 @@
 from deeb.paradigms.base import BaseParadigm
-from deeb.evaluation.base import BaseEvaluation
+from deeb.Evaluation.base import BaseEvaluation
 from deeb.analysis.results import Results as res
 import matplotlib.pyplot as plt
 #%matplotlib inline
@@ -47,7 +47,7 @@ class Plots():
             'tpr': lambda x: np.mean(np.vstack(x), axis=0),  # average across numpy arrays
             'tprs_lower': lambda x: np.mean(np.vstack(x), axis=0),  # average across numpy arrays
             'tprs_upper': lambda x: np.mean(np.vstack(x), axis=0),  # average across numpy arrays
-            'std_auc':'mean',
+            'std_auc': 'mean',
             'n_samples': 'mean'
              }).reset_index()
         
@@ -57,10 +57,11 @@ class Plots():
             fpr=np.linspace(0, 1, 100)
             auc = grouped_df['auc'][i]
             std_auc=grouped_df['std_auc'][i]
+            #std_auc=np.std(grouped_df['auc'][i])
             tpr = grouped_df['tpr'][i]
             
             # Plot the ROC curve
-            ax.plot(fpr, tpr,label=name+" "+r'(AUC = %0.2f $\pm$ %0.2f)' % (auc, std_auc),
+            ax.plot(fpr, tpr,label=name+" "+r'(AUC = %0.3f $\pm$ %0.3f)' % (auc, std_auc),
                     lw=2, alpha=.8)
             # Add labels and legend
             plt.title("ROC Curve: "+evaluation_type,fontsize=12)
@@ -112,7 +113,7 @@ class Plots():
                 auc = grouped_df['auc'][j]
                 std_auc = grouped_df['std_auc'][j]
                 tpr = grouped_df['tpr'][j]
-                ax.plot(fpr, tpr, label=name + " " + r'(AUC = %0.2f $\pm$ %0.2f)' % (auc, std_auc),
+                ax.plot(fpr, tpr, label=name + " " + r'(AUC = %0.3f $\pm$ %0.3f)' % (auc, std_auc),
                         lw=2, alpha=.8)
                 
                 # Add labels and legend

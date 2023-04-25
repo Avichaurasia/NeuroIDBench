@@ -32,7 +32,7 @@ import pandas as pd
 
 
 from deeb import paradigms as deeb_paradigms
-from deeb.evaluation import (CloseSetEvaluation, OpenSetEvaluation,)
+from deeb.Evaluation import (CloseSetEvaluation, OpenSetEvaluation,)
 log = logging.getLogger(__name__)
 
 

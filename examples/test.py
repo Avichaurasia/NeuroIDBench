@@ -15,9 +15,9 @@ from deeb.datasets.draschkow2018 import Draschkow2018
 from deeb.datasets.won2022 import Won2022
 from deeb.pipelines.features import AutoRegressive as AR
 from deeb.pipelines.features import PowerSpectralDensity as PSD
-from deeb.pipelines.siamese_old import Siamese
+#from deeb.pipelines.siamese_old import Siamese
 from deeb.pipelines.base import Basepipeline
-from deeb.evaluation.evaluation import CloseSetEvaluation, OpenSetEvaluation
+#from deeb.evaluation.evaluation import CloseSetEvaluation, OpenSetEvaluation
 from deeb.datasets import utils
 from autoreject import AutoReject, get_rejection_threshold
 from sklearn.pipeline import make_pipeline

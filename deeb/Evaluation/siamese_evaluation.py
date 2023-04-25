@@ -18,8 +18,8 @@ import pandas as pd
 from sklearn.preprocessing import LabelEncoder
 from tqdm import tqdm
 from sklearn.preprocessing import StandardScaler
-from deeb.evaluation.base import BaseEvaluation
-from deeb.evaluation.scores import Scores as score
+from deeb.Evaluation.base import BaseEvaluation
+#from deeb.evaluation.scores import Scores as score
 from collections import OrderedDict
 import tensorflow as tf
 from sklearn.metrics.pairwise import cosine_similarity as cs
@@ -291,9 +291,7 @@ class Siamese_CrossSessionEvaluation(BaseEvaluation):
         for train, test in cv.split(data, y, groups):
             X_train, X_test, y_train, y_test = data[train], data[test], y[train], y[test]
             tf.keras.backend.clear_session()
-            #grid_clf = clone(clf)
             train_dataset = tf.data.Dataset.from_tensor_slices((X_train, y_train)).shuffle(1000).batch(128)
-            #print("classifer", grid_clf)
             model=grid_clf._siamese_embeddings(X_train.shape[1], X_train.shape[2])
             early_stopping_callback = EarlyStopping(monitor='val_loss', patience=10)
             history = model.fit(train_dataset,
@@ -304,11 +302,11 @@ class Siamese_CrossSessionEvaluation(BaseEvaluation):
          
         return average_session_results
     
-    def _open_set(self, data, y, grid_clf, groups=None):
+    def _open_set(self, X, y, grid_clf, groups=None):
         average_session_results=[]
         cv = LeaveOneGroupOut()
         for train_index, test_index in cv.split(X, y, groups=groups):
-            X_train, X_test = X[train_index], X[test_index]
+            X_train, X_test = [train_index], X[test_index]
             y_train, y_test = y[train_index], y[test_index]
 
             # Find the unique subject IDs in the training set

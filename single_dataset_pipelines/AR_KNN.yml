@@ -1,0 +1,26 @@
+name: AR+KNN
+
+dataset: 
+  - name: BrainInvaders15a
+    from: deeb.datasets.braininvaders15a
+    parameters: 
+      subject: 10
+      interval: [-0.2, 0.8]
+      paradigm: 'P300'
+
+pipeline: 
+  - name: AutoRegressive
+    from: deeb.pipelines.features
+    parameters: 
+      order: 2
+      
+
+  - name: KNeighborsClassifier
+    from: sklearn.neighbors
+    parameters: 
+      n_neighbors: 3
+      # shrinkage: 'auto'
+
+
+
+

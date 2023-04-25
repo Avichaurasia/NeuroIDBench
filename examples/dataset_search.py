@@ -7,7 +7,7 @@ from sklearn.svm import SVC
 
 
 from deeb.datasets import brainInvaders15a, mantegna2019, utils
-from deeb.evaluation.evaluation import CloseSetEvaluation
+#from deeb.evaluation.evaluation import CloseSetEvaluation
 from deeb.paradigms.p300 import P300
 from deeb.paradigms.p300 import N400
 import os
@@ -27,7 +27,7 @@ import pandas as pd
 
 
 from deeb import paradigms as deeb_paradigms
-from deeb.evaluation import (CloseSetEvaluation, OpenSetEvaluation,)
+#from deeb.evaluation import (CloseSetEvaluation, OpenSetEvaluation,)
 log = logging.getLogger(__name__)
 
 #print(os.listdir("./pipelines"))

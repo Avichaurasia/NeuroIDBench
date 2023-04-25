@@ -196,3 +196,64 @@ def generate_param_grid(pipeline_configs, context=None, logger=log):
             param_grid[config["name"]] = config["param_grid"]
 
     return param_grid
+
+def parse_pipelines_for_single_dataset(dir_path):
+    """
+    Takes in the path to a directory with pipeline configuration files and returns a dictionary
+    of pipelines.
+    Parameters
+    ----------
+    dir_path: str
+        Path to directory containing pipeline config .yml or .py files
+    Returns
+    -------
+    pipeline_configs: dict
+        Generated pipeline config dictionaries. Each entry has structure:
+        'name': string
+        'pipeline': sklearn.BaseEstimator
+        'paradigms': list of class names that are compatible with said pipeline
+    """
+    assert os.path.isdir(
+        os.path.abspath(dir_path)
+    ), "Given pipeline path {} is not valid".format(dir_path)
+
+    # get list of config files
+    yaml_files = glob(os.path.join(dir_path, "*.yml"))
+
+    pipeline_configs = []
+    for yaml_file in yaml_files:
+        with open(yaml_file, "r") as _file:
+            content = _file.read()
+
+            # load config
+            config_dict = yaml.load(content, Loader=yaml.FullLoader)
+            ppl = create_pipeline_from_config(config_dict["pipeline"])
+            if "param_grid" in config_dict:
+                pipeline_configs.append(
+                    {
+                        "paradigms": config_dict["paradigms"],
+                        "pipeline": ppl,
+                        "name": config_dict["name"],
+                        "param_grid": config_dict["param_grid"],
+                    }
+                )
+            else:
+                pipeline_configs.append(
+                    {
+                        "paradigms": config_dict["paradigms"],
+                        "pipeline": ppl,
+                        "name": config_dict["name"],
+                    }
+                )
+
+    # we can do the same for python defined pipeline
+    # TODO for python pipelines
+    python_files = glob(os.path.join(dir_path, "*.py"))
+
+    for python_file in python_files:
+        spec = importlib.util.spec_from_file_location("custom", python_file)
+        foo = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(foo)
+
+        pipeline_configs.append(foo.PIPELINE)
+    return pipeline_configs

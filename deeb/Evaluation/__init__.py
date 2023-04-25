@@ -5,7 +5,7 @@ either within-recording-session accuracy, across-session within-subject
 accuracy, across-subject accuracy, or other transfer learning settings.
 """
 # flake8: noqa
-from .evaluation import (
+from .evaluation_old import (
     CloseSetEvaluation,
     OpenSetEvaluation,
 )
