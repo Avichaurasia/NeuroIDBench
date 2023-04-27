@@ -116,7 +116,7 @@ class PowerSpectralDensity(Basepipeline):
         
         # Computing PSD with 4 time windows, 50% overlap using welch's method
         spectrum=epochs.compute_psd(method="welch", n_fft=samples_per_window,
-            n_overlap=samples_per_window//2, n_per_seg=None, tmin=tmin, tmax=tmax, verbose=False)
+            n_overlap=samples_per_window//2, n_per_seg=None, fmin=1, fmax=50, tmin=tmin, tmax=tmax, verbose=False)
         
         return spectrum.get_data(return_freqs=True)
     
@@ -158,7 +158,7 @@ class PowerSpectralDensity(Basepipeline):
                     welch_psd=psds[i][j]
                     X=[]
                     for fmin, fmax in FREQ_BANDS.values():
-
+                        
                         # Calculating average power in each frequency band
                         psds_band=welch_psd[(freqs >= fmin) & (freqs < fmax)].mean()
                         X.append(psds_band)

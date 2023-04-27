@@ -46,7 +46,7 @@ class BrainInvaders2015a(BaseDataset):
     def __init__(self):
         super().__init__(
             subjects=list(range(1, 44)),
-            sessions_per_subject=3,
+            sessions_per_subject=1,
             events=dict(Target=2, NonTarget=1),
             code="Brain Invaders 2015a",
             interval=[-0.1,0.9],

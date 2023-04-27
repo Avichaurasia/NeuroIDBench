@@ -7,6 +7,7 @@ from scipy.io import loadmat
 from deeb.datasets import download as dl
 from deeb.datasets.base import BaseDataset
 import mne
+import os
 
 #Lee2019_URL = "ftp://parrot.genomics.cn/gigadb/pub/10.5524/100001_101000/100542/"
 Lee2019_URL = "https://ftp.cngb.org/pub/gigadb/pub/10.5524/100001_101000/100542/"
@@ -43,7 +44,7 @@ class Lee2019(BaseDataset):
     
     def _make_raw_array(self, signal, ch_names, ch_type, sfreq, verbose=False):
         ch_names = [np.squeeze(c).item() for c in np.ravel(ch_names)]
-        print("len of channels: ", len(ch_names))
+        #print("len of channels: ", len(ch_names))
         if len(ch_names) != signal.shape[1]:
             raise ValueError
         info = create_info(
@@ -115,6 +116,8 @@ class Lee2019(BaseDataset):
                 Lee2019_URL, session, subject, self.code_suffix
             )
             data_path = dl.data_dl(url, self.code, path, force_update, verbose)
+            self.dataset_path=os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(data_path))))))
+            #print(data_path)
             subject_paths.append(data_path)
 
         return subject_paths

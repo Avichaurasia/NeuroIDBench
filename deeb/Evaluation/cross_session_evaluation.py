@@ -76,11 +76,22 @@ class CrossSessionEvaluation(BaseEvaluation):
         fnr_list=[] 
         frr_1_far_list=[]
         cv = LeaveOneGroupOut()
-        classifer=pipeline[1:]
+        classifer=pipeline[-1]
         mean_fpr = np.linspace(0, 1, 100)
         for train_index, test_index in cv.split(X, labels, groups=groups):
             X_train, X_test = X[train_index], X[test_index]
             y_train, y_test = labels[train_index], labels[test_index]
+
+            # Print the indices of X_train and X_test
+            #print("X_train indices", train_index)
+            #print("X_test indices", test_index)
+            # print("Train data shape", X_train.shape)
+            # print("Test data shape", X_test.shape)
+            # print("Authenticated train lables", len(np.where(y_train==1)[0]))
+            # print("Imposter test labels", len(np.where(y_train==0)[0]))
+            # print("Authenticated test labels", len(np.where(y_test==1)[0]))
+            # print("Imposter test labels", len(np.where(y_test==0)[0]))
+
 
             # Normalizing training and testing data using StandardScaler
             sc=StandardScaler()
@@ -91,7 +102,7 @@ class CrossSessionEvaluation(BaseEvaluation):
             oversampler = RandomOverSampler(random_state=42)
             X_train, y_train = oversampler.fit_resample(X_train, y_train)
             clf=clone(classifer)
-            #print("cloned classifer", clf)
+
             # Training the model
             model=clf.fit(X_train,y_train)
 
@@ -107,18 +118,19 @@ class CrossSessionEvaluation(BaseEvaluation):
             tpr_list.append(inter_tpr)
             fnr_list.append(fnr)
             frr_1_far_list.append(frr_1_far)
-            average_scores=score._calculate_average_scores(accuracy_list, tpr_list, eer_list, mean_fpr, auc_list, frr_1_far_list)
+        average_scores=score._calculate_average_scores(accuracy_list, tpr_list, eer_list, mean_fpr, auc_list, frr_1_far_list)
         return average_scores
 
 
-    def _close_set(self, data, pipeline, groups=None):
-        for subject in tqdm(np.unique(data.subject), desc="CrossSession (close-set)"):
-            df_subj=data.copy(deep=True)
-            df_subj['Label']=0
-            df_subj.loc[df_subj['Subject'] == subject, 'Label'] = 1
-            labels=np.array(df_subj['Label'])
-            X=np.array(df_subj.drop(['Label','Event_id','Subject','Session'],axis=1))
-            average_scores=self._authenticate_single_subject_close_set(X,labels, pipeline, groups=groups)
+    def _close_set(self, df_subj, pipeline, groups=None):
+        # for subject in tqdm(np.unique(data.subject), desc="CrossSession (close-set)"):
+        #     df_subj=data.copy(deep=True)
+        #     df_subj['Label']=0
+        #     df_subj.loc[df_subj['Subject'] == subject, 'Label'] = 1
+        labels=np.array(df_subj['Label'])
+        X=np.array(df_subj.drop(['Label','Event_id','Subject','session'],axis=1))
+        return self._authenticate_single_subject_close_set(X,labels, pipeline, groups=groups)
+        #return average_scores
 
 #########################################################################################################################################################
 ##########################################################################################################################################################
@@ -126,8 +138,6 @@ class CrossSessionEvaluation(BaseEvaluation):
 ##########################################################################################################################################################
 ##########################################################################################################################################################
 
-
-    # Need to make the open-set scenario for this where subjects used in the training from one sessions doesn't get used in testing
     def _authenticate_single_subject_open_set(X,labels, pipeline, groups=None):
         accuracy_list=[]
         auc_list=[]
@@ -139,11 +149,41 @@ class CrossSessionEvaluation(BaseEvaluation):
         fnr_list=[] 
         frr_1_far_list=[]
         cv = LeaveOneGroupOut()
-        classifer=pipeline[1:]
+        classifer=pipeline[-1]
         mean_fpr = np.linspace(0, 1, 100)
         for train_index, test_index in cv.split(X, labels, groups=groups):
             X_train, X_test = X[train_index], X[test_index]
             y_train, y_test = labels[train_index], labels[test_index]
+            groups_train, groups_test = groups[train_index], groups[test_index]
+        
+            # Get authenticated and rejected subjects from training data
+            auth_subjects = np.unique(X_train[y_train == 1, -1])
+            rej_subjects = np.unique(X_train[y_train == 0, -1])
+            print("Authenticated subjects", auth_subjects)
+            print("Rejected subjects", rej_subjects)
+
+            np.random.shuffle(rej_subjects)
+
+            # Select 75% of rejected subjects for training
+            n_train_rej = int(np.ceil(0.75 * len(rej_subjects)))
+            train_rej_subjects = rej_subjects[:n_train_rej]
+            test_rej_subjects = rej_subjects[n_train_rej:]
+
+            # Combine authenticated and selected rejected subjects for training and testing
+            train_subjects = np.concatenate((auth_subjects, train_rej_subjects))
+            test_subjects = np.concatenate((auth_subjects, test_rej_subjects))
+        
+            # Get indices for training and testing data
+            train_indices = np.isin(X_train[:, -1], train_subjects)
+            test_indices = np.isin(X_test[:, -1], test_subjects)
+            
+            # Filter data based on indices
+            X_train = X_train[train_indices]
+            y_train = y_train[train_indices]
+            X_test = X_test[test_indices]
+            y_test = y_test[test_indices]
+            groups_train = groups_train[train_indices]
+            groups_test = groups_test[test_indices]
 
             # Normalizing training and testing data using StandardScaler
             sc=StandardScaler()
@@ -154,7 +194,7 @@ class CrossSessionEvaluation(BaseEvaluation):
             oversampler = RandomOverSampler(random_state=42)
             X_train, y_train = oversampler.fit_resample(X_train, y_train)
             clf=clone(classifer)
-            #print("cloned classifer", clf)
+            
             # Training the model
             model=clf.fit(X_train,y_train)
 
@@ -170,19 +210,17 @@ class CrossSessionEvaluation(BaseEvaluation):
             tpr_list.append(inter_tpr)
             fnr_list.append(fnr)
             frr_1_far_list.append(frr_1_far)
-            average_scores=score._calculate_average_scores(accuracy_list, tpr_list, eer_list, mean_fpr, auc_list, frr_1_far_list)
+        average_scores=score._calculate_average_scores(accuracy_list, tpr_list, eer_list, mean_fpr, auc_list, frr_1_far_list)
         return average_scores
     
-    def _open_set(self, data, pipeline, groups=None):
-            for subject in tqdm(np.unique(data.subject), desc="CrossSession (close-set)"):
-                df_subj=data.copy(deep=True)
-                df_subj['Label']=0
-                df_subj.loc[df_subj['Subject'] == subject, 'Label'] = 1
-                labels=np.array(df_subj['Label'])
-                X=np.array(df_subj.drop(['Label','Event_id','Subject','Session'],axis=1))
-                average_scores=self._authenticate_single_subject_open_set(X,labels, pipeline, groups=groups)
-
-            return average_scores
+    def _open_set(self, df_subj, pipeline, groups=None):
+            # for subject in tqdm(np.unique(data.subject), desc="CrossSession (close-set)"):
+            #     df_subj=data.copy(deep=True)
+            #     df_subj['Label']=0
+            #     df_subj.loc[df_subj['Subject'] == subject, 'Label'] = 1
+        labels=np.array(df_subj['Label'])
+        X=np.array(df_subj.drop(['Label','Event_id','Subject','session'],axis=1))
+        return self._authenticate_single_subject_open_set(X,labels, pipeline, groups=groups)
 
 ##########################################################################################################################################################
 ##########################################################################################################################################################
@@ -190,21 +228,104 @@ class CrossSessionEvaluation(BaseEvaluation):
 ##########################################################################################################################################################
 ##########################################################################################################################################################
 
-    def evaluate(self, dataset, pipelines):
+
+    def _prepare_dataset(self, dataset, features):
+        df_final=pd.DataFrame()
+        for feat in range(0, len(features)-1):
+            df=features[feat].get_data(dataset, self.paradigm)
+            df_final = pd.concat([df_final, df], axis=1)
+
+        # Check if the dataframe contains duplicate columns
+        if df_final.columns.duplicated().any():
+            df_final = df_final.loc[:, ~df_final.columns.duplicated(keep='first')]
+
+        # Drop rows where "Subject" value_count is less than 4
+        subject_counts = df_final["Subject"].value_counts()
+        valid_subjects = subject_counts[subject_counts >= 4].index
+        df_final = df_final[df_final["Subject"].isin(valid_subjects)]
+
+        return df_final
+
+    def _evaluate(self, dataset, pipelines, param_grid):
         if not self.is_valid(dataset):
-            raise AssertionError("Dataset is not appropriate for cross session evaluation")  
+            raise ValueError("Dataset is not appropriate for cross session evaluation")  
 
         results_close_set=[]
         results_open_set=[]  
         for key, features in pipelines.items():
-            data=features[0].get_data(dataset, self.paradigm)
-            groups = data.session.values
+            #data=features[0].get_data(dataset, self.paradigm)
+            data=self._prepare_dataset(dataset, features)
+            for subject in tqdm(np.unique(data.Subject), desc=f"{key}-CrossSessionEvaluation"):
+                df_subj=data.copy(deep=True)
+                df_subj['Label']=0
+                df_subj.loc[df_subj['Subject'] == subject, 'Label'] = 1
+                
+                # Print the value_counts of subjects and sessions in the dataframe
+                #print("value_counts", df_subj[['Subject','session']].value_counts())
+                groups = df_subj.session.values
 
-            if self.return_close_set:
-                close_set_scores=self._close_set(data, y, pipelines[key], groups=groups)
+                if self.return_close_set == False and self.return_open_set==False:
+                    message = "Please choose either close-set or open-set scenario for the evaluation"
+                    raise ValueError(message)
 
-            elif self.return_open_set:
-                open_set_scores=self._open_set(data, pipelines[key], groups=groups)  
+                if self.return_close_set:
+                    close_set_scores=self._close_set(df_subj, pipelines[key], groups=groups)
+                    mean_accuracy, mean_auc, mean_eer, mean_tpr, tprs_upper, tprr_lower, std_auc, mean_frr_1_far=close_set_scores
+                    res_close_set = {
+                       # "time": duration / 5.0,  # 5 fold CV
+                        "eval Type": "Close Set",
+                        "dataset": dataset.code,
+                        "pipeline": key,
+                        "subject": subject,
+                        #"session": session,
+                        "frr_1_far": mean_frr_1_far,
+                        "accuracy": mean_accuracy,
+                        "auc": mean_auc,
+                        "eer": mean_eer,
+                        "tpr": mean_tpr,
+                        "tprs_upper": tprs_upper,
+                        "tprs_lower": tprr_lower,
+                        "std_auc": std_auc,
+                        #"n_samples": len(data)  # not training sample
+                        #"n_channels": data.columns.size
+                        }
+                    results_close_set.append(res_close_set)
+
+                elif self.return_open_set:
+                    open_set_scores=self._open_set(df_subj, pipelines[key], groups=groups)
+                    mean_accuracy, mean_auc, mean_eer, mean_tpr, tprs_upper, tprr_lower, std_auc, mean_frr_1_far=open_set_scores
+                    res_open_set = {
+                       # "time": duration / 5.0,  # 5 fold CV
+                        "eval Type": "Open Set",
+                        "dataset": dataset.code,
+                        "pipeline": key,
+                        "subject": subject,
+                        #"session": session,
+                        "frr_1_far": mean_frr_1_far,
+                        "accuracy": mean_accuracy,
+                        "auc": mean_auc,
+                        "eer": mean_eer,
+                        "tpr": mean_tpr,
+                        "tprs_upper": tprs_upper,
+                        "tprs_lower": tprr_lower,
+                        "std_auc": std_auc,
+                        #"n_samples": len(data)  # not training sample
+                        #"n_channels": data.columns.size
+                        }
+                    results_open_set.append(res_open_set)
+            
+        return results_close_set, results_open_set
+    
+    def evaluate(self, dataset, pipelines, param_grid):
+        #yield from self._evaluate(dataset, pipelines, param_grid)
+        results_close_set, results_open_set=self._evaluate(dataset, pipelines, param_grid)
+        results_path=os.path.join(
+            dataset.dataset_path,
+            "Results",
+            "CrossSessionEvaluation"
+            #f"{dataset.code}_CloseSetEvaluation")
+        )
+        return results_close_set, results_open_set, results_path
 
     def is_valid(self, dataset):
         return dataset.n_sessions > 1 

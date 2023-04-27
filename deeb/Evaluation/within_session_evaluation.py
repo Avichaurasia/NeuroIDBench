@@ -196,8 +196,9 @@ class WithinSessionEvaluation(BaseEvaluation):
 
             # Assigning 75% samples of authenticated subject to training set
             num_rows = int(len(df_authenticated) * 0.75)
-            # Assigning the remaining 25% samples of authenticated subject to testing set
             df_authenticated_train=df_authenticated.sample(n=num_rows)
+
+            # Assigning the remaining 25% samples of authenticated subject to testing set
             df_authenticated_test=df_authenticated.drop(df_authenticated_train.index)
             
             train_set=pd.concat([df_authenticated_train, train_set], axis=0)
@@ -209,7 +210,7 @@ class WithinSessionEvaluation(BaseEvaluation):
             tpr_list.append(inter_tpr)
             fnr_list.append(fnr)
             frr_1_far_list.append(frr_1_far)
-            average_scores=score._calculate_average_scores(accuracy_list, tpr_list, eer_list, mean_fpr, auc_list, frr_1_far_list)
+        average_scores=score._calculate_average_scores(accuracy_list, tpr_list, eer_list, mean_fpr, auc_list, frr_1_far_list)
         return average_scores
 
     def _open_set(self, df_session, pipeline, subject):

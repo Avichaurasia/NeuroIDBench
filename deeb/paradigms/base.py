@@ -215,8 +215,8 @@ class BaseParadigm(metaclass=ABCMeta):
                 #   epochs = epochs.resample(self.resample)
                 # rescale to work with uV
 
-            ar = AutoReject(picks=picks, thresh_method='random_search')
-            epochs=ar.fit_transform(epochs)
+            #ar = AutoReject(picks=picks, thresh_method='random_search')
+            #epochs=ar.fit_transform(epochs)
             
                 #cleaned_epochs = ar.fit_transform(epochs.copy())
                 #cleaned_epochs.apply_baseline(baseline)
