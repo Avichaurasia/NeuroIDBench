@@ -30,12 +30,16 @@ from deeb.paradigms.p300 import P300
 
 # Intializing the datasets 
 lee = Lee2019()
-lee.subject_list = lee.subject_list[0:5]
+mantegna=Mantegna2019()
+lee.download()
+#lee.subject_list=lee.subject_list[0:1]
+#lee.subject_list = lee.subject_list[0:5]
+#print(lee.get_data())
 
-lee.get_data()
+#lee.get_data()
 
 
-n400=N400()
+#n400=N400()
 
 # _, sub, meta=n400.get_data(erpcore, return_epochs=True)
 # print(sub)

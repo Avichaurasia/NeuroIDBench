@@ -40,7 +40,7 @@ def _evaluate():
     brain=BrainInvaders2015a()
     mantegna=Mantegna2019()
     lee = Lee2019()
-    lee.subject_list = lee.subject_list[0:5]
+    lee.subject_list = lee.subject_list[0:3]
 
     # mantegna.subject_list = mantegna.subject_list[0:10]
 

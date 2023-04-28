@@ -65,7 +65,7 @@ class CrossSessionEvaluation(BaseEvaluation):
 ##########################################################################################################################################################
     
 
-    def _authenticate_single_subject_close_set(self, X, labels, pipeline, groups=None):
+    def _authenticate_single_subject_close_set(self, X, labels, pipeline, session_groups=None):
         accuracy_list=[]
         auc_list=[]
         eer_list=[]
@@ -78,7 +78,7 @@ class CrossSessionEvaluation(BaseEvaluation):
         cv = LeaveOneGroupOut()
         classifer=pipeline[-1]
         mean_fpr = np.linspace(0, 1, 100)
-        for train_index, test_index in cv.split(X, labels, groups=groups):
+        for train_index, test_index in cv.split(X, labels, groups=session_groups):
             X_train, X_test = X[train_index], X[test_index]
             y_train, y_test = labels[train_index], labels[test_index]
 
@@ -122,14 +122,15 @@ class CrossSessionEvaluation(BaseEvaluation):
         return average_scores
 
 
-    def _close_set(self, df_subj, pipeline, groups=None):
+    def _close_set(self, df_subj, pipeline):
         # for subject in tqdm(np.unique(data.subject), desc="CrossSession (close-set)"):
         #     df_subj=data.copy(deep=True)
         #     df_subj['Label']=0
         #     df_subj.loc[df_subj['Subject'] == subject, 'Label'] = 1
+        session_groups = df_subj.session.values
         labels=np.array(df_subj['Label'])
         X=np.array(df_subj.drop(['Label','Event_id','Subject','session'],axis=1))
-        return self._authenticate_single_subject_close_set(X,labels, pipeline, groups=groups)
+        return self._authenticate_single_subject_close_set(X,labels, pipeline, session_groups=session_groups)
         #return average_scores
 
 #########################################################################################################################################################
@@ -138,7 +139,7 @@ class CrossSessionEvaluation(BaseEvaluation):
 ##########################################################################################################################################################
 ##########################################################################################################################################################
 
-    def _authenticate_single_subject_open_set(X,labels, pipeline, groups=None):
+    def _authenticate_single_subject_open_set(self, X,labels, subject_ids,  pipeline, session_groups=None):
         accuracy_list=[]
         auc_list=[]
         eer_list=[]
@@ -151,20 +152,17 @@ class CrossSessionEvaluation(BaseEvaluation):
         cv = LeaveOneGroupOut()
         classifer=pipeline[-1]
         mean_fpr = np.linspace(0, 1, 100)
-        for train_index, test_index in cv.split(X, labels, groups=groups):
+        for train_index, test_index in cv.split(X, subject_ids, groups=session_groups):
             X_train, X_test = X[train_index], X[test_index]
             y_train, y_test = labels[train_index], labels[test_index]
-            groups_train, groups_test = groups[train_index], groups[test_index]
-        
-            # Get authenticated and rejected subjects from training data
-            auth_subjects = np.unique(X_train[y_train == 1, -1])
-            rej_subjects = np.unique(X_train[y_train == 0, -1])
-            print("Authenticated subjects", auth_subjects)
-            print("Rejected subjects", rej_subjects)
+            subj_train, subj_test = subject_ids[train_index], subject_ids[test_index]
 
+            # Get authenticated and rejected subjects from training data
+            auth_subjects = np.unique(subj_train[y_train == 1])
+            rej_subjects = np.unique(subj_train[y_train == 0])
             np.random.shuffle(rej_subjects)
 
-            # Select 75% of rejected subjects for training
+            # Select 75% of rejected subjects for training and 25% for testing
             n_train_rej = int(np.ceil(0.75 * len(rej_subjects)))
             train_rej_subjects = rej_subjects[:n_train_rej]
             test_rej_subjects = rej_subjects[n_train_rej:]
@@ -172,18 +170,16 @@ class CrossSessionEvaluation(BaseEvaluation):
             # Combine authenticated and selected rejected subjects for training and testing
             train_subjects = np.concatenate((auth_subjects, train_rej_subjects))
             test_subjects = np.concatenate((auth_subjects, test_rej_subjects))
-        
+
             # Get indices for training and testing data
-            train_indices = np.isin(X_train[:, -1], train_subjects)
-            test_indices = np.isin(X_test[:, -1], test_subjects)
+            train_indices = np.isin(subj_train, train_subjects)
+            test_indices = np.isin(subj_test, test_subjects)
             
             # Filter data based on indices
             X_train = X_train[train_indices]
             y_train = y_train[train_indices]
             X_test = X_test[test_indices]
             y_test = y_test[test_indices]
-            groups_train = groups_train[train_indices]
-            groups_test = groups_test[test_indices]
 
             # Normalizing training and testing data using StandardScaler
             sc=StandardScaler()
@@ -213,14 +209,16 @@ class CrossSessionEvaluation(BaseEvaluation):
         average_scores=score._calculate_average_scores(accuracy_list, tpr_list, eer_list, mean_fpr, auc_list, frr_1_far_list)
         return average_scores
     
-    def _open_set(self, df_subj, pipeline, groups=None):
+    def _open_set(self, df_subj, pipeline):
             # for subject in tqdm(np.unique(data.subject), desc="CrossSession (close-set)"):
             #     df_subj=data.copy(deep=True)
             #     df_subj['Label']=0
             #     df_subj.loc[df_subj['Subject'] == subject, 'Label'] = 1
+        session_groups = df_subj.session.values
+        subject_ids=df_subj.Subject.values
         labels=np.array(df_subj['Label'])
         X=np.array(df_subj.drop(['Label','Event_id','Subject','session'],axis=1))
-        return self._authenticate_single_subject_open_set(X,labels, pipeline, groups=groups)
+        return self._authenticate_single_subject_open_set(X,labels, subject_ids, pipeline, session_groups=session_groups)
 
 ##########################################################################################################################################################
 ##########################################################################################################################################################
@@ -262,14 +260,15 @@ class CrossSessionEvaluation(BaseEvaluation):
                 
                 # Print the value_counts of subjects and sessions in the dataframe
                 #print("value_counts", df_subj[['Subject','session']].value_counts())
-                groups = df_subj.session.values
+                #groups = df_subj.session.values
 
                 if self.return_close_set == False and self.return_open_set==False:
                     message = "Please choose either close-set or open-set scenario for the evaluation"
                     raise ValueError(message)
 
                 if self.return_close_set:
-                    close_set_scores=self._close_set(df_subj, pipelines[key], groups=groups)
+                    
+                    close_set_scores=self._close_set(df_subj, pipelines[key])
                     mean_accuracy, mean_auc, mean_eer, mean_tpr, tprs_upper, tprr_lower, std_auc, mean_frr_1_far=close_set_scores
                     res_close_set = {
                        # "time": duration / 5.0,  # 5 fold CV
@@ -292,7 +291,8 @@ class CrossSessionEvaluation(BaseEvaluation):
                     results_close_set.append(res_close_set)
 
                 elif self.return_open_set:
-                    open_set_scores=self._open_set(df_subj, pipelines[key], groups=groups)
+                    #print("groups", groups)
+                    open_set_scores=self._open_set(df_subj, pipelines[key])
                     mean_accuracy, mean_auc, mean_eer, mean_tpr, tprs_upper, tprr_lower, std_auc, mean_frr_1_far=open_set_scores
                     res_open_set = {
                        # "time": duration / 5.0,  # 5 fold CV
