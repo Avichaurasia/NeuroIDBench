@@ -25,7 +25,7 @@ class Results():
         class that will abstract result storage
     """
 
-    def _add_results(self, results_close_set, results_open_set, results_path):
+    def _add_results(self, results, results_path, scenario):
         """Add results dataframe to path dataset.datasetpath as json file."""
 
         if not os.path.exists(results_path):
@@ -49,17 +49,25 @@ class Results():
         #     with open(os.path.join(results_path, result['pipeline'] + '.json'), 'w') as f:
         #         json.dump(result, f, cls=NumpyEncoder)
 
-        with open(os.path.join(results_path, "results_close_set.json"), 'w') as f:
-            json.dump(results_close_set, f, cls=NumpyEncoder)
+        #print("scenario",scenario)
+        #print("lenght of scenario",len(scenario))
+        if ("close_set" in scenario) and ("open_set" in scenario):
+            results_close_set, results_open_set = results
+            with open(os.path.join(results_path, "results_close_set.json"), 'w') as f:
+                json.dump(results_close_set, f, cls=NumpyEncoder)
 
-        with open(os.path.join(results_path, "results_open_set.json"), 'w') as f:
-            json.dump(results_open_set, f, cls=NumpyEncoder)
+            with open(os.path.join(results_path, "results_open_set.json"), 'w') as f:
+                json.dump(results_open_set, f, cls=NumpyEncoder)
+        else:
+            fname="results_"+scenario+".json"
+            with open(os.path.join(results_path, fname), 'w') as f:
+                json.dump(results, f, cls=NumpyEncoder)
 
         # getting average results across subjects
-        average_results = self._add_dataframe(results_path)
+        average_results = self._add_dataframe(results_path, scenario)
         return average_results
     
-    def _add_dataframe(self, results_path):
+    def _add_dataframe(self, results_path, scenario):
         """Average results across subjects."""
 
         # # Read all the json files in the results_path, merge them into a single list and convert it to a dataframe
@@ -69,10 +77,26 @@ class Results():
         #         with open(os.path.join(results_path, file), 'r') as f:
         #             results_list.append(json.load(f))
 
+        if ("close_set" in scenario) and ("open_set" in scenario):
+            with open(os.path.join(results_path, "results_close_set.json"), 'r') as f:
+                results_list = json.load(f) 
+            df_results_close_set=pd.DataFrame(results_list)
 
-        with open(os.path.join(results_path, "results_close_set.json"), 'r') as f:
-            results_list = json.load(f) 
-        df_results=pd.DataFrame(results_list)
+            with open(os.path.join(results_path, "results_open_set.json"), 'r') as f:
+                results_list_open = json.load(f) 
+            df_results_open_set=pd.DataFrame(results_list_open)
+            df_results = pd.concat([df_results_close_set, df_results_open_set], ignore_index=True)
+
+        #if (len(scenario)==1):
+        else:
+            fname="results_"+scenario+".json"
+            with open(os.path.join(results_path, fname), 'r') as f:
+                results_list = json.load(f) 
+            df_results_close_set=pd.DataFrame(results_list)
+            df_results = df_results_close_set
+
+        # Concentrate the results from both close set and open set
+        
 
         # getting average results across subjects
         # averaged_results = df_results.groupby(['dataset', 'pipeline']).agg({

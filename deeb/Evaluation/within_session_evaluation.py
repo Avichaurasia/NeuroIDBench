@@ -318,28 +318,29 @@ class WithinSessionEvaluation(BaseEvaluation):
                         #"n_channels": data.columns.size
                         }
                         results_open_set.append(res_open_set)
-                        #results_open_set.append(open_set_scores)  
-                    # else:
-                    #     print("No evaluation type selected")
-                    #     break
 
-            # if results_close_set:
-            #     if (len(results_close_set) == 1):
-            #         results_close_set = results_close_set[0]
-            #     else:
-            #         results_close_set = np.mean(results_close_set, axis=0)
+        if self.return_close_set ==True and self.return_open_set== False:
+            scenario='close_set'
+            return results_close_set, scenario
+            #results_close_set=pd.DataFrame(results_close_set)
 
-            # if results_open_set:
-            #     if (len(results_open_set) == 1):
-            #         results_open_set = results_open_set[0]
-            #     else:
-            #         results_open_set = np.mean(results_open_set, axis=0)
+        if self.return_close_set ==False and self.return_open_set== True:
+            scenario='open_set'
+            return results_open_set, scenario
+        
+        if self.return_close_set ==True and self.return_open_set== True:
+            scenario=['close_set', 'open_set']
+            return (results_close_set, results_open_set), scenario
+            #results_open_set=pd.DataFrame(results_open_set)
 
-        return results_close_set, results_open_set
+            # results_close_set=pd.DataFrame(results_close_set)
+            # results_close_set=results_close_set.sort_values(by=['dataset', 'pipeline', 'subject', 'session'])
+                       
+        #return results_close_set, results_open_set
     
     def evaluate(self, dataset, pipelines, param_grid):
         #yield from self._evaluate(dataset, pipelines, param_grid)
-        results_close_set, results_open_set=self._evaluate(dataset, pipelines, param_grid)
+        results, scenario=self._evaluate(dataset, pipelines, param_grid)
         #print(type(results))
         results_path=os.path.join(
             dataset.dataset_path,
@@ -347,7 +348,7 @@ class WithinSessionEvaluation(BaseEvaluation):
             "WithinSessionEvaluation"
             #f"{dataset.code}_CloseSetEvaluation")
         )
-        return results_close_set, results_open_set, results_path
+        return results, results_path, scenario
     
     def is_valid(self, dataset):
         return True

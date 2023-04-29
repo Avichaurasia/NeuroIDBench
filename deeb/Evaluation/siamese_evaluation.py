@@ -131,6 +131,8 @@ class Siamese_WithinSessionEvaluation(BaseEvaluation):
 
             results, results_by_class=self._predict(model, X_test, y_test) 
             #results, results_by_class=self._predict(model, X_test, y_test) 
+
+        return results, results_by_class
     
     def _open_set(self, data, y, grid_clf):
         #for name, clf in pipelines.items():
@@ -149,7 +151,7 @@ class Siamese_WithinSessionEvaluation(BaseEvaluation):
                                         callbacks=[early_stopping_callback])
 
             results, results_by_class=self._predict(model, X_test, y_test) 
-        return 0
+        return results, results_by_class
  
     def evaluate(self, dataset, pipelines, param_grid):
         y=[]
@@ -309,19 +311,39 @@ class Siamese_CrossSessionEvaluation(BaseEvaluation):
             X_train, X_test = [train_index], X[test_index]
             y_train, y_test = y[train_index], y[test_index]
 
-            # Find the unique subject IDs in the training set
-            train_subjects = np.unique(y_train)
+            # # Find the unique subject IDs in the training set
+            # train_subjects = np.unique(y_train)
 
-            # Exclude the subjects used in training from the test set
-            test_subjects = np.setdiff1d(np.unique(y_test), train_subjects)
+            # # Exclude the subjects used in training from the test set
+            # test_subjects = np.setdiff1d(np.unique(y_test), train_subjects)
 
-            # Filter the test set to include only the test subjects
-            test_mask = np.isin(y_test, test_subjects)
-            X_test = X_test[test_mask]
-            y_test = y_test[test_mask]
+            # # Filter the test set to include only the test subjects
+            # test_mask = np.isin(y_test, test_subjects)
+            # X_test = X_test[test_mask]
+            # y_test = y_test[test_mask]
+
+            # Get the unique subject_ids from y_train
+            train_subject_ids = np.unique(y_train)
+
+            # Randomize the subject_ids
+            np.random.shuffle(train_subject_ids)
+
+            # Select 75% of the subject_ids to be used for training
+            train_subject_ids = train_subject_ids[:int(0.75 * len(train_subject_ids))]
+
+            # remove the subject_ids from y_test that are present in train_subject_ids
+            test_subject_ids = np.unique(y_test)
+            test_subject_ids = [subject_id for subject_id in test_subject_ids if subject_id not in train_subject_ids]
+
+            # Select the samples from X_test and y_test that correspond to the test_subject_ids
+            X_test = X_test[np.isin(y_test, test_subject_ids)]
+            y_test = y_test[np.isin(y_test, test_subject_ids)]
+
+            # Select the samples from X_train and y_train that correspond to the train_subject_ids
+            X_train = X_train[np.isin(y_train, train_subject_ids)]
+            y_train = y_train[np.isin(y_train, train_subject_ids)]
             tf.keras.backend.clear_session()
             train_dataset = tf.data.Dataset.from_tensor_slices((X_train, y_train)).shuffle(1000).batch(128)
-
             model=grid_clf._siamese_embeddings(X_train.shape[1], X_train.shape[2])
             early_stopping_callback = EarlyStopping(monitor='val_loss', patience=10)
             history = model.fit(train_dataset,
@@ -337,7 +359,9 @@ class Siamese_CrossSessionEvaluation(BaseEvaluation):
         if not self.is_valid(dataset):
             raise AssertionError("Dataset is not appropriate for evaluation")
 
-        y=[]
+        #y=[]
+        results_close_set=[]
+        results_open_set=[]
         X, _, metadata=self.paradigm.get_data(dataset)
         if(dataset.paradigm == "p300"):
             target_index=metadata[metadata['event_id']=="Target"].index.tolist()
@@ -364,9 +388,31 @@ class Siamese_CrossSessionEvaluation(BaseEvaluation):
             grid_clf = clone(clf)
             if self.return_close_set:
                 close_set_scores=self._close_set(data, y, grid_clf, groups=groups)
+                mean_accuracy, mean_auc, mean_eer, mean_tpr, tprs_upper, tprr_lower, std_auc, mean_frr_1_far=close_set_scores
+                # res_open_set = {
+                #        # "time": duration / 5.0,  # 5 fold CV
+                #         "eval Type": "Open Set",
+                #         "dataset": dataset.code,
+                #         "pipeline": name,
+                #         # "subject": subject,
+                #         # "session": session,
+                #         "frr_1_far": mean_frr_1_far,
+                #         "accuracy": mean_accuracy,
+                #         "auc": mean_auc,
+                #         "eer": mean_eer,
+                #         "tpr": mean_tpr,
+                #         "tprs_upper": tprs_upper,
+                #         "tprs_lower": tprr_lower,
+                #         "std_auc": std_auc,
+                #         #"n_samples": len(data)  # not training sample
+                #         #"n_channels": data.columns.size
+                #         }
+                # results_open_set.append(res_open_set)
 
             elif self.return_open_set:
-                open_set_scores=self._open_set(data, y, grid_clf, groups=groups)          
+                open_set_scores=self._open_set(data, y, grid_clf, groups=groups) 
+                mean_accuracy, mean_auc, mean_eer, mean_tpr, tprs_upper, tprr_lower, std_auc, mean_frr_1_far=open_set_scores
+         
         return 0
     
     def is_valid(self, dataset):

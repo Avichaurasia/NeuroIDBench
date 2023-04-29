@@ -314,18 +314,31 @@ class CrossSessionEvaluation(BaseEvaluation):
                         }
                     results_open_set.append(res_open_set)
             
-        return results_close_set, results_open_set
+        #return results_close_set, results_open_set
+
+        if self.return_close_set ==True and self.return_open_set== False:
+            scenario='close_set'
+            return results_close_set, scenario
+            #results_close_set=pd.DataFrame(results_close_set)
+
+        if self.return_close_set ==False and self.return_open_set== True:
+            scenario='open_set'
+            return results_open_set, scenario
+        
+        if self.return_close_set ==True and self.return_open_set== True:
+            scenario=['close_set', 'open_set']
+            return (results_close_set, results_open_set), scenario
     
     def evaluate(self, dataset, pipelines, param_grid):
         #yield from self._evaluate(dataset, pipelines, param_grid)
-        results_close_set, results_open_set=self._evaluate(dataset, pipelines, param_grid)
+        results, scenario=self._evaluate(dataset, pipelines, param_grid)
         results_path=os.path.join(
             dataset.dataset_path,
             "Results",
             "CrossSessionEvaluation"
             #f"{dataset.code}_CloseSetEvaluation")
         )
-        return results_close_set, results_open_set, results_path
+        return results, results_path, scenario
 
     def is_valid(self, dataset):
         return dataset.n_sessions > 1 

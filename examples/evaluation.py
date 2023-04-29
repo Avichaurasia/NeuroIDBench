@@ -11,6 +11,7 @@ from deeb.paradigms.p300 import P300
 from deeb.datasets.brainInvaders15a import BrainInvaders2015a
 from deeb.datasets.mantegna2019 import Mantegna2019
 from deeb.datasets.draschkow2018 import Draschkow2018
+from deeb.datasets.erpCoreN400 import ERPCOREN400
 from deeb.datasets.won2022 import Won2022
 from deeb.pipelines.features import AutoRegressive 
 from deeb.pipelines.features import PowerSpectralDensity 
@@ -39,8 +40,9 @@ def _evaluate():
     won = Won2022()
     brain=BrainInvaders2015a()
     mantegna=Mantegna2019()
-    lee = Lee2019()
-    lee.subject_list = lee.subject_list[0:3]
+    erp_core=ERPCOREN400()
+    # lee = Lee2019()
+    # lee.subject_list = lee.subject_list[0:3]
 
     # mantegna.subject_list = mantegna.subject_list[0:10]
 
@@ -59,17 +61,17 @@ def _evaluate():
 
     # Intializing the pipelines
     pipeline={}
-    pipeline['AR+PSD+SVM']=make_pipeline(PowerSpectralDensity(), SVC(kernel='rbf', probability=True))
-    #pipeline['PSD+SVM']=make_pipeline(AutoRegressive(order=6), PowerSpectralDensity(), SVC(kernel='rbf', probability=True))
-    #pipeline['AR+PSD+LR']=make_pipeline(AutoRegressive(order=6), PowerSpectralDensity(), LogisticRegression())
+   # pipeline['AR+PSD+SVM']=make_pipeline(PowerSpectralDensity(), SVC(kernel='rbf', probability=True))
+    # pipeline['AR+PSD+SVM']=make_pipeline(AutoRegressive(order=6), PowerSpectralDensity(), SVC(kernel='rbf', probability=True))
+    # pipeline['AR+PSD+LR']=make_pipeline(AutoRegressive(order=6), PowerSpectralDensity(), LogisticRegression())
     # #pipeline['PSD+LR']=make_pipeline(AutoRegressive(order=6), PowerSpectralDensity(), LogisticRegression())
-    #pipeline['AR+PSD+LDA']=make_pipeline(AutoRegressive(order=6), PowerSpectralDensity(), LDA(solver='lsqr', shrinkage='auto'))
+    # pipeline['AR+PSD+LDA']=make_pipeline(AutoRegressive(order=6), PowerSpectralDensity(), LDA(solver='lsqr', shrinkage='auto'))
     # #pipeline['PSD+LDA']=make_pipeline(AutoRegressive(order=6), PowerSpectralDensity(), LDA(solver='lsqr', shrinkage='auto'))
-    #pipeline['AR+PSD+NB']=make_pipeline(AutoRegressive(order=6), PowerSpectralDensity(), GaussianNB())
+    pipeline['AR+PSD+NB']=make_pipeline(AutoRegressive(order=6), PowerSpectralDensity(), GaussianNB())
     # #pipeline['PSD+NB']=make_pipeline(AutoRegressive(order=6), PowerSpectralDensity(), GaussianNB())
-    #pipeline['AR+PSD+KNN']=make_pipeline(AutoRegressive(order=6), PowerSpectralDensity(), KNeighborsClassifier(n_neighbors=3))
-    #pipeline['PSD+KNN']=make_pipeline(AutoRegressive(order=6), PowerSpectralDensity(), KNeighborsClassifier(n_neighbors=3))
-   # pipeline['AR+PSD+RF']=make_pipeline(AutoRegressive(order=6), PowerSpectralDensity(), RandomForestClassifier())
+    # pipeline['AR+PSD+KNN']=make_pipeline(AutoRegressive(order=6), PowerSpectralDensity(), KNeighborsClassifier(n_neighbors=3))
+    # #pipeline['PSD+KNN']=make_pipeline(AutoRegressive(order=6), PowerSpectralDensity(), KNeighborsClassifier(n_neighbors=3))
+    # pipeline['AR+PSD+RF']=make_pipeline(AutoRegressive(order=6), PowerSpectralDensity(), RandomForestClassifier())
     #pipeline['PSD+RF']=make_pipeline(AutoRegressive(order=6), PowerSpectralDensity(), RandomForestClassifier(n_estimators=100))
 
     #pipeline['AR+NB']=make_pipeline(AutoRegressive(order=6), GaussianNB())
@@ -92,10 +94,17 @@ def _evaluate():
     # plot._roc_curve_single_dataset(results_close_set, evaluation_type="Open-Set", dataset=mantegna)
     # #print(datasets[0].dataset_path)
     # Getting the results for the within session evaluation
-    within_session=CrossSessionEvaluation(paradigm=paradigm, datasets=lee, return_close_set=False, overwrite=False)
+    within_session=WithinSessionEvaluation(paradigm=paradigm_n400, datasets=mantegna, overwrite=False)
     results_within_session=within_session.process(pipeline)
 
-    return results_within_session
+    grouped_df=results_within_session.groupby(['eval Type','dataset','pipeline','session']).agg({
+                'accuracy': 'mean',
+                'auc': 'mean',
+                'eer': lambda x: f'{np.mean(x)*100:.3f} ± {np.std(x)*100:.3f}',
+                'frr_1_far': lambda x: f'{np.mean(x)*100:.3f}'
+            }).reset_index()
+
+    return grouped_df
 
 
 if __name__ == '__main__':

@@ -8,6 +8,7 @@ from deeb.datasets.base import BaseDataset
 from deeb.paradigms.base import BaseParadigm
 from deeb.analysis.results import Results
 import pandas as pd
+import numpy as np
 
 
 log = logging.getLogger(__name__)
@@ -152,11 +153,14 @@ class BaseEvaluation(ABC):
         for _, pipeline in pipelines.items():
             if not (isinstance(pipeline, BaseEstimator)):
                 raise (ValueError("pipelines must only contains Pipelines " "instance"))
-        dataframe=pd.DataFrame()
+        #dataframe=pd.DataFrame()
+        df_final=pd.DataFrame()
         for dataset in self.datasets:
             #print("Avinash")
+            dataframe=pd.DataFrame()
             log.info("Processing dataset: {}".format(dataset.code))
-            results_close_set, results_open_set, results_path= self.evaluate(dataset, pipelines, param_grid)
+            results, results_path, scenario= self.evaluate(dataset, pipelines, param_grid)
+            print("results",len(results))
             #print(results)
 
             #print(results.to_dataframe(pipelines=pipelines))
@@ -165,9 +169,18 @@ class BaseEvaluation(ABC):
             #     self.push_result(res, pipelines)
 
         #return self.results.to_dataframe(pipelines=pipelines)
-            get_results=self.results._add_results(results_close_set, results_open_set, results_path)
+            get_results=self.results._add_results(results, results_path, scenario)
             dataframe=dataframe.append(get_results, ignore_index=True)
-        return dataframe
+
+            # grouped_df=dataframe.groupby(['eval Type','dataset','pipeline','session']).agg({
+            #     'accuracy': 'mean',
+            #     'auc': 'mean',
+            #     'eer': lambda x: f'{np.mean(x)*100:.3f} ± {np.std(x)*100:.3f}',
+            #     'frr_1_far': lambda x: f'{np.mean(x)*100:.3f}'
+            # }).reset_index()
+
+        df_final = pd.concat([df_final, dataframe], ignore_index=True)
+        return df_final
 
     # def push_result(self, res, pipelines):
     #     message = "{} | ".format(res["pipeline"])

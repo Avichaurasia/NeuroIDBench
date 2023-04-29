@@ -121,11 +121,11 @@ class ERPCOREN400(BaseDataset):
         
         events, event_ids = mne.events_from_annotations(raw, event_ids, verbose=False)
 
-        # Merge events of event_id's "Target/Related because nature of the trails is same just they
+        # Merge events of event_id's "Target/Related because nature of the trails is same, just they
         # came from two diffrerent lists"
         events[events[:, 2] == 211, 2] = 212
 
-       # Merge events of event_id's "Target/Unrelated because nature of the trails is same just they
+       # Merge events of event_id's "Target/Unrelated because nature of the trails is same, just they
         # came from two different lists"
         events[events[:, 2] == 221, 2] = 222
         sessions[session_name][run_name]=raw, events
@@ -149,7 +149,6 @@ class ERPCOREN400(BaseDataset):
         main_directory='raw_data'
 
          # download and extract data if needed
-        #path_zip = dl.data_dl(url, "ERPCOREN400")
         path_zip = self.download_dataset(url, "ERPCOREN400")
         self.dataset_path=os.path.dirname(Path(path_zip))
         subject_dir = Path(path_zip.strip(zip_filename))/main_directory
@@ -159,7 +158,6 @@ class ERPCOREN400(BaseDataset):
 
         subject_dir=os.path.join(subject_dir, str(subject))
         raw_data_path = os.listdir(subject_dir)
-        #print(raw_data_path)
         for sub in raw_data_path:
             if sub.endswith(".set") and sub.split('.')[0].split('_')[1]=='N400' and len(sub.split('.')[0].split('_'))==2:
                 return os.path.join(subject_dir, sub)
