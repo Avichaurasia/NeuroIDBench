@@ -1,18 +1,21 @@
 name: AR+KNN
 
 dataset: 
-  - name: BrainInvaders15a
-    from: deeb.datasets.braininvaders15a
+  - name: Lee2019
+    from: deeb.datasets.lee2019
     parameters: 
-      subject: 10
-      interval: [-0.2, 0.8]
-      paradigm: 'P300'
+      subjects: 4
+      interval: [-0.1, 0.9]
+      #paradigm: 'p300'
 
 pipeline: 
   - name: AutoRegressive
     from: deeb.pipelines.features
     parameters: 
-      order: 2
+      order: 4
+
+  - name: PowerSpectralDensity
+    from: deeb.pipelines.features
       
 
   - name: KNeighborsClassifier

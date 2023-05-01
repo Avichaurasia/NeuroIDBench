@@ -12,8 +12,8 @@ from deeb.datasets.brainInvaders15a import BrainInvaders2015a
 from deeb.datasets.mantegna2019 import Mantegna2019
 from deeb.datasets.draschkow2018 import Draschkow2018
 from deeb.datasets.won2022 import Won2022
-from deeb.pipelines.features import AutoRegressive as AR
-from deeb.pipelines.features import PowerSpectralDensity as PSD
+from deeb.pipelines.features import AutoRegressive
+from deeb.pipelines.features import PowerSpectralDensity
 from deeb.pipelines.base import Basepipeline
 #from deeb.Evaluation.evaluation import CloseSetEvaluation, OpenSetEvaluation
 from deeb.datasets import utils
@@ -30,13 +30,15 @@ from deeb.paradigms.p300 import P300
 
 # Intializing the datasets 
 lee = Lee2019()
-mantegna=Mantegna2019()
+mantegna=BrainInvaders2015a()
+#mantegna.interval
 lee.download()
 #lee.subject_list=lee.subject_list[0:1]
 #lee.subject_list = lee.subject_list[0:5]
 #print(lee.get_data())
 
 #lee.get_data()
+ar=AutoRegressive(order=6)
 
 
 #n400=N400()

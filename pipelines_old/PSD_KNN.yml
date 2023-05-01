@@ -1,7 +1,6 @@
 name: AR+SVM
 
 paradigms:
-  - P300
   - N400
 
 pipeline: 

@@ -257,6 +257,7 @@ class WithinSessionEvaluation(BaseEvaluation):
         #print("len of pipelines", pipelines.keys())
         for key, features in pipelines.items():
             data=self._prepare_dataset(dataset, features)
+            #print("data", data)
             #data=features[0].get_data(dataset, self.paradigm)
             for subject in tqdm(np.unique(data.Subject), desc=f"{key}-WithinSessionEvaluation"):
                 df_subj=data.copy(deep=True)

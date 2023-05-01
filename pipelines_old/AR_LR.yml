@@ -1,7 +1,6 @@
 name: AR+LR
 
 paradigms:
-  - P300
   - N400
 
 pipeline: 

@@ -1,7 +1,6 @@
 name: PSD+LDA
 
 paradigms:
-  - P300
   - N400
 
 pipeline: 

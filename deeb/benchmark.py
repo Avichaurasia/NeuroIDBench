@@ -1,5 +1,5 @@
 import sys
-sys.path.append('/Users/avinashkumarchaurasia/Master_Thesis/deeb/')
+sys.path.append('/Users/avinashkumarchaurasia/Master_Thesis/deeb/deeb')
 import numpy as np
 from sklearn.discriminant_analysis import LinearDiscriminantAnalysis as LDA
 from sklearn.pipeline import make_pipeline
@@ -21,7 +21,6 @@ from copy import deepcopy
 from sklearn.base import BaseEstimator, TransformerMixin
 from glob import glob
 import importlib
-
 import logging
 import os.path as osp
 from pathlib import Path
@@ -29,8 +28,6 @@ import mne
 import numpy as np
 import yaml
 import pandas as pd
-
-
 from deeb import paradigms as deeb_paradigms
 from deeb.Evaluation import (CloseSetEvaluation, OpenSetEvaluation,)
 log = logging.getLogger(__name__)
@@ -63,12 +60,13 @@ def benchmark(subjects=None,
             context_params = yaml.load(cfile.read(), Loader=yaml.FullLoader)
             print("context_params",context_params)
 
+    #print("context_params",context_params)
     prdgms = generate_paradigms(pipeline_config, context_params, log)
-    #print(prdgms)
+    print("intial paradigm",prdgms)
     if paradigms is not None:
         prdgms = {p: prdgms[p] for p in paradigms}
 
-    #print("Paradigms: ", prdgms)
+    print("Paradigms: ", prdgms)
     if len(context_params) == 0:
         for paradigm in prdgms:
             context_params[paradigm] = {}

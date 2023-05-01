@@ -1,7 +1,6 @@
 name: PSD+NB
 
 paradigms:
-  - P300
   - N400
 
 pipeline: 

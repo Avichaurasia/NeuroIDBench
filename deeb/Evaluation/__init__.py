@@ -9,3 +9,7 @@ from .evaluation_old import (
     CloseSetEvaluation,
     OpenSetEvaluation,
 )
+
+from .cross_session_evaluation import CrossSessionEvaluation
+from .within_session_evaluation import WithinSessionEvaluation
+from .siamese_evaluation import (Siamese_WithinSessionEvaluation, Siamese_CrossSessionEvaluation)

@@ -1,7 +1,6 @@
 name: AR+KNN
 
 paradigms:
-  - P300
   - N400
 
 pipeline: 
