@@ -275,6 +275,7 @@ class WithinSessionEvaluation(BaseEvaluation):
                         mean_accuracy, mean_auc, mean_eer, mean_tpr, tprs_upper, tprr_lower, std_auc, mean_frr_1_far=close_set_scores
                         res_close_set = {
                        # "time": duration / 5.0,  # 5 fold CV
+                       'evaluation': 'Within Session', 
                         "eval Type": "Close Set",
                         "dataset": dataset.code,
                         "pipeline": key,
@@ -302,6 +303,7 @@ class WithinSessionEvaluation(BaseEvaluation):
 
                         res_open_set = {
                        # "time": duration / 5.0,  # 5 fold CV
+                       'evaluation': 'Within Session', 
                         "eval Type": "Open Set",
                         "dataset": dataset.code,
                         "pipeline": key,

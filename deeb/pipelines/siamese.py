@@ -89,7 +89,15 @@ class Siamese():
             loss=TripletSemiHardLoss(margin=1.0))
         return embeddings
     
-    # def _get_features(self, data):
+    def _get_features(self, subjects_dict, dataset):
+
+        # Get the no of channels and time steps from the subject dict
+        subject_1=subjects_dict[list(subjects_dict.keys())[0]]
+        no_channels=subject_1[subject_1.keys().keys()].get_data().shape[1]
+        time_steps=subject_1[subject_1.keys().keys()].get_data().shape[2]
+        #subject_1=subjects_dict['']
+
+        return self._siamese_embeddings(no_channels, time_steps)
     #     return self._siamese_embeddings(data.shape[1], data.shape[2])
         
 

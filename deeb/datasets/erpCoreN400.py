@@ -87,7 +87,7 @@ class ERPCOREN400(BaseDataset):
         """return data for a single subject"""
 
         file_path_list = self.data_path(subject)
-        print(f"file_path_list: {file_path_list}")
+        #print(f"file_path_list: {file_path_list}")
         sessions = {}
         session_name = 'session_1'
         sessions[session_name] = {}

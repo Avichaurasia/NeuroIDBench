@@ -1,28 +1,59 @@
-name: AR+KNN
+name: "Mantegna2019"
 
 dataset: 
-  - name: Lee2019
-    from: deeb.datasets.lee2019
+  # - name: BrainInvaders2015a
+  #   from: deeb.datasets
+  #   parameters: 
+  #     subjects: [5,30]
+  #     interval: [-0.1, 0.9]
+
+  # - name: Mantegna2019
+  #   from: deeb.datasets
+  #   parameters: 
+  #     subjects: [5,10]
+  #     interval: [-0.1, 0.9]
+
+  # - name: Lee2019
+  #   from: deeb.datasets
+  #   parameters: 
+  #     subjects: 10
+  #     interval: [-0.1, 0.9]
+
+  - name: ERPCOREN400
+    from: deeb.datasets
     parameters: 
-      subjects: 4
+      subjects: [5,20]
       interval: [-0.1, 0.9]
-      #paradigm: 'p300'
 
-pipeline: 
-  - name: AutoRegressive
-    from: deeb.pipelines.features
-    parameters: 
-      order: 4
+pipelines:
 
-  - name: PowerSpectralDensity
-    from: deeb.pipelines.features
-      
+  "AR+PSD+LDA": 
+    - name: AutoRegressive
+      from: deeb.pipelines
+      parameters: 
+        order: 9
 
-  - name: KNeighborsClassifier
-    from: sklearn.neighbors
-    parameters: 
-      n_neighbors: 3
-      # shrinkage: 'auto'
+    - name: PowerSpectralDensity
+      from: deeb.pipelines
+        
+
+    - name: LinearDiscriminantAnalysis
+      from: sklearn.discriminant_analysis 
+      parameters: 
+        solver: 'lsqr'
+        shrinkage: 'auto'
+  
+  "AR+GNB": 
+    - name: AutoRegressive
+      from: deeb.pipelines
+      parameters: 
+        order: 4
+
+    - name: PowerSpectralDensity
+      from: deeb.pipelines
+        
+    - name: GaussianNB
+      from: sklearn.naive_bayes
 
 
 

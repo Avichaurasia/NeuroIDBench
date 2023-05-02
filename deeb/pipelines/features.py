@@ -48,7 +48,7 @@ class AutoRegressive(Basepipeline):
     def _get_features(self, subject_dict, dataset):
         df_list = []
         #order = 6
-        #print("order", self.order)
+        print("order", self.order)
         for subject, sessions in tqdm(subject_dict.items(), desc="Computing AR Coeff"):
             for session, runs in sessions.items():
                 for run, epochs in runs.items():

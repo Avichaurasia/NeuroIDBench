@@ -26,7 +26,8 @@ import mne
 import numpy as np
 import yaml
 import pandas as pd
-from deeb.datasets import brainInvaders15a, mantegna2019, erpCoreN400, lee2019, utils
+from deeb.datasets import (BrainInvaders2015a, Mantegna2019, ERPCOREN400, Lee2019, utils)
+#from deeb.datasets import brainInvaders15a, mantegna2019, erpCoreN400, lee2019, utils
 #from deeb import paradigms as deeb_paradigms
 #from deeb.Evaluation import (CloseSetEvaluation, OpenSetEvaluation,)
 from deeb.Evaluation import (WithinSessionEvaluation, CrossSessionEvaluation, 
@@ -42,10 +43,12 @@ def benchmark(subjects=None,
               contexts=None,):
     """ Benchmark a set of pipelines on a given paradigm and evaluation"""
     if evaluations is None:
-        evaluations = ['WithinSession','CrossSession']
+        evaluations = ['CrossSession', 'WithinSession']
 
     eval_type={'WithinSession':WithinSessionEvaluation,
-               'CrossSession':CrossSessionEvaluation}
+               'CrossSession':CrossSessionEvaluation,
+               'Siamese_WithinSession':Siamese_WithinSessionEvaluation,
+               'Siamese_CrossSession':Siamese_CrossSessionEvaluation}
     
     output = Path(output)
     if not osp.isdir(output):
@@ -65,6 +68,7 @@ def benchmark(subjects=None,
 
     # print("Paradigms: ", prdgm)
     prdgms = get_paradigm_from_config(pipeline_config, context_params, log)
+    print("Paradigms: ", prdgms['pipelines'].keys())
     #print("Paradigms: ", prdgms)
     #if len(context_params) == 0:
         #for paradigm in prdgm:
@@ -73,6 +77,7 @@ def benchmark(subjects=None,
     #print("Context: ", context_params)
     df_eval = []
     for evaluation in evaluations:
+        #print("evaluation",evaluation)
         eval_results = dict()
         #log.debug(f"{paradigm}: {context_params[paradigm]}")
         #dataset=context_params['dataset']
@@ -103,12 +108,16 @@ def benchmark(subjects=None,
 
         log.debug(context_params['paradigm'])
         ppl_with_epochs, ppl_with_array = {}, {}
-        for pn, pv in prdgms['pipeline'].items():
-            if "braindecode" in pn:
-                ppl_with_epochs[pn] = pv
-            else:
-                ppl_with_array[pn] = pv
+        if (evaluation=='CrossSession' or evaluation=='SiameseCrossSession') and (dataset.n_sessions==1):
+            continue
+        else:
 
+            for pn, pv in prdgms['pipelines'].items():
+                if "braindecode" in pn:
+                    ppl_with_epochs[pn] = pv
+                else:
+                    ppl_with_array[pn] = pv
+            #print("ppl_with_array",ppl_with_array[pn])
             context = eval_type[evaluation](
                         paradigm=p,
                         datasets=dataset,
@@ -122,11 +131,11 @@ def benchmark(subjects=None,
             paradigm_results = context.process(
                     pipelines=ppl_with_array
                 )
-                
+                    
             df_eval.append(paradigm_results)
 
             #df = pd.concat(df_eval)
-        return pd.concat(df_eval)
+    return pd.concat(df_eval)
 
         
         #print("paradigm",paradigm)
@@ -150,18 +159,20 @@ def benchmark(subjects=None,
 # Creating main function
 if __name__ == "__main__":
     # Creating an object
-    #brainInvaders=brainInvaders15a.BrainInvaders2015a()
-    #paradigm_p300=P300()
-    #obj = CloseSetEvaluation()
+
     # Calling function
     #obj.run()
     result=benchmark()
-    grouped_df=result.groupby(['eval Type','dataset','pipeline']).agg({
+    #print(result.columns)
+    grouped_df=result.groupby(['evaluation','eval Type','dataset','pipeline']).agg({
+                "subject": lambda x: max(x) - min(x),
                 'accuracy': 'mean',
                 'auc': 'mean',
                 'eer': lambda x: f'{np.mean(x)*100:.3f} ± {np.std(x)*100:.3f}',
                 'frr_1_far': lambda x: f'{np.mean(x)*100:.3f}'
             }).reset_index()
-
+    grouped_df.rename(columns={'eval Type':'Scenario', 'subject':'Subjects'}, inplace=True)
     print(grouped_df)
+
+
 

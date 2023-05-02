@@ -29,53 +29,122 @@ def create_pipeline_from_config(config):
     pipeline : Pipeline
         sklearn Pipeline
     """
-    components = []
+####################################################################################################################################
+################### Below commented code for multiple yaml files or single dataset in single yaml file  ########################################
+####################################################################################################################################
+
+
+    # components = []
+    # #count = 0
+    # for component in config:
+    #     # load the package
+    #     #print(count)
+    #     #print("component", component)
+
+    #     mod = __import__(component["from"], fromlist=[component["name"]])
+    #     #print("mod", mod)
+    #     # create the instance
+    #     if "parameters" in component.keys():
+    #         params = component["parameters"]
+    #         if "optimizer" in component["parameters"].keys():
+    #             for optm in component["parameters"]["optimizer"]:
+    #                 mod_optm = __import__(name=optm["from"], fromlist=[optm["name"]])
+    #                 params_optm = optm["parameters"]
+    #                 instance = getattr(mod_optm, optm["name"])(**params_optm)
+    #                 component["parameters"]["optimizer"] = instance
+
+    #         if "callbacks" in component["parameters"].keys():
+    #             cb = []
+    #             for callbacks in component["parameters"]["callbacks"]:
+    #                 mod_callbacks = __import__(
+    #                     name=callbacks["from"], fromlist=[callbacks["name"]]
+    #                 )
+    #                 params_callbacks = callbacks["parameters"]
+    #                 instance = getattr(mod_callbacks, callbacks["name"])(
+    #                     **params_callbacks
+    #                 )
+    #                 cb.append(instance)
+    #             component["parameters"]["callbacks"] = cb
+
+    #         if "order" in component['parameters'].keys():
+    #             params['order'] = component['parameters']['order']
+
+    #     else:
+    #         params = {}
+    #     instance = getattr(mod, component["name"])(**params)
+    #     components.append(instance)
+    #     #count += 1
+
+    # #print("Final components", components)
+    # pipeline = make_pipeline(*components)
+    # #print("pipeline", pipeline)
+    # #print("====================================")
+    
+    # return pipeline
+
+
+
+####################################################################################################################################
+############################ updated version for multiple pipelines in a single config file ########################################
+####################################################################################################################################
+
+    
+    #pipelines=[]
+    pipelines=OrderedDict()
     #count = 0
-    for component in config:
+    for name, pipieline in config.items():
+        #print("pipelines list", pipelines)
+        components = []
+        pipelines[name] = {}
+        for component in pipieline:
         # load the package
         #print(count)
-        #print("component", component)
+            #print("component", component)
 
-        mod = __import__(component["from"], fromlist=[component["name"]])
-        #print("mod", mod)
-        # create the instance
-        if "parameters" in component.keys():
-            params = component["parameters"]
-            if "optimizer" in component["parameters"].keys():
-                for optm in component["parameters"]["optimizer"]:
-                    mod_optm = __import__(name=optm["from"], fromlist=[optm["name"]])
-                    params_optm = optm["parameters"]
-                    instance = getattr(mod_optm, optm["name"])(**params_optm)
-                    component["parameters"]["optimizer"] = instance
+            mod = __import__(component["from"], fromlist=[component["name"]])
+            #print("mod", mod)
+            # create the instance
+            if "parameters" in component.keys():
+                params = component["parameters"]
+                if "optimizer" in component["parameters"].keys():
+                    for optm in component["parameters"]["optimizer"]:
+                        mod_optm = __import__(name=optm["from"], fromlist=[optm["name"]])
+                        params_optm = optm["parameters"]
+                        instance = getattr(mod_optm, optm["name"])(**params_optm)
+                        component["parameters"]["optimizer"] = instance
 
-            if "callbacks" in component["parameters"].keys():
-                cb = []
-                for callbacks in component["parameters"]["callbacks"]:
-                    mod_callbacks = __import__(
-                        name=callbacks["from"], fromlist=[callbacks["name"]]
-                    )
-                    params_callbacks = callbacks["parameters"]
-                    instance = getattr(mod_callbacks, callbacks["name"])(
-                        **params_callbacks
-                    )
-                    cb.append(instance)
-                component["parameters"]["callbacks"] = cb
+                if "callbacks" in component["parameters"].keys():
+                    cb = []
+                    for callbacks in component["parameters"]["callbacks"]:
+                        mod_callbacks = __import__(
+                            name=callbacks["from"], fromlist=[callbacks["name"]]
+                        )
+                        params_callbacks = callbacks["parameters"]
+                        instance = getattr(mod_callbacks, callbacks["name"])(
+                            **params_callbacks
+                        )
+                        cb.append(instance)
+                    component["parameters"]["callbacks"] = cb
 
-            if "order" in component['parameters'].keys():
-                params['order'] = component['parameters']['order']
+                if "order" in component['parameters'].keys():
+                    params['order'] = component['parameters']['order']
 
-        else:
-            params = {}
-        instance = getattr(mod, component["name"])(**params)
-        components.append(instance)
-        #count += 1
+            else:
+                params = {}
+            instance = getattr(mod, component["name"])(**params)
+            components.append(instance)
+            #count += 1
 
-    #print("Final components", components)
-    pipeline = make_pipeline(*components)
-    #print("pipeline", pipeline)
-    #print("====================================")
-    
-    return pipeline
+        #print("Final components", components)
+        pipeline = make_pipeline(*components)
+        #print("pipeline", pipeline)
+       # print("====================================================")
+        #pipelines.append(pipeline)
+        pipelines[name] = pipeline
+        #print("pipeline", pipeline)
+        
+    #print("pipelines", pipelines.keys())
+    return pipelines
 
 
 def parse_pipelines_from_directory(dir_path):
@@ -167,8 +236,13 @@ def _parse_dataset_from_config(config):
             # for key, value in params.items():
 
             if "subjects" in params.keys():
-                subject=int(params['subjects'])
-                instance.subject_list=instance.subject_list[:subject]
+                #subject=int(params['subjects'])
+                subject=params['subjects']
+                if (type(subject)==list):
+                    instance.subject_list=instance.subject_list[subject[0]-1:subject[1]]
+                else:
+                    subject=int(subject)
+                    instance.subject_list=instance.subject_list[:subject]
                 
             #     instance.subjects=instance.subjects[:subject]
                 #params['subject'] = config['parameters']['subject']
@@ -180,10 +254,9 @@ def _parse_dataset_from_config(config):
         # else:
         #     params = {}
         # instance = getattr(mod, component["name"])(**params)
-        #datasets.append(instance)
+        # datasets.append(instance)
 
     return instance
-
 
 def parse_pipelines_for_single_dataset(dir_path):
     """
@@ -219,13 +292,15 @@ def parse_pipelines_for_single_dataset(dir_path):
             #print("Avinash", config_dict)
             #print("Avinash", config_dict)
             dataset= _parse_dataset_from_config(config_dict["dataset"])
-            ppl = create_pipeline_from_config(config_dict["pipeline"])
+            ppl = create_pipeline_from_config(config_dict["pipelines"])
+            #print("modified pipeline structure", len(ppl))
+            #print("=====================================")
             if "param_grid" in config_dict:
                 pipeline_configs.append(
                     {
                         "dataset": dataset,
                        # "paradigms": config_dict["paradigms"],
-                        "pipeline": ppl,
+                        "pipelines": ppl,
                         "name": config_dict["name"],
                         "param_grid": config_dict["param_grid"],
                     }
@@ -235,7 +310,7 @@ def parse_pipelines_for_single_dataset(dir_path):
                     {
                        "dataset": dataset,
                        # "paradigms": config_dict["paradigms"],
-                        "pipeline": ppl,
+                        "pipelines": ppl,
                         "name": config_dict["name"],
                     }
                 )
@@ -251,46 +326,7 @@ def parse_pipelines_for_single_dataset(dir_path):
 
         pipeline_configs.append(foo.PIPELINE)
     return pipeline_configs
-    # pipeline_configs = []
-    # for yaml_file in yaml_files:
-    #     with open(yaml_file, "r") as _file:
-    #         content = _file.read()
-
-    #         # load config
-    #         config_dict = yaml.load(content, Loader=yaml.FullLoader)
-    #         ppl = create_pipeline_from_config(config_dict["pipeline"])
-    #         if "param_grid" in config_dict:
-    #             pipeline_configs.append(
-    #                 {
-    #                     "paradigms": config_dict["paradigms"],
-    #                     "pipeline": ppl,
-    #                     "name": config_dict["name"],
-    #                     "param_grid": config_dict["param_grid"],
-    #                 }
-    #             )
-    #         else:
-    #             pipeline_configs.append(
-    #                 {
-    #                     "paradigms": config_dict["paradigms"],
-    #                     "pipeline": ppl,
-    #                     "name": config_dict["name"],
-    #                 }
-    #             )
-
-    # # we can do the same for python defined pipeline
-    # # TODO for python pipelines
-    # python_files = glob(os.path.join(dir_path, "*.py"))
-
-    # for python_file in python_files:
-    #     spec = importlib.util.spec_from_file_location("custom", python_file)
-    #     foo = importlib.util.module_from_spec(spec)
-    #     spec.loader.exec_module(foo)
-
-    #     pipeline_configs.append(foo.PIPELINE)
-    #return pipeline_configs
-
-
-
+   
 def generate_paradigms(pipeline_configs, context=None, logger=log):
     """
     Takes in a dictionary of pipelines configurations as returned by
@@ -356,34 +392,51 @@ def get_paradigm_from_config(pipeline_configs, context=None, logger=log):
         pipeline configuration
     context:
     """
+    # context = context or {}
+    # paradigms = OrderedDict()
+    # paradigms['dataset']=pipeline_configs[0]['dataset']
+    # paradigms['pipeline']={}
+    # for config in pipeline_configs:
+    #     if "dataset" not in config.keys():
+    #         logger.error("{} must have a 'dataset' key.".format(config))
+    #         continue
+
+    #     if isinstance(config["pipeline"], BaseEstimator):
+    #         pipeline = deepcopy(config["pipeline"])
+    #     else:
+    #         logger.error(config["pipeline"])
+    #         raise (ValueError("pipeline must be a sklearn estimator"))
+    #     paradigms['pipeline'][config['name']] = pipeline
+
+    # return paradigms
 
     context = context or {}
     paradigms = OrderedDict()
-    #print("pipelines",pipeline_configs[0]['dataset'][0].code)
-    #d=pipeline_configs[0]['dataset'][0]
-    #dataset_name="BrainInvaders"
     paradigms['dataset']=pipeline_configs[0]['dataset']
-    paradigms['pipeline']={}
-    #print("pipeline_configs",pipeline_configs)
-    for config in pipeline_configs:
-        for config in pipeline_configs:
-            if "dataset" not in config.keys():
-                logger.error("{} must have a 'dataset' key.".format(config))
-                continue
+    paradigms['pipelines']={}
+    multi_pipelines = pipeline_configs[0]['pipelines']
+    for name, pipeline in multi_pipelines.items():
+        if isinstance(pipeline, BaseEstimator):
+            pipeline = deepcopy(pipeline)
+        else:
+            logger.error(pipeline)
+            raise (ValueError("pipeline must be a sklearn estimator"))
+        paradigms['pipelines'][name] = pipeline
 
-            if isinstance(config["pipeline"], BaseEstimator):
-                pipeline = deepcopy(config["pipeline"])
-            else:
-                logger.error(config["pipeline"])
-                raise (ValueError("pipeline must be a sklearn estimator"))
-            
-            # if "paradigm" not in config.keys():
-            #     paradigm='default'
-                #logger.error("{} must have a 'paradigm' key.".format(config))
-                #continue
-            #paradigms[dataset_name]=pipeline_configs[0]['dataset'][0]
-            paradigms['pipeline'][config['name']] = pipeline
+    # paradigms['pipeline']={}
+    # for config in pipeline_configs:
+    #     if "dataset" not in config.keys():
+    #         logger.error("{} must have a 'dataset' key.".format(config))
+    #         continue
 
+    #     if isinstance(config["pipeline"], BaseEstimator):
+    #         pipeline = deepcopy(config["pipeline"])
+    #     else:
+    #         logger.error(config["pipeline"])
+    #         raise (ValueError("pipeline must be a sklearn estimator"))
+    #     paradigms['pipeline'][config['name']] = pipeline
+
+    #print("paradigms", paradigms)
     return paradigms
 
 

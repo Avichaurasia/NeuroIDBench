@@ -72,7 +72,7 @@ class BaseEvaluation(ABC):
         self.mne_labels = mne_labels
 
         # check paradigm
-        print("I am in base class of evualtion package", type(paradigm))
+        #print("I am in base class of evualtion package", type(paradigm))
         if not isinstance(paradigm, BaseParadigm):
             raise (ValueError("paradigm must be an Paradigm instance"))
         self.paradigm = paradigm
@@ -160,7 +160,7 @@ class BaseEvaluation(ABC):
             dataframe=pd.DataFrame()
             log.info("Processing dataset: {}".format(dataset.code))
             results, results_path, scenario= self.evaluate(dataset, pipelines, param_grid)
-            print("results",len(results))
+            #print("results",len(results))
             #print(results)
 
             #print(results.to_dataframe(pipelines=pipelines))
