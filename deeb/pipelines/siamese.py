@@ -10,8 +10,8 @@ from keras.models import Sequential, Model, load_model, save_model
 from keras.callbacks import LearningRateScheduler
 #from keras.optimizers import Adam
 #import tensorflow_addons as tfa
-#import tensorflow_addons as tfa
-from tensorflow_addons.losses import TripletSemiHardLoss
+import tensorflow_addons as tfa
+#from tensorflow_addons.losses import TripletSemiHardLoss
 import numpy as np
 import matplotlib.pyplot as plt
 import os
@@ -21,12 +21,15 @@ from deeb.pipelines.base import Basepipeline
 
 
 class Siamese():
+    # def __init__(self) -> None:
+    #     pass
     def __init__(
         self,
-        optimizer="Adam",
-        EPOCHS=50,
-        batch_size=100,
+        #optimizer="Adam",
+        EPOCHS=250,
+        batch_size=256,
         verbose=1,
+        workers=5,
         random_state=None,
         validation_split=0.2,
         history_plot=False,
@@ -37,67 +40,83 @@ class Siamese():
         super().__init__(**kwargs)
 
         #self.loss = loss
-        if optimizer == "Adam":
-            optimizer = tf.keras.optimizers.Adam(learning_rate=0.001, amsgrad=True)
+        # if optimizer == "Adam":
+        #     optimizer = tf.keras.optimizers.Adam(learning_rate=0.001, amsgrad=True)
 
-        self.optimizer = optimizer
+        #self.optimizer = optimizer
         self.EPOCHS = EPOCHS
         self.batch_size = batch_size
         self.verbose = verbose
+        self.workers=workers
         self.random_state = random_state
         self.validation_split = validation_split
         self.history_plot = history_plot
         self.path = path
 
-    # def is_valid(self, dataset):
-    #     ret = True
-    #     if not ((dataset.paradigm == "p300") | (dataset.paradigm == "n400")):
-    #         ret = False
+    def is_valid(self, dataset):
+        ret = True
+        if not ((dataset.paradigm == "p300") | (dataset.paradigm == "n400")):
+            ret = False
 
-    #     # # check if dataset has required events
-    #     # if self.events:
-    #     #     if not set(self.events) <= set(dataset.event_id.keys()):
-    #     #         ret = False
+        # # check if dataset has required events
+        # if self.events:
+        #     if not set(self.events) <= set(dataset.event_id.keys()):
+        #         ret = False
 
-    #     # we should verify list of channels, somehow
-    #     return ret
+        # we should verify list of channels, somehow
+        return ret
     
-    # Make a function for siamese network embeddings with triplet loss function
+    # # This function has been sourced from https://git.scc.kit.edu/ps-chair/brainnet licensed under the Creative Commons
     def _siamese_embeddings(self, no_channels, time_steps):
+        activef="selu"
+        chn=no_channels
+        sn=time_steps
 
-        input = Input((no_channels, time_steps, 1))
-        x = Conv2D(128, (1, 15), activation='selu', kernel_initializer='lecun_normal', padding='same')(input)
-        x = AveragePooling2D(pool_size=(1, 2))(x)
-        x = Dropout(0.3)(x)
-        x = Conv2D(32, (1, 15), activation='selu', kernel_initializer='lecun_normal', padding='same')(x)
-        x = AveragePooling2D(pool_size=(1, 2))(x)
-        x = Dropout(0.3)(x)
-        x = Conv2D(16, (1, 15), activation='selu', kernel_initializer='lecun_normal', padding='same')(x)
-        x = AveragePooling2D(pool_size=(1, 2))(x)
-        x = Dropout(0.3)(x)
-        x = Conv2D(8, (1, 15), activation='selu', kernel_initializer='lecun_normal', padding='same')(x)
-        x = AveragePooling2D(pool_size=(1, 2))(x)
-        x = Dropout(0.3)(x)
-        x = Conv2D(4, (1, 15), activation='selu', kernel_initializer='lecun_normal', padding='same')(x)
-        x = AveragePooling2D(pool_size=(1, 2))(x)
-        x = Dropout(0.3)(x)
-        x = Flatten()(x)
-        x = Dense(32, activation=None, kernel_initializer='lecun_normal')(x)
-        embeddings =Model(input, x, name="Embedding")
-        embeddings.compile(
-            optimizer=self.optimizer,
-            loss=TripletSemiHardLoss(margin=1.0))
-        return embeddings
+        print("chn", chn)
+        print("sn", sn)
+
+        
+        #x = tf.keras.layers.BatchNormalization()(input)
+        if (sn>512):
+            input = tf.keras.layers.Input((chn, sn, 1))
+            x = tf.keras.layers.AveragePooling2D(pool_size=(1, 2))(input)
+            x = tf.keras.layers.Conv2D(128, (1, 15), activation=activef, kernel_initializer='lecun_normal')(input)
+        else:
+            input = tf.keras.layers.Input((chn, sn, 1))
+            x = tf.keras.layers.Conv2D(128, (1, 15), activation=activef, kernel_initializer='lecun_normal')(input)
+        x = tf.keras.layers.AveragePooling2D(pool_size=(1, 2))(x)
+        x = tf.keras.layers.Dropout(0.3)(x)
+        #x = keras.layers.MaxPooling2D(pool_size=(1, 4))(x)
+        x = tf.keras.layers.Conv2D(32, (1, 15), activation=activef, kernel_initializer='lecun_normal')(x)
+        x = tf.keras.layers.AveragePooling2D(pool_size=(1, 2))(x)
+        x = tf.keras.layers.Dropout(0.3)(x)
+        #x = keras.layers.AveragePooling2D(pool_size=(1, 5))(x)
+        x = tf.keras.layers.Conv2D(16, (1, 15), activation=activef, kernel_initializer='lecun_normal')(x)
+        x = tf.keras.layers.AveragePooling2D(pool_size=(1,2))(x)
+        x = tf.keras.layers.Dropout(0.3)(x)
+        # = keras.layers.AveragePooling2D(pool_size=(1,5))(x)
+
+        x = tf.keras.layers.Conv2D(8, (1, 15), activation=activef, kernel_initializer='lecun_normal')(x)
+        x = tf.keras.layers.AveragePooling2D(pool_size=(1,2))(x)
+        x = tf.keras.layers.Dropout(0.3)(x)
+
+        x = tf.keras.layers.Conv2D(4, (1, 15), activation=activef, kernel_initializer='lecun_normal')(x)
+        x = tf.keras.layers.AveragePooling2D(pool_size=(1,2))(x)
+        x = tf.keras.layers.Dropout(0.3)(x)
+
+
+        x = tf.keras.layers.Flatten()(x)
+        #x = tf.keras.layers.BatchNormalization()(x)
+        x = tf.keras. layers.Dense(32, activation=None, kernel_initializer='lecun_normal')(x)
+        #x = tf.keras.layers.BatchNormalization()(x)
+        embedding_network = tf.keras.Model(input, x, name="Embedding")
+        embedding_network.compile(
+        optimizer=tf.keras.optimizers.Adam(),
+        #0.001, clipnorm=1.
+        loss=tfa.losses.TripletSemiHardLoss(margin=1.0))
+    #siamese.summary()
+        embedding_network.summary()
+        return embedding_network
     
-    def _get_features(self, subjects_dict, dataset):
-
-        # Get the no of channels and time steps from the subject dict
-        subject_1=subjects_dict[list(subjects_dict.keys())[0]]
-        no_channels=subject_1[subject_1.keys().keys()].get_data().shape[1]
-        time_steps=subject_1[subject_1.keys().keys()].get_data().shape[2]
-        #subject_1=subjects_dict['']
-
-        return self._siamese_embeddings(no_channels, time_steps)
-    #     return self._siamese_embeddings(data.shape[1], data.shape[2])
         
 

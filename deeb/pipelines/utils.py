@@ -288,12 +288,14 @@ def parse_pipelines_for_single_dataset(dir_path):
             content = _file.read()
 
             # load config
+
+            #print("content", content)
             config_dict = yaml.load(content, Loader=yaml.FullLoader)
-            #print("Avinash", config_dict)
-            #print("Avinash", config_dict)
+            #print("Avinash", config_dict.keys())    
+            #print("Avinash", config_dict['pipelines'])
             dataset= _parse_dataset_from_config(config_dict["dataset"])
             ppl = create_pipeline_from_config(config_dict["pipelines"])
-            #print("modified pipeline structure", len(ppl))
+            #print("modified pipeline structure", ppl)
             #print("=====================================")
             if "param_grid" in config_dict:
                 pipeline_configs.append(

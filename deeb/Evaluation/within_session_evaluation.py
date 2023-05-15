@@ -21,7 +21,7 @@ import pandas as pd
 from sklearn.model_selection._validation import _fit_and_score, _score
 from sklearn.preprocessing import LabelEncoder
 from tqdm import tqdm
-from sklearn.preprocessing import StandardScaler
+from sklearn.preprocessing import StandardScaler, MinMaxScaler
 from deeb.Evaluation.base import BaseEvaluation
 from imblearn.over_sampling import RandomOverSampler
 from imblearn.under_sampling import RandomUnderSampler
@@ -32,6 +32,7 @@ import random
 from scipy.interpolate import interp1d
 from deeb.Evaluation.scores import Scores as score
 from collections import OrderedDict
+from deeb.pipelines.siamese import Siamese
 
 log = logging.getLogger(__name__)
 
@@ -78,7 +79,7 @@ class WithinSessionEvaluation(BaseEvaluation):
         frr_1_far_list=[]
 
         # Defining the Stratified KFold
-        skfold = RepeatedStratifiedKFold(n_splits=4, n_repeats=3, random_state=42)
+        skfold = RepeatedStratifiedKFold(n_splits=4, n_repeats=5, random_state=42)
         classifer=pipeline[-1]
         #classifier=pipeline.steps[1:]
         #print("classifer",classifer)
@@ -90,13 +91,13 @@ class WithinSessionEvaluation(BaseEvaluation):
             y_train, y_test = y[train_index], y[test_index]
 
             # Normalizing training and testing data using StandardScaler
-            sc=StandardScaler()
+            sc=MinMaxScaler()
             X_train=sc.fit_transform(X_train)
             X_test=sc.transform(X_test)
 
-            # Resampling the training data using RandomOverSampler
-            oversampler = RandomOverSampler(random_state=42)
-            X_train, y_train = oversampler.fit_resample(X_train, y_train)
+            # # Resampling the training data using RandomOverSampler
+            # oversampler = RandomOverSampler(random_state=42)
+            # X_train, y_train = oversampler.fit_resample(X_train, y_train)
             clf=clone(classifer)
             #print("cloned classifer", clf)
             # Training the model
@@ -146,13 +147,13 @@ class WithinSessionEvaluation(BaseEvaluation):
         y_test=np.array(test_set['Label'])
 
          # Normalizing the data using StandardScaler
-        sc=StandardScaler()
+        sc=MinMaxScaler()
         X_train=sc.fit_transform(X_train)
         X_test=sc.transform(X_test)
 
-        # Resampling the data using RandomOverSampler
-        oversampler = RandomOverSampler(random_state=42)
-        X_train, y_train = oversampler.fit_resample(X_train, y_train)
+        # # Resampling the data using RandomOverSampler
+        # oversampler = RandomOverSampler(random_state=42)
+        # X_train, y_train = oversampler.fit_resample(X_train, y_train)
         #model=pipeline.fit(X_train, y_train)
 
         clf=clone(classifier)
@@ -244,10 +245,15 @@ class WithinSessionEvaluation(BaseEvaluation):
         if df_final.columns.duplicated().any():
             df_final = df_final.loc[:, ~df_final.columns.duplicated(keep='first')]
 
-        # Drop rows where "Subject" value_count is less than 4
-        subject_counts = df_final["Subject"].value_counts()
-        valid_subjects = subject_counts[subject_counts >= 4].index
-        df_final = df_final[df_final["Subject"].isin(valid_subjects)]
+        subject_session_counts = df_final.groupby(['Subject', 'session']).size().reset_index(name='counts')
+
+        # Identify subjects with sessions having fewer than 4 rows
+        invalid_subject_sessions = subject_session_counts[subject_session_counts['counts'] < 4][['Subject', 'session']]
+        
+        # Filter out rows with invalid subject and session combinations
+        df_final = df_final[~df_final.set_index(['Subject', 'session']).index.isin(invalid_subject_sessions.set_index(['Subject', 'session']).index)]
+
+        #print(df[['session', 'Subject']].value_counts())
 
         return df_final
     
@@ -265,6 +271,9 @@ class WithinSessionEvaluation(BaseEvaluation):
                 df_subj.loc[df_subj['Subject'] == subject, 'Label'] = 1
                 for session in np.unique(df_subj.session):
                     df_session= df_subj[df_subj.session==session]
+
+                    if not self._valid_subject(df_session, subject, session):
+                        continue
 
                     if self.return_close_set == False and self.return_open_set==False:
                         message = "Please choose either close-set or open-set scenario for the evaluation"
@@ -289,7 +298,7 @@ class WithinSessionEvaluation(BaseEvaluation):
                         "tprs_upper": tprs_upper,
                         "tprs_lower": tprr_lower,
                         "std_auc": std_auc,
-                        #"n_samples": len(data)  # not training sample
+                        "n_samples": len(data)  # not training sample
                         #"n_channels": data.columns.size
                          }
                         results_close_set.append(res_close_set)
@@ -317,7 +326,7 @@ class WithinSessionEvaluation(BaseEvaluation):
                         "tprs_upper": tprs_upper,
                         "tprs_lower": tprr_lower,
                         "std_auc": std_auc,
-                        #"n_samples": len(data)  # not training sample
+                        "n_samples": len(data)  # not training sample
                         #"n_channels": data.columns.size
                         }
                         results_open_set.append(res_open_set)
@@ -352,6 +361,16 @@ class WithinSessionEvaluation(BaseEvaluation):
             #f"{dataset.code}_CloseSetEvaluation")
         )
         return results, results_path, scenario
+    
+    def _valid_subject(self, df, subject, session):
+        """Checks if the subject has the required session needed for performing within Session Evaluation"""
+        df_subject=df[df['Subject']==subject]
+        sessions=df_subject.session.values
+        if (session not in sessions):
+            return False
+        
+        else:
+            return True
     
     def is_valid(self, dataset):
         return True

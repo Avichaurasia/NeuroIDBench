@@ -36,7 +36,7 @@ class Mantegna2019(BaseDataset):
             sessions_per_subject=1,
             events=dict(Inconsistent=9, Consistent=7),
             code="mantegna 2019",
-            interval=[-0.1, 0.9],
+            interval=[-0.2, 0.8],
             paradigm="n400",
             doi=None,
             dataset_path=None
@@ -98,7 +98,7 @@ class Mantegna2019(BaseDataset):
         events, _=mne.events_from_annotations(raw, verbose=False)
 
         # update event ids from 8 to 9
-        events[:, 2] = np.where(events[:, 2] == 8, 9, events[:, 2])
+        #events[:, 2] = np.where(events[:, 2] == 8, 9, events[:, 2])
         #montage = mne.channels.make_standard_montage('standard_1020')
 
         #stim_channels = mne.utils._get_stim_channel(None, raw.info, raise_error=False)        

@@ -237,10 +237,10 @@ class CrossSessionEvaluation(BaseEvaluation):
         if df_final.columns.duplicated().any():
             df_final = df_final.loc[:, ~df_final.columns.duplicated(keep='first')]
 
-        # Drop rows where "Subject" value_count is less than 4
-        subject_counts = df_final["Subject"].value_counts()
-        valid_subjects = subject_counts[subject_counts >= 4].index
-        df_final = df_final[df_final["Subject"].isin(valid_subjects)]
+        # # Drop rows where "Subject" value_count is less than 4
+        # subject_counts = df_final["Subject"].value_counts()
+        # valid_subjects = subject_counts[subject_counts >= 4].index
+        # df_final = df_final[df_final["Subject"].isin(valid_subjects)]
 
         return df_final
 
@@ -262,6 +262,10 @@ class CrossSessionEvaluation(BaseEvaluation):
                 #print("value_counts", df_subj[['Subject','session']].value_counts())
                 #groups = df_subj.session.values
 
+                if not self._valid_subject(self, df_subj, subject, dataset):
+                    continue
+                
+
                 if self.return_close_set == False and self.return_open_set==False:
                     message = "Please choose either close-set or open-set scenario for the evaluation"
                     raise ValueError(message)
@@ -272,6 +276,7 @@ class CrossSessionEvaluation(BaseEvaluation):
                     mean_accuracy, mean_auc, mean_eer, mean_tpr, tprs_upper, tprr_lower, std_auc, mean_frr_1_far=close_set_scores
                     res_close_set = {
                        # "time": duration / 5.0,  # 5 fold CV
+                       'evaluation': 'Cross Session',
                         "eval Type": "Close Set",
                         "dataset": dataset.code,
                         "pipeline": key,
@@ -290,12 +295,13 @@ class CrossSessionEvaluation(BaseEvaluation):
                         }
                     results_close_set.append(res_close_set)
 
-                elif self.return_open_set:
+                if self.return_open_set:
                     #print("groups", groups)
                     open_set_scores=self._open_set(df_subj, pipelines[key])
                     mean_accuracy, mean_auc, mean_eer, mean_tpr, tprs_upper, tprr_lower, std_auc, mean_frr_1_far=open_set_scores
                     res_open_set = {
                        # "time": duration / 5.0,  # 5 fold CV
+                       'evaluation': 'Cross Session',
                         "eval Type": "Open Set",
                         "dataset": dataset.code,
                         "pipeline": key,
@@ -339,6 +345,16 @@ class CrossSessionEvaluation(BaseEvaluation):
             #f"{dataset.code}_CloseSetEvaluation")
         )
         return results, results_path, scenario
+    
+    def _valid_subject(self, df, subject, dataset):
+        """Checks if the subject has the required session needed for performing within Session Evaluation"""
+        # Return True if the subject has at sessions equal to the number of sessions in the dataset else False
+        if df[df.Subject == subject].session.nunique() == dataset.n_sessions:
+            return True
+        else:
+            return False
+
+        #return df[df.Subject == subject].session.nunique() >= 2
 
     def is_valid(self, dataset):
         return dataset.n_sessions > 1 

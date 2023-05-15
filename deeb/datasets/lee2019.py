@@ -13,6 +13,7 @@ import os
 Lee2019_URL = "https://ftp.cngb.org/pub/gigadb/pub/10.5524/100001_101000/100542/"
 
 
+# Some Functions of this class has been sourced from the BDS-3 licensed repository at https://github.com/NeuroTechX/moabb
 class Lee2019(BaseDataset):
     """Base dataset class for Lee2019"""
     def __init__(
@@ -31,7 +32,7 @@ class Lee2019(BaseDataset):
             sessions_per_subject=2,
             events=dict(Target=1, NonTarget=2),
             code="Lee2019_" + code_suffix,
-            interval=[-0.1, 0.9],
+            interval=[-0.2, 0.8],
             paradigm="p300",
             doi="10.5524/100542",
             dataset_path=None,

@@ -49,12 +49,14 @@ class BrainInvaders2015a(BaseDataset):
             sessions_per_subject=1,
             events=dict(Target=2, NonTarget=1),
             code="Brain Invaders 2015a",
-            interval=[-0.1,0.9],
+            interval=[-0.2,0.8],
             paradigm="p300",
             doi="https://doi.org/10.5281/zenodo.3266929",
             dataset_path=None,
             )
-            
+        
+    #_scalings = dict(eeg=1e-6, stim=1)   
+
     def _get_single_subject_data(self, subject):
         """return data for a single subject"""
          
@@ -73,19 +75,26 @@ class BrainInvaders2015a(BaseDataset):
                 'Pz', 'P4', 'P8', 'PO7', 'O1', 'Oz', 'O2', 'PO8', 'PO9', 'PO10', 'STI 014'
             ]
 
-            chtypes = ['eeg'] * 32 + ['stim']
-            D = loadmat(file_path)['DATA'].T
-            S = D[1:33, :]
+            chtypes = ["eeg"] * 32 + ["stim"]
+            D = loadmat(file_path)["DATA"].T
+            S = D[1:33, :] * 1e-6
             stim = D[-2, :] + D[-1, :]
-            
             X = np.concatenate([S, stim[None, :]])
             info = mne.create_info(ch_names=chnames, sfreq=512, ch_types=chtypes, 
                                    verbose=False)
 
             # make standard montage before read raw data
-            montage=mne.channels.make_standard_montage('standard_1020')
-            info.set_montage(montage, match_case=False)
+            #montage=mne.channels.make_standard_montage('standard_1020')
+            #info.set_montage(montage, match_case=False)
+            #factor = self._scalings.get('eeg')
             raw = mne.io.RawArray(data=X, info=info, verbose=False)
+            raw.set_montage(make_standard_montage("standard_1020"))
+
+            # # Scale EEG data to volts
+            # scalings = {'eeg': 1e-6}
+            # eeg_chans = mne.pick_types(raw.info, eeg=True)
+            # raw._data[eeg_chans,:] *= scalings['eeg']
+        #sessions[session_name][run_name]=raw, events
             all_sessions_data.append(raw)
 
         # Concetenating the three sessions data since there was no break between each session

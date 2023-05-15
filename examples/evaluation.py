@@ -24,6 +24,7 @@ from sklearn.preprocessing import StandardScaler
 from sklearn.discriminant_analysis import LinearDiscriminantAnalysis as LDA
 from deeb.Evaluation.within_session_evaluation import WithinSessionEvaluation
 from deeb.Evaluation.cross_session_evaluation import CrossSessionEvaluation
+from deeb.Evaluation.siamese_evaluation import Siamese_WithinSessionEvaluation, Siamese_CrossSessionEvaluation
 from sklearn.linear_model import LogisticRegression
 from sklearn.naive_bayes import GaussianNB
 from sklearn.neighbors import KNeighborsClassifier
@@ -31,6 +32,7 @@ from sklearn.svm import SVC
 from sklearn.ensemble import RandomForestClassifier
 from deeb.analysis.plotting import Plots 
 from deeb.datasets.lee2019 import Lee2019
+from deeb.pipelines.siamese import Siamese
 import os
 
 # Function for performing evaulation across differeeent datasets and pipelines
@@ -41,6 +43,7 @@ def _evaluate():
     brain=BrainInvaders2015a()
     mantegna=Mantegna2019()
     erp_core=ERPCOREN400()
+    #erp_core.subject_list=erp_core.subject_list[0:5]
     # lee = Lee2019()
     # lee.subject_list = lee.subject_list[0:3]
 
@@ -61,13 +64,18 @@ def _evaluate():
 
     # Intializing the pipelines
     pipeline={}
-   # pipeline['AR+PSD+SVM']=make_pipeline(PowerSpectralDensity(), SVC(kernel='rbf', probability=True))
-    # pipeline['AR+PSD+SVM']=make_pipeline(AutoRegressive(order=6), PowerSpectralDensity(), SVC(kernel='rbf', probability=True))
-    # pipeline['AR+PSD+LR']=make_pipeline(AutoRegressive(order=6), PowerSpectralDensity(), LogisticRegression())
+    # pipeline['siamese']=make_pipeline(Siamese())
+    # #print("type of siamese", type(siamese))
+    # evaluate=Siamese_WithinSessionEvaluation(paradigm=paradigm_n400, datasets=erp_core, overwrite=False)
+    # results=evaluate.process(pipeline)
+
+    pipeline['AR+PSD+SVM']=make_pipeline(PowerSpectralDensity(), SVC(kernel='rbf', probability=True))
+    pipeline['AR+PSD+SVM']=make_pipeline(AutoRegressive(order=6), PowerSpectralDensity(), SVC(kernel='rbf', probability=True))
+    pipeline['AR+PSD+LR']=make_pipeline(AutoRegressive(order=6), PowerSpectralDensity(), LogisticRegression())
     # #pipeline['PSD+LR']=make_pipeline(AutoRegressive(order=6), PowerSpectralDensity(), LogisticRegression())
-    # pipeline['AR+PSD+LDA']=make_pipeline(AutoRegressive(order=6), PowerSpectralDensity(), LDA(solver='lsqr', shrinkage='auto'))
+    pipeline['AR+PSD+LDA']=make_pipeline(AutoRegressive(order=6), PowerSpectralDensity(), LDA(solver='lsqr', shrinkage='auto'))
     # #pipeline['PSD+LDA']=make_pipeline(AutoRegressive(order=6), PowerSpectralDensity(), LDA(solver='lsqr', shrinkage='auto'))
-    pipeline['AR+PSD+NB']=make_pipeline(AutoRegressive(order=6), PowerSpectralDensity(), GaussianNB())
+    #pipeline['AR+PSD+NB']=make_pipeline(AutoRegressive(order=6), PowerSpectralDensity(), GaussianNB())
     # #pipeline['PSD+NB']=make_pipeline(AutoRegressive(order=6), PowerSpectralDensity(), GaussianNB())
     # pipeline['AR+PSD+KNN']=make_pipeline(AutoRegressive(order=6), PowerSpectralDensity(), KNeighborsClassifier(n_neighbors=3))
     # #pipeline['PSD+KNN']=make_pipeline(AutoRegressive(order=6), PowerSpectralDensity(), KNeighborsClassifier(n_neighbors=3))
@@ -97,14 +105,14 @@ def _evaluate():
     within_session=WithinSessionEvaluation(paradigm=paradigm_n400, datasets=mantegna, overwrite=False)
     results_within_session=within_session.process(pipeline)
 
-    grouped_df=results_within_session.groupby(['eval Type','dataset','pipeline','session']).agg({
-                'accuracy': 'mean',
-                'auc': 'mean',
-                'eer': lambda x: f'{np.mean(x)*100:.3f} ± {np.std(x)*100:.3f}',
-                'frr_1_far': lambda x: f'{np.mean(x)*100:.3f}'
-            }).reset_index()
+    # grouped_df=results_within_session.groupby(['eval Type','dataset','pipeline','session']).agg({
+    #             'accuracy': 'mean',
+    #             'auc': 'mean',
+    #             'eer': lambda x: f'{np.mean(x)*100:.3f} ± {np.std(x)*100:.3f}',
+    #             'frr_1_far': lambda x: f'{np.mean(x)*100:.3f}'
+    #         }).reset_index()
 
-    return grouped_df
+    # return grouped_df
 
 
 if __name__ == '__main__':

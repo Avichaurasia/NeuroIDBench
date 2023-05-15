@@ -46,21 +46,41 @@ class AutoRegressive(Basepipeline):
         return ret
     
     def _get_features(self, subject_dict, dataset):
+
+        # AR_path=os.path.join(features_path, "AR")
+        # if not os.path.exists(AR_path):
+        #     os.makedirs(os.path.join(AR_path))
         df_list = []
         #order = 6
-        print("order", self.order)
+        #print("order", self.order)
         for subject, sessions in tqdm(subject_dict.items(), desc="Computing AR Coeff"):
             for session, runs in sessions.items():
                 for run, epochs in runs.items():
 
+
+                    # print("I am at subject", subject)
+                    # print("I am at session", session)
+                    # print("I am at run", run)
+                    # print("Showing the epochs", epochs)
+
+                    # print("====================================================================================")
+                    # print("====================================================================================")
+
+
+                    #print("run key", run)
+                    if not epochs:
+                        continue
+
                     if (dataset.paradigm == "p300"):
                         epochs= epochs['Target']
-                        epochs_data = epochs.get_data()
+                        #epochs_data = epochs.get_data()
 
                     elif (dataset.paradigm == "n400"):
                         epochs = epochs['Inconsistent']
-                        epochs_data = epochs.get_data()
                         
+                    if (len(epochs)==0):
+                            continue
+                    epochs_data = epochs.get_data()   
                     for i in range(len(epochs_data)):
                         dictemp = {'Subject': subject, "session": session, 'Event_id': list(epochs[i].event_id.values())[0]}
                         for j in range(len(epochs_data[i])):
@@ -113,6 +133,7 @@ class PowerSpectralDensity(Basepipeline):
         # # Using mne.Epochs in-built method compute_psd to calculate PSD using welch's method
         # spectrum=epochs.compute_psd(method="welch", n_fft=N_FFT,
         #     n_overlap=0, n_per_seg=None, fmin=1, fmax=50, tmin=tmin, tmax=tmax, verbose=False)
+
         
         # Computing PSD with 4 time windows, 50% overlap using welch's method
         spectrum=epochs.compute_psd(method="welch", n_fft=samples_per_window,
@@ -121,6 +142,10 @@ class PowerSpectralDensity(Basepipeline):
         return spectrum.get_data(return_freqs=True)
     
     def _get_features(self, subject_dict, dataset):
+        # PSD_path=os.path.join(features_path, "PSD")
+        # if not os.path.exists(PSD_path):
+        #     os.makedirs(os.path.join(PSD_path))
+
         df_psd=pd.DataFrame()
         df_list = []
         FREQ_BANDS = {"low" : [1,10],
@@ -134,6 +159,17 @@ class PowerSpectralDensity(Basepipeline):
         for subject, sessions in tqdm(subject_dict.items(), desc="Computing PSD"):
             for session, runs in sessions.items():
                 for run, epochs in runs.items():
+                    # print("I am at subject", subject)
+                    # print("I am at session", session)
+                    # print("I am at run", run)
+                    # print("Showing the epochs", epochs)
+
+                    # print("====================================================================================")
+                    # print("====================================================================================")
+
+
+                    if not epochs:
+                        continue
 
                     if (dataset.paradigm == "p300"):
                         epochs = epochs['Target']
@@ -145,8 +181,11 @@ class PowerSpectralDensity(Basepipeline):
                     #print("epochs size", epochs.get_data().shape)
 
                     # Computing PSD for each epoch
-                    result = self.computing_psd(epochs)
-                    results.append((result, subject, session, epochs))
+                    if (len(epochs)==0):
+                            continue
+                    else:
+                        result = self.computing_psd(epochs)
+                        results.append((result, subject, session, epochs))
 
         # Computing average band power for each channel
         for result, subject, session, epochs in results:

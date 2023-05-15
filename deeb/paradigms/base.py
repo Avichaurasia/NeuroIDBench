@@ -171,7 +171,7 @@ class BaseParadigm(metaclass=ABCMeta):
             tmax = self.tmax + dataset.interval[0]
 
         #if self.reject:
-        #peak_to_peak_reject=dict(eeg=150e-6) 
+        peak_to_peak_reject=dict(eeg=150e-6) 
         #else:
         #    peak_to_peak_reject=None
 
@@ -180,7 +180,7 @@ class BaseParadigm(metaclass=ABCMeta):
             fmin, fmax = bandpass
             #print("fmin, fmax", fmin, fmax)
             # filter data
-            raw_f = raw.copy().filter(fmin, fmax, method="iir", picks=picks, verbose=False)
+            raw_f = raw.copy().filter(fmin, fmax, picks=picks, verbose=False)
             # epoch data
             #baseline = self.baseline
             # if baseline is not None:
@@ -201,7 +201,7 @@ class BaseParadigm(metaclass=ABCMeta):
                 tmax=tmax,
                 proj=False,
                 baseline=self.baseline,
-                #reject=peak_to_peak_reject,
+                reject=peak_to_peak_reject,
                 preload=True,
                 verbose=False,
                 picks=picks,
@@ -296,11 +296,11 @@ class BaseParadigm(metaclass=ABCMeta):
                     if not os.path.exists(pre_processed_epochs):
                         
                         proc = self.process_raw(raw, events, dataset, return_epochs)
-                        if proc is None:
+                        x, lbs = proc
+                        if (proc is None) or (len(x)==0):
                         # this mean the run did not contain any selected event
                         # go to next
                             continue
-                        x, lbs = proc
                         x.save(pre_processed_epochs, overwrite=True)
                         subject_dict[subject][session][run]=x
                         X.append(x)

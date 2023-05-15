@@ -38,12 +38,12 @@ class ERPCOREN400(BaseDataset):
             sessions_per_subject=1, 
             events=dict(Inconsistent=222, Consistent=212),
             code="erpcore n400",
-            interval=[-0.1, 0.9],
+            interval=[-0.2, 0.8],
             paradigm="n400",
             doi=None,
             dataset_path=None
             )
-    
+    # This function has been sourced from the BDS-3 licensed repository at https://github.com/NeuroTechX/moabb    
     @verbose
     def download_dataset(self, url, sign, path=None, force_update=False, verbose=None):
         """
@@ -93,7 +93,7 @@ class ERPCOREN400(BaseDataset):
         sessions[session_name] = {}
         run_name = 'run_1'
         raw = read_raw_eeglab(file_path_list, preload = True, verbose=False)
-        raw.annotations.onset = raw.annotations.onset+.026
+        #raw.annotations.onset = raw.annotations.onset+.026
         raw.rename_channels(dict(FP1 = 'Fp1', FP2 = 'Fp2'))
         raw.drop_channels(['HEOG_left', 'HEOG_right', 'VEOG_lower'])
         raw.set_montage('standard_1020')
