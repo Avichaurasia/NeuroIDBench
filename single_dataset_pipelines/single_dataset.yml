@@ -19,22 +19,28 @@ dataset:
   #     subjects: 10
   #     interval: [-0.1, 0.9]
 
-  - name: ERPCOREN400
+  # - name: ERPCOREN400
+  #   from: deeb.datasets
+  #   parameters: 
+  #     subjects: 10
+  #     #interval: [-0.1, 0.9]
+
+  - name: COGBCIFLANKER
     from: deeb.datasets
     parameters: 
-      subjects: 10
+      subjects: 4
       #interval: [-0.1, 0.9]
 
 pipelines:
 
-  "AR+PSD+SVM": 
+  "AR+SVM": 
     - name: AutoRegressive
       from: deeb.pipelines
       parameters: 
-        order: 6
+        order: 8
         
-    - name: PowerSpectralDensity
-      from: deeb.pipelines
+    # - name: PowerSpectralDensity
+    #   from: deeb.pipelines
         
     - name: SVC
       from: sklearn.svm
@@ -43,20 +49,12 @@ pipelines:
         class_weight: "balanced"
         probability: True
 
-  "siamese": 
-    - name : Siamese
-      from: deeb.pipelines
-      parameters: 
-        EPOCHS: 10
-        batch_size: 256
-        verbose: 1
-        workers: 1
-
-  "AR+PSD+LG": 
-  - name: AutoRegressive
-    from: deeb.pipelines
-    parameters: 
-      order: 6
+ 
+  "PSD+LG": 
+  # - name: AutoRegressive
+  #   from: deeb.pipelines
+  #   parameters: 
+  #     order: 6
     
   - name: PowerSpectralDensity
     from: deeb.pipelines
@@ -67,16 +65,6 @@ pipelines:
         #kernel: 'rbf'
         class_weight: "balanced"
         #probability: True
-
-  # "siamese": 
-  #   - name : Siamese
-  #     from: deeb.pipelines
-  #     parameters: 
-  #       EPOCHS: 10
-  #       batch_size: 256
-  #       verbose: 1
-  #       workers: 1
-
 
   # "AR+PSD+RF": 
   # - name: AutoRegressive
@@ -94,21 +82,30 @@ pipelines:
   #       class_weight: "balanced"
   #       #probability: True
 
-  # "AR+PSD+LDA": 
-  #   - name: AutoRegressive
-  #     from: deeb.pipelines
-  #     parameters: 
-  #       order: 6
+  "AR+PSD+LDA": 
+    - name: AutoRegressive
+      from: deeb.pipelines
+      parameters: 
+        order: 6
       
-  #   - name: PowerSpectralDensity
-  #     from: deeb.pipelines
+    - name: PowerSpectralDensity
+      from: deeb.pipelines
         
-  #   - name: LinearDiscriminantAnalysis
-  #     from: sklearn.discriminant_analysis 
+    - name: LinearDiscriminantAnalysis
+      from: sklearn.discriminant_analysis 
+      parameters: 
+        solver: 'lsqr'
+        #class_weight: "balanced"
+        shrinkage: 'auto'
+
+  # "SNN": 
+  #   - name : Siamese
+  #     from: deeb.pipelines
   #     parameters: 
-  #       solver: 'lsqr'
-  #       #class_weight: "balanced"
-  #       shrinkage: 'auto'
+  #       EPOCHS: 5
+  #       batch_size: 256
+  #       verbose: 1
+  #       workers: 1
 
   # "AR+PSD+KNN": 
   #   - name: AutoRegressive

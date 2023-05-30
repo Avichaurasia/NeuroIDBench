@@ -208,6 +208,9 @@ class BaseParadigm(metaclass=ABCMeta):
                 event_repeated="drop",
                 on_missing="ignore",
             )
+
+            # epochs_units = epochs.info['units']
+            print("Epochs units:", epochs.info['chs'][0]['unit'])
                 #print(epochs.info)
                 # if bmin < tmin or bmax > tmax:
                 #     epochs.crop(tmin=tmin, tmax=tmax)

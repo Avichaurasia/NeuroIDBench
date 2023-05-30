@@ -52,7 +52,7 @@ class AutoRegressive(Basepipeline):
         #     os.makedirs(os.path.join(AR_path))
         df_list = []
         #order = 6
-        #print("order", self.order)
+        print("order", self.order)
         for subject, sessions in tqdm(subject_dict.items(), desc="Computing AR Coeff"):
             for session, runs in sessions.items():
                 for run, epochs in runs.items():

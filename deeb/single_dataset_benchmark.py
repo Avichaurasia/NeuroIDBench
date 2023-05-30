@@ -45,6 +45,8 @@ def benchmark(subjects=None,
     if evaluations is None:
         evaluations = ['Within_Session', 'Cross_Session', 'Siamese_WithinSession', 'Siamese_CrossSession']
 
+    print("Current path", os.getcwd())
+
     eval_type={'Within_Session':WithinSessionEvaluation,
                'Cross_Session':CrossSessionEvaluation,
                'Siamese_WithinSession':Siamese_WithinSessionEvaluation,
@@ -76,150 +78,86 @@ def benchmark(subjects=None,
 
     #print("Context: ", context_params)
     df_eval = []
-    for evaluation in evaluations:
-        #print("evaluation",evaluation)
-        eval_results = dict()
-        #log.debug(f"{paradigm}: {context_params[paradigm]}")
-        #dataset=context_params['dataset']
-        #print("context_params",context_params.keys())
-        dataset=prdgms['dataset']
-        #print("dataset",dataset.subject_list)
-        #dataset=dataset()
-        #dataset.subjects=dataset.subjects[:context_params['dataset']['subjects']]
-        # print("type of dataset",type(dataset))
-        # print("Instance variable of the dataset", dir(dataset))
-        # code=dataset.code
-        #dataset.subjects=dataset.subjects[:context_params['dataset']['subjects']]
-        
-        # if "subects" in pipeline_config[0]['dataset']['parameters']:
-        #     dataset.subject_list=dataset.subject_list[:pipeline_config[0]['dataset']['subjects']]
-        
-        # if "interval" in pipeline_config['dataset']['parameters']:
-        #     dataset.interval=pipeline_config[0]['dataset']['interval']
+    dataset=prdgms['dataset']
 
-        if dataset.paradigm == "p300":
-            #paradigm_300= P300()
-            #p = getattr(paradigm_300)(**context_params['paradigm'])
-            p=P300()
-        else: 
-            #paradigm_N400= N400()
-            #p = getattr(paradigm_N400)(**context_params['paradigm'])
-            p=N400()
-
-        log.debug(context_params['paradigm'])
-        ppl_with_epochs, ppl_with_array = {}, {}
-        print("evaluation",evaluation.split("_"))
-        if (evaluation.split("_")[0]=='Siamese'):
-            print("Siamese evaluation")
-            if (evaluation=='Siamese_CrossSession') and (dataset.n_sessions<3):
-                continue
-            else:
-
-                if "siamese" not in prdgms['pipelines'].keys():
-                    #print("Please provide siamese pipelines for siamese evaluation")
-                    continue
-                else:
-                    for pn, pv in prdgms['pipelines'].items():
-                        if "siamese" in pn:
-                            ppl_with_epochs[pn] = pv
-                        else:
-                            print("Please provide siamese pipelines for siamese evaluation")
-                            continue
-                    #print("ppl_with_array",ppl_with_array[pn])
-                    context = eval_type[evaluation](
-                                paradigm=p,
-                                datasets=dataset,
-                            )
-                    
-                        # Calling the evualtion function
-                    paradigm_results = context.process(
-                            pipelines=ppl_with_epochs
-                        )
-                            
-                    df_eval.append(paradigm_results)
+    if dataset.paradigm == "p300":
+        #paradigm_300= P300()
+        #p = getattr(paradigm_300)(**context_params['paradigm'])
+        p=P300()
+    else: 
+        #paradigm_N400= N400()
+        #p = getattr(paradigm_N400)(**context_params['paradigm'])
+        p=N400()
+    log.debug(context_params['paradigm'])  
+    for pn, pv in prdgms['pipelines'].items():
+        ppl_with_epochs, ppl_with_array = {}, {}  
+        #print(pv)
+        if "SNN" in pn:
+            ppl_with_epochs[pn]=pv
+            #ppl_with_epochs[pn] = pv
+            if (dataset.n_sessions>2):
+                context = eval_type["Siamese_CrossSession"](
+                        paradigm=p,
+                        datasets=dataset,
+                        # random_state=42,
+                        # hdf5_path=results,
+                        # n_jobs=1,
+                        # return_epochs=True,
+                    )
+            
+                # Calling the evualtion function
+                paradigm_results = context.process(
+                    pipelines=ppl_with_epochs)   
+                df_eval.append(paradigm_results)
+            
+            context = eval_type["Siamese_WithinSession"](
+                        paradigm=p,
+                        datasets=dataset,
+                        # random_state=42,
+                        # hdf5_path=results,
+                        # n_jobs=1,
+                        # return_epochs=True,
+                    )
+            
+            # Calling the evualtion function
+            paradigm_results = context.process(
+                pipelines=ppl_with_epochs)   
+            df_eval.append(paradigm_results)
 
         else:
-            if (evaluation=='Cross_Session') and (dataset.n_sessions<3):
-                continue
-            else:
-
-                # if "siamese" in prdgms['pipelines'].keys():
-                #     print("Please provide non-siamese pipelines for non-siamese evaluation")
-                #     continue
-                # else:
-                for pn, pv in prdgms['pipelines'].items():
-                    if "siamese" in pn:
-                       print("Please provide non-siamese pipelines for non-siamese evaluation")
-                       continue
-                        #print("pn",pn)
-                    else:
-                        ppl_with_array[pn] = pv
-                #print("ppl_with_array",ppl_with_array[pn])
-
-                #print("ppl_with_array")
-                context = eval_type[evaluation](
-                            paradigm=p,
-                            datasets=dataset,
-                            # random_state=42,
-                            # hdf5_path=results,
-                            # n_jobs=1,
-                            # return_epochs=True,
-                        )
-                
-                    # Calling the evualtion function
-                paradigm_results = context.process(
-                        pipelines=ppl_with_array
+            ppl_with_array[pn] = pv
+            if (dataset.n_sessions>2):
+                context = eval_type["Cross_Session"](
+                        paradigm=p,
+                        datasets=dataset,
+                        # random_state=42,
+                        # hdf5_path=results,
+                        # n_jobs=1,
+                        # return_epochs=True,
                     )
-                        
+            
+                # Calling the evualtion function
+                paradigm_results = context.process(
+                    pipelines=ppl_with_array)   
                 df_eval.append(paradigm_results)
-
-
-        # if (evaluation=='CrossSession' or evaluation=='SiameseCrossSession') and (dataset.n_sessions==1):
-        #     continue
-        # else:
-
-        #     for pn, pv in prdgms['pipelines'].items():
-        #         if "braindecode" in pn:
-        #             ppl_with_epochs[pn] = pv
-        #         else:
-        #             ppl_with_array[pn] = pv
-        #     #print("ppl_with_array",ppl_with_array[pn])
-        #     context = eval_type[evaluation](
-        #                 paradigm=p,
-        #                 datasets=dataset,
-        #                 # random_state=42,
-        #                 # hdf5_path=results,
-        #                 # n_jobs=1,
-        #                 # return_epochs=True,
-        #             )
-                
-        #         # Calling the evualtion function
-        #     paradigm_results = context.process(
-        #             pipelines=ppl_with_array
-        #         )
                     
-        #     df_eval.append(paradigm_results)
-
-            #df = pd.concat(df_eval)
+            context = eval_type["Within_Session"](
+                        paradigm=p,
+                        datasets=dataset,
+                        # random_state=42,
+                        # hdf5_path=results,
+                        # n_jobs=1,
+                        # return_epochs=True,
+                    )
+            
+            # Calling the evualtion function
+            paradigm_results = context.process(
+                pipelines=ppl_with_array)   
+            df_eval.append(paradigm_results)
+         
     return pd.concat(df_eval)
 
-        
-        #print("paradigm",paradigm)
-        #print("context_params",context_params)
-        #print("pipeline_config",pipeline_config)
-        #print("evaluation",evaluation)
-        #print("eval_type",eval_type)
-        #print("output",output)
-        #print("results",results)
-        #print("subjects",subjects)
-        #print("pipeline_config",pipeline_config)
-        #print("pipeline_config",pipeline_config)
-        #print("pipeline_config",pipeline_config)
-        #print("pipeline_config",pipeline_config)
-        #print("pipeline_config",pipeline_config)
-
-        
-        #p = getattr(deeb_paradigms, paradigm)(**context_params[paradigm])
+    
     
 
 # Creating main function
@@ -230,11 +168,11 @@ if __name__ == "__main__":
     #obj.run()
     result=benchmark()
     #print(result.columns)
-    result['pipeline']=result['pipeline'].apply(lambda x: x.split('+')[-1])
+    #result['pipeline']=result['pipeline'].apply(lambda x: x.split('+')[-1])
     grouped_df=result.groupby(['evaluation','pipeline', 'eval Type','dataset']).agg({
                 "subject": 'nunique',
-                'n_samples': 'first',
-                'accuracy': 'mean',
+                #'n_samples': 'first',
+                #'accuracy': 'mean',
                 'auc': 'mean',
                 'eer': lambda x: f'{np.mean(x)*100:.3f} ± {np.std(x)*100:.3f}',
                 'frr_1_far': lambda x: f'{np.mean(x)*100:.3f}'

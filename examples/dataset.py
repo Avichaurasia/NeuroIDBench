@@ -27,18 +27,20 @@ from deeb.datasets.lee2019 import Lee2019
 from deeb.datasets.erpCoreN400 import ERPCOREN400
 from deeb.paradigms.n400 import N400
 from deeb.paradigms.p300 import P300
+from deeb.datasets.cogBciFlanker import COGBCIFLANKER
 
 # Intializing the datasets 
 lee = Lee2019()
-mantegna=BrainInvaders2015a()
+mantegna=COGBCIFLANKER()
 #mantegna.interval
-lee.download()
+mantegna.subject_list = mantegna.subject_list[0:1]
+mantegna.get_data()
 #lee.subject_list=lee.subject_list[0:1]
 #lee.subject_list = lee.subject_list[0:5]
 #print(lee.get_data())
 
 #lee.get_data()
-ar=AutoRegressive(order=6)
+#ar=AutoRegressive(order=6)
 
 
 #n400=N400()

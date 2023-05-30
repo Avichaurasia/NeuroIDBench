@@ -1,0 +1,297 @@
+import glob
+import os
+import os.path as osp
+import zipfile as z
+from distutils.dir_util import copy_tree
+from pathlib import Path
+import mne
+import numpy as np
+import yaml
+from mne.channels import make_standard_montage
+from scipy.io import loadmat
+from deeb.datasets import download as dl
+from deeb.datasets.base import BaseDataset
+from mne.io import read_raw_eeglab, read_raw
+import sys
+#sys.path.append('/Users/avinashkumarchaurasia/Master_Thesis/deeb/deeb/datasets')
+from mne.channels import read_dig_polhemus_isotrak, read_custom_montage
+import numpy as np
+import pandas as pd
+from mne import get_config, set_config
+from mne.datasets.utils import _get_path
+from mne.utils import _url_to_local_path, verbose
+import pooch
+from pooch import file_hash, retrieve
+from requests.exceptions import HTTPError
+from deeb.datasets import download as dl
+from deeb.datasets.base import BaseDataset
+from collections import OrderedDict
+from mne.utils import _url_to_local_path, verbose
+import shutil
+import io
+from pooch import Unzip, retrieve
+
+FLANKER_BASE_URL = "https://zenodo.org/record/7413650/files/"
+download_url="?download=1"
+
+class COGBCIFLANKER(BaseDataset):
+    def __init__(self):
+        super().__init__(
+            subjects=list(range(1, 30)),
+            sessions_per_subject=3, 
+            events=dict(Inconsistent=242, Consistent=241),
+            code="COG-BCI Flanker",
+            interval=[-0.2, 0.8],
+            paradigm="n400",
+            doi=None,
+            dataset_path=None
+            )
+    # # This function has been sourced from the BDS-3 licensed repository at https://github.com/NeuroTechX/moabb    
+    # @verbose
+    # def download_dataset(self, url, sign, path=None, force_update=False, verbose=None):
+    #     """
+    #     This function has been sourced from the BDS-3 licensed repository at https://github.com/NeuroTechX/moabb
+
+    #     References
+    #     ----------
+    #     [1] Vinay Jayaram and Alexandre Barachant. MOABB: trustworthy algorithm benchmarking for BCIs. 
+    #     Journal of neural engineering 15.6 (2018): 066011. DOI:10.1088/1741-2552
+    #     """
+    #     path = Path(dl.get_dataset_path(sign, path))
+    #     print(f"path: {path}")
+
+    #     key_dest = f"MNE-{sign.lower()}-data"
+    #     destination = _url_to_local_path(url, path / key_dest)
+        
+    #     destination = str(path) + destination.split(str(path))[1]
+    #     table = {ord(c): "-" for c in ':*?"<>|'}
+    #     destination = Path(str(path) + destination.split(str(path))[1].translate(table))
+
+    #     if not destination.is_file() or force_update:
+    #         if destination.is_file():
+    #             destination.unlink()
+    #         if not destination.parent.is_dir():
+    #             destination.parent.mkdir(parents=True)
+    #         known_hash = None
+    #     else:
+    #         known_hash = file_hash(str(destination))
+
+    #     dlpath = retrieve(
+    #         url,
+    #         known_hash,
+    #         fname="raw_data.zip",
+    #         path=str(destination.parent),
+    #         progressbar=True,
+    #     )
+
+    #     return dlpath
+
+    def _get_single_subject_data(self, subject):
+        """return data for a single subject"""
+
+        #print("Avinash Kumar Chaurasia")
+        file_path_list = self.data_path(subject)
+        sessions = {}
+        #print(f"file_path_list: {file_path_list}")
+        for file_path, session in zip(file_path_list, [1, 2, 3]):
+            #session_name = f'session_{str(file_path).split("_")[-1][1:2]}'
+            session_name = "session_"+str(session)
+            if session_name not in sessions.keys():
+                sessions[session_name] = {}
+            run_name = 'run_1'
+            raw_data_path=os.path.join(file_path,"Flanker.set")
+            raw = read_raw_eeglab(raw_data_path, preload = True, verbose=False)
+
+            if "Cz" in raw.ch_names:
+                raw.drop_channels(['Cz', 'ECG1'])
+            else:
+                raw.drop_channels(['ECG1'])
+            raw.set_montage('standard_1020')
+
+            #print("raw annotations", raw.annotations.description)
+
+            description_dict = { '20' : 'FLANKER/Start',
+                '210' : 'FLANKER Trial/ISI Start',
+                '221' : 'FLANKER/Error/ISI',
+                '222' : 'FLANKER/Error/FIXI',
+                '23' : 'FLANKER/Fixation/Cross',
+                '241' : 'FLANKER/Stimulus/cong',
+                '2511' : 'FLANKER/Response/Correct/cong',
+                '2521' : 'FLANKER/Response/Incorrect/cong',
+                '25121' : 'FLANKER/Response/Correct/Feedback/cong',
+                '25221' : 'FLANKER/Response/Incorrect/Feedback cong',
+                '25321' : 'FLANKER/Missed/Response/Feedback/cong',
+                '21' : 'FLANKER/End',
+                '242' : 'FLANKER/Stimulus/incong',
+                '2512' : 'FLANKER/Response/Correct/incong',
+                '2522' : 'FLANKER/Response/Incorrect/incong',
+                '25122' : 'FLANKER/Response/Correct/Feedback/incong',
+                '25222' : 'FLANKER/Response/Incorrect/Feedback/incong',
+                '25322' : 'FLANKER/Missed/Response/Feedback/incong',
+                   'boundary': 'boundary'}
+            raw.annotations.description=pd.Series(raw.annotations.description).map(description_dict).to_numpy()
+            print("raw annotations", raw.annotations.description)
+
+            event_ids={
+                'FLANKER/Start': 20,
+                            'FLANKER Trial/ISI Start': 210,
+                            'FLANKER/Error/ISI': 221,
+                            'FLANKER/Error/FIXI': 222,
+                            'FLANKER/Fixation/Cross': 23,
+                           'FLANKER/Stimulus/cong': 241,
+                            'FLANKER/Response/Correct/cong': 2511,
+                            'FLANKER/Response/Incorrect/cong' : 2521,
+                            'FLANKER/Response/Correct/Feedback/cong': 25121,
+                            'FLANKER/Response/Incorrect/Feedback cong':25221 ,
+                            'FLANKER/Missed/Response/Feedback/cong': 25321,
+                            'FLANKER/End': 21,
+                            'FLANKER/Stimulus/incong':242 ,
+                            'FLANKER/Response/Correct/incong': 2512,
+                            'FLANKER/Response/Incorrect/incong': 2522,
+                            'FLANKER/Response/Correct/Feedback/incong': 25122,
+                            'FLANKER/Response/Incorrect/Feedback/incong': 25222,
+                            'FLANKER/Missed/Response/Feedback/incong': 25322
+            }
+            events, events_ids= mne.events_from_annotations(raw, event_ids, verbose=False)
+
+            ## Iterate over all FLANKER/Stimulus/incong events and delete those FLANKER/Stimulus/incong events from the 
+            ## events array if the next event after all FLANKER/Stimulus/incong is not 'FLANKER/Response/Correct/incong'
+            ## or 'FLANKER/Response/Incorrect/incong'
+
+            # print("events", len(events))
+            # events_to_delete=[]
+            # for i in range(len(events)-1):
+            #     print(events[i][2])
+            #     if events[i][2]==242:
+            #         print("next event", events[i+1][2])
+            #         if events[i+1][2]!=2512:
+            #             events_to_delete.append(i)
+            # events=np.delete(events, events_to_delete, axis=0)
+            # print("after deleting events", len(events))
+
+            event_242_indices_before = np.where(events[:, 2] == 242)[0]
+            #print("event_242_indices", event_242_indices_before)
+            #print("len of 242 events before", len(event_242_indices_before))
+
+            # events_to_delete = []
+            # for i in range(len(events) - 1):
+            #     if events[i][2] == 242:
+            #         #print("next event", events[i+1][2])
+            #         if events[i+1][2] != 2512:
+            #             events_to_delete.append(i)
+
+            # events = np.delete(events, events_to_delete, axis=0)
+
+            events_to_delete = []
+            for i in range(len(events) - 1):
+
+                # To delete incorrect congruent events which had incorrect response from the subject
+                if events[i][2] == 241 and events[i+1][2] != 2511:
+                    events_to_delete.append(i)
+
+                # To delete incorrect incongruent events which had incorrect response from the subject
+                elif events[i][2] == 242 and events[i+1][2] != 2512:
+                    events_to_delete.append(i)
+
+            events = np.delete(events, events_to_delete, axis=0)
+
+
+            event_242_indices_after = np.where(events[:, 2] == 242)[0]
+            #print("event_242_indices after", event_242_indices_after)
+            #print("len of 242 events after", len(event_242_indices_after))
+
+
+
+            sessions[session_name][run_name] = raw, events
+        return sessions
+
+    
+    def data_path(self, subject, path=None, force_update=False,
+                  update_path=None, verbose=None): 
+        
+        if subject not in self.subject_list:
+            raise ValueError("Invalid subject number")
+        #subject=str(subject) 
+        # else:
+        #     if(subject<10):
+        #         subject="0"+str(subject)
+            #else:
+                
+
+        # define url and paths
+        #url = FLANKER_BASE_URL
+        subject_str = f"sub-{subject:02}"
+        url = f"{FLANKER_BASE_URL}{subject_str}.zip{download_url}"
+        zip_filename = f"{subject_str}.zip{download_url}"
+       # main_directory='raw_data'
+
+        # download and extract data if needed
+        path_zip = dl.data_dl(url, "COGBCIFLANKER2022")
+        #print(f"path_zip: {path_zip}")
+        self.dataset_path=os.path.dirname(os.path.dirname(Path(path_zip.strip(zip_filename))))
+        #print(f"dataset_path: {self.dataset_path}")
+        subject_dir = Path(path_zip.strip(zip_filename))/subject_str
+        #print(f"subject_dir:", subject_dir)
+        if not subject_dir.exists():
+            with z.ZipFile(path_zip, "r") as zip_ref:
+                zip_ref.extractall(subject_dir)
+
+
+        #print(Path(os.path.dirname(os.path.join(subject_dir, subject_str, subject_str, subject_str))))
+        print(os.listdir(os.path.join(subject_dir, subject_str)))
+
+        if subject_str in os.listdir(os.path.join(subject_dir, subject_str)):
+            subject_dir=os.path.join(subject_dir, subject_str)
+        
+        # print("subject_dir", subject_dir)
+        # subject_inside_folder=os.path.join(subject_dir, subject_str)
+        # print("subject_inside_folder", subject_inside_folder)
+        # if (Path(os.path.dirname(os.path.join(subject_inside_folder, subject_str))).name)==subject_str:
+        #     final_subject_directory=os.path.join(subject_inside_folder, subject_dir)
+        # else:
+        #     final_subject_directory=subject_dir
+
+        # print("fibal subject directory", final_subject_directory)
+
+        #print(os.listdir(folders))
+
+        #if(Path(os.path.dirname(os.path.join(subject_dir, ))))
+
+        #folders = [folder for folder in subject_dir.iterdir() if folder.is_dir()]
+        #if len(subject_dir)
+
+        #print(f"subject_dir:",os.listdir(os.path.join(subject_dir, subject_str)))
+
+        #if len(os.)
+
+
+        #subject_dir=os.path.join(subject_dir, subject_str)
+        #print(f"subject_dir:", subject_dir)
+        #raw_data_path = os.listdir(subject_dir)
+        #print(f"raw_data_path:", raw_data_path)
+        #for sub in raw_data_path:
+         #   if sub.endswith(".set") and sub.split('.')[0].split('_')[1]=='N400' and len(sub.split('.')[0].split('_'))==2:
+          #      return os.path.join(subject_dir, sub)
+
+        # get paths to relevant files
+        session_name="ses"
+        session_paths = [
+            subject_dir / f"{subject_str}/{session_name}-S{session:1}/eeg" for session in [1, 2, 3]]
+            #final_subject_directory / f"{subject_str}{session_name}-S{session:1}/eeg" for session in [1, 2, 3]]
+        #print(f"session_paths: {session_paths}")
+        #print("avinash")
+        return session_paths
+            
+
+# if __name__ == "__main__":
+#     d=COGBCIFLANKER()
+#     d=d.subject_list[0:1]
+            
+    
+
+        
+
+    
+
+
+

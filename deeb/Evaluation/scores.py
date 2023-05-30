@@ -76,8 +76,9 @@ class Scores():
         frr_1_far = 1-inter_tpr[1]
         return (auc, eer, eer_thresh, inter_tpr, tpr, fnr, frr_1_far)
     
-    def _calculate_siamese_scores(predicted_lables, true_lables, mean_fpr):
-        fpr, tpr, thresholds=metrics.roc_curve(true_lables, predicted_lables, pos_label=1)
+    def _calculate_siamese_scores(true_lables, predicted_scores):
+        mean_fpr=np.linspace(0, 1, 100)
+        fpr, tpr, thresholds=metrics.roc_curve(true_lables, predicted_scores, pos_label=1)
 
         inter_tpr=np.interp(mean_fpr, fpr, tpr)
         #inter_fpr=interp1d()

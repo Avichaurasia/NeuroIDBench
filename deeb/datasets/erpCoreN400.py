@@ -127,6 +127,8 @@ class ERPCOREN400(BaseDataset):
 
        # Merge events of event_id's "Target/Unrelated because nature of the trails is same, just they
         # came from two different lists"
+        print("Raw data units ", raw.info['chs'][0]['unit'])
+        #raw=raw.get_data()*1e6
         events[events[:, 2] == 221, 2] = 222
         sessions[session_name][run_name]=raw, events
         return sessions

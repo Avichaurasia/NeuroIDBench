@@ -1,5 +1,5 @@
 import sys
-sys.path.append('/Users/avinashkumarchaurasia/Master_Thesis/deeb/')
+#sys.path.append('/Users/avinashkumarchaurasia/Master_Thesis/deeb/')
 import numpy as np
 from sklearn.discriminant_analysis import LinearDiscriminantAnalysis as LDA
 from sklearn.pipeline import make_pipeline
