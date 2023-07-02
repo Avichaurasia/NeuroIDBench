@@ -55,8 +55,6 @@ class BrainInvaders2015a(BaseDataset):
             dataset_path=None,
             )
         
-    #_scalings = dict(eeg=1e-6, stim=1)   
-
     def _get_single_subject_data(self, subject):
         """return data for a single subject"""
          
@@ -64,7 +62,6 @@ class BrainInvaders2015a(BaseDataset):
         all_sessions_data=[]
         sessions = {}
         for file_path, session in zip(file_path_list, [1, 2, 3]):
-            #session_name = f'session_{str(file_path).split("_")[-1][1:2]}'
             session_name = "session_1"
             if session_name not in sessions.keys():
                 sessions[session_name] = {}
@@ -84,17 +81,8 @@ class BrainInvaders2015a(BaseDataset):
                                    verbose=False)
 
             # make standard montage before read raw data
-            #montage=mne.channels.make_standard_montage('standard_1020')
-            #info.set_montage(montage, match_case=False)
-            #factor = self._scalings.get('eeg')
             raw = mne.io.RawArray(data=X, info=info, verbose=False)
             raw.set_montage(make_standard_montage("standard_1020"))
-
-            # # Scale EEG data to volts
-            # scalings = {'eeg': 1e-6}
-            # eeg_chans = mne.pick_types(raw.info, eeg=True)
-            # raw._data[eeg_chans,:] *= scalings['eeg']
-        #sessions[session_name][run_name]=raw, events
             all_sessions_data.append(raw)
 
         # Concetenating the three sessions data since there was no break between each session

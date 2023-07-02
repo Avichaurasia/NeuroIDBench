@@ -99,8 +99,8 @@ class CrossSessionEvaluation(BaseEvaluation):
             X_test=sc.transform(X_test)
 
             # Resampling the training data using RandomOverSampler
-            oversampler = RandomOverSampler(random_state=42)
-            X_train, y_train = oversampler.fit_resample(X_train, y_train)
+            # oversampler = RandomOverSampler(random_state=42)
+            # X_train, y_train = oversampler.fit_resample(X_train, y_train)
             clf=clone(classifer)
 
             # Training the model
@@ -187,8 +187,8 @@ class CrossSessionEvaluation(BaseEvaluation):
             X_test=sc.transform(X_test)
 
             # Resampling the training data using RandomOverSampler
-            oversampler = RandomOverSampler(random_state=42)
-            X_train, y_train = oversampler.fit_resample(X_train, y_train)
+            # oversampler = RandomOverSampler(random_state=42)
+            # X_train, y_train = oversampler.fit_resample(X_train, y_train)
             clf=clone(classifer)
             
             # Training the model
@@ -228,19 +228,30 @@ class CrossSessionEvaluation(BaseEvaluation):
 
 
     def _prepare_dataset(self, dataset, features):
+
+        # features_path=os.path.join(os.path.join(
+        #     dataset.dataset_path,
+        #     "Features",
+        #     #f"{dataset.code}_CloseSetEvaluation")
+        # ))
+
+        # if not os.path.exists(features_path):
+        #     os.makedirs(features_path)
+
         df_final=pd.DataFrame()
         for feat in range(0, len(features)-1):
             df=features[feat].get_data(dataset, self.paradigm)
             df_final = pd.concat([df_final, df], axis=1)
 
+
         # Check if the dataframe contains duplicate columns
         if df_final.columns.duplicated().any():
             df_final = df_final.loc[:, ~df_final.columns.duplicated(keep='first')]
 
-        # # Drop rows where "Subject" value_count is less than 4
-        # subject_counts = df_final["Subject"].value_counts()
-        # valid_subjects = subject_counts[subject_counts >= 4].index
-        # df_final = df_final[df_final["Subject"].isin(valid_subjects)]
+        # Drop rows where "Subject" value_count is less than 4
+        subject_counts = df_final["Subject"].value_counts()
+        valid_subjects = subject_counts[subject_counts >= 4].index
+        df_final = df_final[df_final["Subject"].isin(valid_subjects)]
 
         return df_final
 
@@ -262,9 +273,8 @@ class CrossSessionEvaluation(BaseEvaluation):
                 #print("value_counts", df_subj[['Subject','session']].value_counts())
                 #groups = df_subj.session.values
 
-                if not self._valid_subject(self, df_subj, subject, dataset):
-                    continue
-                
+                if not self._valid_subject(df_subj, subject, dataset):
+                        continue
 
                 if self.return_close_set == False and self.return_open_set==False:
                     message = "Please choose either close-set or open-set scenario for the evaluation"
@@ -346,15 +356,13 @@ class CrossSessionEvaluation(BaseEvaluation):
         )
         return results, results_path, scenario
     
-    def _valid_subject(self, df, subject, dataset):
-        """Checks if the subject has the required session needed for performing within Session Evaluation"""
-        # Return True if the subject has at sessions equal to the number of sessions in the dataset else False
-        if df[df.Subject == subject].session.nunique() == dataset.n_sessions:
-            return True
-        else:
+    def _valid_subject(self, df_subj, subject, dataset):
+        df_subject=df_subj[df_subj['Subject']==subject]
+        print(df_subject['session'].unique())
+        if (len(df_subject['session'].unique())!=dataset.n_sessions):
             return False
-
-        #return df[df.Subject == subject].session.nunique() >= 2
+        else:
+            return True
 
     def is_valid(self, dataset):
         return dataset.n_sessions > 1 

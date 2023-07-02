@@ -43,7 +43,7 @@ def _evaluate():
     brain=BrainInvaders2015a()
     mantegna=Mantegna2019()
     erp_core=ERPCOREN400()
-    #erp_core.subject_list=erp_core.subject_list[0:5]
+    erp_core.subject_list=erp_core.subject_list[0:10]
     # lee = Lee2019()
     # lee.subject_list = lee.subject_list[0:3]
 
@@ -70,10 +70,11 @@ def _evaluate():
     # results=evaluate.process(pipeline)
 
     pipeline['AR+PSD+SVM']=make_pipeline(PowerSpectralDensity(), SVC(kernel='rbf', probability=True))
-    pipeline['AR+PSD+SVM']=make_pipeline(AutoRegressive(order=6), PowerSpectralDensity(), SVC(kernel='rbf', probability=True))
+    pipeline['AR+SVM']=make_pipeline(AutoRegressive(order=6), SVC(kernel='rbf', probability=True))
     pipeline['AR+PSD+LR']=make_pipeline(AutoRegressive(order=6), PowerSpectralDensity(), LogisticRegression())
     # #pipeline['PSD+LR']=make_pipeline(AutoRegressive(order=6), PowerSpectralDensity(), LogisticRegression())
     pipeline['AR+PSD+LDA']=make_pipeline(AutoRegressive(order=6), PowerSpectralDensity(), LDA(solver='lsqr', shrinkage='auto'))
+    #pipeline['siamese']=make_pipeline(Siamese())
     # #pipeline['PSD+LDA']=make_pipeline(AutoRegressive(order=6), PowerSpectralDensity(), LDA(solver='lsqr', shrinkage='auto'))
     #pipeline['AR+PSD+NB']=make_pipeline(AutoRegressive(order=6), PowerSpectralDensity(), GaussianNB())
     # #pipeline['PSD+NB']=make_pipeline(AutoRegressive(order=6), PowerSpectralDensity(), GaussianNB())
@@ -102,7 +103,7 @@ def _evaluate():
     # plot._roc_curve_single_dataset(results_close_set, evaluation_type="Open-Set", dataset=mantegna)
     # #print(datasets[0].dataset_path)
     # Getting the results for the within session evaluation
-    within_session=WithinSessionEvaluation(paradigm=paradigm_n400, datasets=mantegna, overwrite=False)
+    within_session=WithinSessionEvaluation(paradigm=paradigm_n400, datasets=erp_core, overwrite=False)
     results_within_session=within_session.process(pipeline)
 
     # grouped_df=results_within_session.groupby(['eval Type','dataset','pipeline','session']).agg({

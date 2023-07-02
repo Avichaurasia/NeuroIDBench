@@ -210,7 +210,7 @@ class BaseParadigm(metaclass=ABCMeta):
             )
 
             # epochs_units = epochs.info['units']
-            print("Epochs units:", epochs.info['chs'][0]['unit'])
+            #print("Epochs units:", epochs.info['chs'][0]['unit'])
                 #print(epochs.info)
                 # if bmin < tmin or bmax > tmax:
                 #     epochs.crop(tmin=tmin, tmax=tmax)
@@ -263,8 +263,9 @@ class BaseParadigm(metaclass=ABCMeta):
         #     message = "Select only return_epochs or return_raws, not both"
         #     raise ValueError(message)
         replacement_dict = {v: k for k, v in dataset.event_id.items()}
+
+        # This returns the raw mne data for the given number of subjects in the form of dictionary
         data = dataset.get_data(dataset.subject_list)
-        #del data
         epochs_directory=os.path.join(dataset.dataset_path, "Epochs")
         if not os.path.exists(epochs_directory):
             os.makedirs(epochs_directory)

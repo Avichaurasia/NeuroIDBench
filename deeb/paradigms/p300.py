@@ -345,6 +345,7 @@ class P300(SinglePass):
     def used_events(self, dataset):
         #print("Show event id's", {ev: dataset.event_id[ev] for ev in self.events})
         return {ev: dataset.event_id[ev] for ev in self.events}
+        ## Would return like "target": 2, "NonTarget": 1 for BrainInvaders2015a dataset
 
     @property
     def scoring(self):

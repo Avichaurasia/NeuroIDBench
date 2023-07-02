@@ -437,6 +437,7 @@ class WithinSessionEvaluation(BaseEvaluation):
                         #"n_channels": data.columns.size
                         }
                         results_open_set.append(res_open_set)
+                        #print("I am done with open set")
 
         if self.return_close_set ==True and self.return_open_set== False:
             scenario='close_set'
@@ -459,7 +460,9 @@ class WithinSessionEvaluation(BaseEvaluation):
     
     def evaluate(self, dataset, pipelines, param_grid):
         #yield from self._evaluate(dataset, pipelines, param_grid)
+        #print("start evaluation")
         results, scenario=self._evaluate(dataset, pipelines, param_grid)
+        #print("stopp evaluation")
         #print(type(results))
         results_path=os.path.join(
             dataset.dataset_path,

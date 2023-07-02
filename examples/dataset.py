@@ -1,5 +1,5 @@
-import sys
-sys.path.append('/Users/avinashkumarchaurasia/Master_Thesis/deeb/deeb')
+#import sys
+#sys.path.append('/Users/avinashkumarchaurasia/Master_Thesis/deeb/deeb')
 import abc
 import logging
 import mne
@@ -31,10 +31,26 @@ from deeb.datasets.cogBciFlanker import COGBCIFLANKER
 
 # Intializing the datasets 
 lee = Lee2019()
-mantegna=COGBCIFLANKER()
+erp=ERPCOREN400()
 #mantegna.interval
-mantegna.subject_list = mantegna.subject_list[0:1]
-mantegna.get_data()
+erp.subject_list = erp.subject_list[0:10]
+data=erp.get_data()
+for subject, sessions in data.items():
+    for session, runs in sessions.items():
+        for run, raw_events in runs.items():
+            raw = raw_events[0]
+            print("Subject:", subject)
+            print("Session:", session)
+            print("Run:", run)
+            print("Raw data:", raw)
+            print("---------------------")
+
+
+
+
+#data, events=erp.get_data()
+#print(data)
+#print(erp.get_data())
 #lee.subject_list=lee.subject_list[0:1]
 #lee.subject_list = lee.subject_list[0:5]
 #print(lee.get_data())

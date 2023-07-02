@@ -1,5 +1,5 @@
-import sys
-sys.path.append('/Users/avinashkumarchaurasia/Master_Thesis/deeb/deeb')
+#import sys
+#sys.path.append('/Users/avinashkumarchaurasia/Master_Thesis/deeb/deeb')
 import numpy as np
 from sklearn.discriminant_analysis import LinearDiscriminantAnalysis as LDA
 from sklearn.pipeline import make_pipeline
@@ -35,7 +35,7 @@ from deeb.Evaluation import (WithinSessionEvaluation, CrossSessionEvaluation,
 log = logging.getLogger(__name__)
 
 def benchmark(subjects=None,
-              pipelines="../single_dataset_pipelines/",
+              pipelines="single_dataset_pipelines",
               evaluations=None,
               paradigms=None,
               results='./results',
@@ -166,7 +166,9 @@ if __name__ == "__main__":
 
     # Calling function
     #obj.run()
+    print("Current path", os.getcwd())
     result=benchmark()
+
     #print(result.columns)
     #result['pipeline']=result['pipeline'].apply(lambda x: x.split('+')[-1])
     grouped_df=result.groupby(['evaluation','pipeline', 'eval Type','dataset']).agg({

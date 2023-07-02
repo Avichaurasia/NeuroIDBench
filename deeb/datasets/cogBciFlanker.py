@@ -92,6 +92,7 @@ class COGBCIFLANKER(BaseDataset):
         #print("Avinash Kumar Chaurasia")
         file_path_list = self.data_path(subject)
         sessions = {}
+        #print("file path", file_path_list)
         #print(f"file_path_list: {file_path_list}")
         for file_path, session in zip(file_path_list, [1, 2, 3]):
             #session_name = f'session_{str(file_path).split("_")[-1][1:2]}'
@@ -99,6 +100,7 @@ class COGBCIFLANKER(BaseDataset):
             if session_name not in sessions.keys():
                 sessions[session_name] = {}
             run_name = 'run_1'
+            #print("fle paths", os.listdir(file_path))
             raw_data_path=os.path.join(file_path,"Flanker.set")
             raw = read_raw_eeglab(raw_data_path, preload = True, verbose=False)
 
@@ -107,8 +109,6 @@ class COGBCIFLANKER(BaseDataset):
             else:
                 raw.drop_channels(['ECG1'])
             raw.set_montage('standard_1020')
-
-            #print("raw annotations", raw.annotations.description)
 
             description_dict = { '20' : 'FLANKER/Start',
                 '210' : 'FLANKER Trial/ISI Start',
@@ -130,7 +130,6 @@ class COGBCIFLANKER(BaseDataset):
                 '25322' : 'FLANKER/Missed/Response/Feedback/incong',
                    'boundary': 'boundary'}
             raw.annotations.description=pd.Series(raw.annotations.description).map(description_dict).to_numpy()
-            print("raw annotations", raw.annotations.description)
 
             event_ids={
                 'FLANKER/Start': 20,
@@ -138,7 +137,7 @@ class COGBCIFLANKER(BaseDataset):
                             'FLANKER/Error/ISI': 221,
                             'FLANKER/Error/FIXI': 222,
                             'FLANKER/Fixation/Cross': 23,
-                           'FLANKER/Stimulus/cong': 241,
+                            'FLANKER/Stimulus/cong': 241,
                             'FLANKER/Response/Correct/cong': 2511,
                             'FLANKER/Response/Incorrect/cong' : 2521,
                             'FLANKER/Response/Correct/Feedback/cong': 25121,
@@ -154,34 +153,6 @@ class COGBCIFLANKER(BaseDataset):
             }
             events, events_ids= mne.events_from_annotations(raw, event_ids, verbose=False)
 
-            ## Iterate over all FLANKER/Stimulus/incong events and delete those FLANKER/Stimulus/incong events from the 
-            ## events array if the next event after all FLANKER/Stimulus/incong is not 'FLANKER/Response/Correct/incong'
-            ## or 'FLANKER/Response/Incorrect/incong'
-
-            # print("events", len(events))
-            # events_to_delete=[]
-            # for i in range(len(events)-1):
-            #     print(events[i][2])
-            #     if events[i][2]==242:
-            #         print("next event", events[i+1][2])
-            #         if events[i+1][2]!=2512:
-            #             events_to_delete.append(i)
-            # events=np.delete(events, events_to_delete, axis=0)
-            # print("after deleting events", len(events))
-
-            event_242_indices_before = np.where(events[:, 2] == 242)[0]
-            #print("event_242_indices", event_242_indices_before)
-            #print("len of 242 events before", len(event_242_indices_before))
-
-            # events_to_delete = []
-            # for i in range(len(events) - 1):
-            #     if events[i][2] == 242:
-            #         #print("next event", events[i+1][2])
-            #         if events[i+1][2] != 2512:
-            #             events_to_delete.append(i)
-
-            # events = np.delete(events, events_to_delete, axis=0)
-
             events_to_delete = []
             for i in range(len(events) - 1):
 
@@ -194,14 +165,7 @@ class COGBCIFLANKER(BaseDataset):
                     events_to_delete.append(i)
 
             events = np.delete(events, events_to_delete, axis=0)
-
-
-            event_242_indices_after = np.where(events[:, 2] == 242)[0]
-            #print("event_242_indices after", event_242_indices_after)
-            #print("len of 242 events after", len(event_242_indices_after))
-
-
-
+            
             sessions[session_name][run_name] = raw, events
         return sessions
 
@@ -231,47 +195,17 @@ class COGBCIFLANKER(BaseDataset):
         self.dataset_path=os.path.dirname(os.path.dirname(Path(path_zip.strip(zip_filename))))
         #print(f"dataset_path: {self.dataset_path}")
         subject_dir = Path(path_zip.strip(zip_filename))/subject_str
-        #print(f"subject_dir:", subject_dir)
+        #print(f"subject_dir:", Path(path_zip.strip(zip_filename)))
         if not subject_dir.exists():
             with z.ZipFile(path_zip, "r") as zip_ref:
                 zip_ref.extractall(subject_dir)
 
-
         #print(Path(os.path.dirname(os.path.join(subject_dir, subject_str, subject_str, subject_str))))
-        print(os.listdir(os.path.join(subject_dir, subject_str)))
+        #print(os.listdir(os.path.join(subject_dir, subject_str)))
 
         if subject_str in os.listdir(os.path.join(subject_dir, subject_str)):
-            subject_dir=os.path.join(subject_dir, subject_str)
-        
-        # print("subject_dir", subject_dir)
-        # subject_inside_folder=os.path.join(subject_dir, subject_str)
-        # print("subject_inside_folder", subject_inside_folder)
-        # if (Path(os.path.dirname(os.path.join(subject_inside_folder, subject_str))).name)==subject_str:
-        #     final_subject_directory=os.path.join(subject_inside_folder, subject_dir)
-        # else:
-        #     final_subject_directory=subject_dir
+            subject_dir=Path(os.path.join(subject_dir, subject_str))
 
-        # print("fibal subject directory", final_subject_directory)
-
-        #print(os.listdir(folders))
-
-        #if(Path(os.path.dirname(os.path.join(subject_dir, ))))
-
-        #folders = [folder for folder in subject_dir.iterdir() if folder.is_dir()]
-        #if len(subject_dir)
-
-        #print(f"subject_dir:",os.listdir(os.path.join(subject_dir, subject_str)))
-
-        #if len(os.)
-
-
-        #subject_dir=os.path.join(subject_dir, subject_str)
-        #print(f"subject_dir:", subject_dir)
-        #raw_data_path = os.listdir(subject_dir)
-        #print(f"raw_data_path:", raw_data_path)
-        #for sub in raw_data_path:
-         #   if sub.endswith(".set") and sub.split('.')[0].split('_')[1]=='N400' and len(sub.split('.')[0].split('_'))==2:
-          #      return os.path.join(subject_dir, sub)
 
         # get paths to relevant files
         session_name="ses"

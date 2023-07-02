@@ -53,6 +53,8 @@ class Results():
         #print("lenght of scenario",len(scenario))
         if ("close_set" in scenario) and ("open_set" in scenario):
             results_close_set, results_open_set = results
+            #print("results_close_set", results_close_set)
+            #print("results_open_set", results_open_set)
             with open(os.path.join(results_path, "results_close_set.json"), 'w') as f:
                 json.dump(results_close_set, f, cls=NumpyEncoder)
 

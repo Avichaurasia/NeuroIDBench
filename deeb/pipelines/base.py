@@ -88,7 +88,7 @@ class Basepipeline(metaclass=ABCMeta):
         # # Getting the data for the given subjects
         # data = dataset.get_data(subjects)
 
-        # get the data
+        # Get the pre-processed data for the dataset
         X, subjects_dict , metadata = paradigm.get_data(
                 dataset, return_epochs)
 
