@@ -35,6 +35,7 @@ from deeb.Evaluation import (WithinSessionEvaluation, CrossSessionEvaluation,
 log = logging.getLogger(__name__)
 
 def benchmark(subjects=None,
+             #pipelines="../single_dataset_pipelines/",
               pipelines="single_dataset_pipelines",
               evaluations=None,
               paradigms=None,

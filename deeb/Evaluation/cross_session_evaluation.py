@@ -358,7 +358,7 @@ class CrossSessionEvaluation(BaseEvaluation):
     
     def _valid_subject(self, df_subj, subject, dataset):
         df_subject=df_subj[df_subj['Subject']==subject]
-        print(df_subject['session'].unique())
+        #print(df_subject['session'].unique())
         if (len(df_subject['session'].unique())!=dataset.n_sessions):
             return False
         else:
