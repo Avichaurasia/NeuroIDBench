@@ -4,8 +4,8 @@ dataset:
   # - name: BrainInvaders2015a
   #   from: deeb.datasets
   #   parameters: 
-  #     subjects: [5,30]
-  #     interval: [-0.1, 0.9]
+  #     subjects: 10
+      #interval: [-0.1, 0.9]
 
   # - name: Mantegna2019
   #   from: deeb.datasets
@@ -13,34 +13,29 @@ dataset:
   #     subjects: [5,10]
   #     interval: [-0.1, 0.9]
 
-  # - name: Lee2019
-  #   from: deeb.datasets
-  #   parameters: 
-  #     subjects: 10
-  #     interval: [-0.1, 0.9]
-
-  # - name: ERPCOREN400
-  #   from: deeb.datasets
-  #   parameters: 
-  #     subjects: 10
-  # #     #interval: [-0.1, 0.9]
-
-  - name: COGBCIFLANKER
+  - name: ERPCOREN400
     from: deeb.datasets
     parameters: 
-      subjects: 10
-      interval: [-0.1, 0.9]
+      #subjects: 10
+      rejection_threshold: 200
+    #   interval: [-0.1, 0.9]
+
+  # - name: COGBCIFLANKER
+  #   from: deeb.datasets
+    # parameters: 
+    #   subjects: 5
+    #   #interval: [-0.1, 0.9]
 
 pipelines:
 
-  # "AR+SVM": 
+  # "AR+PSD+SVM": 
   #   - name: AutoRegressive
   #     from: deeb.pipelines
   #     parameters: 
-  #       order: 8
+  #       order: 6
         
-  #   # - name: PowerSpectralDensity
-  #   #   from: deeb.pipelines
+  #   - name: PowerSpectralDensity
+  #     from: deeb.pipelines
         
   #   - name: SVC
   #     from: sklearn.svm
@@ -49,12 +44,11 @@ pipelines:
   #       class_weight: "balanced"
   #       probability: True
 
- 
-  "PSD+LG": 
-  # - name: AutoRegressive
-  #   from: deeb.pipelines
-  #   parameters: 
-  #     order: 6
+  "AR+PSD+LG": 
+  - name: AutoRegressive
+    from: deeb.pipelines
+    parameters: 
+      order: 6
     
   - name: PowerSpectralDensity
     from: deeb.pipelines
@@ -65,6 +59,16 @@ pipelines:
         #kernel: 'rbf'
         class_weight: "balanced"
         #probability: True
+
+  # "SNN": 
+  #   - name : Siamese
+  #     from: deeb.pipelines
+  #     parameters: 
+  #       EPOCHS: 10
+  #       batch_size: 256
+  #       verbose: 1
+  #       workers: 1
+
 
   # "AR+PSD+RF": 
   # - name: AutoRegressive
@@ -82,30 +86,30 @@ pipelines:
   #       class_weight: "balanced"
   #       #probability: True
 
-  "AR+PSD+LDA": 
-    - name: AutoRegressive
-      from: deeb.pipelines
-      parameters: 
-        order: 6
-      
-    - name: PowerSpectralDensity
-      from: deeb.pipelines
-        
-    - name: LinearDiscriminantAnalysis
-      from: sklearn.discriminant_analysis 
-      parameters: 
-        solver: 'lsqr'
-        #class_weight: "balanced"
-        shrinkage: 'auto'
-
-  # "SNN": 
-  #   - name : Siamese
+  # "AR+PSD+LDA": 
+  #   - name: AutoRegressive
   #     from: deeb.pipelines
   #     parameters: 
-  #       EPOCHS: 5
-  #       batch_size: 256
-  #       verbose: 1
-  #       workers: 1
+  #       order: 6
+      
+  #   - name: PowerSpectralDensity
+  #     from: deeb.pipelines
+        
+  #   - name: LinearDiscriminantAnalysis
+  #     from: sklearn.discriminant_analysis 
+  #     parameters: 
+  #       solver: 'lsqr'
+  #       #class_weight: "balanced"
+  #       shrinkage: 'auto'
+
+  # "SNN": 
+  #     - name : Siamese
+  #       from: deeb.pipelines
+  #       parameters: 
+  #         EPOCHS: 10
+  #         batch_size: 256
+  #         verbose: 1
+  #         workers: 
 
   # "AR+PSD+KNN": 
   #   - name: AutoRegressive
@@ -123,17 +127,17 @@ pipelines:
   #     #   class_weight: "balanced"
   #     #   #probability: True
 
-  "AR+PSD+GNB": 
-    - name: AutoRegressive
-      from: deeb.pipelines
-      parameters: 
-        order: 6
+  # "AR+PSD+GNB": 
+  #   - name: AutoRegressive
+  #     from: deeb.pipelines
+  #     parameters: 
+  #       order: 6
       
-    - name: PowerSpectralDensity
-      from: deeb.pipelines
+  #   - name: PowerSpectralDensity
+  #     from: deeb.pipelines
       
-    - name: GaussianNB
-      from: sklearn.naive_bayes
+  #   - name: GaussianNB
+  #     from: sklearn.naive_bayes
 
 
 

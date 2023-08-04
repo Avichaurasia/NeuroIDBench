@@ -293,8 +293,8 @@ class BaseParadigm(metaclass=ABCMeta):
 
         """
         # get events id
-        print("I am in process_raw")
-        print("rejection threshold", dataset.rejection_threshold)
+        #print("I am in process_raw")
+        #print("rejection threshold", dataset.rejection_threshold)
         event_id = self.used_events(dataset)
         # picks channels
         if self.channels is None:
@@ -333,7 +333,7 @@ class BaseParadigm(metaclass=ABCMeta):
                 baseline=self.baseline,
                 reject= peak_to_peak_reject, 
                 preload=True,
-                verbose=True,
+                verbose=False,
                 picks=picks,
                 event_repeated="drop",
                 on_missing="ignore",
@@ -489,7 +489,7 @@ class BaseParadigm(metaclass=ABCMeta):
             return X, subject_dict, metadata
         
     def get_data(self, dataset, subjects=None, return_epochs=False):
-        print("My name is Avinash")
+        #print("My name is Avinash")
         if not self.is_valid(dataset):
             message = f"Dataset {dataset.code} is not valid for paradigm"
             raise AssertionError(message)
@@ -505,6 +505,7 @@ class BaseParadigm(metaclass=ABCMeta):
         for subject, sessions in tqdm(data.items(), desc="Extracting epochs"):
             subject_dict[subject]={}
             for session, runs in sessions.items():
+                subject_dict[subject][session]={}
                 for run, raw_events in runs.items():
                     raw=raw_events[0]
                     events=raw_events[1]
