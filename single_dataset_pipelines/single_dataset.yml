@@ -21,14 +21,14 @@ dataset:
 
   - name: ERPCOREN400
     from: deeb.datasets
-    parameters: 
-      subjects: 10
-  #     #interval: [-0.1, 0.9]
-
-  # - name: COGBCIFLANKER
-  #   from: deeb.datasets
   #   parameters: 
-      subjects: 10
+  #     subjects: 10
+  # #     #interval: [-0.1, 0.9]
+
+  # # - name: COGBCIFLANKER
+  # #   from: deeb.datasets
+  # #   parameters: 
+  #     subjects: 10
       #interval: [-0.1, 0.9]
 
 pipelines:

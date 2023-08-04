@@ -5,7 +5,7 @@ from sklearn.base import BaseEstimator
 
 #from deeb.Evaluation. import Results
 from deeb.datasets.base import BaseDataset
-from deeb.paradigms.base import BaseParadigm
+from deeb.paradigms.base_old import BaseParadigm
 from deeb.analysis.results import Results
 import pandas as pd
 import numpy as np

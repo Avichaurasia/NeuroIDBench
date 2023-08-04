@@ -33,6 +33,7 @@ ERPCORE_N400_URL = "https://files.osf.io/v1/resources/29xpq/providers/osfstorage
 
 class ERPCOREN400(BaseDataset):
     def __init__(self):
+        #print("I am in the init function of ERPCOREN400")
         super().__init__(
             subjects=list(range(1, 41)),
             sessions_per_subject=1, 
@@ -41,7 +42,8 @@ class ERPCOREN400(BaseDataset):
             interval=[-0.2, 0.8],
             paradigm="n400",
             doi=None,
-            dataset_path=None
+            dataset_path=None,
+            rejection_threshold=None,
             )
     # This function has been sourced from the BDS-3 licensed repository at https://github.com/NeuroTechX/moabb    
     @verbose

@@ -40,6 +40,7 @@ class Draschkow2018(BaseDataset):
             paradigm="n400",
             doi="https://doi.org/10.5281/zenodo.3266929",
             dataset_path=None,
+            rejection_threshold=None,
             )
 
     def fix_overlapping_events(self, events):

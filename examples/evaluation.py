@@ -5,7 +5,7 @@ import logging
 import mne
 import numpy as np
 import pandas as pd
-from deeb.paradigms.base import BaseParadigm
+#from deeb.paradigms.base_old import BaseParadigm
 from deeb.paradigms.n400 import N400
 from deeb.paradigms.p300 import P300
 from deeb.datasets.brainInvaders15a import BrainInvaders2015a
@@ -43,7 +43,7 @@ def _evaluate():
     brain=BrainInvaders2015a()
     mantegna=Mantegna2019()
     erp_core=ERPCOREN400()
-    erp_core.subject_list=erp_core.subject_list[0:10]
+    #erp_core.subject_list=erp_core.subject_list[0:10]
     # lee = Lee2019()
     # lee.subject_list = lee.subject_list[0:3]
 
@@ -61,6 +61,14 @@ def _evaluate():
     # Initializing the p300 paradigm
     paradigm=P300()
     paradigm_n400=N400()
+    erp_core.rejection_threshold=200e-6
+    print("Rejection threshold:", erp_core.rejection_threshold)
+    #print(dir(n400))
+    data, subject_dict, _=paradigm_n400.get_data(erp_core)
+    print("Chaurasia")
+    #print(subject_dict)
+    print(data.shape)
+
 
     # Intializing the pipelines
     pipeline={}
@@ -103,8 +111,8 @@ def _evaluate():
     # plot._roc_curve_single_dataset(results_close_set, evaluation_type="Open-Set", dataset=mantegna)
     # #print(datasets[0].dataset_path)
     # Getting the results for the within session evaluation
-    within_session=WithinSessionEvaluation(paradigm=paradigm_n400, datasets=erp_core, overwrite=False)
-    results_within_session=within_session.process(pipeline)
+    # within_session=WithinSessionEvaluation(paradigm=paradigm_n400, datasets=erp_core, overwrite=False)
+    # results_within_session=within_session.process(pipeline)
 
     # grouped_df=results_within_session.groupby(['eval Type','dataset','pipeline','session']).agg({
     #             'accuracy': 'mean',
@@ -118,7 +126,7 @@ def _evaluate():
 
 if __name__ == '__main__':
    result= _evaluate()
-   print(result)
+   #print(result)
    #print(result)
 #print(results['eer'])
 

@@ -55,6 +55,7 @@ class Won2022(BaseDataset):
             paradigm="p300",
             doi=None,
             dataset_path=None,
+            rejection_threshold=None,
             )
         
     # This function has been sourced from the BDS-3 licensed repository at https://github.com/NeuroTechX/moabb          

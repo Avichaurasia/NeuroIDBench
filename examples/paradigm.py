@@ -1,11 +1,11 @@
 import sys
-sys.path.append('/Users/avinashkumarchaurasia/Master_Thesis/deeb/')
+sys.path.append('/Users/avinashkumarchaurasia/Master_Thesis/deeb/deeb')
 import abc
 import logging
 import mne
 import numpy as np
 import pandas as pd
-from deeb.paradigms.base import BaseParadigm
+from deeb.paradigms.base_old import BaseParadigm
 #from deeb.paradigms.erp import N400
 from deeb.paradigms.n400 import N400
 from deeb.paradigms.p300 import P300
@@ -40,32 +40,33 @@ mantegna=Mantegna2019()
 # won.subject_list = won.subject_list[0:10]
 
 # Selecting the first 5 subjects from the brainInvaders2015a dataset
-brain.subject_list = brain.subject_list[0:10]
+#brain.subject_list = brain.subject_list[0:10]
 
 # selecting the first 3 subjects from the Mantegna dataset
-mantegna.subject_list = mantegna.subject_list[0:10]
+#mantegna.subject_list = mantegna.subject_list[0:10]
 
 # Initializing the p300 paradigm
 paradigm_p300=P300()
 paradigm_n400=N400()
 
 # Getting the pre-prpcessed data for the p300 paradigm
-X, sub, meta=paradigm_p300.get_data(brain, return_epochs=True)
+X, sub, meta=paradigm_n400.get_data(mantegna, return_epochs=True)
+print("length of X", len(X))
 # print("BrainInvaders", sub)
 
 # for i, epochs in enumerate(X):
 #     print("event id", epochs.event_id.values)
 
-#print(meta[['subject', 'event_id']].value_counts())
-target_index=meta[meta['event_id']=="Target"].index.tolist()
+# #print(meta[['subject', 'event_id']].value_counts())
+# target_index=meta[meta['event_id']=="Target"].index.tolist()
 
-print("lenght of target index", len(target_index))
+# print("lenght of target index", len(target_index))
 
-target_epochs=X[target_index]
+# target_epochs=X[target_index]
 
-print("length of target epochs", len(target_epochs))
+# print("length of target epochs", len(target_epochs))
 
-print("subject labels", meta.iloc[target_index]["subject"].value_counts())
+# print("subject labels", meta.iloc[target_index]["subject"].value_counts())
 
 
 

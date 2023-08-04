@@ -39,7 +39,8 @@ class Mantegna2019(BaseDataset):
             interval=[-0.2, 0.8],
             paradigm="n400",
             doi=None,
-            dataset_path=None
+            dataset_path=None, 
+            rejection_threshold=None,
             )
     # This function has been sourced from the BDS-3 licensed repository at https://github.com/NeuroTechX/moabb    
     @verbose
@@ -97,13 +98,10 @@ class Mantegna2019(BaseDataset):
         raw.set_channel_types({'LO1':'eog','IO1':'eog','LO2':'eog','SO1':'misc',"A2":'misc'})
         events, _=mne.events_from_annotations(raw, verbose=False)
 
-        # update event ids from 8 to 9
-        #events[:, 2] = np.where(events[:, 2] == 8, 9, events[:, 2])
-        #montage = mne.channels.make_standard_montage('standard_1020')
-
-        #stim_channels = mne.utils._get_stim_channel(None, raw.info, raise_error=False)        
-        #raw.set_montage(montage, on_missing='ignore')
-
+        # update event ids from 8 (intermediate condition) to 9 (inconsistent condition) since
+        # it was established in the paper that the intermediate condition had the same ERP effects as the 
+        # consistent condition
+        events[:, 2] = np.where(events[:, 2] == 8, 9, events[:, 2]) 
         sessions[session_name][run_name] = raw, events
         return sessions
     

@@ -1,4 +1,4 @@
-from deeb.paradigms.base import BaseParadigm
+from deeb.paradigms.base_old import BaseParadigm
 from deeb.Evaluation.base import BaseEvaluation
 from deeb.analysis.results import Results as res
 import matplotlib.pyplot as plt

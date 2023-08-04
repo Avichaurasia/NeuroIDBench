@@ -7,6 +7,7 @@ import mne
 import numpy as np
 import pandas as pd
 from deeb.paradigms.base import BaseParadigm
+from deeb.datasets.base import BaseDataset
 from deeb.datasets.brainInvaders15a import BrainInvaders2015a
 from deeb.datasets import utils
 from autoreject import AutoReject, get_rejection_threshold
@@ -338,6 +339,7 @@ class P300(SinglePass):
     """
 
     def __init__(self, **kwargs):
+        #print("I am P300 derived class")
         if "events" in kwargs.keys():
             raise (ValueError("P300 dont accept events"))
         super().__init__(events=["Target", "NonTarget"], **kwargs)

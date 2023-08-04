@@ -44,7 +44,8 @@ class COGBCIFLANKER(BaseDataset):
             interval=[-0.2, 0.8],
             paradigm="n400",
             doi=None,
-            dataset_path=None
+            dataset_path=None,
+            rejection_threshold=None,
             )
     # # This function has been sourced from the BDS-3 licensed repository at https://github.com/NeuroTechX/moabb    
     # @verbose
@@ -217,9 +218,6 @@ class COGBCIFLANKER(BaseDataset):
         return session_paths
             
 
-# if __name__ == "__main__":
-#     d=COGBCIFLANKER()
-#     d=d.subject_list[0:1]
             
     
 
