@@ -107,7 +107,7 @@ def _predict_open_set(embedding_network, x_test, y_test):
 # This function has been sourced from https://git.scc.kit.edu/ps-chair/brainnet licensed under the Creative Commons
 def _predict_close_set(embedding_network, x_train_val, y_train_val, x_test, y_test):
     """Calculates similarity values for closed-set recognition by comparing each face embedding in the test set with all face embeddings 
-    in the training set, and then calculating the cosine similarity between each pair of embeddings. It then uses these similarity 
+    in the training set, and then calculating the euclidean distance between each pair of embeddings. It then uses these similarity 
     values to create pairs of faces, with the label 1 indicating that the faces belong to the same individual (from the training set) 
     and label 0 indicating that the faces belong to different individuals (including unknown identities)"""
 
@@ -495,11 +495,8 @@ class Siamese_CrossSessionEvaluation(BaseEvaluation):
         self,
         n_perms: Optional[Union[int, Vector]] = None,
         data_size: Optional[dict] = None,
-        # dataset=None,
         return_close_set: bool = True,
         return_open_set: bool = True,
-        # paradigm=None,
-        #paradigm=None,
         **kwargs
     ):
         # self.dataset = dataset

@@ -5,6 +5,7 @@ import mne
 import numpy as np
 import pandas as pd
 from deeb.paradigms.base import BaseParadigm
+from deeb.datasets.base import BaseDataset
 #from deeb.paradigms.erp import N400
 from deeb.datasets.brainInvaders15a import BrainInvaders2015a
 from deeb.datasets.mantegna2019 import Mantegna2019
@@ -64,6 +65,7 @@ class BaseN400(BaseParadigm):
         channels=None,
         resample=None,
         #reject=False,
+        
     ):
         super().__init__()
         self.filters = filters
@@ -333,15 +335,16 @@ class N400(SinglePass):
     def __init__(self, **kwargs):
         if "events" in kwargs.keys():
             raise (ValueError("N400 dont accept events"))
+        print("I am in baseN400")
         super().__init__(events=["Consistent", "Inconsistent"], **kwargs)
 
     def used_events(self, dataset):
         return {ev: dataset.event_id[ev] for ev in self.events}
 
-@property
-def scoring(self):
-    return "roc_auc"
+    @property
+    def scoring(self):
+        return "roc_auc"
 
-if __name__ == "__main__":
-    dset = Mantegna2019()
-    dset.subject_list = dset.subject_list[0:5] 
+# if __name__ == "__main__":
+#     dset = Mantegna2019()
+#     dset.subject_list = dset.subject_list[0:5] 

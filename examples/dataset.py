@@ -1,13 +1,14 @@
-#import sys
-#sys.path.append('/Users/avinashkumarchaurasia/Master_Thesis/deeb/deeb')
+import sys
+sys.path.append('/Users/avinashkumarchaurasia/Master_Thesis/deeb/deeb')
 import abc
 import logging
 import mne
 import numpy as np
 import pandas as pd
-from deeb.paradigms.base import BaseParadigm
+#from deeb.paradigms.base_old import BaseParadigm
+#from deeb.datasets.base import BaseDataset
 # from deeb.paradigms.p300 import N400
-from deeb.paradigms.p300 import P300
+#from deeb.paradigms.p300 import P300
 from deeb.datasets.brainInvaders15a import BrainInvaders2015a
 from deeb.datasets.mantegna2019 import Mantegna2019
 from deeb.datasets.draschkow2018 import Draschkow2018
@@ -28,22 +29,34 @@ from deeb.datasets.erpCoreN400 import ERPCOREN400
 from deeb.paradigms.n400 import N400
 from deeb.paradigms.p300 import P300
 from deeb.datasets.cogBciFlanker import COGBCIFLANKER
+import importlib
+#importlib.reload(N400)
+
 
 # Intializing the datasets 
 lee = Lee2019()
 erp=ERPCOREN400()
+mantegna2019=Mantegna2019()
 #mantegna.interval
+p300=P300()
+n400=N400()
 erp.subject_list = erp.subject_list[0:10]
-data=erp.get_data()
-for subject, sessions in data.items():
-    for session, runs in sessions.items():
-        for run, raw_events in runs.items():
-            raw = raw_events[0]
-            print("Subject:", subject)
-            print("Session:", session)
-            print("Run:", run)
-            print("Raw data:", raw)
-            print("---------------------")
+erp.rejection_threshold=200e-6
+print("Rejection threshold:", erp.rejection_threshold)
+#print(dir(n400))
+data, subject_dict, _=n400.get_data(erp)
+print("Chaurasia")
+#print(subject_dict)
+print(data.shape)
+# for subject, sessions in data.items():
+#     for session, runs in sessions.items():
+#         for run, raw_events in runs.items():
+#             raw = raw_events[0]
+#             print("Subject:", subject)
+#             print("Session:", session)
+#             print("Run:", run)
+#             print("Raw data:", raw)
+#             print("---------------------")
 
 
 

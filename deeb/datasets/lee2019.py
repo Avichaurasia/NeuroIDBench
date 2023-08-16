@@ -36,6 +36,7 @@ class Lee2019(BaseDataset):
             paradigm="p300",
             doi="10.5524/100542",
             dataset_path=None,
+            rejection_threshold=None,
             )
         self.train_run = train_run
         self.code_suffix=code_suffix

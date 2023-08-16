@@ -167,7 +167,7 @@ if __name__ == "__main__":
 
     # Calling function
     #obj.run()
-    print("Current path", os.getcwd())
+    #print("Current path", os.getcwd())
     result=benchmark()
 
     #print(result.columns)

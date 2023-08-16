@@ -5,7 +5,7 @@ import logging
 import mne
 import numpy as np
 import pandas as pd
-from deeb.paradigms.base import BaseParadigm
+from deeb.paradigms.base_old import BaseParadigm
 from deeb.paradigms.n400 import N400
 from deeb.paradigms.p300 import P300
 from deeb.datasets.brainInvaders15a import BrainInvaders2015a

@@ -360,6 +360,7 @@ class WithinSessionEvaluation(BaseEvaluation):
         df_final = df_final[~df_final.set_index(['Subject', 'session']).index.isin(invalid_subject_sessions.set_index(['Subject', 'session']).index)]
 
         #print(df[['session', 'Subject']].value_counts())
+        print("final data shape", len(df_final))
 
         return df_final
     

@@ -53,6 +53,7 @@ class BrainInvaders2015a(BaseDataset):
             paradigm="p300",
             doi="https://doi.org/10.5281/zenodo.3266929",
             dataset_path=None,
+            rejection_threshold=None,
             )
         
     def _get_single_subject_data(self, subject):

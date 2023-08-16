@@ -14,7 +14,8 @@ class BaseDataset(metaclass=abc.ABCMeta):
         [1] Vinay Jayaram and Alexandre Barachant. MOABB: trustworthy algorithm benchmarking for BCIs. 
         Journal of neural engineering 15.6 (2018): 066011. DOI:10.1088/1741-2552""
     """
-    def __init__(self, subjects, sessions_per_subject, events, code, interval, paradigm, doi=None, dataset_path=None, unit_factor=1e6):
+    def __init__(self, subjects, sessions_per_subject, events, code, interval, paradigm, doi=None, dataset_path=None, rejection_threshold=None, 
+                 unit_factor=1e6):
         if not isinstance(subjects, list):
             raise ValueError("subjects must be a iterable, like a list")
         #print("subjects", subjects)
@@ -27,6 +28,7 @@ class BaseDataset(metaclass=abc.ABCMeta):
         self.doi = doi
         self.unit_factor = unit_factor
         self.dataset_path=dataset_path
+        self.rejection_threshold=rejection_threshold
         #self.subject_list=subject_url_dict
 
     def get_data(self, subjects=None):

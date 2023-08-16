@@ -251,6 +251,10 @@ def _parse_dataset_from_config(config):
                 instance.interval=params['interval']
                 #params['interval'] = config['parameters']['interval']
 
+            if "rejection_threshold" in params.keys():
+                instance.rejection_threshold=params['rejection_threshold']
+                #params['rejection_threshold'] = config['parameters']['rejection_threshold']
+
         # else:
         #     params = {}
         # instance = getattr(mod, component["name"])(**params)
