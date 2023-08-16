@@ -1,0 +1,64 @@
+\documentclass[]{upb_cs_thesis} % include german inside brackets for a German thesis
+
+% load your own packages and user-defined commands
+\input{packages}
+\input{commands}
+
+
+% set up some resources (graphics and bibliography)
+\graphicspath{{figures/}}
+
+
+%%%%%%%%%
+% your thesis title, name, advisor, etc. go here;
+%%%%%%%%%
+\title{Design and Evaluation of Brainwave Authentication Systems}
+\author{Avinash Kumar Chaurasia}
+\thesistype{Master's Thesis}
+%\thesistype{Bachelor's Thesis}
+%\thesistype{Masterarbeit}
+%\thesistype{Bachelorarbeit}
+\degree{Master of Science}
+%\degree{Bachelor of Science}
+\researchgroup{IT Security}
+\supervisor{Prof. Dr. Patricia Arias Cabarcos}
+\submissiondate{\today{}}
+
+
+% here your thesis really starts
+\begin{document}
+
+% start with the titlepage, the formalities, and then the abstract
+\input{pretext/titlepage} % prints the title page
+\input{pretext/erklaerung} % prints the statement that you worked on your own and did not commit plagiarism
+\cleardoublepage
+\vspace*{\fill}
+\begin{abstract}
+	\input{abstract}
+\end{abstract}
+\acresetall
+\vspace*{\fill}
+\emptypage
+
+\tableofcontents % prints the table of contents
+
+
+%%%%%%%%%
+% the contents of your thesis go into file body.tex
+%%%%%%%%%
+\input{body}
+
+% include the bibliography, and add it as a chapter the table of contents
+\newpage
+\addcontentsline{toc}{chapter}{Bibliography}
+\bibliographystyle{unsrt}
+\bibliography{literature.bib}
+
+
+%%%%%%%%%
+% the appendices of your thesis go into file appendix.tex
+%%%%%%%%%
+\appendix
+\input{appendix}
+
+\end{document}
