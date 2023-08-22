@@ -1,0 +1,30 @@
+%%%%%%%%%
+% Some commands for setting up theorem environments as provided by package 
+% amsthm --- language sensitive
+%%%%%%%%%
+\theoremstyle{plain}
+\newtheorem{definition}{Definition}[chapter]
+\newtheorem{lemma}[definition]{Lemma}
+\ifgerman
+	\newtheorem{theorem}[definition]{Satz}
+	\newtheorem{corollary}[definition]{Korollar}
+	\newtheorem{example}[definition]{Beispiel}
+\else
+	\newtheorem{theorem}[definition]{Theorem}
+	\newtheorem{corollary}[definition]{Corollary}
+	\newtheorem{example}[definition]{Example}
+\fi
+
+
+
+%%%%%%%%%
+% Your commands should go here...
+%%%%%%%%%
+\newcommand*{\eg}{e.\,g.}
+\newcommand*{\ie}{i.\,e.}
+\newcommand*{\cf}{c.\,f.}
+\newcommand*{\etal}{et~al.}
+
+\newacro{template}[UPB-CS-TT]{Paderborn University Computer Science thesis template}
+
+\DeclareMathOperator{\testop}{top}

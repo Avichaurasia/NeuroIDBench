@@ -1,0 +1,120 @@
+\section{Organisation: Directories}
+\label{sec:introduction:folders}
+
+The \acs{template} template assumes a simple directory structure.
+It has a main directory that holds all files relevant to the template itself.
+Three complementary directories hold your texts, figures and appendices.
+
+
+
+\subsection{Main Directory}
+\label{sec:introduction:folders:main}
+Your main directory contains the four sub-directories
+\begin{enumerate}
+	\item \texttt{chapters},
+	\item \texttt{figures},
+	\item \texttt{pretext}, and
+	\item \texttt{appendices}.
+\end{enumerate}
+These directories are further described in separate sections. The main
+directory also contains a couple of files: 
+\begin{description}
+	\item[\texttt{abstract.tex}] This file holds the abstract of your
+	thesis.
+
+	\item[\texttt{appendix.tex}] This file groups your appendices together.
+	The file is \verb+\input+ into the main file \mbox{thesis.tex}.
+	The appendices themselves should go into the \texttt{appendices}
+	folder, and be included into \mbox{appendix.tex} via the \verb+\input+
+	command.
+
+	\item[\texttt{body.tex}] This file contains the main text of your
+	thesis.
+	The file is \verb+\input+ into the main file \mbox{thesis.tex}.
+	The texts themselves should go into the \texttt{chapters} folder, and be
+	included into \mbox{body.tex} via the \verb+\input+ command.
+
+	\item[\texttt{commands.tex}] Your custom \LaTeX{} commands should go
+	into this file.
+	The file is \verb+\input+ into the preamble of the main file
+	\mbox{thesis.tex}.
+	By default, \mbox{commands.tex} defines commands for common
+	abbreviations, and some environments.
+	See Section~\ref{sec:packages:commands} for further information.
+
+	\item[\texttt{literature.bib}] Your bibliographic references should go
+	into this file.
+	See Section~\ref{sec:guide:bibliographies} for further information.
+
+	\item[\texttt{Makefile}] This file can make your life easier. It
+	provides means for simple and complex compilation processes. For
+	details, see Section~\ref{sec:makefiles:main}.
+
+	\item[\texttt{packages.tex}] This is where you include \LaTeX{}
+	packages.
+	The file is \verb+\input+ as the first file into the preamble of the
+	main file \mbox{thesis.tex}.
+	By default, it loads the auxiliary packages as described in
+	Section~\ref{sec:packages:auxiliary_packages}.
+
+	\item[\texttt{thesis.tex}] This is the main file for your thesis.
+	It defines the document class, includes the preamble, and loads files
+	\mbox{body.tex} and \mbox{appendix.tex}.
+	It also sets up the title page, legalities, and the table of contents.
+
+	\item[\texttt{upb\_cs\_thesis.cls}] This is defines the document class
+	used by the \ac{template} template.
+	See Chapter~\ref{ch:class_file} for details.
+\end{description}
+
+
+
+\subsection{Chapters Directory}
+\label{sec:introduction:folders:chapters}
+This directory is where the \mbox{.tex} files of your thesis go.
+It is advisable to have one file per chapter.
+For long chapters, you should create additional files for smaller bits of text,
+\eg{} on the section or even subsection level.
+The low level files should then be \verb+\input+ into the respective chapter's
+\mbox{.tex} file, while the chapter's \mbox{.tex} file should be \verb+input+
+in main directory's \mbox{body.tex}.
+
+
+
+\subsection{Figures Directory}
+\label{sec:introduction:folders:figures}
+This directory is where your graphics go.
+See Section~\ref{sec:guide:graphics} on how to include graphics in your thesis.
+By default, this directory contains the university's logo
+(\texttt{uni-logo.pdf}), a \texttt{Makefile}, and the \texttt{template\_files}
+sub-directory. 
+
+The university's logo is used on the title page.
+The \emph{Makefile} of the \emph{figures} directory converts some types of raw
+data into graphics; see Section~\ref{sec:makefiles:figures} for details.
+Finally, the \emph{template\_files} sub-directory contains the
+\texttt{tikz\_template.tex} file, that can be used to create
+tikz\footnote{\TeX{} Ist Kein Zeichenprogramm, a \LaTeX{} package for
+programming graphics} graphics that the figures directory's \emph{Makefile} can
+properly process.
+
+
+
+\subsection{Pretext Directory}
+\label{sec:introduction:folders:pretext}
+This directory contains two files \texttt{erklaerung.tex} and
+\texttt{titlepage.tex}.
+The former contains a legal statement, the latter defines the layout of your
+titlepage.
+Typically, you do not need to edit these files.
+You fill in the details of your title page as described in
+Section~\ref{sec:introduction:start}.
+
+
+
+\subsection{Appendices Directory}
+\label{sec:introduction:folders:appendices}
+This directory is where your thesis's appendices go.
+The files should be \verb+\input+ into your thesis via the \mbox{appendix.tex}
+file.
+By default, this directory is empty.
