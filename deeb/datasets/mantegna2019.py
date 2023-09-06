@@ -42,7 +42,6 @@ class Mantegna2019(BaseDataset):
             dataset_path=None, 
             rejection_threshold=None,
             )
-    # This function has been sourced from the BDS-3 licensed repository at https://github.com/NeuroTechX/moabb    
     @verbose
     def download_dataset(self, url, sign, path=None, force_update=False, verbose=None):
         """

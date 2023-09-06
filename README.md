@@ -1,5 +1,4 @@
-# DEEB
-
+# Brainwave-Based User Authentication Models
 
 
 ## Getting started

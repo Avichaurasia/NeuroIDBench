@@ -1,73 +1,58 @@
-name: "Mantegna2019"
+name: "COGBCIFLANKER"
 
 dataset: 
-  # - name: BrainInvaders2015a
-  #   from: deeb.datasets
-  #   parameters: 
-  #     subjects: 10
-      #interval: [-0.1, 0.9]
-
-  # - name: Mantegna2019
-  #   from: deeb.datasets
-  #   parameters: 
-  #     subjects: [5,10]
-  #     interval: [-0.1, 0.9]
-
-  - name: ERPCOREN400
+  - name: COGBCIFLANKER
     from: deeb.datasets
     parameters: 
-      #subjects: 10
+      subjects: 10
+      interval: [-0.1, 0.9]
       rejection_threshold: 200
-    #   interval: [-0.1, 0.9]
 
-  # - name: COGBCIFLANKER
-  #   from: deeb.datasets
-    # parameters: 
-    #   subjects: 5
-    #   #interval: [-0.1, 0.9]
 
 pipelines:
 
-  # "AR+PSD+SVM": 
-  #   - name: AutoRegressive
-  #     from: deeb.pipelines
-  #     parameters: 
-  #       order: 6
+  "AR+PSD+SVM": 
+    - name: AutoRegressive
+      from: deeb.pipelines
+      parameters: 
+        order: 6
         
-  #   - name: PowerSpectralDensity
-  #     from: deeb.pipelines
+    - name: PowerSpectralDensity
+      from: deeb.pipelines
         
-  #   - name: SVC
-  #     from: sklearn.svm
-  #     parameters: 
-  #       kernel: 'rbf'
-  #       class_weight: "balanced"
-  #       probability: True
-
-  "AR+PSD+LG": 
-  - name: AutoRegressive
-    from: deeb.pipelines
-    parameters: 
-      order: 6
-    
-  - name: PowerSpectralDensity
-    from: deeb.pipelines
-      
-  - name: LogisticRegression
-    from: sklearn.linear_model
-    parameters: 
-        #kernel: 'rbf'
+    - name: SVC
+      from: sklearn.svm
+      parameters: 
+        kernel: 'rbf'
         class_weight: "balanced"
-        #probability: True
+        probability: True
 
-  # "SNN": 
-  #   - name : Siamese
-  #     from: deeb.pipelines
-  #     parameters: 
-  #       EPOCHS: 10
-  #       batch_size: 256
-  #       verbose: 1
-  #       workers: 1
+  "Siamese": 
+    - name : Siamese
+      from: deeb.pipelines
+      parameters: 
+        EPOCHS: 10
+        batch_size: 256
+        verbose: 1
+        workers: 1
+
+  # "AR+PSD+LG": 
+  # - name: AutoRegressive
+  #   from: deeb.pipelines
+  #   parameters: 
+  #     order: 6
+    
+  # - name: PowerSpectralDensity
+  #   from: deeb.pipelines
+      
+  # - name: LogisticRegression
+  #   from: sklearn.linear_model
+  #   parameters: 
+  #       #kernel: 'rbf'
+  #       class_weight: "balanced"
+  #       #probability: True
+
+
 
 
   # "AR+PSD+RF": 

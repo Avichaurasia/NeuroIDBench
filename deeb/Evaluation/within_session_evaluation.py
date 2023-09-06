@@ -358,9 +358,12 @@ class WithinSessionEvaluation(BaseEvaluation):
         
         # Filter out rows with invalid subject and session combinations
         df_final = df_final[~df_final.set_index(['Subject', 'session']).index.isin(invalid_subject_sessions.set_index(['Subject', 'session']).index)]
+        
+        # Show value_counts of subject and session
+        print(df_final[['session', 'Subject']].value_counts())
 
         #print(df[['session', 'Subject']].value_counts())
-        print("final data shape", len(df_final))
+        #print("final data shape", len(df_final))
 
         return df_final
     

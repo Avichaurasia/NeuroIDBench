@@ -35,7 +35,6 @@ class BrainInvaders2015a(BaseDataset):
     :Scientific Supervisor: Ph.D. Marco Congedo
     Notes
     -----
-    .. versionadded:: 0.4.6
     References
     ----------
     .. [1] Korczowski, L., Cederhout, M., Andreev, A., Cattan, G., Rodrigues, P. L. C.,
@@ -58,7 +57,7 @@ class BrainInvaders2015a(BaseDataset):
         
     def _get_single_subject_data(self, subject):
         """return data for a single subject"""
-         
+        
         file_path_list = self.data_path(subject)
         all_sessions_data=[]
         sessions = {}

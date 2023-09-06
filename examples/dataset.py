@@ -40,14 +40,14 @@ mantegna2019=Mantegna2019()
 #mantegna.interval
 p300=P300()
 n400=N400()
-erp.subject_list = erp.subject_list[0:10]
+erp.subject_list = erp.subject_list[0:5]
 erp.rejection_threshold=200e-6
 print("Rejection threshold:", erp.rejection_threshold)
 #print(dir(n400))
 data, subject_dict, _=n400.get_data(erp)
 print("Chaurasia")
 #print(subject_dict)
-print(data.shape)
+print(data)
 # for subject, sessions in data.items():
 #     for session, runs in sessions.items():
 #         for run, raw_events in runs.items():

@@ -358,8 +358,8 @@ class Siamese_WithinSessionEvaluation(BaseEvaluation):
                 #X_=X_*1000000
                 y_=y[ix]
 
-                print("Siamese data shape", X_.shape)
-                print("laels", y_.shape)
+                #print("Siamese data shape", X_.shape)
+                #print("laels", y_.shape)
                 # print("Later checking x and x_data", np.array_equal(X_, X_data))
                 # print("Later checking y and y_data",np.array_equal(y_, y_data))
 
