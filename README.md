@@ -1,5 +1,10 @@
 # Brianwave-Based User Authentication Models
 
+<p align="center">
+  <img src="logo-color.png" alt="My Logo" width="400" height="380">
+</p>
+
+
 [![PyPI Latest Release](https://img.shields.io/pypi/v/pandas.svg)](https://pypi.org/project/pandas/)
 
 ## Abstract: 
