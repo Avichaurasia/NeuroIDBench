@@ -13,7 +13,6 @@ from deeb.datasets import download as dl
 from deeb.datasets.base import BaseDataset
 from mne.io import read_raw_eeglab, read_raw
 import sys
-#sys.path.append('/Users/avinashkumarchaurasia/Master_Thesis/deeb/deeb/datasets')
 from mne.channels import read_dig_polhemus_isotrak, read_custom_montage
 import numpy as np
 import pandas as pd
@@ -47,61 +46,15 @@ class COGBCIFLANKER(BaseDataset):
             dataset_path=None,
             rejection_threshold=None,
             )
-    # # This function has been sourced from the BDS-3 licensed repository at https://github.com/NeuroTechX/moabb    
-    # @verbose
-    # def download_dataset(self, url, sign, path=None, force_update=False, verbose=None):
-    #     """
-    #     This function has been sourced from the BDS-3 licensed repository at https://github.com/NeuroTechX/moabb
-
-    #     References
-    #     ----------
-    #     [1] Vinay Jayaram and Alexandre Barachant. MOABB: trustworthy algorithm benchmarking for BCIs. 
-    #     Journal of neural engineering 15.6 (2018): 066011. DOI:10.1088/1741-2552
-    #     """
-    #     path = Path(dl.get_dataset_path(sign, path))
-    #     print(f"path: {path}")
-
-    #     key_dest = f"MNE-{sign.lower()}-data"
-    #     destination = _url_to_local_path(url, path / key_dest)
-        
-    #     destination = str(path) + destination.split(str(path))[1]
-    #     table = {ord(c): "-" for c in ':*?"<>|'}
-    #     destination = Path(str(path) + destination.split(str(path))[1].translate(table))
-
-    #     if not destination.is_file() or force_update:
-    #         if destination.is_file():
-    #             destination.unlink()
-    #         if not destination.parent.is_dir():
-    #             destination.parent.mkdir(parents=True)
-    #         known_hash = None
-    #     else:
-    #         known_hash = file_hash(str(destination))
-
-    #     dlpath = retrieve(
-    #         url,
-    #         known_hash,
-    #         fname="raw_data.zip",
-    #         path=str(destination.parent),
-    #         progressbar=True,
-    #     )
-
-    #     return dlpath
-
     def _get_single_subject_data(self, subject):
         """return data for a single subject"""
-
-        #print("Avinash Kumar Chaurasia")
         file_path_list = self.data_path(subject)
         sessions = {}
-        #print("file path", file_path_list)
-        #print(f"file_path_list: {file_path_list}")
         for file_path, session in zip(file_path_list, [1, 2, 3]):
-            #session_name = f'session_{str(file_path).split("_")[-1][1:2]}'
             session_name = "session_"+str(session)
             if session_name not in sessions.keys():
                 sessions[session_name] = {}
             run_name = 'run_1'
-            #print("fle paths", os.listdir(file_path))
             raw_data_path=os.path.join(file_path,"Flanker.set")
             raw = read_raw_eeglab(raw_data_path, preload = True, verbose=False)
 
@@ -176,45 +129,24 @@ class COGBCIFLANKER(BaseDataset):
         
         if subject not in self.subject_list:
             raise ValueError("Invalid subject number")
-        #subject=str(subject) 
-        # else:
-        #     if(subject<10):
-        #         subject="0"+str(subject)
-            #else:
-                
-
-        # define url and paths
-        #url = FLANKER_BASE_URL
         subject_str = f"sub-{subject:02}"
         url = f"{FLANKER_BASE_URL}{subject_str}.zip{download_url}"
         zip_filename = f"{subject_str}.zip{download_url}"
-       # main_directory='raw_data'
 
         # download and extract data if needed
         path_zip = dl.data_dl(url, "COGBCIFLANKER2022")
-        #print(f"path_zip: {path_zip}")
         self.dataset_path=os.path.dirname(os.path.dirname(Path(path_zip.strip(zip_filename))))
-        #print(f"dataset_path: {self.dataset_path}")
         subject_dir = Path(path_zip.strip(zip_filename))/subject_str
-        #print(f"subject_dir:", Path(path_zip.strip(zip_filename)))
         if not subject_dir.exists():
             with z.ZipFile(path_zip, "r") as zip_ref:
                 zip_ref.extractall(subject_dir)
-
-        #print(Path(os.path.dirname(os.path.join(subject_dir, subject_str, subject_str, subject_str))))
-        #print(os.listdir(os.path.join(subject_dir, subject_str)))
-
         if subject_str in os.listdir(os.path.join(subject_dir, subject_str)):
             subject_dir=Path(os.path.join(subject_dir, subject_str))
-
 
         # get paths to relevant files
         session_name="ses"
         session_paths = [
             subject_dir / f"{subject_str}/{session_name}-S{session:1}/eeg" for session in [1, 2, 3]]
-            #final_subject_directory / f"{subject_str}{session_name}-S{session:1}/eeg" for session in [1, 2, 3]]
-        #print(f"session_paths: {session_paths}")
-        #print("avinash")
         return session_paths
             
 

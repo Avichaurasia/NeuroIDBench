@@ -33,7 +33,6 @@ ERPCORE_N400_URL = "https://files.osf.io/v1/resources/29xpq/providers/osfstorage
 
 class ERPCOREN400(BaseDataset):
     def __init__(self):
-        #print("I am in the init function of ERPCOREN400")
         super().__init__(
             subjects=list(range(1, 41)),
             sessions_per_subject=1, 
@@ -88,13 +87,11 @@ class ERPCOREN400(BaseDataset):
         """return data for a single subject"""
 
         file_path_list = self.data_path(subject)
-        #print(f"file_path_list: {file_path_list}")
         sessions = {}
         session_name = 'session_1'
         sessions[session_name] = {}
         run_name = 'run_1'
         raw = read_raw_eeglab(file_path_list, preload = True, verbose=False)
-        #raw.annotations.onset = raw.annotations.onset+.026
         raw.rename_channels(dict(FP1 = 'Fp1', FP2 = 'Fp2'))
         raw.drop_channels(['HEOG_left', 'HEOG_right', 'VEOG_lower'])
         raw.set_montage('standard_1020')
@@ -125,11 +122,6 @@ class ERPCOREN400(BaseDataset):
         # Merge events of event_id's "Target/Related because nature of the trails is same, just they
         # came from two diffrerent lists"
         events[events[:, 2] == 211, 2] = 212
-
-       # Merge events of event_id's "Target/Unrelated because nature of the trails is same, just they
-        # came from two different lists"
-        #print("Raw data units ", raw.info['chs'][0]['unit'])
-        #raw=raw.get_data()*1e6
         events[events[:, 2] == 221, 2] = 222
         sessions[session_name][run_name]=raw, events
         return sessions
@@ -138,14 +130,8 @@ class ERPCOREN400(BaseDataset):
                   update_path=None, verbose=None): 
         
         if subject not in self.subject_list:
-            raise ValueError("Invalid subject number")
-        #subject=str(subject) 
-        # else:
-        #     if(subject<10):
-        #         subject="0"+str(subject)
-            #else:
-                
-
+            raise ValueError("Invalid subject number") 
+        
         # define url and paths
         url = ERPCORE_N400_URL
         zip_filename = f"raw_data.zip."

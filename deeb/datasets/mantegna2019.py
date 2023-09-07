@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-# coding: utf-8
 import glob
 import os
 import os.path as osp
@@ -28,8 +26,6 @@ from pooch import Unzip, retrieve
 
 Mantegna2019_URL = "https://files.de-1.osf.io/v1/resources/rp4jy/providers/osfstorage/5c7651cf62c82a0018dc5cf7/?zip="
 class Mantegna2019(BaseDataset):
-
-    path_to_dataset=" "
     def __init__(self):
         super().__init__(
             subjects=list(range(1, 32)),
@@ -78,10 +74,8 @@ class Mantegna2019(BaseDataset):
             path=str(destination.parent),
             progressbar=True,
         )
-
         return dlpath
-
-    
+   
     def _get_single_subject_data(self, subject):
         """return data for a single subject"""
 
@@ -90,9 +84,7 @@ class Mantegna2019(BaseDataset):
         session_name = 'session_1'
         sessions[session_name] = {}
         run_name = 'run_1'
-
         raw=mne.io.read_raw_brainvision(file_path_list,eog=('LEOG', 'LBEOG', 'REOG'), preload=True, verbose=False)
-
         raw.rename_channels({'LEOG':'LO1','LBEOG':'IO1','REOG':'LO2','C64':'SO1','RM':'A2'})
         raw.set_channel_types({'LO1':'eog','IO1':'eog','LO2':'eog','SO1':'misc',"A2":'misc'})
         events, _=mne.events_from_annotations(raw, verbose=False)
@@ -120,20 +112,12 @@ class Mantegna2019(BaseDataset):
         zip_filename = f"raw_data.zip"
         main_directory='raw_data'
         path_zip = self.download_dataset(url, "Mantegna2019")
-        # if(Mantegna2019.path_to_dataset==" "):
-        #     path_zip = self.download_dataset(url, "Mantegna2019")
-        #     Mantegna2019.dataset_path=path_zip
-        # else:
-        #     path_zip=Mantegna2019.dataset_path
-
-        #self.dataset_path=os.path.dirname(Path(path_zip.strip(zip_filename)))
         self.dataset_path=os.path.dirname(Path(path_zip))
         subject_dir = Path(path_zip.strip(zip_filename))/main_directory
         print("")
         if not subject_dir.exists():
             with z.ZipFile(path_zip, "r") as zip_ref:
                 zip_ref.extractall(subject_dir)
-
         raw_data_path = os.listdir(subject_dir)
         for sub in raw_data_path:
             if sub.endswith(".vhdr") and sub.split("_")[0] == subject:

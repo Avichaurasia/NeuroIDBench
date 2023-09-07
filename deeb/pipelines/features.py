@@ -29,51 +29,25 @@ log = logging.getLogger(__name__)
 class AutoRegressive(Basepipeline):
 
     def __init__(self, order=6):
-        #super().__init__(feature_type='AR')
         self.order = order
 
     def is_valid(self, dataset):
         ret = True
         if not ((dataset.paradigm == "p300") | (dataset.paradigm == "n400")) :
             ret = False
-
-        # # check if dataset has required events
-        # if self.events:
-        #     if not set(self.events) <= set(dataset.event_id.keys()):
-        #         ret = False
-
-        # we should verify list of channels, somehow
         return ret
-    
+      
     def _get_features(self, subject_dict, dataset):
-
-        # AR_path=os.path.join(features_path, "AR")
-        # if not os.path.exists(AR_path):
-        #     os.makedirs(os.path.join(AR_path))
         df_list = []
-        #order = 6
         print("order", self.order)
         for subject, sessions in tqdm(subject_dict.items(), desc="Computing AR Coeff"):
             for session, runs in sessions.items():
                 for run, epochs in runs.items():
-
-
-                    # print("I am at subject", subject)
-                    # print("I am at session", session)
-                    # print("I am at run", run)
-                    # print("Showing the epochs", epochs)
-
-                    # print("====================================================================================")
-                    # print("====================================================================================")
-
-
-                    #print("run key", run)
                     if not epochs:
                         continue
 
                     if (dataset.paradigm == "p300"):
                         epochs= epochs['Target']
-                        #epochs_data = epochs.get_data()
 
                     elif (dataset.paradigm == "n400"):
                         epochs = epochs['Inconsistent']
@@ -92,28 +66,16 @@ class AutoRegressive(Basepipeline):
                         df_list.append(dictemp)
         df = pd.DataFrame(df_list)
         return df
-    
-    # @abstractmethod
-    # def _get_siamese_features(self, subject_dict):
-    #     pass
 
-        #return super()._get_siamese_features(subject_dict)
-    
 class PowerSpectralDensity(Basepipeline):
 
     def __init__(self):
         pass
 
-
     def is_valid(self, dataset):
         ret = True
         if not ((dataset.paradigm == "p300") | (dataset.paradigm == "n400")) :
             ret = False
-
-        # # check if dataset has required events
-        # if self.events:
-        #     if not set(self.events) <= set(dataset.event_id.keys()):
-        #         ret = False
 
         # we should verify list of channels, somehow
         return ret
@@ -123,18 +85,11 @@ class PowerSpectralDensity(Basepipeline):
         tmax=epochs.tmax
         tmin=epochs.tmin
         sfreq=epochs.info['sfreq']
-        #N_FFT=int(sfreq * (tmax - tmin))
-
+        
         # setting 4 time windows for PSD calculation
         window_duration = (tmax - tmin) / 4
         samples_per_window = int(window_duration * sfreq)
 
-
-        # # Using mne.Epochs in-built method compute_psd to calculate PSD using welch's method
-        # spectrum=epochs.compute_psd(method="welch", n_fft=N_FFT,
-        #     n_overlap=0, n_per_seg=None, fmin=1, fmax=50, tmin=tmin, tmax=tmax, verbose=False)
-
-        
         # Computing PSD with 4 time windows, 50% overlap using welch's method
         spectrum=epochs.compute_psd(method="welch", n_fft=samples_per_window,
             n_overlap=samples_per_window//2, n_per_seg=None, fmin=1, fmax=50, tmin=tmin, tmax=tmax, verbose=False)
@@ -142,32 +97,17 @@ class PowerSpectralDensity(Basepipeline):
         return spectrum.get_data(return_freqs=True)
     
     def _get_features(self, subject_dict, dataset):
-        # PSD_path=os.path.join(features_path, "PSD")
-        # if not os.path.exists(PSD_path):
-        #     os.makedirs(os.path.join(PSD_path))
-
         df_psd=pd.DataFrame()
         df_list = []
         FREQ_BANDS = {"low" : [1,10],
-                  #"theta" : [10,13],
                   "alpha" : [10, 13],
                   "beta" : [13,30],
                   "gamma" : [30, 50]}
-    
-        
+      
         results = []
         for subject, sessions in tqdm(subject_dict.items(), desc="Computing PSD"):
             for session, runs in sessions.items():
                 for run, epochs in runs.items():
-                    # print("I am at subject", subject)
-                    # print("I am at session", session)
-                    # print("I am at run", run)
-                    # print("Showing the epochs", epochs)
-
-                    # print("====================================================================================")
-                    # print("====================================================================================")
-
-
                     if not epochs:
                         continue
 
@@ -176,9 +116,6 @@ class PowerSpectralDensity(Basepipeline):
                         
                     elif (dataset.paradigm == "n400"):
                         epochs = epochs['Inconsistent']
-
-                    #epochs=epochs['Target']
-                    #print("epochs size", epochs.get_data().shape)
 
                     # Computing PSD for each epoch
                     if (len(epochs)==0):
@@ -191,7 +128,6 @@ class PowerSpectralDensity(Basepipeline):
         for result, subject, session, epochs in results:
             psds, freqs = result
             for i in range(len(psds)):
-                #features={}
                 features = {'Subject': subject, 'session': session, 'Event_id': list(epochs[i].event_id.values())[0]}
                 for j in range(len(psds[i])):
                     welch_psd=psds[i][j]

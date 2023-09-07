@@ -35,7 +35,6 @@ urls=['32398631', '32398637', '32398625', '32398613', '32398628', '32398631', '3
       '32398754', '32398763', '32398769', '32398787', '32398775', '32398781', '32398760']
 
 class Won2022(BaseDataset):
-
     path_to_dataset=" "
     def __init__(self):
         super().__init__(
@@ -55,13 +54,10 @@ class Won2022(BaseDataset):
         """
         Download a file from a given URL to a local folder.
         """
-
         path = Path(dl.get_dataset_path(sign, path))
         print(f"path: {path}")
-
         key_dest = f"MNE-{sign.lower()}-data"
         destination = _url_to_local_path(url, path / key_dest)
-        
         destination = str(path) + destination.split(str(path))[1]
         table = {ord(c): "-" for c in ':*?"<>|'}
         destination = Path(str(path) + destination.split(str(path))[1].translate(table))
@@ -82,7 +78,6 @@ class Won2022(BaseDataset):
             path=str(destination.parent),
             progressbar=True,
         )
-
         return dlpath
     
     def _make_raw_array(self, eeg_data, markers, ch_names, ch_type, sfreq):  
@@ -91,8 +86,6 @@ class Won2022(BaseDataset):
         info = mne.create_info(ch_names=chnames, sfreq=sfreq, ch_types=ch_types, 
                                verbose=False)
         X=np.concatenate((eeg_data, markers[None, :]), axis=0)
-
-        # make standard montage before read raw data
         montage=mne.channels.make_standard_montage('biosemi32')
         info.set_montage(montage, match_case=False)
         raw = mne.io.RawArray(data=X, info=info, verbose=False)

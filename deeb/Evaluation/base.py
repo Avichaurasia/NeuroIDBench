@@ -2,17 +2,13 @@ import logging
 from abc import ABC, abstractmethod
 import os
 from sklearn.base import BaseEstimator
-
-#from deeb.Evaluation. import Results
 from deeb.datasets.base import BaseDataset
 from deeb.paradigms.base import BaseParadigm
 from deeb.analysis.results import Results
 import pandas as pd
 import numpy as np
 
-
 log = logging.getLogger(__name__)
-
 
 class BaseEvaluation(ABC):
     """Base class that defines necessary operations for an evaluation.
@@ -119,16 +115,7 @@ class BaseEvaluation(ABC):
                 """No datasets left after paradigm
             and evaluation checks"""
             )
-
-        # Adding results object from deeb.analysis.results module to the current instance of BaseEvaluation
         self.results = Results()
-        #     type(self),
-        #     type(self.paradigm),
-        #     overwrite=overwrite,
-        #     suffix=suffix,
-        #     hdf5_path=self.hdf5_path,
-        #     additional_columns=additional_columns,
-        # )
 
     def process(self, pipelines, param_grid=None):
         """Runs all pipelines on all datasets.
@@ -153,44 +140,16 @@ class BaseEvaluation(ABC):
         for _, pipeline in pipelines.items():
             if not (isinstance(pipeline, BaseEstimator)):
                 raise (ValueError("pipelines must only contains Pipelines " "instance"))
-        #dataframe=pd.DataFrame()
         df_final=pd.DataFrame()
         for dataset in self.datasets:
-            #print("Avinash")
             dataframe=pd.DataFrame()
             log.info("Processing dataset: {}".format(dataset.code))
             results, results_path, scenario= self.evaluate(dataset, pipelines, param_grid)
-            #print("results",len(results))
-            #print(results)
-
-            #print(results.to_dataframe(pipelines=pipelines))
-            # for res in results:
-            #     print(res)
-            #     self.push_result(res, pipelines)
-
-        #return self.results.to_dataframe(pipelines=pipelines)
             get_results=self.results._add_results(results, results_path, scenario)
             dataframe=dataframe.append(get_results, ignore_index=True)
-
-            # grouped_df=dataframe.groupby(['eval Type','dataset','pipeline','session']).agg({
-            #     'accuracy': 'mean',
-            #     'auc': 'mean',
-            #     'eer': lambda x: f'{np.mean(x)*100:.3f} ± {np.std(x)*100:.3f}',
-            #     'frr_1_far': lambda x: f'{np.mean(x)*100:.3f}'
-            # }).reset_index()
-
         df_final = pd.concat([df_final, dataframe], ignore_index=True)
         return df_final
-
-    # def push_result(self, res, pipelines):
-    #     message = "{} | ".format(res["pipeline"])
-    #     message += "{} | {} | {}".format(
-    #         res["dataset"].code, res["subject"], res["session"]
-    #     )
-    #     message += ": Score %.3f" % res["score"]
-    #     log.info(message)
-    #     self.results.add({res["pipeline"]: res}, pipelines=pipelines)
-
+    
     def get_results(self):
         return self.results.to_dataframe()
 

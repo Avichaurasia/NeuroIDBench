@@ -1,8 +1,6 @@
-from deeb.paradigms.base_old import BaseParadigm
 from deeb.Evaluation.base import BaseEvaluation
 from deeb.analysis.results import Results as res
 import matplotlib.pyplot as plt
-#%matplotlib inline
 import numpy as np
 from matplotlib.ticker import ScalarFormatter, AutoMinorLocator
 import warnings
@@ -131,7 +129,6 @@ class Plots():
         plt.show()
         #plt.savefig(fname, dpi=300, bbox_inches='tight')
         plt.close()
-        #return 0
     
     def _det_curve_single_dataset():
         return 0

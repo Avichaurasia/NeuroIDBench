@@ -3,7 +3,6 @@ import os
 from copy import deepcopy
 from time import time
 from typing import Optional, Union
-
 import joblib
 import numpy as np
 from mne.epochs import BaseEpochs
@@ -42,16 +41,10 @@ class CrossSessionEvaluation(BaseEvaluation):
         self,
         n_perms: Optional[Union[int, Vector]] = None,
         data_size: Optional[dict] = None,
-        # dataset=None,
         return_close_set: bool = True,
         return_open_set: bool = True,
-        # paradigm=None,
-        #paradigm=None,
         **kwargs
     ):
-        # self.dataset = dataset
-        # self.paradigm = paradigm
-        #self.paradigm = paradigm
         self.n_perms = n_perms
         self.data_size = data_size
         self.return_close_set = return_close_set
@@ -185,10 +178,6 @@ class CrossSessionEvaluation(BaseEvaluation):
             sc=StandardScaler()
             X_train=sc.fit_transform(X_train)
             X_test=sc.transform(X_test)
-
-            # Resampling the training data using RandomOverSampler
-            # oversampler = RandomOverSampler(random_state=42)
-            # X_train, y_train = oversampler.fit_resample(X_train, y_train)
             clf=clone(classifer)
             
             # Training the model
@@ -210,10 +199,6 @@ class CrossSessionEvaluation(BaseEvaluation):
         return average_scores
     
     def _open_set(self, df_subj, pipeline):
-            # for subject in tqdm(np.unique(data.subject), desc="CrossSession (close-set)"):
-            #     df_subj=data.copy(deep=True)
-            #     df_subj['Label']=0
-            #     df_subj.loc[df_subj['Subject'] == subject, 'Label'] = 1
         session_groups = df_subj.session.values
         subject_ids=df_subj.Subject.values
         labels=np.array(df_subj['Label'])
@@ -228,21 +213,10 @@ class CrossSessionEvaluation(BaseEvaluation):
 
 
     def _prepare_dataset(self, dataset, features):
-
-        # features_path=os.path.join(os.path.join(
-        #     dataset.dataset_path,
-        #     "Features",
-        #     #f"{dataset.code}_CloseSetEvaluation")
-        # ))
-
-        # if not os.path.exists(features_path):
-        #     os.makedirs(features_path)
-
         df_final=pd.DataFrame()
         for feat in range(0, len(features)-1):
             df=features[feat].get_data(dataset, self.paradigm)
             df_final = pd.concat([df_final, df], axis=1)
-
 
         # Check if the dataframe contains duplicate columns
         if df_final.columns.duplicated().any():
@@ -262,26 +236,18 @@ class CrossSessionEvaluation(BaseEvaluation):
         results_close_set=[]
         results_open_set=[]  
         for key, features in pipelines.items():
-            #data=features[0].get_data(dataset, self.paradigm)
             data=self._prepare_dataset(dataset, features)
             for subject in tqdm(np.unique(data.Subject), desc=f"{key}-CrossSessionEvaluation"):
                 df_subj=data.copy(deep=True)
                 df_subj['Label']=0
                 df_subj.loc[df_subj['Subject'] == subject, 'Label'] = 1
-                
-                # Print the value_counts of subjects and sessions in the dataframe
-                #print("value_counts", df_subj[['Subject','session']].value_counts())
-                #groups = df_subj.session.values
-
                 if not self._valid_subject(df_subj, subject, dataset):
                         continue
-
                 if self.return_close_set == False and self.return_open_set==False:
                     message = "Please choose either close-set or open-set scenario for the evaluation"
                     raise ValueError(message)
 
-                if self.return_close_set:
-                    
+                if self.return_close_set: 
                     close_set_scores=self._close_set(df_subj, pipelines[key])
                     mean_accuracy, mean_auc, mean_eer, mean_tpr, tprs_upper, tprr_lower, std_auc, mean_frr_1_far=close_set_scores
                     res_close_set = {
@@ -291,7 +257,6 @@ class CrossSessionEvaluation(BaseEvaluation):
                         "dataset": dataset.code,
                         "pipeline": key,
                         "subject": subject,
-                        #"session": session,
                         "frr_1_far": mean_frr_1_far,
                         "accuracy": mean_accuracy,
                         "auc": mean_auc,
@@ -300,13 +265,10 @@ class CrossSessionEvaluation(BaseEvaluation):
                         "tprs_upper": tprs_upper,
                         "tprs_lower": tprr_lower,
                         "std_auc": std_auc,
-                        #"n_samples": len(data)  # not training sample
-                        #"n_channels": data.columns.size
                         }
                     results_close_set.append(res_close_set)
 
                 if self.return_open_set:
-                    #print("groups", groups)
                     open_set_scores=self._open_set(df_subj, pipelines[key])
                     mean_accuracy, mean_auc, mean_eer, mean_tpr, tprs_upper, tprr_lower, std_auc, mean_frr_1_far=open_set_scores
                     res_open_set = {
@@ -316,7 +278,6 @@ class CrossSessionEvaluation(BaseEvaluation):
                         "dataset": dataset.code,
                         "pipeline": key,
                         "subject": subject,
-                        #"session": session,
                         "frr_1_far": mean_frr_1_far,
                         "accuracy": mean_accuracy,
                         "auc": mean_auc,
@@ -325,17 +286,13 @@ class CrossSessionEvaluation(BaseEvaluation):
                         "tprs_upper": tprs_upper,
                         "tprs_lower": tprr_lower,
                         "std_auc": std_auc,
-                        #"n_samples": len(data)  # not training sample
-                        #"n_channels": data.columns.size
                         }
                     results_open_set.append(res_open_set)
             
-        #return results_close_set, results_open_set
 
         if self.return_close_set ==True and self.return_open_set== False:
             scenario='close_set'
             return results_close_set, scenario
-            #results_close_set=pd.DataFrame(results_close_set)
 
         if self.return_close_set ==False and self.return_open_set== True:
             scenario='open_set'
@@ -352,13 +309,11 @@ class CrossSessionEvaluation(BaseEvaluation):
             dataset.dataset_path,
             "Results",
             "CrossSessionEvaluation"
-            #f"{dataset.code}_CloseSetEvaluation")
         )
         return results, results_path, scenario
     
     def _valid_subject(self, df_subj, subject, dataset):
         df_subject=df_subj[df_subj['Subject']==subject]
-        #print(df_subject['session'].unique())
         if (len(df_subject['session'].unique())!=dataset.n_sessions):
             return False
         else:

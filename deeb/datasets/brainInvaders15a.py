@@ -14,11 +14,9 @@ from scipy.io import loadmat
 from deeb.datasets import download as dl
 from deeb.datasets.base import BaseDataset
 
-
 BI2015a_URL = "https://zenodo.org/record/3266930/files/"
 
 class BrainInvaders2015a(BaseDataset):
-
     """P300 dataset bi2015a from a "Brain Invaders" experiment
     This dataset contains electroencephalographic (EEG) recordings
     of 43 subjects playing to a visual P300 Brain-Computer Interface (BCI)
@@ -116,7 +114,6 @@ class BrainInvaders2015a(BaseDataset):
         session_paths = [
             subject_dir / f"{subject_str}_session_{session:02}.mat" for session in [1, 2, 3]
     ]
-
         return session_paths
                                 
 
