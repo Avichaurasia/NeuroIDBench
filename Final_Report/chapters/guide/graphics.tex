@@ -1,0 +1,61 @@
+\section{Using Graphics}
+\label{sec:guide:graphics}
+
+\LaTeX{} together with the \emph{graphicx} package provides a simple means to
+add graphics to your thesis.
+Use the \verb+\includegraphics+ command to include a graphic.\footnote{only
+some file types are supported. With the default \ac{template} template,
+\mbox{.pdf}, \mbox{.png} and \mbox{.jpg} files work just fine.}
+The command takes the file name of the graphics (relative to the main file) as
+its paremeter.
+As optionaly parameters you can pass key=value pairs that determine scaling
+factors, \eg{} \verb+[width=10cm]+.
+
+If you use graphics compiled from \mbox{.svg} via inkscape, as described in
+Section~\ref{sec:makefiles:figures}, they are included via
+\begin{verbatim}
+\def\svgwidth{10cm}
+\input{pdf_tex file}
+\end{verbatim}
+Here, the scaling factor is given as the parameter to \verb+\svgwidth+ and the
+path to the graphics file (a \mbox{.pdf\_tex} file), given via \verb+\input+(!)
+must be relative tou your thesis's main file.
+
+Typically, you want to put your graphics in context, \eg{} add a caption and a
+label.
+For this, the \emph{figure} floating environment is used, see
+Example~\ref{ex:figure}
+\begin{example}
+\label{ex:figure}
+An example of a \emph{figure} environment.
+\begin{verbatim}
+\begin{figure}[tbph]
+        \includegraphics[...]{...}
+        \caption{Some descriptive text}
+        \label{fig:name}
+\end{figure}
+\end{verbatim}
+The optional parameter passed to the environment determines its preferred
+placement on a page, while the order of the letters determine the options'
+precedence.
+In this case, \LaTeX{} first attempts to put the figure on the top (\verb+t+)
+of a page, the bottom (\verb+b+) of the page is the second option.
+Putting the figure on a special page (\verb+p+) for floating environments is
+the third option, and as a last resort, \LaTeX{} will put the figure at the
+point of its definition (relative to the source code).
+
+Inside the environment, first the graphics file is included, then a caption is
+given, and finally a label is defined.
+\emph{Note} that the label must be given after the caption for it to function
+properly.
+Also \emph{node} that with figures, the caption is given after the graphics.
+\end{example}
+
+In some cases a figure consists of sub-figures.
+For this, you use the \verb+\subfloat+ command as provided by the \emph{subfig}
+package.
+You put the \verb+\subfloat+ inside the \emph{figure} environment and pass the
+\verb+\includegraphics[...]{...}+ command as a parameter.
+The sub-figure can have an individual caption an label: the caption is passed
+to the \verb+subfloat+ as an optional parameter (no \verb+\caption+ command!)
+that also contains the respective label (passed as a \verb+\label+ command).
