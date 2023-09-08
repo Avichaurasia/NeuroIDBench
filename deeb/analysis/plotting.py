@@ -80,7 +80,6 @@ class Plots():
             os.makedirs(file_path)
 
         n_datasets = len(datasets)
-        # Create subplots
         n_rows = int(np.ceil(n_datasets / 2))  # Round up to the nearest integer
         n_cols = 2
         fig, axes = plt.subplots(n_rows, n_cols, figsize=(10, 8))
