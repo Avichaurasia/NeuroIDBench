@@ -31,6 +31,7 @@ import io
 from pooch import Unzip, retrieve
 
 FLANKER_BASE_URL = "https://zenodo.org/record/7413650/files/"
+
 download_url="?download=1"
 
 class COGBCIFLANKER(BaseDataset):
