@@ -54,7 +54,7 @@ class BrainInvaders2015a(BaseDataset):
             )
         
     def _get_single_subject_data(self, subject):
-        """return data for a single subject"""
+        """return data for a single subject and session"""
         
         file_path_list = self.data_path(subject)
         all_sessions_data=[]
