@@ -29,6 +29,12 @@ The thesis was written at the IT Security group at Paderborn University. It was 
 
 To run this project, several dependencies need to be installed. 
 
+
+You can install all these dependencies at once using the following command:
+
+```bash
+pip install numpy scipy mne pandas scikit-learn matplotlib seaborn pooch requests tqdm zipfile36 statsmodels mat73 tensorflow tensorflow_addons
+
 numpy<br>
 scipy<br> 
 mne<br>
@@ -45,7 +51,7 @@ mat73<br>
 tensorflow<br> 
 tensorflow_addons<br> 
 
-To install these dependencies, please use the following command:
+To install these dependencies, please use the following command: <br>
 conda env create -f DEEB/environment.yml
 
 
