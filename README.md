@@ -43,6 +43,12 @@ zipfile36<br>
 statsmodels<br>
 mat73<br> 
 tensorflow<br> 
+tensorflow_addons<br> 
+
+To install these dependencies, please use the following command:
+conda env create -f DEEB/environment.yml
+
+
 
 
 
