@@ -50,8 +50,11 @@ tensorflow
 tensorflow_addons
 ```
 
-To install these dependencies, please use the following command: <br>
+To install these dependencies, please use the following command:
+
+```bash
 conda env create -f DEEB/environment.yml
+```
 
 
 
