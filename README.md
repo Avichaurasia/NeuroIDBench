@@ -21,6 +21,31 @@ In within-session evaluation, our framework showcased outstanding performance fo
 
 This repository serves as a comprehensive resource for my master's thesis, "Brainwave-Based User Authentication Models". It encompasses the entire implementation codebase along with a collection of illustrative examples for conducting benchmarking experiments using this powerful tool. Please note that while this repository is a valuable resource for code and methodologies, it does not include the proprietary or sensitive data utilized in our thesis.
 
-The thesis was written at the IT Security group at Paderborn University. It was supervised by Patricia Arias Cabarcos, who also leads the group. Further, the implementation aspects of this benchmarking tool was supervised by Matin Fallahi, a reserach associate at Kalrsruhe Insistute of Technology, Germany.   
+The thesis was written at the IT Security group at Paderborn University. It was supervised by Patricia Arias Cabarcos, who also leads the group. Further, the implementation aspects of this benchmarking tool was supervised by Matin Fallahi, a reserach associate at Kalrsruhe Insistute of Technology, Germany.  
+
+## Installation
+
+### BrainModels
+
+To run this project, several dependencies need to be installed. 
+
+numpy
+scipy 
+mne 
+pandas
+scikit-learn 
+matplotlib 
+seaborn 
+pooch 
+requests 
+tqdm 
+zipfile36
+statsmodels
+mat73 
+tensorflow 
+
+
+
+
 
 
