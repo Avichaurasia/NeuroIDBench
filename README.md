@@ -29,20 +29,20 @@ The thesis was written at the IT Security group at Paderborn University. It was 
 
 To run this project, several dependencies need to be installed. 
 
-numpy
-scipy 
-mne 
-pandas
-scikit-learn 
-matplotlib 
-seaborn 
-pooch 
-requests 
-tqdm 
-zipfile36
-statsmodels
-mat73 
-tensorflow 
+numpy<br>
+scipy<br> 
+mne<br>
+pandas<br>
+scikit-learn<br> 
+matplotlib<br> 
+seaborn<br> 
+pooch<br> 
+requests<br> 
+tqdm<br> 
+zipfile36<br>
+statsmodels<br>
+mat73<br> 
+tensorflow<br> 
 
 
 
