@@ -17,7 +17,18 @@ from deeb.datasets.base import BaseDataset
 BI2015a_URL = "https://zenodo.org/record/3266930/files/"
 
 class BrainInvaders2015a(BaseDataset):
-    """P300 dataset bi2015a from a "Brain Invaders" experiment
+    """
+    P300 dataset BI2015a from a "Brain Invaders" experiment.
+
+    .. admonition:: Dataset summary
+        ================ ======= ======= ================ =============== =============== ===========
+         Name             #Subj   #Chan   #Trials/class    Trials length   Sampling Rate   #Sessions
+        ================ ======= ======= ================ =============== =============== ===========
+         BI2015a           43      32        5 NT x 1 T         1s              512Hz           3
+        ================ ======= ======= ================ =============== =============== ===========
+
+    **Datasets Description**
+
     This dataset contains electroencephalographic (EEG) recordings
     of 43 subjects playing to a visual P300 Brain-Computer Interface (BCI)
     videogame named Brain Invaders. The interface uses the oddball paradigm
@@ -26,20 +37,27 @@ class BrainInvaders2015a(BaseDataset):
     32 active wet electrodes with three conditions: flash duration 50ms, 80ms
     or 110ms. The experiment took place at GIPSA-lab, Grenoble, France, in 2015.
     A full description of the experiment is available at [1]_. The ID of this
-    dataset is bi2015a.
+    dataset is BI2015a.
+
     :Investigators: Eng. Louis Korczowski, B. Sc. Martine Cederhout
     :Technical Support: Eng. Anton Andreev, Eng. Grégoire Cattan, Eng. Pedro. L. C. Rodrigues,
                         M. Sc. Violette Gautheret
     :Scientific Supervisor: Ph.D. Marco Congedo
+
     Notes
     -----
+
+    .. versionadded:: 0.4.6
+
     References
     ----------
+
     .. [1] Korczowski, L., Cederhout, M., Andreev, A., Cattan, G., Rodrigues, P. L. C.,
            Gautheret, V., & Congedo, M. (2019). Brain Invaders calibration-less P300-based
-           BCI with modulation of flash duration Dataset (bi2015a)
+           BCI with modulation of flash duration Dataset (BI2015a)
            https://hal.archives-ouvertes.fr/hal-02172347
     """
+
     def __init__(self):
         super().__init__(
             subjects=list(range(1, 44)),
@@ -93,6 +111,8 @@ class BrainInvaders2015a(BaseDataset):
     
     def data_path(self, subject, path=None, force_update=False,
                   update_path=None, verbose=None): 
+        "Get path to local copy of a subject data"
+
         if subject not in self.subject_list:
             raise ValueError("Invalid subject number")
 

@@ -35,7 +35,41 @@ urls=['32398631', '32398637', '32398625', '32398613', '32398628', '32398631', '3
       '32398754', '32398763', '32398769', '32398787', '32398775', '32398781', '32398760']
 
 class Won2022(BaseDataset):
-    path_to_dataset=" "
+    """
+    P300 dataset BI2015a from a "Brain Invaders" experiment.
+
+    .. admonition:: Dataset summary
+        ================ ======= ======= ================ =============== =============== ===========
+         Name             #Subj   #Chan   #Trials/class    Trials length   Sampling Rate   #Sessions
+        ================ ======= ======= ================ =============== =============== ===========
+         won2022           43      32        5 NT x 1 T         1s              512Hz           3
+        ================ ======= ======= ================ =============== =============== ===========
+
+    **Datasets Description**
+
+    This dataset contains electroencephalographic (EEG) recordings
+    of 43 subjects playing to a visual P300 Brain-Computer Interface (BCI)
+    videogame named Brain Invaders. The interface uses the oddball paradigm
+    on a grid of 36 symbols (1 Target, 35 Non-Target) that are flashed
+    pseudo-randomly to elicit the P300 response. EEG data were recorded using
+    32 active wet electrodes with three conditions: flash duration 50ms, 80ms
+    or 110ms. The experiment took place at GIPSA-lab, Grenoble, France, in 2015.
+    A full description of the experiment is available at [1]_. The ID of this
+    dataset is BI2015a.
+
+    :Investigators: Eng. Louis Korczowski, B. Sc. Martine Cederhout
+    :Technical Support: Eng. Anton Andreev, Eng. Grégoire Cattan, Eng. Pedro. L. C. Rodrigues,
+                        M. Sc. Violette Gautheret
+    :Scientific Supervisor: Ph.D. Marco Congedo
+
+    References
+    ----------
+
+    .. [1] Korczowski, L., Cederhout, M., Andreev, A., Cattan, G., Rodrigues, P. L. C.,
+           Gautheret, V., & Congedo, M. (2019). Brain Invaders calibration-less P300-based
+           BCI with modulation of flash duration Dataset (BI2015a)
+           https://hal.archives-ouvertes.fr/hal-02172347
+    """
     def __init__(self):
         super().__init__(
             subjects=list(range(1, 56)),
@@ -81,6 +115,8 @@ class Won2022(BaseDataset):
         return dlpath
     
     def _make_raw_array(self, eeg_data, markers, ch_names, ch_type, sfreq):  
+        """create mne raw array from data"""
+
         chnames = ch_names + ['STI 014']
         ch_types=[ch_type]*len(ch_names)+['stim']
         info = mne.create_info(ch_names=chnames, sfreq=sfreq, ch_types=ch_types, 
@@ -92,6 +128,8 @@ class Won2022(BaseDataset):
         return raw
     
     def _get_single_run(self, data):
+        """return data for a single run"""
+        
         eeg_data=np.asarray(data['data'])
         ch_names=[channel['labels'] for channel in data['chanlocs']]
         sfreq=data['srate']

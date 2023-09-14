@@ -75,25 +75,10 @@ class CrossSessionEvaluation(BaseEvaluation):
             X_train, X_test = X[train_index], X[test_index]
             y_train, y_test = labels[train_index], labels[test_index]
 
-            # Print the indices of X_train and X_test
-            #print("X_train indices", train_index)
-            #print("X_test indices", test_index)
-            # print("Train data shape", X_train.shape)
-            # print("Test data shape", X_test.shape)
-            # print("Authenticated train lables", len(np.where(y_train==1)[0]))
-            # print("Imposter test labels", len(np.where(y_train==0)[0]))
-            # print("Authenticated test labels", len(np.where(y_test==1)[0]))
-            # print("Imposter test labels", len(np.where(y_test==0)[0]))
-
-
             # Normalizing training and testing data using StandardScaler
             sc=StandardScaler()
             X_train=sc.fit_transform(X_train)
             X_test=sc.transform(X_test)
-
-            # Resampling the training data using RandomOverSampler
-            # oversampler = RandomOverSampler(random_state=42)
-            # X_train, y_train = oversampler.fit_resample(X_train, y_train)
             clf=clone(classifer)
 
             # Training the model
@@ -116,10 +101,6 @@ class CrossSessionEvaluation(BaseEvaluation):
 
 
     def _close_set(self, df_subj, pipeline):
-        # for subject in tqdm(np.unique(data.subject), desc="CrossSession (close-set)"):
-        #     df_subj=data.copy(deep=True)
-        #     df_subj['Label']=0
-        #     df_subj.loc[df_subj['Subject'] == subject, 'Label'] = 1
         session_groups = df_subj.session.values
         labels=np.array(df_subj['Label'])
         X=np.array(df_subj.drop(['Label','Event_id','Subject','session'],axis=1))

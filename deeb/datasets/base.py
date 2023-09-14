@@ -5,44 +5,38 @@ from tqdm import tqdm
 
 log = logging.getLogger(__name__)
 
+
 class BaseDataset(metaclass=abc.ABCMeta):
     def __init__(self, subjects, sessions_per_subject, events, code, interval, paradigm, doi=None, dataset_path=None, rejection_threshold=None, 
                  unit_factor=1e6):
         """"
-        Parameters required for all datasets
+        Common Parameters for all datasets
 
         parameters
         ----------
         subjects: List of int
-            List of subject number (or tuple or numpy array)
+            A list containing subject numbers (or tuples or numpy arrays).
 
         sessions_per_subject: int
-            Number of sessions per subject (if varying, take minimum)
+            The number of sessions per subject.
 
         events: dict of strings
-            String codes for events matched with labels in the stim channel.
-            Currently imagery codes codes can include:
-            - left_hand
-            - right_hand
-            - hands
-            - feet
-            - rest
-            - left_hand_right_foot
-            - right_hand_left_foot
-            - tongue
-            - navigation
-            - subtraction
-            - word_ass (for word association)
+            String codes representing events that match labels in the stimulus channel.
+            For ERP codes, you can include:
+            - 'Target'
+            - 'NonTarget'
+            - 'Congruent'
+            - 'Incongruent'
 
         code: string
-            Unique identifier for dataset, used in all plots.
+            A unique identifier for the dataset, which is used in all plots.
             The code should be in CamelCase.
 
         interval: list with 2 entries
-            Imagery interval as defined in the dataset description
+            ERP interval as defined in the dataset description
 
         paradigm: ['p300','n400']
-            Defines what sort of dataset this is
+            Defines the type of dataset. It can be either 'p300' or 'n400'.
 
         doi: DOI for dataset, optional (for now)
         """
@@ -63,31 +57,36 @@ class BaseDataset(metaclass=abc.ABCMeta):
     def get_data(self, subjects=None):
 
         """
-        Return the data correspoonding to a list of subjects.
+        Retrieve Data for a List of Subjects
 
-        The returned data is a dictionary with the following structure::
+        This function returns the data corresponding to a list of subjects in the following structure:
 
-            data = {'subject_id' :
-                        {'session_id':
-                            {'run_id': run}
-                        }
-                    }
+        data = {
+            'subject_id': {
+            'session_id': {
+            'run_id': run
+                }
+            }
+        }
 
-        subjects are on top, then we have sessions, then runs.
-        A sessions is a recording done in a single day, without removing the
-        EEG cap. A session is constitued of at least one run. A run is a single
-        contiguous recording. Some dataset break session in multiple runs.
- 
+        The hierarchy starts with subjects, followed by sessions, and then runs. 
+        In this context, a session refers to a recording conducted in a 
+        single day without removing the EEG cap. A session consists of at least one run, 
+        which represents a continuous recording. 
+        It is worth noting that some datasets split sessions into multiple runs.
+
         Parameters
         ----------
-        subjects: List of int
-            List of subject number
-        
+        subjects : List of int
+            A list containing subject numbers.
+
         Returns
         -------
-        data: Dict
-            dict containing the raw data
+        data : Dict
+            A dictionary containing the raw data.
+
         """
+
         if subjects is None:
             subjects = self.subject_list
         if not isinstance(subjects, list):
@@ -101,33 +100,36 @@ class BaseDataset(metaclass=abc.ABCMeta):
         return data
 
     def download(self, subject_list=None, path=None, force_update=False, update_path=None, accept=False, verbose=None):
-        """Download all data from the dataset.
+        """
 
-        This function is only useful to download all the dataset at once.
+        Download All Data from the Dataset
 
+        This function allows you to download all the data from the dataset in a single operation.
 
         Parameters
         ----------
         subject_list : list of int | None
-            List of subjects id to download, if None all subjects
-            are downloaded.
+            A list of subject IDs to download. If set to None, all subjects are downloaded.
+
         path : None | str
-            Location of where to look for the data storing location.
-            If None, the environment variable or config parameter
-            ``MNE_DATASETS_(dataset)_PATH`` is used. If it doesn't exist, the
-            "~/mne_data" directory is used. If the dataset
-            is not found under the given path, the data
-            will be automatically downloaded to the specified folder.
+            The location where the data will be stored. If set to None, the function checks for the environment 
+            variable or config parameter 'MNE_DATASETS_(dataset)_PATH'. If this doesn't exist, 
+            it defaults to the '~/mne_data' directory. If the dataset is not found under the specified path, 
+            the data will be automatically downloaded to that folder.
+
         force_update : bool
-            Force update of the dataset even if a local copy exists.
+            If True, it forces an update of the dataset even if a local copy already exists.
+
         update_path : bool | None
-            If True, set the MNE_DATASETS_(dataset)_PATH in mne-python
-            config to the given path. If None, the user is prompted.
-        accept: bool
-            Accept licence term to download the data, if any. Default: False
+            If set to True, it configures 'MNE_DATASETS_(dataset)_PATH' in the mne-python config to the provided path. 
+            If set to None, the user is prompted for confirmation.
+
+        accept : bool
+            If True, it accepts the license terms to proceed with the data download (if any). Default is set to False.
+
         verbose : bool, str, int, or None
-            If not None, override default verbose level
-            (see :func:`mne.verbose`).
+            If not set to None, it overrides the default verbose level (refer to :func:`mne.verbose`).
+
         """
         if subject_list is None:
             subject_list = self.subject_list
@@ -151,54 +153,58 @@ class BaseDataset(metaclass=abc.ABCMeta):
 
     @abc.abstractmethod
     def _get_single_subject_data(self, subject):
-        """Return the data of a single subject.
 
-        The returned data is a dictionary with the following structure
+        """
+        Return Data for a Single Subject
+
+        This function returns the data for a single subject in the following structure:
 
         data = {'session_id':
-                    {'run_id': raw}
-                }
+            {'run_id': raw}
+            }
 
-        parameters
+        Parameters
         ----------
-        subject: int
-            subject number
+        subject : int
+            The subject number.
 
-        returns
+        Returns
         -------
-        data: Dict
-            dict containing the raw data
+        data : Dict
+            A dictionary containing the raw data.
         """
         pass
 
     @abc.abstractmethod
     def data_path(self, subject, path=None, force_update=False, update_path=None, verbose=None):
-        """Get path to local copy of a subject data.
+
+        """
+        Get the Local Path of Subject Data
+
+        This function retrieves the local path to a subject's data.
 
         Parameters
         ----------
         subject : int
-            Number of subject to use
-        path : None | str
-            Location of where to look for the data storing location.
-            If None, the environment variable or config parameter
-            ``MNE_DATASETS_(dataset)_PATH`` is used. If it doesn't exist, the
-            "~/mne_data" directory is used. If the dataset
-            is not found under the given path, the data
-            will be automatically downloaded to the specified folder.
-        force_update : bool
-            Force update of the dataset even if a local copy exists.
-        update_path : bool | None **Deprecated**
-            If True, set the MNE_DATASETS_(dataset)_PATH in mne-python
-            config to the given path. If None, the user is prompted.
-        verbose : bool, str, int, or None
-            If not None, override default verbose level
-            (see :func:`mne.verbose`).
+            The subject number.
+
+        path : str | None
+            The location to search for the data storage location. If set to None,
+            it uses the environment variable or config parameter
+            "MNE_DATASETS_(dataset)_PATH." If it doesn't exist, it defaults to the
+            "~/mne_data" directory. If the dataset isn't found under the specified
+            path, the data is automatically downloaded to that folder.
+
+            force_update : bool
+                Force an update of the dataset even if a local copy exists.
+
+            verbose : bool, str, int, or None
+                If not None, override the default verbosity level (see :func:`mne.verbose`).
 
         Returns
         -------
         path : list of str
-            Local path to the given data file. This path is contained inside a
-            list of length one, for compatibility.
-        """  
-        pass
+            The local path to the given data file. This path is contained within a
+            list of length one for compatibility.
+        """
+        pass 

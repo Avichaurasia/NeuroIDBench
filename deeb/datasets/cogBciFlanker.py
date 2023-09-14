@@ -35,6 +35,42 @@ FLANKER_BASE_URL = "https://zenodo.org/record/7413650/files/"
 download_url="?download=1"
 
 class COGBCIFLANKER(BaseDataset):
+    """
+    P300 dataset BI2015a from a "Brain Invaders" experiment.
+
+    .. admonition:: Dataset summary
+        ================ ======= ======= ================ =============== =============== ===========
+         Name             #Subj   #Chan   #Trials/class    Trials length   Sampling Rate   #Sessions
+        ================ ======= ======= ================ =============== =============== ===========
+         BI2015a           28      32        5 NT x 1 T         1s              512Hz           3
+        ================ ======= ======= ================ =============== =============== ===========
+
+    **Datasets Description**
+
+    This dataset contains electroencephalographic (EEG) recordings
+    of 43 subjects playing to a visual P300 Brain-Computer Interface (BCI)
+    videogame named Brain Invaders. The interface uses the oddball paradigm
+    on a grid of 36 symbols (1 Target, 35 Non-Target) that are flashed
+    pseudo-randomly to elicit the P300 response. EEG data were recorded using
+    32 active wet electrodes with three conditions: flash duration 50ms, 80ms
+    or 110ms. The experiment took place at GIPSA-lab, Grenoble, France, in 2015.
+    A full description of the experiment is available at [1]_. The ID of this
+    dataset is BI2015a.
+
+    :Investigators: Eng. Louis Korczowski, B. Sc. Martine Cederhout
+    :Technical Support: Eng. Anton Andreev, Eng. Grégoire Cattan, Eng. Pedro. L. C. Rodrigues,
+                        M. Sc. Violette Gautheret
+    :Scientific Supervisor: Ph.D. Marco Congedo
+
+    References
+    ----------
+
+    .. [1] Korczowski, L., Cederhout, M., Andreev, A., Cattan, G., Rodrigues, P. L. C.,
+           Gautheret, V., & Congedo, M. (2019). Brain Invaders calibration-less P300-based
+           BCI with modulation of flash duration Dataset (BI2015a)
+           https://hal.archives-ouvertes.fr/hal-02172347
+    """
+
     def __init__(self):
         super().__init__(
             subjects=list(range(1, 30)),

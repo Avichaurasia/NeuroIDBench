@@ -26,6 +26,45 @@ from pooch import Unzip, retrieve
 
 Mantegna2019_URL = "https://files.de-1.osf.io/v1/resources/rp4jy/providers/osfstorage/5c7651cf62c82a0018dc5cf7/?zip="
 class Mantegna2019(BaseDataset):
+
+    """
+    P300 dataset BI2015a from a "Brain Invaders" experiment.
+
+    .. admonition:: Dataset summary
+        ================ ======= ======= ================ =============== =============== ===========
+         Name             #Subj   #Chan   #Trials/class    Trials length   Sampling Rate   #Sessions
+        ================ ======= ======= ================ =============== =============== ===========
+         Mantegna2019       31      54        2                1s              512Hz           1
+        ================ ======= ======= ================ =============== =============== ===========
+
+    **Datasets Description**
+
+    The dataset is derived from EEG investigations, explicitly focusing on the 
+    analysis of N400 target word modulations. The researchers of this study examined the potential for 
+    disentangling integration and prediction in the modulation of ERPs N400 during language processing. 
+    To do this, they used a stimulus assignment to complete sentences with rhyming words in various 
+    contexts with varying degrees of word predictability. All individuals who took part in the 
+    experiment were native speakers of the Dutch language, as the investigation was carried out in Dutch. 
+    In this experimental study, participants were provided with rhyming sentence completions. 
+    This experiment was carried out in three distinct stages. 
+    The first two stages consist of conducting online experiments with thirty and, respectively, 44 individuals. 
+    The third and ultimate stage of the study entails conducting an EEG experiment involving 31 participants.
+    This experiment involves participants listening to 135 rhyming sentences with either congruent or 
+    incongruent endings. The primary objective of this experiment is to elicit N400 ERPs.
+
+    :Investigators: Eng. Louis Korczowski, B. Sc. Martine Cederhout
+    :Technical Support: Eng. Anton Andreev, Eng. Grégoire Cattan, Eng. Pedro. L. C. Rodrigues,
+                        M. Sc. Violette Gautheret
+    :Scientific Supervisor: Ph.D. Marco Congedo
+
+    References
+    ----------
+
+    .. [1] Francesco Mantegna, Florian Hintz, Markus Ostarek, Phillip M Alday, and Falk Huettig.
+            Distinguishing integration and prediction accounts of erp n400 modulations in language
+            processing through experimental design. Neuropsychologia, 134:107199, 2019
+
+    """
     def __init__(self):
         super().__init__(
             subjects=list(range(1, 32)),
