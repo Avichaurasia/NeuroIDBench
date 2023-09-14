@@ -1,7 +1,7 @@
 # DEEB
 
 <p align="center">
-  <img src="logo-color.png" alt="My Logo" width="400" height="380">
+  <img src="logo.png" alt="My Logo" width="400" height="380">
 </p>
 
 
