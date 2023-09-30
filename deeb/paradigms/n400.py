@@ -168,7 +168,6 @@ class N400(SinglePass):
     def __init__(self, **kwargs):
         if "events" in kwargs.keys():
             raise (ValueError("N400 dont accept events"))
-        print("I am in baseN400")
         super().__init__(events=["Consistent", "Inconsistent"], **kwargs)
 
     def used_events(self, dataset):

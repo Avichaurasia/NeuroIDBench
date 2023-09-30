@@ -46,7 +46,6 @@ def _predict_open_set(embedding_network, x_test, y_test):
     each pair of embeddings. It then uses these similarity values to create pairs of faces, with the label 1 indicating that the faces
     belong to the same individual and label 0 indicating that the faces belong to different individuals."""
 
-    print("I am in predict open set function")
     # Compute embeddings for all test samples
     resutls=[]
     resutls2=[]
@@ -110,7 +109,6 @@ def _predict_close_set(embedding_network, x_train_val, y_train_val, x_test, y_te
     values to create pairs of faces, with the label 1 indicating that the faces belong to the same individual (from the training set) 
     and label 0 indicating that the faces belong to different individuals (including unknown identities)"""
 
-    print("I am in predict close set function")
     resutls=[]
     resutls2=[]
     resutls3=defaultdict(list)

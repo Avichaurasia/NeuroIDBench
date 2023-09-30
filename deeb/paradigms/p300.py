@@ -167,7 +167,6 @@ class P300(SinglePass):
 
     """
     def __init__(self, **kwargs):
-        #print("I am P300 derived class")
         if "events" in kwargs.keys():
             raise (ValueError("P300 dont accept events"))
         super().__init__(events=["Target", "NonTarget"], **kwargs)

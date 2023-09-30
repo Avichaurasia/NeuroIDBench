@@ -11,7 +11,7 @@ import pandas as pd
 #from deeb.paradigms.p300 import P300
 from deeb.datasets.brainInvaders15a import BrainInvaders2015a
 from deeb.datasets.mantegna2019 import Mantegna2019
-from deeb.datasets.draschkow2018 import Draschkow2018
+#from deeb.datasets.draschkow2018 import Draschkow2018
 from deeb.datasets.won2022 import Won2022
 from deeb.pipelines.features import AutoRegressive
 from deeb.pipelines.features import PowerSpectralDensity
@@ -24,30 +24,33 @@ from sklearn.preprocessing import StandardScaler
 from sklearn.discriminant_analysis import LinearDiscriminantAnalysis as LDA
 from sklearn.naive_bayes import GaussianNB
 from sklearn.svm import SVC
-from deeb.datasets.lee2019 import Lee2019
+#from deeb.datasets.lee2019 import Lee2019
 from deeb.datasets.erpCoreN400 import ERPCOREN400
 from deeb.paradigms.n400 import N400
 from deeb.paradigms.p300 import P300
 from deeb.datasets.cogBciFlanker import COGBCIFLANKER
+#from deeb.datasets.userDataset import User
 import importlib
 #importlib.reload(N400)
 
-
 # Intializing the datasets 
-lee = Lee2019()
+#lee = Lee2019()
 erp=ERPCOREN400()
 mantegna2019=Mantegna2019()
 #mantegna.interval
-p300=P300()
+#p300=P300()
 n400=N400()
-erp.subject_list = erp.subject_list[0:5]
-erp.rejection_threshold=200e-6
-print("Rejection threshold:", erp.rejection_threshold)
-#print(dir(n400))
-data, subject_dict, _=n400.get_data(erp)
-print("Chaurasia")
-#print(subject_dict)
-print(data)
+#user=User()
+
+print(erp.get_data())
+# erp.subject_list = erp.subject_list[0:5]
+# erp.rejection_threshold=200e-6
+# print("Rejection threshold:", erp.rejection_threshold)
+# #print(dir(n400))
+# data, subject_dict, _=n400.get_data(erp)
+# print("Chaurasia")
+# #print(subject_dict)
+# print(data)
 # for subject, sessions in data.items():
 #     for session, runs in sessions.items():
 #         for run, raw_events in runs.items():

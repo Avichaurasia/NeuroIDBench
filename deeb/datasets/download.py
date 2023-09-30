@@ -40,7 +40,6 @@ def get_dataset_path(sign: str, path: str = None) -> str:
     # Set default path if MNE_DATA not already configured
     if os.getenv("MNE_DATA") is None:
         path_def = Path.home()/ "mne_data"
-        #path_def=Path('/Volumes/Z Slim')/ "mne_data"
         print(f"MNE_DATA is not already configured. It will be set to "
               f"default location in the home directory - {path_def}\n"
               f"All datasets will be downloaded to this location, if anything is "

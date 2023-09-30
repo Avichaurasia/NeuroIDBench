@@ -37,33 +37,6 @@ class Mantegna2019(BaseDataset):
          Mantegna2019       31      54        2                1s              512Hz           1
         ================ ======= ======= ================ =============== =============== ===========
 
-    **Datasets Description**
-
-    The dataset is derived from EEG investigations, explicitly focusing on the 
-    analysis of N400 target word modulations. The researchers of this study examined the potential for 
-    disentangling integration and prediction in the modulation of ERPs N400 during language processing. 
-    To do this, they used a stimulus assignment to complete sentences with rhyming words in various 
-    contexts with varying degrees of word predictability. All individuals who took part in the 
-    experiment were native speakers of the Dutch language, as the investigation was carried out in Dutch. 
-    In this experimental study, participants were provided with rhyming sentence completions. 
-    This experiment was carried out in three distinct stages. 
-    The first two stages consist of conducting online experiments with thirty and, respectively, 44 individuals. 
-    The third and ultimate stage of the study entails conducting an EEG experiment involving 31 participants.
-    This experiment involves participants listening to 135 rhyming sentences with either congruent or 
-    incongruent endings. The primary objective of this experiment is to elicit N400 ERPs.
-
-    :Investigators: Eng. Louis Korczowski, B. Sc. Martine Cederhout
-    :Technical Support: Eng. Anton Andreev, Eng. Grégoire Cattan, Eng. Pedro. L. C. Rodrigues,
-                        M. Sc. Violette Gautheret
-    :Scientific Supervisor: Ph.D. Marco Congedo
-
-    References
-    ----------
-
-    .. [1] Francesco Mantegna, Florian Hintz, Markus Ostarek, Phillip M Alday, and Falk Huettig.
-            Distinguishing integration and prediction accounts of erp n400 modulations in language
-            processing through experimental design. Neuropsychologia, 134:107199, 2019
-
     """
     def __init__(self):
         super().__init__(
@@ -153,7 +126,7 @@ class Mantegna2019(BaseDataset):
         path_zip = self.download_dataset(url, "Mantegna2019")
         self.dataset_path=os.path.dirname(Path(path_zip))
         subject_dir = Path(path_zip.strip(zip_filename))/main_directory
-        print("")
+        #print("")
         if not subject_dir.exists():
             with z.ZipFile(path_zip, "r") as zip_ref:
                 zip_ref.extractall(subject_dir)

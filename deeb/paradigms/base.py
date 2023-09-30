@@ -56,16 +56,16 @@ class BaseParadigm(metaclass=ABCMeta):
     def prepare_process(self, dataset):
         """Prepare processing of raw files
 
-                This function allows to set parameter of the paradigm class prior to
-                the preprocessing (process_raw). Does nothing by default and could be
-                overloaded if needed.
+        This function allows to set parameter of the paradigm class prior to
+        the preprocessing (process_raw). Does nothing by default and could be
+        overloaded if needed.
 
-                Parameters
-                ----------
+        Parameters
+        ----------
 
-                dataset : dataset instance
-                    The dataset corresponding to the raw file. mainly use to access
-                    dataset specific i
+        dataset : dataset instance
+        The dataset corresponding to the raw file. mainly use to access
+        dataset specific i
         nformation.
         """
         if dataset is not None:
@@ -104,9 +104,7 @@ class BaseParadigm(metaclass=ABCMeta):
             if return_epochs=False, this is np.ndarray
         labels: np.ndarray
             the labels for training / evaluating the model
-        metadata: pd.DataFrame
-            A dataframe containing the metadata
-
+        
         """
         # get events id
         event_id = self.used_events(dataset)
@@ -158,6 +156,38 @@ class BaseParadigm(metaclass=ABCMeta):
         return X, labels
        
     def get_data(self, dataset, subjects=None, return_epochs=False):
+
+        """
+        Return the data for a list of subject.
+
+        return the data, labels and a dataframe with metadata. the dataframe
+        will contain at least the following columns
+
+        - subject : the subject indice
+        - session : the session indice
+        - run : the run indice
+
+        Parameters
+        ----------
+        dataset:
+            A dataset instance.
+        subjects: List of int
+            List of subject number
+        return_epochs: boolean
+            This flag specifies whether to return only the data array or the
+            complete processed mne.Epochs
+        
+        Returns
+        -------
+        X : Union[np.ndarray, mne.Epochs]
+            the data that will be used as features for the model
+            Note: if return_epochs=True,  this is mne.Epochs
+            if return_epochs=False, this is np.ndarray
+        subject_dict: Python dictionary containing the preprocessed 
+                      data for each subject    
+        metadata: pd.DataFrame
+            A dataframe containing the metadata.
+        """
         if not self.is_valid(dataset):
             message = f"Dataset {dataset.code} is not valid for paradigm"
             raise AssertionError(message)
