@@ -2,7 +2,8 @@ import abc
 import logging
 from inspect import signature
 from tqdm import tqdm
-
+import numpy as np
+import os
 log = logging.getLogger(__name__)
 
 
@@ -55,7 +56,6 @@ class BaseDataset(metaclass=abc.ABCMeta):
 
     def get_data(self, subjects=None):
 
-        print("======================Avinash======================")
 
         """
         Retrieve Data for a List of Subjects
@@ -88,12 +88,22 @@ class BaseDataset(metaclass=abc.ABCMeta):
 
         """
 
-        if subjects is None:
-            subjects = self.subject_list
-        if not isinstance(subjects, list):
-            raise ValueError("subjects must be a list")
-
         data = {}
+        if self.code == "User Dataset":  
+            all_subjects=len(np.unique(os.listdir(self.dataset_path)))
+            sessions=len(os.listdir(os.path.join(self.dataset_path, os.listdir(self.dataset_path)[0])))
+            if subjects is None:
+                subjects=np.arange(1, all_subjects+1)
+                self.subject_list=np.arange(1, all_subjects+1)
+                self.n_sessions=sessions
+            else:
+                subjects=self.subject_list
+        else:
+            
+            if subjects is None:
+                subjects = self.subject_list
+            if not isinstance(subjects, list):
+                raise ValueError("subjects must be a list")
         for subject in subjects:
             if subject not in self.subject_list:
                 raise ValueError(f"Invalid subject {subject} given")

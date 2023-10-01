@@ -10,17 +10,13 @@ import mne
 import numpy as np
 import yaml
 from mne.channels import make_standard_montage
-from scipy.io import loadmat
 from deeb.datasets import download as dl
 from deeb.datasets.base import BaseDataset
 
-BI2015a_URL = "https://zenodo.org/record/3266930/files/"
-
-class User(BaseDataset): 
-
+class USERDATASET(BaseDataset): 
     def __init__(self):
         super().__init__(
-            subjects=None,
+            subjects=[],
             sessions_per_subject=None,
             events=None,
             code="User Dataset",
@@ -30,42 +26,40 @@ class User(BaseDataset):
             dataset_path=None,
             rejection_threshold=None,
             )
-        print(self.code)
-           
+    
     def _get_single_subject_data(self, subject):
         """return data for a single subject and session"""
         
-        # file_path_list = self.data_path(subject)
-        # all_sessions_data=[]
-        # sessions = {}
-        return None
-        
+        file_path_list = self.data_path(subject)
+        sessions = {}
+        for file_path, session in zip(file_path_list, [1, 2, 3]):
+            session_name = "session_"+str(session)
+            if session_name not in sessions.keys():
+                sessions[session_name] = {}
+            run_name = 'run_1'
+            raw_data_path=os.path.join(file_path)
+            raw = mne.io.read_raw_fif(raw_data_path, preload = True, verbose=False)
+            sessions[session_name][run_name] = raw
+        return sessions
+         
     def data_path(self, subject, path=None, force_update=False,
                   update_path=None, verbose=None): 
         "Get path to local copy of a subject data"
 
         if subject not in self.subject_list:
-            raise ValueError("Invalid subject number")
-
-        # define url and paths
-        base_url = BI2015a_URL
-        subject_str = f"subject_{subject:02}"
-        url = f"{base_url}{subject_str}_mat.zip"
-        zip_filename = f"{subject_str}.zip"
-
-        # download and extract data if needed
-        path_zip = dl.data_dl(url, "BRAININVADERS2015A")
-        self.dataset_path=os.path.dirname(os.path.dirname(Path(path_zip.strip(zip_filename))))
-        subject_dir = Path(path_zip.strip(zip_filename)) / subject_str
-        if not subject_dir.exists():
-            with z.ZipFile(path_zip, "r") as zip_ref:
-                zip_ref.extractall(subject_dir)
-        
-        # get paths to relevant files
+            raise ValueError("Invalid subject number")  
+        subject=str(subject)
+        all_subjects_path=os.listdir(self.dataset_path)
+        if subject in all_subjects_path:
+            subject_dir=Path(os.path.join(self.dataset_path, subject))
+        session_name="Session"
         session_paths = [
-            subject_dir / f"{subject_str}_session_{session:02}.mat" for session in [1, 2, 3]
-    ]
+            subject_dir / f"{subject}/{session_name}_S{session:1}/.fif" for session in os.listdir(os.path.join(self.dataset_path, os.listdir(self.dataset_path)[0]))]
         return session_paths
+
+
+
+       
                                 
 
 

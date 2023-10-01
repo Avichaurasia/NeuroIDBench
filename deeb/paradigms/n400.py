@@ -161,11 +161,9 @@ class SinglePass(BaseN400):
     
 class N400(SinglePass):
     """N400 for Consistent/Inconsistent classification
-
-    Metric is 'roc_auc'
-
     """
     def __init__(self, **kwargs):
+        #print("N400 init")
         if "events" in kwargs.keys():
             raise (ValueError("N400 dont accept events"))
         super().__init__(events=["Consistent", "Inconsistent"], **kwargs)
