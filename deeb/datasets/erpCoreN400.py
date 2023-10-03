@@ -39,8 +39,26 @@ class ERPCOREN400(BaseDataset):
         ================ ======= ======= ================ =============== =============== ===========
          Name             #Subj   #Chan   #Trials/class    Trials length   Sampling Rate   #Sessions
         ================ ======= ======= ================ =============== =============== ===========
-         BI2015a           43      32        5 NT x 1 T         1s              512Hz           3
+         ERP: N400          40      32        5 NT x 1 T         1s              1024Hz           1
         ================ ======= ======= ================ =============== =============== ===========
+
+        **Datasets Description**
+
+        This dataset included 40 participants, consisting of 25 females and 15 males. 
+        The participants were selected from the University of California, Davis community. 
+        The mean age of the participants was 21.5 years, with a standard deviation of 2.87. 
+        The age range of the participants was between 18 and 30 years. A word pair judgment task 
+        was employed to elicit the N400 component in this task. Every experimental trial comprised a red prime 
+        word that was subsequently followed by a green target word. Participants were required 
+        to indicate whether the target word was semantically related or unrelated to the prime word.
+
+         References
+        ----------
+
+        [1] Kappenman, Emily S., et al. "ERP CORE: An open resource for human event-related potential 
+        research." NeuroImage 225 (2021): 117465.
+
+
 
     """
 

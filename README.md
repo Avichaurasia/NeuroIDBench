@@ -56,6 +56,35 @@ To install these dependencies, please use the following command:
 conda env create -f DEEB/environment.yml
 ```
 
+we can also utilize requirement.txt to create the virtual environment by using the pip
+command
+
+```bash
+python -m venv venv
+source venv/bin/activate
+pip install -r requirements.txt
+```
+
+Activate the conda environment using the following command:
+
+```bash
+conda activate master_thesis
+```
+
+Edit the configuration File: 
+
+Upon activating the Conda environment, navigate to the designated project directory. 
+A file named single_dataset.yml can be located within the "configuration_files" folder. 
+The single_dataset.yml file is adjusted based on the exemplified configurations
+in the following sections.
+
+Execute the Automation Script
+
+Launch the automated script single_dataset_benchmark.py
+in Python. This script streamlines all the tasks related to data preprocessing, feature extraction,
+and classification for a single dataset. It conducts benchmarking assessments across multiple
+classifiers for the specified dataset
+
 
 
 

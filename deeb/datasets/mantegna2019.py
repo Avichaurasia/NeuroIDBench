@@ -37,6 +37,23 @@ class Mantegna2019(BaseDataset):
          Mantegna2019       31      54        2                1s              512Hz           1
         ================ ======= ======= ================ =============== =============== ===========
 
+    **Datasets Description**
+
+        This dataset included 40 participants, consisting of 25 females and 15 males. 
+        The participants were selected from the University of California, Davis community. 
+        The mean age of the participants was 21.5 years, with a standard deviation of 2.87. 
+        The age range of the participants was between 18 and 30 years. A word pair judgment task 
+        was employed to elicit the N400 component in this task. Every experimental trial comprised a red prime 
+        word that was subsequently followed by a green target word. Participants were required 
+        to indicate whether the target word was semantically related or unrelated to the prime word.
+
+         References
+        ----------
+
+        [1] Mantegna, Francesco, et al. "Distinguishing integration and prediction accounts of ERP N400 
+        modulations in language processing through experimental design." Neuropsychologia 134 (2019): 107199.
+
+
     """
     def __init__(self):
         super().__init__(

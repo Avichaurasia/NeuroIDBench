@@ -38,6 +38,47 @@ log = logging.getLogger(__name__)
 Vector = Union[list, tuple, np.ndarray]
 
 class WithinSessionEvaluation(BaseEvaluation):
+    """Performance evaluation within session (k-fold cross-validation)
+
+    Within-session evaluation uses k-fold cross_validation to determine train
+    and test sets on separate session for each subject, it is possible to
+    estimate the performance on a subset of training examples to obtain
+    learning curves.
+
+    Parameters
+    ----------
+    n_perms :
+        Number of permutations to perform. If an array
+        is passed it has to be equal in size to the data_size array.
+        Values in this array must be monotonically decreasing (performing
+        more permutations for more data is not useful to reduce standard
+        error of the mean).
+        Default: None
+    data_size :
+        If None is passed, it performs conventional WithinSession evaluation.
+        Contains the policy to pick the datasizes to
+        evaluate, as well as the actual values. The dict has the
+        key 'policy' with either 'ratio' or 'per_class', and the key
+        'value' with the actual values as an numpy array. This array should be
+        sorted, such that values in data_size are strictly monotonically increasing.
+        Default: None
+    paradigm : Paradigm instance
+        The paradigm to use.
+    datasets : List of Dataset instance
+        The list of dataset to run the evaluation. If none, the list of
+        compatible dataset will be retrieved from the paradigm instance.
+    random_state: int, RandomState instance, default=None
+        If not None, can guarantee same seed for shuffling examples.
+    n_jobs: int, default=1
+        Number of jobs for fitting of pipeline.
+    return_close_set: bool, default=False
+        return close set results if True
+    return_open_set: bool, default=False
+        return open set results if True
+    
+    """
+
+
     VALID_POLICIES = ["per_class", "ratio"]
 
     def __init__(

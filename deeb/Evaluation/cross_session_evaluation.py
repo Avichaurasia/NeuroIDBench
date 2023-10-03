@@ -37,6 +37,41 @@ log = logging.getLogger(__name__)
 Vector = Union[list, tuple, np.ndarray]
 
 class CrossSessionEvaluation(BaseEvaluation):
+
+    """Cross-session performance evaluation.
+
+    Evaluate performance of the pipeline across sessions but for a single
+    subject. Verifies that there is at least two sessions before starting
+    the evaluation.
+
+    Parameters
+    ----------
+    paradigm : Paradigm instance
+        The paradigm to use.
+    datasets : List of Dataset instance
+        The list of dataset to run the evaluation. If none, the list of
+        compatible dataset will be retrieved from the paradigm instance.
+    random_state: int, RandomState instance, default=None
+        If not None, can guarantee same seed for shuffling examples.
+    n_jobs: int, default=1
+        Number of jobs for fitting of pipeline.
+    n_jobs_evaluation: int, default=1
+        Number of jobs for evaluation, processing in parallel the within session,
+        cross-session or cross-subject.
+    overwrite: bool, default=False
+        If true, overwrite the results.
+    error_score: "raise" or numeric, default="raise"
+        Value to assign to the score if an error occurs in estimator fitting. If set to
+        'raise', the error is raised.
+    suffix: str
+        Suffix for the results file.
+    hdf5_path: str
+        Specific path for storing the results and models.
+    return_close_set: bool, default=False
+        return close set results if True
+    return_open_set: bool, default=False
+        return open set results if True
+    """
     def __init__(
         self,
         n_perms: Optional[Union[int, Vector]] = None,
