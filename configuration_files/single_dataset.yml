@@ -1,4 +1,4 @@
-name: "COGBCIFLANKER"
+name: "UserDataset"
 
 dataset: 
   - name: COGBCIFLANKER
@@ -36,93 +36,23 @@ pipelines:
         verbose: 1
         workers: 1
 
-  # "AR+PSD+LG": 
-  # - name: AutoRegressive
-  #   from: deeb.pipelines
-  #   parameters: 
-  #     order: 6
+  
+  "AR+PSD+RF": 
+  - name: AutoRegressive
+    from: deeb.pipelines
+    parameters: 
+      order: 6
     
-  # - name: PowerSpectralDensity
-  #   from: deeb.pipelines
+  - name: PowerSpectralDensity
+    from: deeb.pipelines
       
-  # - name: LogisticRegression
-  #   from: sklearn.linear_model
-  #   parameters: 
-  #       #kernel: 'rbf'
-  #       class_weight: "balanced"
-  #       #probability: True
+  - name: RandomForestClassifier
+    from: sklearn.ensemble
+    parameters: 
+        class_weight: "balanced"
 
-
-
-
-  # "AR+PSD+RF": 
-  # - name: AutoRegressive
-  #   from: deeb.pipelines
-  #   parameters: 
-  #     order: 6
-    
-  # - name: PowerSpectralDensity
-  #   from: deeb.pipelines
-      
-  # - name: RandomForestClassifier
-  #   from: sklearn.ensemble
-  #   parameters: 
-  #       #kernel: 'rbf'
-  #       class_weight: "balanced"
-  #       #probability: True
-
-  # "AR+PSD+LDA": 
-  #   - name: AutoRegressive
-  #     from: deeb.pipelines
-  #     parameters: 
-  #       order: 6
-      
-  #   - name: PowerSpectralDensity
-  #     from: deeb.pipelines
-        
-  #   - name: LinearDiscriminantAnalysis
-  #     from: sklearn.discriminant_analysis 
-  #     parameters: 
-  #       solver: 'lsqr'
-  #       #class_weight: "balanced"
-  #       shrinkage: 'auto'
-
-  # "SNN": 
-  #     - name : Siamese
-  #       from: deeb.pipelines
-  #       parameters: 
-  #         EPOCHS: 10
-  #         batch_size: 256
-  #         verbose: 1
-  #         workers: 
-
-  # "AR+PSD+KNN": 
-  #   - name: AutoRegressive
-  #     from: deeb.pipelines
-  #     parameters: 
-  #       order: 6
-      
-  #   - name: PowerSpectralDensity
-  #     from: deeb.pipelines
-        
-  #   - name: KNeighborsClassifier
-  #     from: sklearn.neighbors
-  #     # parameters: 
-  #     #   #kernel: 'rbf'
-  #     #   class_weight: "balanced"
-  #     #   #probability: True
-
-  # "AR+PSD+GNB": 
-  #   - name: AutoRegressive
-  #     from: deeb.pipelines
-  #     parameters: 
-  #       order: 6
-      
-  #   - name: PowerSpectralDensity
-  #     from: deeb.pipelines
-      
-  #   - name: GaussianNB
-  #     from: sklearn.naive_bayes
+  
+  
 
 
 

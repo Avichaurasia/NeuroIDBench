@@ -85,6 +85,18 @@ in Python. This script streamlines all the tasks related to data preprocessing, 
 and classification for a single dataset. It conducts benchmarking assessments across multiple
 classifiers for the specified dataset
 
+### How to Add new EEG data for benchmarking?
+
+Reserachers can utilize this tool to perform benchmarking and evalaute their approach. 
+However,there are certain pre-requisities that need to be fuflfilled to add new EEG data to this tool.
+Following steps needs to be followed to add new EEG data.
+
+1. Convert the raw EEG data into standarized MNE raw object. MNE is a powerful Python package and capable to reading and 
+    converting any EEG format into MNE format. Some of the tutorials for converting EEG data into standarized MNE format
+    can be found at https://mne.tools/stable/auto_tutorials/io/index.html. 
+
+
+
 
 
 

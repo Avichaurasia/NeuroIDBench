@@ -12,7 +12,8 @@ from sklearn.model_selection import (
     GridSearchCV,
     StratifiedKFold,
     GroupKFold,
-    LeaveOneGroupOut
+    LeaveOneGroupOut,
+    train_test_split
     ,
 )
 import pandas as pd
@@ -180,36 +181,57 @@ class Siamese_CrossSessionEvaluation(BaseEvaluation):
         self.return_open_set = return_open_set
         super().__init__(**kwargs)
     
-    def _close_set(self, data, y, groups, siamese):
-        count_cv=0
-        dicr3={}
-        dicr2={}
-        dicr1={}
-        #cv=LeaveOneGroupOut()
-        
-        return (dicr1, dicr2, dicr3)
-    
     def _open_set(self, X, y, groups, siamese):
+        count_session=2
         dicr3={}
         dicr2={}
         dicr1={}
-        x_train=[]
-        y_train=[]
-        x_test=[]
-        y_test=[]
-        session_id=np.unique(groups)
-        # Divide the x and y into train and test based on session_id such that session_id=1 is train and session_id=2,3 is for test
-        for i in range(len(session_id)):
-            if i==0:
-                x_train=X[groups==session_id[i]]
-                y_train=y[groups==session_id[i]]
-            else:
-                x_test=X[groups==session_id[i]]
-                y_test=y[groups==session_id[i]]
-        # Train the siamese network on the train data
+        unique_sessions=np.unique(groups)
+        
+        # Initialize lists to store training and testing data
+        X_train, X_test, y_train, y_test = [], [], [], []
+    
+        # Find subjects from Session 1
+        session_1_subject_indices = np.where(groups == 'session_1')[0]
+    
+        # Randomly select 75% of subjects from Session 1 for training
+        train_indices, test_indices = train_test_split(
+        session_1_subject_indices, test_size=0.25, random_state=42)
+    
+        # Append Session 1 training data
+        X_train.append(X[train_indices])
+        y_train.append(y[train_indices])
+        scaler = StandardScaler()
+        x_train = scaler.fit_transform(x_train.reshape((x_train.shape[0], -1))).reshape(x_train.shape) 
+        tf.keras.backend.clear_session()
+        model=siamese._siamese_embeddings(x_train.shape[1], x_train.shape[2])
+        embedding_network=model
+        early_stopping_callback = EarlyStopping(monitor='val_loss', patience=10)
+        train_dataset = tf.data.Dataset.from_tensor_slices((x_train, y_train)).shuffle(1000).batch(siamese.batch_size)
+        history = embedding_network.fit(train_dataset,
+                                        workers=siamese.workers,
+                                        epochs=siamese.EPOCHS,
+                                        verbose=siamese.verbose)
 
-        
-        
+        # Loop through other sessions for testing exclusing session 1
+        for session_id in unique_sessions:
+            if session_id != 1:
+                # Extract indices for subjects in the current session
+                session_subject_indices = np.where(groups == session_id)[0]
+
+                # Remove subjects used for training from the testing set
+                session_subject_indices = np.setdiff1d(session_subject_indices, train_indices)
+            
+                # Append data to testing lists
+                X_test.append(X[session_subject_indices])
+                y_test.append(y[session_subject_indices])
+            
+                X_test = scaler.transform(X_test.reshape((X_test.shape[0], -1))).reshape(X_test.shape)
+                resutls1,resutls2,resutls3=_predict_open_set(model, X_test, y_test) 
+                dicr1[count_session] = resutls1
+                dicr2[count_session] = resutls2
+                dicr3.update(dict(resutls3))
+                count_session=count_session+1  
         return (dicr1, dicr2, dicr3)
         
     def _evaluate(self, dataset, pipelines):
@@ -245,12 +267,58 @@ class Siamese_CrossSessionEvaluation(BaseEvaluation):
         for name, clf in pipelines.items(): 
             siamese = clf[0]
             if self.return_close_set:
-                close_dicr1, close_dicr2, close_dicr3=self._close_set(data, y, groups, siamese)
+                raise AssertionError("Close-set is not allowed for cross-session evaluation")
                     
-                    
-
             if self.return_open_set:
-                open_dicr1, open_dicr2, open_dicr3=self._open_set(data, y, groups, siamese)  
+                open_dicr1, open_dicr2, open_dicr3=self._open_set(data, y, groups, siamese) 
+                open_set_path=os.path.join(results_saving_path,"open_set")
+                if not os.path.exists(open_set_path):
+                    os.makedirs(open_set_path)
+                
+                with open(os.path.join(open_set_path, "d1_dicr1.pkl"), 'wb') as f:
+                    pickle.dump(open_dicr1, f)
+
+                with open(os.path.join(open_set_path, "d1_dicr2.pkl"), 'wb') as f:
+                    pickle.dump(open_dicr2, f)
+
+                with open(os.path.join(open_set_path, "d1_dicr3.pkl"), 'wb') as f:
+                    pickle.dump(open_dicr3, f)
+
+                for sub in open_dicr3.keys():
+                    results=np.array(open_dicr3[sub])
+                    true_lables=np.array(results[:,1])
+                    predicted_scores=np.array(results[:,0])
+                    inter_tpr, auc, eer, frr_1_far=score._calculate_siamese_scores(true_lables, predicted_scores)
+                    res_open_set = {
+                    # "time": duration / 5.0,  # 5 fold CV
+                    'evaluation': 'Cross Session',
+                        "eval Type": "Open Set",
+                        "dataset": dataset.code,
+                        "pipeline": name,
+                        "subject": sub,
+                        #"session": session,
+                        "frr_1_far": frr_1_far,
+                        #"accuracy": mean_accuracy,
+                        "auc": auc,
+                        "eer": eer,
+                        "tpr": inter_tpr,
+                        #"std_auc": std_auc,
+                        "n_samples": len(X)  # not training sample
+                        #"n_channels": data.columns.size
+                        }
+                    results_open_set.append(res_open_set)   
+
+        # if self.return_close_set ==True and self.return_open_set== False:
+        #     scenario='close_set'
+        #     return results_close_set, scenario
+
+       # if self.return_close_set ==False and self.return_open_set== True:
+        scenario='open_set'
+        return results_open_set, scenario
+        
+        # if self.return_close_set ==True and self.return_open_set== True:
+        #     scenario=['close_set', 'open_set']
+        #     return (results_close_set, results_open_set), scenario
 
                    
     def evaluate(self, dataset, pipelines, param_grid):

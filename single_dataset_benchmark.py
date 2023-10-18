@@ -27,9 +27,6 @@ import numpy as np
 import yaml
 import pandas as pd
 from deeb.datasets import (BrainInvaders2015a, Mantegna2019, ERPCOREN400, Lee2019, utils)
-#from deeb.datasets import brainInvaders15a, mantegna2019, erpCoreN400, lee2019, utils
-#from deeb import paradigms as deeb_paradigms
-#from deeb.Evaluation import (CloseSetEvaluation, OpenSetEvaluation,)
 from deeb.Evaluation import (WithinSessionEvaluation, CrossSessionEvaluation, 
                              Siamese_WithinSessionEvaluation, Siamese_CrossSessionEvaluation)
 log = logging.getLogger(__name__)
