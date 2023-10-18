@@ -85,7 +85,7 @@ in Python. This script streamlines all the tasks related to data preprocessing, 
 and classification for a single dataset. It conducts benchmarking assessments across multiple
 classifiers for the specified dataset
 
-### How to Add new EEG data for benchmarking?
+## How to Add new EEG data for benchmarking?
 
 Reserachers can utilize this tool to perform benchmarking and evalaute their approach. 
 However,there are certain pre-requisities that need to be fuflfilled to add new EEG data to this tool.
@@ -95,6 +95,14 @@ Following steps needs to be followed to add new EEG data.
     converting any EEG format into MNE format. Some of the tutorials for converting EEG data into standarized MNE format
     can be found at https://mne.tools/stable/auto_tutorials/io/index.html. 
 
+2. Once the raw EEG data is converted into mne. Save the state of MNE object into .fif format. 
+    The mne data should be saved in hierarchy of folders like "sujectID"--> "Sesssion number" --> EEG_data.fif.
+    For example: Assume an EEG dataset comprises of 2 subjects. Each subject has performed EEG task across 2 sessions
+    and each session contains two runs. 
+
+3. Edit the single_dataset.yml with the below configurations:
+
+4. Launch the automated script single_dataset_benchmark.py from terminal.  
 
 
 
