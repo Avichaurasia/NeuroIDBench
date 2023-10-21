@@ -101,65 +101,6 @@ def _predict_open_set(embedding_network, x_test, y_test):
                 else:
                     TN+=1
     return resutls,resutls2,resutls3
-
-# This function has been sourced from https://git.scc.kit.edu/ps-chair/brainnet licensed under the Creative Commons
-def _predict_close_set(embedding_network, x_train_val, y_train_val, x_test, y_test):
-    """Calculates similarity values for closed-set recognition by comparing each face embedding in the test set with all face embeddings 
-    in the training set, and then calculating the euclidean distance between each pair of embeddings. It then uses these similarity 
-    values to create pairs of faces, with the label 1 indicating that the faces belong to the same individual (from the training set) 
-    and label 0 indicating that the faces belong to different individuals (including unknown identities)"""
-
-    resutls=[]
-    resutls2=[]
-    resutls3=defaultdict(list)
-    calsstrain=np.unique(y_train_val)
-    TP,FP,TN,FN=0,0,0,0
-    digit_indices = [np.where(y_train_val == i)[0] for i in np.unique(y_train_val)]
-    x_test_1 = x_test
-
-    print(len(x_train_val),len(x_test))
-    anc_e=embedding_network(x_test[0:min(500,len(x_test))])
-    for c in range(len(x_test)//500):
-        anc_e=tf.concat(axis=0, values = [anc_e, embedding_network(x_test[(c+1)*500:min((c+2)*500,len(x_test))])]) 	
-    anc_et=embedding_network(x_train_val[0:min(500,len(x_train_val))])
-    for c in range(len(x_train_val)//500):
-        anc_et=tf.concat(axis=0, values = [anc_et, embedding_network(x_train_val[(c+1)*500:min((c+2)*500,len(x_train_val))])]) 
-    print(len(anc_et),len(anc_e))
-    for i in tqdm(range(len(x_test_1)), desc="Calculating similarity"):
-        prediction=[]
-        test_e=embedding_network(np.array([x_test[i]]))
-        same_in=digit_indices[np.where(calsstrain == y_train_val[i])[0][0]]
-        
-        for t in range(len(x_train_val)):
-            tempp=-1*euclidean_distance2(anc_et[t],test_e).numpy()[0][0] 
-            if y_test[i] ==y_train_val[t]:
-                resutls.append([tempp,1,y_test[i],y_train_val[t]])
-            else:
-                resutls.append([tempp,0,y_test[i],y_train_val[t]])
-
-            prediction.append(tempp)        
-        prediction=np.array(prediction)
-        
-        for j in calsstrain:
-            same_in=digit_indices[np.where(calsstrain == j)[0][0]]
-            spredict=((sum(prediction[same_in]))/(len(same_in)))            
-            if y_test[i] ==j:
-                resutls2.append([spredict,1,y_test[i],j])
-                resutls3[j].append([spredict,1,y_test[i],j])
-            else:
-                resutls2.append([spredict,0,y_test[i],j])
-                resutls3[j].append([spredict,0,y_test[i],j])   
-            if spredict>0.85:
-                if y_test[i] ==j:
-                    TP+=1
-                else:
-                    FP+=1
-            else:
-                if y_test[i] == j:
-                    FN+=1
-                else:
-                    TN+=1
-    return resutls,resutls2,resutls3
             
 def euclidean_distance2(x, y):
 	sum_square = tf.math.reduce_sum(tf.math.square(x - y), axis=None, keepdims=True)
@@ -180,53 +121,68 @@ class Siamese_CrossSessionEvaluation(BaseEvaluation):
         self.return_close_set = return_close_set
         self.return_open_set = return_open_set
         super().__init__(**kwargs)
-    
+     
     def _open_set(self, X, y, groups, siamese):
         count_session=2
         dicr3={}
         dicr2={}
         dicr1={}
-        unique_sessions=np.unique(groups)
         
-        # Initialize lists to store training and testing data
-        X_train, X_test, y_train, y_test = [], [], [], []
-    
+        # Gettin the unique session IDs
+        unique_sessions=np.unique(groups)
+
         # Find subjects from Session 1
         session_1_subject_indices = np.where(groups == 'session_1')[0]
-    
-        # Randomly select 75% of subjects from Session 1 for training
-        train_indices, test_indices = train_test_split(
-        session_1_subject_indices, test_size=0.25, random_state=42)
-    
-        # Append Session 1 training data
-        X_train.append(X[train_indices])
-        y_train.append(y[train_indices])
+        X_train=X[session_1_subject_indices]
+        y_train=y[session_1_subject_indices]
+        
+        # Find all the subject IDs from sessions
+        session_1_subject_ids=np.unique(y[session_1_subject_indices])
+          
+        # Randomise the subject ids from session 1
+        np.random.shuffle(session_1_subject_ids) 
+
+        # Randomly select 75% of subjects from Session 1 for training 
+        no_subjects_for_train = int(np.ceil(0.75 * len(session_1_subject_ids)))
+        train_subjects = session_1_subject_ids[0:no_subjects_for_train]
+        train_indices = np.where(np.isin(y_train, train_subjects))
+        test_subjectsIds=np.setdiff1d(session_1_subject_ids, train_subjects)
+
+        # Getting the training data
+        X_train=X_train[train_indices]
+        y_train=y_train[train_indices]
         scaler = StandardScaler()
-        x_train = scaler.fit_transform(x_train.reshape((x_train.shape[0], -1))).reshape(x_train.shape) 
+
+        # Normalising the training data
+        X_train = scaler.fit_transform(X_train.reshape((X_train.shape[0], -1))).reshape(X_train.shape) 
         tf.keras.backend.clear_session()
-        model=siamese._siamese_embeddings(x_train.shape[1], x_train.shape[2])
+        model=siamese._siamese_embeddings(X_train.shape[1], X_train.shape[2])
         embedding_network=model
         early_stopping_callback = EarlyStopping(monitor='val_loss', patience=10)
-        train_dataset = tf.data.Dataset.from_tensor_slices((x_train, y_train)).shuffle(1000).batch(siamese.batch_size)
+        train_dataset = tf.data.Dataset.from_tensor_slices((X_train, y_train)).shuffle(1000).batch(siamese.batch_size)
         history = embedding_network.fit(train_dataset,
                                         workers=siamese.workers,
                                         epochs=siamese.EPOCHS,
                                         verbose=siamese.verbose)
 
-        # Loop through other sessions for testing exclusing session 1
+        # Loop through other sessions for testing
         for session_id in unique_sessions:
-            if session_id != 1:
-                # Extract indices for subjects in the current session
-                session_subject_indices = np.where(groups == session_id)[0]
 
-                # Remove subjects used for training from the testing set
-                session_subject_indices = np.setdiff1d(session_subject_indices, train_indices)
-            
-                # Append data to testing lists
-                X_test.append(X[session_subject_indices])
-                y_test.append(y[session_subject_indices])
-            
+            # Skip session 1 as it is used for training
+            if session_id != 'session_1':
+                session_subject_indices = np.where(groups == session_id)[0] 
+                X_test=X[session_subject_indices]
+                y_test=y[session_subject_indices]
+
+                # Remove the subjects from session 1 from the test data
+                test_indices=np.where(np.isin(y_test, test_subjectsIds))
+
+                # Getting the test data for subjects not used for training from each sessions except session 1
+                X_test=X_test[test_indices]
+                y_test=y_test[test_indices]
                 X_test = scaler.transform(X_test.reshape((X_test.shape[0], -1))).reshape(X_test.shape)
+
+                # Getting the similarity scores from session except session 1 under open set scenario
                 resutls1,resutls2,resutls3=_predict_open_set(model, X_test, y_test) 
                 dicr1[count_session] = resutls1
                 dicr2[count_session] = resutls2
@@ -237,12 +193,13 @@ class Siamese_CrossSessionEvaluation(BaseEvaluation):
     def _evaluate(self, dataset, pipelines):
         if not self.is_valid(dataset):
             raise AssertionError("Dataset is not appropriate for evaluation")
+        
+        # Getting the EEG data from the dataset
         X, _, metadata=self.paradigm.get_data(dataset)
         results_saving_path=os.path.join(
             dataset.dataset_path,
             "Results",
             "SiameseCrossSessionEvaluation"
-            #f"{dataset.code}_CloseSetEvaluation")
         )
         if not os.path.exists(results_saving_path):
             os.makedirs(results_saving_path)
@@ -253,9 +210,8 @@ class Siamese_CrossSessionEvaluation(BaseEvaluation):
         elif (dataset.paradigm == "n400"):
             metadata=metadata[metadata['event_id']=="Inconsistent"]
 
-       # print("subjects and sessions after selection", metadata[['subject', 'session']].value_counts())
-
         metadata=self._valid_subject(metadata, dataset)
+        #print("session numbers", metadata['session'].value_counts())
         target_index=metadata['event_id'].index.tolist()
         data=X[target_index]
        
@@ -290,7 +246,6 @@ class Siamese_CrossSessionEvaluation(BaseEvaluation):
                     predicted_scores=np.array(results[:,0])
                     inter_tpr, auc, eer, frr_1_far=score._calculate_siamese_scores(true_lables, predicted_scores)
                     res_open_set = {
-                    # "time": duration / 5.0,  # 5 fold CV
                     'evaluation': 'Cross Session',
                         "eval Type": "Open Set",
                         "dataset": dataset.code,
@@ -308,18 +263,8 @@ class Siamese_CrossSessionEvaluation(BaseEvaluation):
                         }
                     results_open_set.append(res_open_set)   
 
-        # if self.return_close_set ==True and self.return_open_set== False:
-        #     scenario='close_set'
-        #     return results_close_set, scenario
-
-       # if self.return_close_set ==False and self.return_open_set== True:
         scenario='open_set'
         return results_open_set, scenario
-        
-        # if self.return_close_set ==True and self.return_open_set== True:
-        #     scenario=['close_set', 'open_set']
-        #     return (results_close_set, results_open_set), scenario
-
                    
     def evaluate(self, dataset, pipelines, param_grid):
         results, scenario=self._evaluate(dataset, pipelines)
