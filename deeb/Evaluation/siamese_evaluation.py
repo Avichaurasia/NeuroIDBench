@@ -672,12 +672,12 @@ class Siamese_CrossSessionEvaluation(BaseEvaluation):
         super().__init__(**kwargs)
      
     def _open_set(self, X, y, groups, siamese):
-        count_session=2
+        #count_session=2
         dicr3={}
         dicr2={}
         dicr1={}
         
-        # Gettin the unique session IDs
+        # Getting the unique session IDs
         unique_sessions=np.unique(groups)
 
         # Find subjects from Session 1
@@ -685,7 +685,7 @@ class Siamese_CrossSessionEvaluation(BaseEvaluation):
         X_train=X[session_1_subject_indices]
         y_train=y[session_1_subject_indices]
         
-        # Find all the subject IDs from sessions
+        # Find the unqiue subject IDs from session 1
         session_1_subject_ids=np.unique(y[session_1_subject_indices])
           
         # Randomise the subject ids from session 1
@@ -695,7 +695,7 @@ class Siamese_CrossSessionEvaluation(BaseEvaluation):
         no_subjects_for_train = int(np.ceil(0.75 * len(session_1_subject_ids)))
         train_subjects = session_1_subject_ids[0:no_subjects_for_train]
         train_indices = np.where(np.isin(y_train, train_subjects))
-        test_subjectsIds=np.setdiff1d(session_1_subject_ids, train_subjects)
+        
 
         # Getting the training data
         X_train=X_train[train_indices]
@@ -707,26 +707,29 @@ class Siamese_CrossSessionEvaluation(BaseEvaluation):
         tf.keras.backend.clear_session()
         model=siamese._siamese_embeddings(X_train.shape[1], X_train.shape[2])
         embedding_network=model
-        early_stopping_callback = EarlyStopping(monitor='val_loss', patience=10)
+        #early_stopping_callback = EarlyStopping(monitor='val_loss', patience=10)
         train_dataset = tf.data.Dataset.from_tensor_slices((X_train, y_train)).shuffle(1000).batch(siamese.batch_size)
         history = embedding_network.fit(train_dataset,
                                         workers=siamese.workers,
                                         epochs=siamese.EPOCHS,
                                         verbose=siamese.verbose)
+        
+        # Extract the subjects that were not utilized for training the model
+        test_subjectsIds=np.setdiff1d(session_1_subject_ids, train_subjects)
 
         # Loop through other sessions for testing
         for session_id in unique_sessions:
 
-            # Skip session 1 as it is used for training
+            # Skip session 1 as it is used onlyfor training
             if session_id != 'session_1':
                 session_subject_indices = np.where(groups == session_id)[0] 
                 X_test=X[session_subject_indices]
                 y_test=y[session_subject_indices]
 
-                # Remove the subjects from session 1 from the test data
+                # Find the indices of subjects for testing which were not used during training 
                 test_indices=np.where(np.isin(y_test, test_subjectsIds))
 
-                # Getting the test data for subjects not used for training from each sessions except session 1
+                # Getting the final test data for subjects not used for training 
                 X_test=X_test[test_indices]
                 y_test=y_test[test_indices]
                 X_test = scaler.transform(X_test.reshape((X_test.shape[0], -1))).reshape(X_test.shape)
@@ -760,21 +763,29 @@ class Siamese_CrossSessionEvaluation(BaseEvaluation):
             metadata=metadata[metadata['event_id']=="Inconsistent"]
 
         metadata=self._valid_subject(metadata, dataset)
-        #print("session numbers", metadata['session'].value_counts())
+
+        # Getting the indices of target(P300) or inconsistent(N400) trails
         target_index=metadata['event_id'].index.tolist()
         data=X[target_index]
        
-        # Selecting the subject labels for the target or inconsistent trails
+        # Selecting the subject labels for the target(P300) or inconsistent(N400) trails
         y=np.array(metadata["subject"])
         results_close_set=[]
         results_open_set=[]
+
+        # Getting the session ID's for all subjects
         groups = metadata.session.values
+
+        # Loop through siamese pipeline
         for name, clf in pipelines.items(): 
+
+            # getting the siamese object
             siamese = clf[0]
             if self.return_close_set:
                 raise AssertionError("Close-set is not allowed for cross-session evaluation")
                     
             if self.return_open_set:
+ 
                 open_dicr1, open_dicr2, open_dicr3=self._open_set(data, y, groups, siamese) 
                 open_set_path=os.path.join(results_saving_path,"open_set")
                 if not os.path.exists(open_set_path):
