@@ -1,22 +1,24 @@
 import sys
-sys.path.append('/Users/avinashkumarchaurasia/Master_Thesis/deeb/')
+sys.path.append('/Users/avinashkumarchaurasia/Master_Thesis/deeb/deeb')
 import abc
 import logging
 import mne
 import numpy as np
 import pandas as pd
-from deeb.paradigms.base_old import BaseParadigm
+#from deeb.paradigms.base_old import BaseParadigm
 from deeb.paradigms.n400 import N400
 from deeb.paradigms.p300 import P300
 from deeb.datasets.brainInvaders15a import BrainInvaders2015a
 from deeb.datasets.mantegna2019 import Mantegna2019
-from deeb.datasets.draschkow2018 import Draschkow2018
+#from deeb.datasets.draschkow2018 import Draschkow2018
 from deeb.datasets.won2022 import Won2022
+from deeb.datasets.cogBciFlanker import COGBCIFLANKER
 from deeb.pipelines.features import AutoRegressive 
 from deeb.pipelines.features import PowerSpectralDensity 
 #from deeb.pipelines.siamese_old import Siamese
 from deeb.pipelines.base import Basepipeline
 #from deeb.evaluation.siamese_evaluation import Siamese_WithinSessionEvaluation
+#from deeb.Evaluation.siamese_cross import Siamese_CrossSessionEvaluation
 from deeb.datasets import utils
 from autoreject import AutoReject, get_rejection_threshold
 from sklearn.pipeline import make_pipeline
@@ -32,8 +34,9 @@ def _evaluate():
     won = Won2022()
     brain=BrainInvaders2015a()
     mantegna=Mantegna2019()
+    cog=COGBCIFLANKER()
 
-    mantegna.subject_list=mantegna.subject_list[0:10]
+    #mantegna.subject_list=mantegna.subject_list[0:10]
 
     paradigm_n400=N400()
 
@@ -44,9 +47,16 @@ def _evaluate():
     pipeline={}
     pipeline['siamese']=make_pipeline(Siamese())
 
-    within_close_set=Siamese_WithinSessionEvaluation(paradigm=paradigm_n400, datasets=mantegna, return_open_set=False)
+    cross_session=Siamese_CrossSessionEvaluation(paradigm=paradigm_n400, datasets=cog, return_close_set=False)
     
-    results_close_set=within_close_set.process(pipelines=pipeline)
+    grouped_df=cross_session.groupby(['eval Type','dataset','pipeline','session']).agg({
+                'accuracy': 'mean',
+                'auc': 'mean',
+                'eer': lambda x: f'{np.mean(x)*100:.3f} ± {np.std(x)*100:.3f}',
+                'frr_1_far': lambda x: f'{np.mean(x)*100:.3f}'
+            }).reset_index()
+
+    return grouped_df
 
 
 if __name__ == '__main__':

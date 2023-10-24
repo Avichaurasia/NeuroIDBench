@@ -32,6 +32,7 @@ from keras.callbacks import EarlyStopping
 from collections import defaultdict
 from deeb.Evaluation.scores import Scores as score
 import pickle
+#from deeb.Evaluation.siamese_cross import Siamese_Cross_session_evaluation
 import mne
 from tabnanny import verbose
 from tqdm import tqdm 
@@ -408,6 +409,253 @@ class Siamese_WithinSessionEvaluation(BaseEvaluation):
         return True
     
 # This needs to be checked later and modified
+# class Siamese_CrossSessionEvaluation(BaseEvaluation):
+#     def __init__(
+#         self,
+#         n_perms: Optional[Union[int, Vector]] = None,
+#         data_size: Optional[dict] = None,
+#         return_close_set: bool = True,
+#         return_open_set: bool = True,
+#         **kwargs
+#     ):
+#         self.n_perms = n_perms
+#         self.data_size = data_size
+#         self.return_close_set = return_close_set
+#         self.return_open_set = return_open_set
+#         super().__init__(**kwargs)
+    
+#     def _close_set(self, data, y, groups, siamese):
+#         count_cv=0
+#         dicr3={}
+#         dicr2={}
+#         dicr1={}
+#         cv=LeaveOneGroupOut()
+#         for train, test in cv.split(data, y, groups):
+#             x_train, x_test, y_train, y_test = data[train], data[test], y[train], y[test]
+
+#             scaler = StandardScaler()
+#             x_train = scaler.fit_transform(x_train.reshape((x_train.shape[0], -1))).reshape(x_train.shape)
+#             x_test = scaler.transform(x_test.reshape((x_test.shape[0], -1))).reshape(x_test.shape)
+#             tf.keras.backend.clear_session()
+#             model=siamese._siamese_embeddings(x_train.shape[1], x_train.shape[2])
+#             embedding_network=model
+#             #early_stopping_callback = EarlyStopping(monitor='val_loss', patience=10)
+#             train_dataset = tf.data.Dataset.from_tensor_slices((x_train, y_train)).shuffle(1000).batch(siamese.batch_size)
+#             history = embedding_network.fit(train_dataset,
+#                                         workers=siamese.workers,
+#                                         epochs=siamese.EPOCHS,
+#                                         verbose=siamese.verbose)
+#             resutls1,resutls2,resutls3=_predict_close_set(model, x_train, y_train, x_test, y_test) 
+#             dicr1[count_cv] = resutls1
+#             dicr2[count_cv] = resutls2
+#             dicr3.update(dict(resutls3))
+#             count_cv=count_cv+1
+#         return (dicr1, dicr2, dicr3)
+    
+#     def _open_set(self, X, y, groups, siamese):
+#         count_cv=0
+#         dicr3={}
+#         dicr2={}
+#         dicr1={}
+#         cv = LeaveOneGroupOut()
+#         for train_index, test_index in cv.split(X, y, groups=groups):
+#             X_train, X_test = [train_index], X[test_index]
+#             y_train, y_test = y[train_index], y[test_index]
+
+#             # Get the unique subject_ids from y_train
+#             train_subject_ids = np.unique(y_train)
+
+#             # Randomize the subject_ids
+#             np.random.shuffle(train_subject_ids)
+
+#             # Select 75% of the subject_ids to be used for training
+#             train_subject_ids = train_subject_ids[:int(0.75 * len(train_subject_ids))]
+
+#             # remove the subject_ids from y_test that are present in train_subject_ids
+#             test_subject_ids = np.unique(y_test)
+#             test_subject_ids = [subject_id for subject_id in test_subject_ids if subject_id not in train_subject_ids]
+#             X_train_indices=np.isin(y_train, train_subject_ids)
+#             y_train_indices=np.isin(y_train, train_subject_ids)
+#             X_test_indices=np.isin(y_test, test_subject_ids)
+#             y_test_indices=np.isin(y_test, test_subject_ids)
+#             X_train=X_train[X_train_indices]
+#             y_train=y_train[y_train_indices]
+#             X_test=X_test[X_test_indices]
+#             y_test=y_test[y_test_indices]
+
+
+#             scaler = StandardScaler()
+#             x_train = scaler.fit_transform(X_train.reshape((X_train.shape[0], -1))).reshape(X_train.shape)
+#             x_test = scaler.transform(X_test.reshape((X_test.shape[0], -1))).reshape(X_test.shape)
+#             tf.keras.backend.clear_session()
+#             model=siamese._siamese_embeddings(x_train.shape[1], x_train.shape[2])
+#             embedding_network=model
+#             early_stopping_callback = EarlyStopping(monitor='val_loss', patience=10)
+#             train_dataset = tf.data.Dataset.from_tensor_slices((x_train, y_train)).shuffle(1000).batch(siamese.batch_size)
+#             history = embedding_network.fit(train_dataset,
+#                                         workers=siamese.workers,
+#                                         epochs=siamese.EPOCHS,
+#                                         verbose=siamese.verbose)
+
+#             resutls1,resutls2,resutls3=_predict_open_set(model, x_test, y_test) 
+#             dicr1[count_cv] = resutls1
+#             dicr2[count_cv] = resutls2
+#             dicr3.update(dict(resutls3))
+#             count_cv=count_cv+1
+#         return (dicr1, dicr2, dicr3)
+        
+#     def _evaluate(self, dataset, pipelines):
+#         if not self.is_valid(dataset):
+#             raise AssertionError("Dataset is not appropriate for evaluation")
+#         X, _, metadata=self.paradigm.get_data(dataset)
+#         results_saving_path=os.path.join(
+#             dataset.dataset_path,
+#             "Results",
+#             "SiameseCrossSessionEvaluation"
+#             #f"{dataset.code}_CloseSetEvaluation")
+#         )
+
+#         print("subjects and sessions before selection", metadata[['subject', 'session']].value_counts())
+#         if not os.path.exists(results_saving_path):
+#             os.makedirs(results_saving_path)
+
+#         if(dataset.paradigm == "p300"):
+#             metadata=metadata[metadata['event_id']=="Target"]
+            
+#         elif (dataset.paradigm == "n400"):
+#             metadata=metadata[metadata['event_id']=="Inconsistent"]
+
+#         print("subjects and sessions after selection", metadata[['subject', 'session']].value_counts())
+
+#         metadata=self._valid_subject(metadata, dataset)
+#         target_index=metadata['event_id'].index.tolist()
+#         data=X[target_index]
+       
+#         # Selecting the subject labels for the target or inconsistent trails
+#         y=np.array(metadata["subject"])
+#         results_close_set=[]
+#         results_open_set=[]
+#         groups = metadata.session.values
+#         for name, clf in pipelines.items():
+            
+#             siamese = clf[0]
+#             if self.return_close_set:
+#                     close_dicr1, close_dicr2, close_dicr3=self._close_set(data, y, groups, siamese)
+#                     close_set_path=os.path.join(results_saving_path,"close_set")
+#                     if not os.path.exists(close_set_path):
+#                         os.makedirs(close_set_path)
+
+#                     with open(os.path.join(close_set_path, "d1_dicr1.pkl"), 'wb') as f:
+#                         pickle.dump(close_dicr1, f)
+
+#                     with open(os.path.join(close_set_path, "d1_dicr2.pkl"), 'wb') as f:
+#                         pickle.dump(close_dicr2, f)
+
+#                     with open(os.path.join(close_set_path, "d1_dicr3.pkl"), 'wb') as f:
+#                         pickle.dump(close_dicr3, f)
+
+#                     for sub in close_dicr3.keys():
+#                         result=close_dicr3[sub]
+#                         result=np.array(result)
+#                         true_lables=np.array(result[:,1])
+#                         predicted_scores=np.array(result[:,0])
+#                         inter_tpr, auc, eer, frr_1_far=score._calculate_siamese_scores(true_lables, predicted_scores)
+#                         res_close_set = {
+#                         'evaluation': 'Cross Session',
+#                             "eval Type": "Close Set",
+#                             "dataset": dataset.code,
+#                             "pipeline": name,
+#                             "subject": sub,
+#                             #"session": session,
+#                             "frr_1_far": frr_1_far,
+#                             #"accuracy": mean_accuracy,
+#                             "auc": auc,
+#                             "eer": eer,
+#                             "tpr": inter_tpr,
+#                             #"std_auc": std_auc,
+#                             "n_samples": len(X)  # not training sample
+#                             #"n_channels": data.columns.size
+#                             }
+#                         results_close_set.append(res_close_set)
+
+#             if self.return_open_set:
+#                 open_dicr1, open_dicr2, open_dicr3=self._open_set(data, y, groups, siamese)  
+#                 open_set_path=os.path.join(results_saving_path,"open_set")
+#                 if not os.path.exists(open_set_path):
+#                     os.makedirs(open_set_path)
+                
+#                 with open(os.path.join(open_set_path, "d1_dicr1.pkl"), 'wb') as f:
+#                     pickle.dump(open_dicr1, f)
+
+#                 with open(os.path.join(open_set_path, "d1_dicr2.pkl"), 'wb') as f:
+#                     pickle.dump(open_dicr2, f)
+
+#                 with open(os.path.join(open_set_path, "d1_dicr3.pkl"), 'wb') as f:
+#                     pickle.dump(open_dicr3, f)
+
+#                 for sub in open_dicr3.keys():
+#                     results=np.array(open_dicr3[sub])
+#                     true_lables=np.array(results[:,1])
+#                     predicted_scores=np.array(results[:,0])
+#                     inter_tpr, auc, eer, frr_1_far=score._calculate_siamese_scores(true_lables, predicted_scores)
+#                     res_open_set = {
+#                     # "time": duration / 5.0,  # 5 fold CV
+#                     'evaluation': 'Cross Session',
+#                         "eval Type": "Open Set",
+#                         "dataset": dataset.code,
+#                         "pipeline": name,
+#                         "subject": sub,
+#                         #"session": session,
+#                         "frr_1_far": frr_1_far,
+#                         #"accuracy": mean_accuracy,
+#                         "auc": auc,
+#                         "eer": eer,
+#                         "tpr": inter_tpr,
+#                         #"std_auc": std_auc,
+#                         "n_samples": len(X)  # not training sample
+#                         #"n_channels": data.columns.size
+#                         }
+#                     results_open_set.append(res_open_set)  
+                                  
+
+#         if self.return_close_set ==True and self.return_open_set== False:
+#             scenario='close_set'
+#             return results_close_set, scenario
+
+#         if self.return_close_set ==False and self.return_open_set== True:
+#             scenario='open_set'
+#             return results_open_set, scenario
+        
+#         if self.return_close_set ==True and self.return_open_set== True:
+#             scenario=['close_set', 'open_set']
+#             return (results_close_set, results_open_set), scenario
+        
+#     def evaluate(self, dataset, pipelines, param_grid):
+#         results, scenario=self._evaluate(dataset, pipelines)
+
+#         print("Siamese object", Siamese_Cross_session_evaluation)
+
+#         results_path=os.path.join(
+#             dataset.dataset_path,
+#             "Results",
+#             "SiameseCrossSessionEvaluation"
+#             #f"{dataset.code}_CloseSetEvaluation")
+#         )
+#         if not os.path.exists(results_path):
+#             os.makedirs(results_path)
+#         return results, results_path, scenario
+    
+#     def _valid_subject(self , metadata, dataset):
+#         subject_sessions = metadata.groupby('subject')['session'].nunique()
+#         valid_subjects = subject_sessions[subject_sessions == dataset.n_sessions].index
+#         metadata = metadata[metadata['subject'].isin(valid_subjects)]      
+#         return metadata
+ 
+    
+#     def is_valid(self, dataset):
+#         return dataset.n_sessions > 1
+
+# This needs to be checked later and modified
 class Siamese_CrossSessionEvaluation(BaseEvaluation):
     def __init__(
         self,
@@ -422,99 +670,86 @@ class Siamese_CrossSessionEvaluation(BaseEvaluation):
         self.return_close_set = return_close_set
         self.return_open_set = return_open_set
         super().__init__(**kwargs)
-    
-    def _close_set(self, data, y, groups, siamese):
-        count_cv=0
-        dicr3={}
-        dicr2={}
-        dicr1={}
-        cv=LeaveOneGroupOut()
-        for train, test in cv.split(data, y, groups):
-            x_train, x_test, y_train, y_test = data[train], data[test], y[train], y[test]
-
-            scaler = StandardScaler()
-            x_train = scaler.fit_transform(x_train.reshape((x_train.shape[0], -1))).reshape(x_train.shape)
-            x_test = scaler.transform(x_test.reshape((x_test.shape[0], -1))).reshape(x_test.shape)
-            tf.keras.backend.clear_session()
-            model=siamese._siamese_embeddings(x_train.shape[1], x_train.shape[2])
-            embedding_network=model
-            #early_stopping_callback = EarlyStopping(monitor='val_loss', patience=10)
-            train_dataset = tf.data.Dataset.from_tensor_slices((x_train, y_train)).shuffle(1000).batch(siamese.batch_size)
-            history = embedding_network.fit(train_dataset,
-                                        workers=siamese.workers,
-                                        epochs=siamese.EPOCHS,
-                                        verbose=siamese.verbose)
-            resutls1,resutls2,resutls3=_predict_close_set(model, x_train, y_train, x_test, y_test) 
-            dicr1[count_cv] = resutls1
-            dicr2[count_cv] = resutls2
-            dicr3.update(dict(resutls3))
-            count_cv=count_cv+1
-        return (dicr1, dicr2, dicr3)
-    
+     
     def _open_set(self, X, y, groups, siamese):
-        count_cv=0
+        count_session=2
         dicr3={}
         dicr2={}
         dicr1={}
-        cv = LeaveOneGroupOut()
-        for train_index, test_index in cv.split(X, y, groups=groups):
-            X_train, X_test = [train_index], X[test_index]
-            y_train, y_test = y[train_index], y[test_index]
+        
+        # Gettin the unique session IDs
+        unique_sessions=np.unique(groups)
 
-            # Get the unique subject_ids from y_train
-            train_subject_ids = np.unique(y_train)
+        # Find subjects from Session 1
+        session_1_subject_indices = np.where(groups == 'session_1')[0]
+        X_train=X[session_1_subject_indices]
+        y_train=y[session_1_subject_indices]
+        
+        # Find all the subject IDs from sessions
+        session_1_subject_ids=np.unique(y[session_1_subject_indices])
+          
+        # Randomise the subject ids from session 1
+        np.random.shuffle(session_1_subject_ids) 
 
-            # Randomize the subject_ids
-            np.random.shuffle(train_subject_ids)
+        # Randomly select 75% of subjects from Session 1 for training 
+        no_subjects_for_train = int(np.ceil(0.75 * len(session_1_subject_ids)))
+        train_subjects = session_1_subject_ids[0:no_subjects_for_train]
+        train_indices = np.where(np.isin(y_train, train_subjects))
+        test_subjectsIds=np.setdiff1d(session_1_subject_ids, train_subjects)
 
-            # Select 75% of the subject_ids to be used for training
-            train_subject_ids = train_subject_ids[:int(0.75 * len(train_subject_ids))]
+        # Getting the training data
+        X_train=X_train[train_indices]
+        y_train=y_train[train_indices]
+        scaler = StandardScaler()
 
-            # remove the subject_ids from y_test that are present in train_subject_ids
-            test_subject_ids = np.unique(y_test)
-            test_subject_ids = [subject_id for subject_id in test_subject_ids if subject_id not in train_subject_ids]
-            X_train_indices=np.isin(y_train, train_subject_ids)
-            y_train_indices=np.isin(y_train, train_subject_ids)
-            X_test_indices=np.isin(y_test, test_subject_ids)
-            y_test_indices=np.isin(y_test, test_subject_ids)
-            X_train=X_train[X_train_indices]
-            y_train=y_train[y_train_indices]
-            X_test=X_test[X_test_indices]
-            y_test=y_test[y_test_indices]
-
-
-            scaler = StandardScaler()
-            x_train = scaler.fit_transform(X_train.reshape((X_train.shape[0], -1))).reshape(X_train.shape)
-            x_test = scaler.transform(X_test.reshape((X_test.shape[0], -1))).reshape(X_test.shape)
-            tf.keras.backend.clear_session()
-            model=siamese._siamese_embeddings(x_train.shape[1], x_train.shape[2])
-            embedding_network=model
-            early_stopping_callback = EarlyStopping(monitor='val_loss', patience=10)
-            train_dataset = tf.data.Dataset.from_tensor_slices((x_train, y_train)).shuffle(1000).batch(siamese.batch_size)
-            history = embedding_network.fit(train_dataset,
+        # Normalising the training data
+        X_train = scaler.fit_transform(X_train.reshape((X_train.shape[0], -1))).reshape(X_train.shape) 
+        tf.keras.backend.clear_session()
+        model=siamese._siamese_embeddings(X_train.shape[1], X_train.shape[2])
+        embedding_network=model
+        early_stopping_callback = EarlyStopping(monitor='val_loss', patience=10)
+        train_dataset = tf.data.Dataset.from_tensor_slices((X_train, y_train)).shuffle(1000).batch(siamese.batch_size)
+        history = embedding_network.fit(train_dataset,
                                         workers=siamese.workers,
                                         epochs=siamese.EPOCHS,
                                         verbose=siamese.verbose)
 
-            resutls1,resutls2,resutls3=_predict_open_set(model, x_test, y_test) 
-            dicr1[count_cv] = resutls1
-            dicr2[count_cv] = resutls2
-            dicr3.update(dict(resutls3))
-            count_cv=count_cv+1
+        # Loop through other sessions for testing
+        for session_id in unique_sessions:
+
+            # Skip session 1 as it is used for training
+            if session_id != 'session_1':
+                session_subject_indices = np.where(groups == session_id)[0] 
+                X_test=X[session_subject_indices]
+                y_test=y[session_subject_indices]
+
+                # Remove the subjects from session 1 from the test data
+                test_indices=np.where(np.isin(y_test, test_subjectsIds))
+
+                # Getting the test data for subjects not used for training from each sessions except session 1
+                X_test=X_test[test_indices]
+                y_test=y_test[test_indices]
+                X_test = scaler.transform(X_test.reshape((X_test.shape[0], -1))).reshape(X_test.shape)
+
+                # Getting the similarity scores from session except session 1 under open set scenario
+                resutls1,resutls2,resutls3=_predict_open_set(model, X_test, y_test) 
+                dicr1[count_session] = resutls1
+                dicr2[count_session] = resutls2
+                dicr3.update(dict(resutls3))
+                count_session=count_session+1  
         return (dicr1, dicr2, dicr3)
         
     def _evaluate(self, dataset, pipelines):
         if not self.is_valid(dataset):
             raise AssertionError("Dataset is not appropriate for evaluation")
+        
+        # Getting the EEG data from the dataset
         X, _, metadata=self.paradigm.get_data(dataset)
         results_saving_path=os.path.join(
             dataset.dataset_path,
             "Results",
             "SiameseCrossSessionEvaluation"
-            #f"{dataset.code}_CloseSetEvaluation")
         )
-
-        print("subjects and sessions before selection", metadata[['subject', 'session']].value_counts())
         if not os.path.exists(results_saving_path):
             os.makedirs(results_saving_path)
 
@@ -524,9 +759,8 @@ class Siamese_CrossSessionEvaluation(BaseEvaluation):
         elif (dataset.paradigm == "n400"):
             metadata=metadata[metadata['event_id']=="Inconsistent"]
 
-        print("subjects and sessions after selection", metadata[['subject', 'session']].value_counts())
-
         metadata=self._valid_subject(metadata, dataset)
+        #print("session numbers", metadata['session'].value_counts())
         target_index=metadata['event_id'].index.tolist()
         data=X[target_index]
        
@@ -535,50 +769,13 @@ class Siamese_CrossSessionEvaluation(BaseEvaluation):
         results_close_set=[]
         results_open_set=[]
         groups = metadata.session.values
-        for name, clf in pipelines.items():
-            
+        for name, clf in pipelines.items(): 
             siamese = clf[0]
             if self.return_close_set:
-                    close_dicr1, close_dicr2, close_dicr3=self._close_set(data, y, groups, siamese)
-                    close_set_path=os.path.join(results_saving_path,"close_set")
-                    if not os.path.exists(close_set_path):
-                        os.makedirs(close_set_path)
-
-                    with open(os.path.join(close_set_path, "d1_dicr1.pkl"), 'wb') as f:
-                        pickle.dump(close_dicr1, f)
-
-                    with open(os.path.join(close_set_path, "d1_dicr2.pkl"), 'wb') as f:
-                        pickle.dump(close_dicr2, f)
-
-                    with open(os.path.join(close_set_path, "d1_dicr3.pkl"), 'wb') as f:
-                        pickle.dump(close_dicr3, f)
-
-                    for sub in close_dicr3.keys():
-                        result=close_dicr3[sub]
-                        result=np.array(result)
-                        true_lables=np.array(result[:,1])
-                        predicted_scores=np.array(result[:,0])
-                        inter_tpr, auc, eer, frr_1_far=score._calculate_siamese_scores(true_lables, predicted_scores)
-                        res_close_set = {
-                        'evaluation': 'Cross Session',
-                            "eval Type": "Close Set",
-                            "dataset": dataset.code,
-                            "pipeline": name,
-                            "subject": sub,
-                            #"session": session,
-                            "frr_1_far": frr_1_far,
-                            #"accuracy": mean_accuracy,
-                            "auc": auc,
-                            "eer": eer,
-                            "tpr": inter_tpr,
-                            #"std_auc": std_auc,
-                            "n_samples": len(X)  # not training sample
-                            #"n_channels": data.columns.size
-                            }
-                        results_close_set.append(res_close_set)
-
+                raise AssertionError("Close-set is not allowed for cross-session evaluation")
+                    
             if self.return_open_set:
-                open_dicr1, open_dicr2, open_dicr3=self._open_set(data, y, groups, siamese)  
+                open_dicr1, open_dicr2, open_dicr3=self._open_set(data, y, groups, siamese) 
                 open_set_path=os.path.join(results_saving_path,"open_set")
                 if not os.path.exists(open_set_path):
                     os.makedirs(open_set_path)
@@ -598,7 +795,6 @@ class Siamese_CrossSessionEvaluation(BaseEvaluation):
                     predicted_scores=np.array(results[:,0])
                     inter_tpr, auc, eer, frr_1_far=score._calculate_siamese_scores(true_lables, predicted_scores)
                     res_open_set = {
-                    # "time": duration / 5.0,  # 5 fold CV
                     'evaluation': 'Cross Session',
                         "eval Type": "Open Set",
                         "dataset": dataset.code,
@@ -614,21 +810,11 @@ class Siamese_CrossSessionEvaluation(BaseEvaluation):
                         "n_samples": len(X)  # not training sample
                         #"n_channels": data.columns.size
                         }
-                    results_open_set.append(res_open_set)  
-                                  
+                    results_open_set.append(res_open_set)   
 
-        if self.return_close_set ==True and self.return_open_set== False:
-            scenario='close_set'
-            return results_close_set, scenario
-
-        if self.return_close_set ==False and self.return_open_set== True:
-            scenario='open_set'
-            return results_open_set, scenario
-        
-        if self.return_close_set ==True and self.return_open_set== True:
-            scenario=['close_set', 'open_set']
-            return (results_close_set, results_open_set), scenario
-        
+        scenario='open_set'
+        return results_open_set, scenario
+                   
     def evaluate(self, dataset, pipelines, param_grid):
         results, scenario=self._evaluate(dataset, pipelines)
 
@@ -636,7 +822,6 @@ class Siamese_CrossSessionEvaluation(BaseEvaluation):
             dataset.dataset_path,
             "Results",
             "SiameseCrossSessionEvaluation"
-            #f"{dataset.code}_CloseSetEvaluation")
         )
         if not os.path.exists(results_path):
             os.makedirs(results_path)

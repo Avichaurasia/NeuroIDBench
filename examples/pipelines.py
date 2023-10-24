@@ -5,15 +5,15 @@ import logging
 import mne
 import numpy as np
 import pandas as pd
-from deeb.paradigms.base_old import BaseParadigm
+#from deeb.paradigms.base_old import BaseParadigm
 #from deeb.paradigms.p300 import N400
 from deeb.paradigms.p300 import P300
 from deeb.paradigms.n400 import N400
 from deeb.datasets.brainInvaders15a import BrainInvaders2015a
 from deeb.datasets.mantegna2019 import Mantegna2019
 from deeb.datasets.erpCoreN400 import ERPCOREN400
-from deeb.datasets.lee2019 import Lee2019
-from deeb.datasets.draschkow2018 import Draschkow2018
+#from deeb.datasets.lee2019 import Lee2019
+#from deeb.datasets.draschkow2018 import Draschkow2018
 from deeb.datasets.won2022 import Won2022
 from deeb.pipelines.features import AutoRegressive
 from deeb.pipelines.features import PowerSpectralDensity
@@ -33,9 +33,9 @@ from sklearn.svm import SVC
 dest = Won2022()
 brain=Mantegna2019()
 erpcore=ERPCOREN400()
-lee=Lee2019()
+#lee=Lee2019()
 erpcore.subject_list=erpcore.subject_list[0:5]
-lee.subject_list=lee.subject_list[0:3]
+#lee.subject_list=lee.subject_list[0:3]
 
 # Selecting the first 3 subjects from the Won2022 dataset
 #dest.subject_list = dest.subject_list[0:5]

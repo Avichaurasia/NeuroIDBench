@@ -10,30 +10,35 @@ from deeb.paradigms.n400 import N400
 from deeb.paradigms.p300 import P300
 from deeb.datasets.brainInvaders15a import BrainInvaders2015a
 from deeb.datasets.mantegna2019 import Mantegna2019
-from deeb.datasets.draschkow2018 import Draschkow2018
+#from deeb.datasets.draschkow2018 import Draschkow2018
 from deeb.datasets.erpCoreN400 import ERPCOREN400
 from deeb.datasets.won2022 import Won2022
+from deeb.datasets.cogBciFlanker import COGBCIFLANKER
 from deeb.pipelines.features import AutoRegressive 
 from deeb.pipelines.features import PowerSpectralDensity 
 from deeb.pipelines.base import Basepipeline
-from deeb.Evaluation.evaluation_old import CloseSetEvaluation, OpenSetEvaluation
+#from deeb.Evaluation.evaluation_old import CloseSetEvaluation, OpenSetEvaluation
 from deeb.datasets import utils
 from autoreject import AutoReject, get_rejection_threshold
 from sklearn.pipeline import make_pipeline
 from sklearn.preprocessing import StandardScaler 
 from sklearn.discriminant_analysis import LinearDiscriminantAnalysis as LDA
 from deeb.Evaluation.within_session_evaluation import WithinSessionEvaluation
-from deeb.Evaluation.cross_session_evaluation import CrossSessionEvaluation
+# from deeb.Evaluation.cross_session_evaluation import CrossSessionEvaluation
 from deeb.Evaluation.siamese_evaluation import Siamese_WithinSessionEvaluation, Siamese_CrossSessionEvaluation
+#from deeb.Evaluation.siamese_crossSession
+# from deeb.Evaluation.siamese_cross import Siamese_Cross_session_evaluation
 from sklearn.linear_model import LogisticRegression
 from sklearn.naive_bayes import GaussianNB
 from sklearn.neighbors import KNeighborsClassifier
-from sklearn.svm import SVC
+from sklearn.svm import SVC                                                                                 
 from sklearn.ensemble import RandomForestClassifier
 from deeb.analysis.plotting import Plots 
-from deeb.datasets.lee2019 import Lee2019
+#from deeb.datasets.lee2019 import Lee2019
 from deeb.pipelines.siamese import Siamese
 import os
+import pkgutil
+
 
 # Function for performing evaulation across differeeent datasets and pipelines
 def _evaluate():
@@ -43,6 +48,8 @@ def _evaluate():
     brain=BrainInvaders2015a()
     mantegna=Mantegna2019()
     erp_core=ERPCOREN400()
+    cog=COGBCIFLANKER()
+    cog.subject_list=cog.subject_list[0:10]
     #erp_core.subject_list=erp_core.subject_list[0:10]
     # lee = Lee2019()
     # lee.subject_list = lee.subject_list[0:3]
@@ -61,27 +68,27 @@ def _evaluate():
     # Initializing the p300 paradigm
     paradigm=P300()
     paradigm_n400=N400()
-    erp_core.rejection_threshold=200e-6
-    print("Rejection threshold:", erp_core.rejection_threshold)
+    #erp_core.rejection_threshold=200e-6
+    #print("Rejection threshold:", erp_core.rejection_threshold)
     #print(dir(n400))
-    data, subject_dict, _=paradigm_n400.get_data(erp_core)
-    print("Chaurasia")
+    #data, subject_dict, _=paradigm_n400.get_data(erp_core)
+    #print("Chaurasia")
     #print(subject_dict)
-    print(data.shape)
+    #print(data.shape)
 
 
     # Intializing the pipelines
     pipeline={}
-    # pipeline['siamese']=make_pipeline(Siamese())
+    pipeline['siamese']=make_pipeline(Siamese())
     # #print("type of siamese", type(siamese))
     # evaluate=Siamese_WithinSessionEvaluation(paradigm=paradigm_n400, datasets=erp_core, overwrite=False)
     # results=evaluate.process(pipeline)
 
-    pipeline['AR+PSD+SVM']=make_pipeline(PowerSpectralDensity(), SVC(kernel='rbf', probability=True))
-    pipeline['AR+SVM']=make_pipeline(AutoRegressive(order=6), SVC(kernel='rbf', probability=True))
-    pipeline['AR+PSD+LR']=make_pipeline(AutoRegressive(order=6), PowerSpectralDensity(), LogisticRegression())
-    # #pipeline['PSD+LR']=make_pipeline(AutoRegressive(order=6), PowerSpectralDensity(), LogisticRegression())
-    pipeline['AR+PSD+LDA']=make_pipeline(AutoRegressive(order=6), PowerSpectralDensity(), LDA(solver='lsqr', shrinkage='auto'))
+    # pipeline['AR+PSD+SVM']=make_pipeline(PowerSpectralDensity(), SVC(kernel='rbf', probability=True))
+    # pipeline['AR+SVM']=make_pipeline(AutoRegressive(order=6), SVC(kernel='rbf', probability=True))
+    # pipeline['AR+PSD+LR']=make_pipeline(AutoRegressive(order=6), PowerSpectralDensity(), LogisticRegression())
+    # # #pipeline['PSD+LR']=make_pipeline(AutoRegressive(order=6), PowerSpectralDensity(), LogisticRegression())
+    # pipeline['AR+PSD+LDA']=make_pipeline(AutoRegressive(order=6), PowerSpectralDensity(), LDA(solver='lsqr', shrinkage='auto'))
     #pipeline['siamese']=make_pipeline(Siamese())
     # #pipeline['PSD+LDA']=make_pipeline(AutoRegressive(order=6), PowerSpectralDensity(), LDA(solver='lsqr', shrinkage='auto'))
     #pipeline['AR+PSD+NB']=make_pipeline(AutoRegressive(order=6), PowerSpectralDensity(), GaussianNB())
@@ -113,20 +120,25 @@ def _evaluate():
     # Getting the results for the within session evaluation
     # within_session=WithinSessionEvaluation(paradigm=paradigm_n400, datasets=erp_core, overwrite=False)
     # results_within_session=within_session.process(pipeline)
+    a=Siamese_CrossSessionEvaluation(paradigm=paradigm_n400, datasets=cog, return_close_set=False)
+    results=a.process(pipeline)
 
-    # grouped_df=results_within_session.groupby(['eval Type','dataset','pipeline','session']).agg({
-    #             'accuracy': 'mean',
-    #             'auc': 'mean',
-    #             'eer': lambda x: f'{np.mean(x)*100:.3f} ± {np.std(x)*100:.3f}',
-    #             'frr_1_far': lambda x: f'{np.mean(x)*100:.3f}'
-    #         }).reset_index()
+    grouped_df=results.groupby(['eval Type','dataset','pipeline','session']).agg({
+                'accuracy': 'mean',
+                'auc': 'mean',
+                'eer': lambda x: f'{np.mean(x)*100:.3f} ± {np.std(x)*100:.3f}',
+                'frr_1_far': lambda x: f'{np.mean(x)*100:.3f}'
+            }).reset_index()
 
-    # return grouped_df
+    return grouped_df
 
 
 if __name__ == '__main__':
+   package = 'deeb.Evaluation'  # Change to your package/module name
+   for importer, modname, ispkg in pkgutil.walk_packages(path=['/Users/avinashkumarchaurasia/Desktop/deeb/deeb/Evaluation'], prefix=package + '.'):
+        print('Found submodule %s (is a package: %s)' % (modname, ispkg))
    result= _evaluate()
-   #print(result)
+   print(result)
    #print(result)
 #print(results['eer'])
 
