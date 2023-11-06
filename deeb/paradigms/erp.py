@@ -1,17 +1,17 @@
+"""ERP Paradigms"""
 import abc
 import logging
 import mne
 import numpy as np
 import pandas as pd
 from deeb.paradigms.base import BaseParadigm
-from deeb.datasets.base import BaseDataset
-from deeb.datasets.brainInvaders15a import BrainInvaders2015a
-from deeb.datasets.mantegna2019 import Mantegna2019
 from deeb.datasets import utils
-from autoreject import AutoReject, get_rejection_threshold
 
-class BaseN400(BaseParadigm):
-    """Base N400 paradigm.
+log = logging.getLogger(__name__)
+
+
+class BaseERP(BaseParadigm):
+    """Base P300 paradigm.
 
     Please use one of the child classes
 
@@ -60,7 +60,8 @@ class BaseN400(BaseParadigm):
         tmax=None,
         baseline=(None,0),
         channels=None,
-        resample=None,        
+        resample=None,
+        reject=False,
     ):
         super().__init__()
         self.filters = filters
@@ -68,6 +69,7 @@ class BaseN400(BaseParadigm):
         self.channels = channels
         self.baseline = baseline
         self.resample = resample
+        self.reject = reject
 
         if tmax is not None:
             if tmin >= tmax:
@@ -78,14 +80,13 @@ class BaseN400(BaseParadigm):
 
     def is_valid(self, dataset):
         ret = True
-        if not (dataset.paradigm == "n400"):
+        if not (dataset.paradigm == "erp") :
             ret = False
 
         # check if dataset has required events
-        if self.events:
-            if not set(self.events) <= set(dataset.event_id.keys()):
-                ret = False
-
+        if not dataset.event_id:
+            ret=False
+            
         # we should verify list of channels, somehow
         return ret
 
@@ -100,7 +101,7 @@ class BaseN400(BaseParadigm):
         else:
             interval = self.tmax - self.tmin
         return utils.dataset_search(
-            paradigm="n400", events=self.events, interval=interval, has_all_events=True
+            paradigm='erp', events=self.events, interval=interval, has_all_events=True
         )
 
     @property
@@ -108,7 +109,7 @@ class BaseN400(BaseParadigm):
         return "roc_auc"
 
 
-class SinglePass(BaseN400):
+class SinglePass(BaseERP):
     """Single Bandpass filter P300
 
     P300 paradigm with only one bandpass filter (default 1 to 24 Hz)
@@ -155,24 +156,26 @@ class SinglePass(BaseN400):
 
     def __init__(self, fmin=1, fmax=50, **kwargs):
         if "filters" in kwargs.keys():
-            raise (ValueError("P300 does not take argument filters"))
+            raise (ValueError("ERP does not take argument filters"))
         super().__init__(filters=[[fmin, fmax]], **kwargs)
 
-    
-class N400(SinglePass):
-    """N400 for Consistent/Inconsistent classification
+
+class ERP(SinglePass):
+    """P300 for Target/NonTarget classification
+
+    Metric is 'roc_auc'
+
     """
+
     def __init__(self, **kwargs):
-        #print("N400 init")
         if "events" in kwargs.keys():
-            raise (ValueError("N400 dont accept events"))
-        super().__init__(events=["Consistent", "Inconsistent"], **kwargs)
+            raise (ValueError("ERP dont accept events"))
+        super().__init__(events=["Deviant", "Standard"], **kwargs)
 
     def used_events(self, dataset):
-        return {ev: dataset.event_id[ev] for ev in self.events}
+        return dataset.event_id
 
     @property
     def scoring(self):
         return "roc_auc"
-
-
+    

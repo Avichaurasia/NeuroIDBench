@@ -27,7 +27,7 @@ from deeb.Evaluation.within_session_evaluation import WithinSessionEvaluation
 # from deeb.Evaluation.cross_session_evaluation import CrossSessionEvaluation
 from deeb.Evaluation.siamese_evaluation import Siamese_WithinSessionEvaluation, Siamese_CrossSessionEvaluation
 #from deeb.Evaluation.siamese_crossSession
-# from deeb.Evaluation.siamese_cross import Siamese_Cross_session_evaluation
+#from deeb.evaluation.siamese_evaluation import Siamese_Cross_session_evaluation
 from sklearn.linear_model import LogisticRegression
 from sklearn.naive_bayes import GaussianNB
 from sklearn.neighbors import KNeighborsClassifier
@@ -134,9 +134,9 @@ def _evaluate():
 
 
 if __name__ == '__main__':
-   package = 'deeb.Evaluation'  # Change to your package/module name
-   for importer, modname, ispkg in pkgutil.walk_packages(path=['/Users/avinashkumarchaurasia/Desktop/deeb/deeb/Evaluation'], prefix=package + '.'):
-        print('Found submodule %s (is a package: %s)' % (modname, ispkg))
+#    package = 'deeb.Evaluation'  # Change to your package/module name
+#    for importer, modname, ispkg in pkgutil.walk_packages(path=['/Users/avinashkumarchaurasia/Desktop/deeb/deeb/Evaluation'], prefix=package + '.'):
+#         print('Found submodule %s (is a package: %s)' % (modname, ispkg))
    result= _evaluate()
    print(result)
    #print(result)

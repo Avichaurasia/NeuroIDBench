@@ -146,6 +146,13 @@ def _parse_dataset_from_config(config):
 
             if "rejection_threshold" in params.keys():
                 instance.rejection_threshold=params['rejection_threshold']
+
+            if "baseline_correction" in params.keys():
+                instance.baseline_correction=params['baseline_correction']
+
+            if "event_id" in params.keys():
+                instance.event_id=params['event_id']
+                
     return instance
 
 def parse_pipelines_for_single_dataset(dir_path):

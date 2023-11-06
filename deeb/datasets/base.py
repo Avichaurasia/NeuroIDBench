@@ -9,7 +9,7 @@ log = logging.getLogger(__name__)
 
 class BaseDataset(metaclass=abc.ABCMeta):
     def __init__(self, subjects, sessions_per_subject, events, code, interval, paradigm, doi=None, dataset_path=None, rejection_threshold=None, 
-                 unit_factor=1e6):
+                 baseline_correction=True, unit_factor=1e6):
         """"
         Common Parameters for all datasets
 
@@ -53,6 +53,7 @@ class BaseDataset(metaclass=abc.ABCMeta):
         self.unit_factor = unit_factor
         self.dataset_path=dataset_path
         self.rejection_threshold=rejection_threshold
+        self.baseline_correction=baseline_correction
 
     def get_data(self, subjects=None):
 

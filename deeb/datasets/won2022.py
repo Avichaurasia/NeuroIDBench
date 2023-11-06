@@ -57,6 +57,7 @@ class Won2022(BaseDataset):
             doi=None,
             dataset_path=None,
             rejection_threshold=None,
+            baseline_correction=None,
             )
         
     @verbose

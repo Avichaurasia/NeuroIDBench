@@ -73,6 +73,7 @@ class ERPCOREN400(BaseDataset):
             doi=None,
             dataset_path=None,
             rejection_threshold=None,
+            baseline_correction=None,
             )
     @verbose
     def download_dataset(self, url, sign, path=None, force_update=False, verbose=None):
