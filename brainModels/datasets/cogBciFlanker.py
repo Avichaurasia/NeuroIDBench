@@ -77,7 +77,7 @@ class COGBCIFLANKER(BaseDataset):
             doi=None,
             dataset_path=None,
             rejection_threshold=None,
-            baseline_correction=None,
+            baseline_correction=True,
             )
     def _get_single_subject_data(self, subject):
         """return data for a single subject"""

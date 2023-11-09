@@ -93,7 +93,7 @@ class BaseDataset(metaclass=abc.ABCMeta):
         if self.code == "User Dataset":  
             all_subjects=len(np.unique(os.listdir(self.dataset_path)))
             sessions=len(os.listdir(os.path.join(self.dataset_path, os.listdir(self.dataset_path)[0])))
-            if subjects is None:
+            if (len(self.subject_list)==1000):
                 subjects=np.arange(1, all_subjects+1)
                 self.subject_list=np.arange(1, all_subjects+1)
                 self.n_sessions=sessions

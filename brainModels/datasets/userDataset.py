@@ -9,23 +9,22 @@ from pathlib import Path
 import mne
 import numpy as np
 import yaml
-from mne.channels import make_standard_montage
 from brainModels.datasets import download as dl
 from brainModels.datasets.base import BaseDataset
 
 class USERDATASET(BaseDataset): 
     def __init__(self):
         super().__init__(
-            subjects=[],
+            subjects=list(range(1, 1001)),
             sessions_per_subject=None,
             events={},
             code="User Dataset",
             interval=[-0.2,0.8],
-            paradigm="p300",
+            paradigm="erp",
             doi=None,
             dataset_path=None,
             rejection_threshold=None,
-            baseline_correction=None,
+            baseline_correction=True,
             )
     
     def _get_single_subject_data(self, subject):
@@ -33,14 +32,16 @@ class USERDATASET(BaseDataset):
         
         file_path_list = self.data_path(subject)
         sessions = {}
-        for file_path, session in zip(file_path_list, [1, 2, 3]):
-            session_name = "session_"+str(session)
-            if session_name not in sessions.keys():
-                sessions[session_name] = {}
-            run_name = 'run_1'
-            raw_data_path=os.path.join(file_path)
-            raw = mne.io.read_raw_fif(raw_data_path, preload = True, verbose=False)
-            sessions[session_name][run_name] = raw
+        for session, runs in file_path_list.items():
+            sessions[session]={}
+            for run in os.listdir(runs):
+                sessions[session][run]={}
+                run_dir=Path(os.path.join(runs, run))
+                for eeg_data in os.listdir(run_dir):
+                    raw_data_path=Path(os.path.join(run_dir, eeg_data))
+                    raw=mne.io.read_raw_fif(raw_data_path, preload = True, verbose=False)
+                    events = mne.find_events(raw, shortest_event=0, verbose=False)
+                    sessions[session][run]=raw, events
         return sessions
          
     def data_path(self, subject, path=None, force_update=False,
@@ -49,14 +50,30 @@ class USERDATASET(BaseDataset):
 
         if subject not in self.subject_list:
             raise ValueError("Invalid subject number")  
-        subject=str(subject)
-        all_subjects_path=os.listdir(self.dataset_path)
-        if subject in all_subjects_path:
-            subject_dir=Path(os.path.join(self.dataset_path, subject))
-        session_name="Session"
-        session_paths = [
-            subject_dir / f"{subject}/{session_name}_S{session:1}/.fif" for session in os.listdir(os.path.join(self.dataset_path, os.listdir(self.dataset_path)[0]))]
-        return session_paths
+        
+        subject="Subject_"+str(subject)
+        if subject not in os.listdir(self.dataset_path):
+            raise AssertionError(subject, " is not valid")
+        
+        subject_dir=Path(os.path.join(self.dataset_path, subject))
+        ssessions_paths={}
+
+        if len(os.listdir(subject_dir))==0:
+            raise AssertionError("Session cannot be Empty")
+
+        else:
+            for sess in os.listdir(subject_dir):
+                ssessions_paths[sess]=Path(os.path.join(subject_dir, sess))
+
+        return ssessions_paths
+
+        
+
+        
+
+
+        
+        
 
 
 
