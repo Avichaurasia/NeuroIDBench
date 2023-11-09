@@ -86,13 +86,13 @@ name: "BrainInvaders2015a"
 
 dataset: 
   - name: BrainInvaders2015a
-    from: deeb.datasets
+    from: brainModels.datasets
 
 pipelines:
 
   "AR+PSD+SVM": 
     - name: AutoRegressive
-      from: deeb.pipelines
+      from: brainModels.pipelines
 
     - name: SVC
       from: sklearn.svm
@@ -114,7 +114,7 @@ name: "BrainInvaders2015a"
 
 dataset: 
   - name: BrainInvaders2015a
-    from: deeb.datasets
+    from: brainModels.datasets
     parameters:
         subjects: 10
         interval: [-0.1, 0.9] 
@@ -124,7 +124,7 @@ dataset:
 
   "AR+SVM":
     - name: AutoRegressive 
-      from: deeb.pipelines 
+      from: brainModels.pipelines 
       parameters:
         order: 5
 
@@ -148,7 +148,7 @@ name: "BrainInvaders2015a"
 
 dataset: 
   - name: BrainInvaders2015a
-    from: deeb.datasets
+    from: brainModels.datasets
     parameters:
         subjects: 10
         interval: [-0.1, 0.9] 
@@ -159,12 +159,12 @@ dataset:
   
   "AR+SVM":
     - name: AutoRegressive 
-      from: deeb.pipelines 
+      from: brainModels.pipelines 
       parameters:
         order: 5
 
     - name: PowerSpectralDensity 
-      from: deeb.pipelines
+      from: brainModels.pipelines
 
     - name: SVC
       from: sklearn.svm 
@@ -185,7 +185,7 @@ name: "BrainInvaders2015a"
 
 dataset: 
   - name: BrainInvaders2015a
-    from: deeb.datasets
+    from: brainModels.datasets
     parameters:
         subjects: 10
         interval: [-0.1, 0.9] 
@@ -195,7 +195,7 @@ dataset:
 
   "Siamese":
     - name : Siamese
-    from: deeb.pipelines 
+    from: brainModels.pipelines 
     parameters:
         EPOCHS: 10 
         batch_size: 256 
@@ -215,7 +215,7 @@ name: "BrainInvaders2015a"
 
 dataset: 
   - name: BrainInvaders2015a
-    from: deeb.datasets
+    from: brainModels.datasets
     parameters:
         subjects: 10
         interval: [-0.1, 0.9] 
@@ -225,12 +225,12 @@ dataset:
 
    "AR+SVM":
     - name: AutoRegressive 
-      from: deeb.pipelines 
+      from: brainModels.pipelines 
       parameters:
         order: 5
 
     - name: PowerSpectralDensity 
-      from: deeb.pipelines
+      from: brainModels.pipelines
 
     - name: SVC
       from: sklearn.svm 
@@ -241,7 +241,7 @@ dataset:
 
    "Siamese":
     - name : Siamese
-    from: deeb.pipelines 
+    from: brainModels.pipelines 
     parameters:
         EPOCHS: 10 
         batch_size: 256 
@@ -329,7 +329,7 @@ name: "User"
 
 dataset: 
   - name: UserDataset
-    from: deeb.datasets
+    from: brainModels.datasets
     parameters: 
       dataset_path: '/Users/avinashkumarchaurasia/mne_data/Matin/dataset'
     
@@ -337,12 +337,12 @@ pipelines:
 
   "AR+PSD+SVM": 
     - name: AutoRegressive
-      from: deeb.pipelines
+      from: brainModels.pipelines
       parameters: 
         order: 6
         
     - name: PowerSpectralDensity
-      from: deeb.pipelines
+      from: brainModels.pipelines
         
     - name: SVC
       from: sklearn.svm
@@ -353,7 +353,7 @@ pipelines:
 
   "Siamese": 
     - name : Siamese
-      from: deeb.pipelines
+      from: brainModels.pipelines
       parameters: 
         EPOCHS: 10
         batch_size: 256
@@ -363,12 +363,12 @@ pipelines:
   
   "AR+PSD+RF": 
   - name: AutoRegressive
-    from: deeb.pipelines
+    from: brainModels.pipelines
     parameters: 
       order: 6
     
   - name: PowerSpectralDensity
-    from: deeb.pipelines
+    from: brainModels.pipelines
       
   - name: RandomForestClassifier
     from: sklearn.ensemble
