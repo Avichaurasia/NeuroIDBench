@@ -15,9 +15,34 @@ log = logging.getLogger(__name__)
 
 class Plots():
 
+    """
+    A class for generating and saving various plots and visualizations.
+
+    This class provides methods for creating and saving different types of plots, such as ROC curves, EER curves,
+    and other visualizations related to evaluations. It also handles the organization of plot files in specified
+    directories.
+
+    Attributes:
+    - plot_path: The path where plot files are saved.
+
+    Methods:
+    - _plot_erp():
+      A method for plotting event-related potentials (ERP). [This method currently lacks a specific implementation.]
+
+    - _roc_curve_single_dataset(data=None, evaluation_type=None, dataset=None):
+      Generate and save ROC curves for a single dataset and evaluation type.
+
+    - _eer_single_dataset(data=None, evaluation_type=None, dataset=None):
+      Generate and save EER (Equal Error Rate) curves for a single dataset and evaluation type.
+
+    - _eer_graph_single_dataset_across_evaluations(data=None):
+      Generate and save EER graphs for a single dataset across multiple evaluation types.
+
+      """
+
     def __init__(self,
     plot_path=None,
-    ):
+    ):                          
         if plot_path is None:
             mne_data_path = get_config("MNE_DATA")
             if mne_data_path is None:
@@ -29,11 +54,22 @@ class Plots():
         else:
             self.plot_path = plot_path
         
-    def _plot_erp():
-        return 0
     
     def _roc_curve_single_dataset(self, data=None, evaluation_type=None, dataset=None):
-        #print("Plotting roc curve for single dataset", self.plot_path)
+
+        """
+        Generate and save ROC curves for a single dataset and evaluation type.
+
+        Parameters:
+        - data: A DataFrame containing results data.
+        - evaluation_type: The type of evaluation (e.g., "close_set", "open_set").
+        - dataset: The dataset to be evaluated.
+
+        Returns:
+        - None
+        
+        """
+
         file_path=os.path.join(self.plot_path, "Single_dataset_Roc_curves")
         if not os.path.exists(file_path):
             os.makedirs(file_path)
@@ -55,12 +91,12 @@ class Plots():
             fpr=np.linspace(0, 1, 100)
             auc = grouped_df['auc'][i]
             std_auc=grouped_df['std_auc'][i]
-            #std_auc=np.std(grouped_df['auc'][i])
             tpr = grouped_df['tpr'][i]
             
             # Plot the ROC curve
             ax.plot(fpr, tpr,label=name+" "+r'(AUC = %0.3f $\pm$ %0.3f)' % (auc, std_auc),
                     lw=2, alpha=.8)
+            
             # Add labels and legend
             plt.title("ROC Curve: "+evaluation_type,fontsize=12)
             plt.xlabel('False Positive Rate', fontsize=12)
@@ -74,68 +110,20 @@ class Plots():
         fname=os.path.join(file_path, dataset.code+"_"+evaluation_type+'.pdf')
         plt.savefig(fname, dpi=300, bbox_inches='tight')
         
-    def _roc_curve_multiple_datasets(self, data=None, evaluation_type=None, datasets=None):
-        file_path=os.path.join(self.plot_path, "roc_curve_multiple_datasets")
-        if not os.path.exists(file_path):
-            os.makedirs(file_path)
-
-        n_datasets = len(datasets)
-        n_rows = int(np.ceil(n_datasets / 2))  # Round up to the nearest integer
-        n_cols = 2
-        fig, axes = plt.subplots(n_rows, n_cols, figsize=(10, 8))
-        # Flatten the axes array
-        axes = axes.flatten()
-        # Iterate over each dataset and plot the ROC curve
-        for i, (df, dataset) in enumerate(zip(data, datasets)):
-
-            # Select the current subplot
-            ax = axes[i]
-
-            # Group the data by pipeline and aggregate the scores
-            grouped_df = df.groupby(['pipeline']).agg({
-                'accuracy': 'mean',
-                'auc': 'mean',
-                'eer': 'mean',
-                'tpr': lambda x: np.mean(np.vstack(x), axis=0),
-                'tprs_lower': lambda x: np.mean(np.vstack(x), axis=0),
-                'tprs_upper': lambda x: np.mean(np.vstack(x), axis=0),
-                'std_auc': 'mean',
-                'n_samples': 'mean'
-            }).reset_index()
-
-            # Plot the ROC curve
-            for j in range(len(grouped_df)):
-                name = grouped_df['pipeline'][j]
-                fpr = np.linspace(0, 1, 100)
-                auc = grouped_df['auc'][j]
-                std_auc = grouped_df['std_auc'][j]
-                tpr = grouped_df['tpr'][j]
-                ax.plot(fpr, tpr, label=name + " " + r'(AUC = %0.3f $\pm$ %0.3f)' % (auc, std_auc),
-                        lw=2, alpha=.8)
-                
-                # Add labels and legend
-                ax.set_title(dataset.code, fontsize=12)
-                ax.set_xlabel('False Positive Rate', fontsize=12)
-                ax.set_ylabel('True Positive Rate', fontsize=12)
-                ax.yaxis.set_major_formatter(ScalarFormatter())
-                ax.yaxis.major.formatter._useMathText = True
-                ax.legend(frameon=True, loc='best', ncol=1, handlelength=2, framealpha=1, edgecolor="0.8", fancybox=False)
-                ax.grid(True, ls="--", lw=0.8)
-                ax.plot([0, 1], [0, 1], "k--", color='b', label="chance level (AUC = 0.5)")
-                plt.tight_layout()
-            
-        fname = os.path.join(file_path, 'roc_curve_multiple_datasets.pdf')
-        plt.show()
-        #plt.savefig(fname, dpi=300, bbox_inches='tight')
-        plt.close()
-    
-    def _det_curve_single_dataset():
-        return 0
-    
-    def _det_curve_multiple_datasets():
-        return 0
-    
     def _eer_single_dataset(self, data=None, evaluation_type=None, dataset=None):
+
+        """
+        Generate and save EER (Equal Error Rate) curves for a single dataset and evaluation type.
+
+        parameters:
+        - data: Data containing evaluation results.
+        - evaluation_type: A string specifying the type of evaluation (e.g., 'close-set' or 'open-set').
+        - dataset: The name of the dataset for labeling the plot.
+
+        Returns:
+        - None
+        """
+
         file_path=os.path.join(self.plot_path, "Single_dataset_EER_curves")
         if not os.path.exists(file_path):
             os.makedirs(file_path)
@@ -154,7 +142,8 @@ class Plots():
         # Convert eer to %eer for plotting
         grouped_df['eer'] = grouped_df['eer']*100
 
-        # Plotting the bar graph for %eer across pipelines with %eer on x-axis, pipelines on y-axis and %eer as bar height with maximum and minimum values
+        # Plotting the bar graph for %eer across pipelines with %eer on x-axis, pipelines on y-axis and %eer 
+        # as bar height with maximum and minimum values
         fig, ax = plt.subplots(figsize=(9,6))
         for i in range(len(grouped_df)):
             name = grouped_df['pipeline'][i]
@@ -172,11 +161,20 @@ class Plots():
             plt.grid(True, ls="--", lw=0.8)
         fname=os.path.join(file_path, dataset.code+"_"+evaluation_type+'.pdf')
         plt.savefig(fname, dpi=300, bbox_inches='tight')
-    
-    def _plot_eer_multiple_datasets():
-        return 0
+
     
     def _eer_graph_single_dataset_across_evaluations(self, data=None):
+
+        """
+        Generate and save EER graphs for a single dataset across multiple evaluation types.
+
+        Parameters:
+        - data: Data containing evaluation results for different evaluation types (e.g., close-set and open-set).
+
+        Returns:
+        - None
+        """
+
         eer_path=os.path.join(self.plot_path, "EER_across_evaluations")
         if not os.path.exists(eer_path):
             os.makedirs(eer_path)
@@ -247,7 +245,5 @@ class Plots():
             plt.savefig(fname, dpi=300, bbox_inches='tight')
         
     
-    def _eer_graph_across_datasets(self, data=None, evaluation_type=None, dataset=None):
-        return 0
-        #return 0
+    
     

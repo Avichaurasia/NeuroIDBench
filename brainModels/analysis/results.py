@@ -17,11 +17,44 @@ import datetime
 
 class Results():
     """
-        class that will abstract result storage
+    A class for storing and managing results in JSON format.
+
+    This class is designed for storing and organizing results generated during experiments. 
+    It provides methods for saving, loading, and processing results as JSON files.
+
+    Attributes:
+    - None
+
+    Methods:
+    - _add_results(results, results_path, scenario):
+      Adds results to a JSON file and returns an averaged DataFrame if applicable.
+
+    - _add_dataframe(results_path, scenario):
+      Averages results from JSON files and returns them as a DataFrame.
+
+    Example usage:
+    ```
+    results_handler = Results()
+    average_results = results_handler._add_results(results_data, 'results_folder', 'scenario_name')
+    ```
+
+    The Results class is typically used to save and manage the outcome of experiments and provides tools for
+    aggregating and summarizing results.
+
     """
 
     def _add_results(self, results, results_path, scenario):
-        """Add results dataframe to path dataset.datasetpath as json file."""
+        """
+        Add results to a JSON file in the specified results folder.
+
+        Parameters:
+        - results: Results data to be stored as a JSON file.
+        - results_path: The path to the results folder.
+        - scenario: A scenario identifier used to create the appropriate JSON file.
+
+        Returns:
+        - average_results: A DataFrame of averaged results if multiple JSON files are used.
+        """
 
         if not os.path.exists(results_path):
             os.makedirs(results_path)
@@ -42,7 +75,16 @@ class Results():
         return average_results
     
     def _add_dataframe(self, results_path, scenario):
-        """Average results across subjects."""
+        """
+        Average results from JSON files and return them as a DataFrame.
+
+        Parameters:
+        - results_path: The path to the results folder.
+        - scenario: A scenario identifier used to find the appropriate JSON files.
+
+        Returns:
+        - df_results: A DataFrame containing the averaged results.
+        """
 
         if ("close_set" in scenario) and ("open_set" in scenario):
             with open(os.path.join(results_path, "results_close_set.json"), 'r') as f:
