@@ -9,12 +9,14 @@ import scipy.signal as scp
 import yaml
 from sklearn.base import BaseEstimator, TransformerMixin
 from sklearn.pipeline import make_pipeline
-from deeb.datasets.base import BaseDataset
+from brainModels.datasets.base import BaseDataset
 
 log = logging.getLogger(__name__)
 
 def create_pipeline_from_config(config):
-    """Create a pipeline from a config file.
+
+    """
+    Create a pipeline from a config file.
     takes a config dict as input and return the corresponding pipeline.
     If the pipeline is a Tensorflow pipeline it convert also the optimizer function and the callbacks.
     Parameters
@@ -69,6 +71,7 @@ def create_pipeline_from_config(config):
 
 
 def parse_pipelines_from_directory(dir_path):
+
     """
     Takes in the path to a directory with pipeline configuration files and returns a dictionary
     of pipelines.
@@ -126,6 +129,37 @@ def parse_pipelines_from_directory(dir_path):
     return pipeline_configs
 
 def _parse_dataset_from_config(config):
+
+    """
+    Parse dataset configuration from a given configuration dictionary.
+
+    This function takes a configuration dictionary and parses the dataset component based on the provided
+    configuration. It dynamically imports the specified dataset class and initializes it with the given parameters.
+
+    Parameters:
+    - config (dict): A configuration dictionary containing information about the dataset component, including
+      class name, parameters, and settings.
+
+    Returns:
+    - instance: An instance of the specified dataset class with the provided settings.
+
+    Example configuration:
+    ```
+    config = {
+        "from": "my_dataset_module",
+        "name": "MyDataset",
+        "parameters": {
+            "subjects": [1, 10],
+            "interval": [0, 2],
+            "rejection_threshold": 0.5
+        }
+    }
+    dataset_instance = _parse_dataset_from_config(config)
+    ```
+
+    This function allows dynamic loading and configuration of dataset classes based on the provided configuration.
+    """
+
     for component in config:
         mod = __import__(component["from"], fromlist=[component["name"]])
         instance = getattr(mod, component["name"])
@@ -146,13 +180,6 @@ def _parse_dataset_from_config(config):
 
             if "rejection_threshold" in params.keys():
                 instance.rejection_threshold=params['rejection_threshold']
-
-            if "baseline_correction" in params.keys():
-                instance.baseline_correction=params['baseline_correction']
-
-            if "event_id" in params.keys():
-                instance.event_id=params['event_id']
-                
     return instance
 
 def parse_pipelines_for_single_dataset(dir_path):

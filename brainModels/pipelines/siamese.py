@@ -14,19 +14,37 @@ import matplotlib.pyplot as plt
 import os
 import pandas as pd
 import seaborn as sns
-from deeb.pipelines.base import Basepipeline
+from brainModels.pipelines.base import Basepipeline
 
 class Siamese():
+
+    """
+    A Siamese Neural Network for EEG-based authentication.
+
+    Parameters:
+    - EPOCHS (int): The number of training epochs.
+    - batch_size (int): The batch size for training.
+    - verbose (int): Verbosity mode (0 for silent, 1 for progress bar, 2 for one line per epoch).
+    - workers (int): The number of workers to use for data loading.
+    
+    This class defines a Siamese Neural Network for EEG-based authentication. The network is designed to learn
+    representations of EEG data suitable for authentication. It allows customizing the training process, batch size,
+    verbosity, random seed, and more.
+
+    Methods:
+    - is_valid(dataset): Check if the provided dataset is valid for the given paradigm.
+
+    Example usage:
+    siamese = Siamese(EPOCHS=250, batch_size=256, verbose=1, workers=5, random_state=None, validation_split=0.2)
+    siamese_model = siamese._siamese_embeddings(no_channels, time_steps)
+    siamese_model.fit(training_data, validation_data)
+    """
     def __init__(
         self,
         EPOCHS=250,
         batch_size=256,
         verbose=1,
         workers=5,
-        random_state=None,
-        validation_split=0.2,
-        history_plot=False,
-        path=None,
         **kwargs,
     ):
         super().__init__(**kwargs)
@@ -34,19 +52,47 @@ class Siamese():
         self.batch_size = batch_size
         self.verbose = verbose
         self.workers=workers
-        self.random_state = random_state
-        self.validation_split = validation_split
-        self.history_plot = history_plot
-        self.path = path
 
     def is_valid(self, dataset):
+
+        """
+        Check if a dataset is valid for the given paradigm.
+
+        Parameters:
+        - dataset (object): An object representing the EEG dataset.
+
+        Returns:
+        - bool: True if the dataset is valid; False otherwise.
+        """
         ret = True
         if not ((dataset.paradigm == "p300") | (dataset.paradigm == "n400")):
             ret = False
         return ret
     
-    # # This function has been sourced from https://git.scc.kit.edu/ps-chair/brainnet licensed under the Creative Commons
     def _siamese_embeddings(self, no_channels, time_steps):
+
+        """
+            
+        Siamese Implementation of the Siamese Neural Network for EEG-based authentication in [1]_
+
+        Parameters:
+            - no_channels (int): The number of EEG channels.
+            - time_steps (int): The number of time steps.
+
+        Returns:
+            - SiamModel: A Siamese Neural Network for EEG-based authentication.
+            
+
+        The implementation is based on the following paper with some modifications:
+
+        [1] M. Fallahi, T. Strufe and P. Arias-Cabarcos, "BrainNet: Improving Brainwave-based Biometric Recognition with Siamese Networks
+        ," 2023 IEEE International Conference on Pervasive Computing and Communications (PerCom), Atlanta, GA, USA, 2023, pp. 53-60, 
+        doi: 10.1109/PERCOM56429.2023.10099367.”
+
+        The code has been sourced from https://git.scc.kit.edu/ps-chair/brainnet licensed under the Creative Commons
+
+        """
+
         activef="selu"
         chn=no_channels
         sn=time_steps

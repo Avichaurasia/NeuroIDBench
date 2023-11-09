@@ -19,7 +19,7 @@ from collections import OrderedDict
 import logging
 from tqdm import tqdm
 from mne.utils import _url_to_local_path, verbose
-from deeb.pipelines.base import Basepipeline
+from brainModels.pipelines.base import Basepipeline
 from sklearn.base import BaseEstimator, TransformerMixin
 from sklearn.preprocessing import StandardScaler
 from scipy.signal import welch
@@ -27,19 +27,55 @@ from scipy.signal import welch
 log = logging.getLogger(__name__)
 
 class AutoRegressive(Basepipeline):
+    """Compute Autoregressive (AR) coefficients from EEG data"""
 
     def __init__(self, order=6):
         self.order = order
 
     def is_valid(self, dataset):
+
+        """Verify the dataset is compatible with the paradigm.
+
+        This method is called to verify dataset is compatible with the
+        paradigm.
+
+        This method should raise an error if the dataset is not compatible
+        with the paradigm. This is for example the case if the
+        dataset is an ERP dataset for motor imagery paradigm, or if the
+        dataset does not contain any of the required events.
+
+        Parameters
+        ----------
+        dataset : dataset instance
+            The dataset to verify.
+        """
+
         ret = True
         if not ((dataset.paradigm == "p300") | (dataset.paradigm == "n400")) :
             ret = False
         return ret
       
     def _get_features(self, subject_dict, dataset):
+
+        """Compute Autoregressive (AR) coefficients from EEG data.
+
+        This function computes AR coefficients from EEG data. 
+        The EEG data for each subject is in the shape of (n_epochs, n_channels, n_times).
+        The AR coeffecients are computed using the Yule-Walker method with the maximum 
+        likelihood estimation. The order of the AR model isspecified by the user. 
+
+        The resulting DataFrame df contains columns for Subject, session, Event_id, and 
+        AR coefficients for each EEG channel, up to a specified order (self.order). 
+        
+        Parameters:
+            - subject_dict (dict): A dictionary containing subject information and EEG data.
+            - dataset (object): An object representing the dataset.
+
+        Returns:
+        - df (pd.DataFrame): A DataFrame containing AR coefficients for each channel for each epoch.
+        """
+
         df_list = []
-        print("order", self.order)
         for subject, sessions in tqdm(subject_dict.items(), desc="Computing AR Coeff"):
             for session, runs in sessions.items():
                 for run, epochs in runs.items():
@@ -68,20 +104,39 @@ class AutoRegressive(Basepipeline):
         return df
 
 class PowerSpectralDensity(Basepipeline):
+    """Compute Power Spectral Density (PSD) from EEG data"""
 
     def __init__(self):
         pass
 
     def is_valid(self, dataset):
+        """Verify the dataset is compatible with the paradigm"""
+
         ret = True
         if not ((dataset.paradigm == "p300") | (dataset.paradigm == "n400")) :
             ret = False
-
-        # we should verify list of channels, somehow
         return ret
 
 
     def computing_psd(self, epochs):
+
+        """
+        Compute Power Spectral Density (PSD) of EEG epochs using Welch's method.
+
+        Parameters:
+            - epochs (mne.Epochs): The EEG epochs for which PSD will be computed.
+
+        Returns:
+            - psd_data (array): Array containing the PSD data.
+            - freqs (array): Array containing the corresponding frequency values.
+
+        This function calculates the PSD of EEG data using the Welch method. It divides the time
+        series data into four time windows with 50% overlap. The PSD is calculated within the frequency
+        range from 1 Hz to 50 Hz. The PSD is computed separately for each time window and EEG channel.
+
+        Example usage:
+        psd_data, freqs = my_instance.computing_psd(my_epochs)
+        """
         tmax=epochs.tmax
         tmin=epochs.tmin
         sfreq=epochs.info['sfreq']
@@ -97,6 +152,25 @@ class PowerSpectralDensity(Basepipeline):
         return spectrum.get_data(return_freqs=True)
     
     def _get_features(self, subject_dict, dataset):
+
+        """
+        Compute Power Spectral Density (PSD) features for EEG data.
+
+        Parameters:
+            - subject_dict (dict): A dictionary containing subject information and EEG data.
+            - dataset (object): An object representing the dataset.
+
+        Returns:
+            - df_psd (pd.DataFrame): A DataFrame containing PSD features.
+
+        This function computes PSD features for EEG data. It iterates through subjects, sessions, and runs
+        to calculate PSD for each epoch. The function divides the EEG data into frequency bands (e.g., low,
+        alpha, beta, gamma) and computes the average power in each band for each channel. The results are
+        stored in a DataFrame.
+
+        Example usage:
+        df_psd = my_instance._get_features(my_subject_dict, my_dataset)
+        """
         df_psd=pd.DataFrame()
         df_list = []
         FREQ_BANDS = {"low" : [1,10],
@@ -117,7 +191,6 @@ class PowerSpectralDensity(Basepipeline):
                     elif (dataset.paradigm == "n400"):
                         epochs = epochs['Inconsistent']
 
-                    # Computing PSD for each epoch
                     if (len(epochs)==0):
                             continue
                     else:
@@ -148,26 +221,5 @@ class PowerSpectralDensity(Basepipeline):
 
         return df_psd
     
-    
-class StandardScaler_Epoch(BaseEstimator, TransformerMixin):
-    """
-    Function to standardize the epochs data for the pipeline
-    """
-
-    def __init__(self):
-        """Init."""
-
-    def fit(self, X, y):
-        return self
-
-    def transform(self, X):
-        X_fin = []
-
-        for i in np.arange(X.shape[0]):
-            X_p = StandardScaler().fit_transform(X[i])
-            X_fin.append(X_p)
-        X_fin = np.array(X_fin)
-
-        return X_fin
     
     

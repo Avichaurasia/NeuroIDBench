@@ -10,8 +10,8 @@ import mne
 import numpy as np
 import yaml
 from mne.channels import make_standard_montage
-from deeb.datasets import download as dl
-from deeb.datasets.base import BaseDataset
+from brainModels.datasets import download as dl
+from brainModels.datasets.base import BaseDataset
 
 class USERDATASET(BaseDataset): 
     def __init__(self):

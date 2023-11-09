@@ -21,7 +21,7 @@ from sklearn.model_selection._validation import _fit_and_score, _score
 from sklearn.preprocessing import LabelEncoder
 from tqdm import tqdm
 from sklearn.preprocessing import StandardScaler
-from deeb.Evaluation.base import BaseEvaluation
+from brainModels.Evaluation.base import BaseEvaluation
 from imblearn.over_sampling import RandomOverSampler
 from imblearn.under_sampling import RandomUnderSampler
 from sklearn import metrics
@@ -29,7 +29,7 @@ from sklearn.metrics import accuracy_score
 import random
 from scipy.optimize import brentq
 from scipy.interpolate import interp1d
-from deeb.Evaluation.scores import Scores as score
+from brainModels.Evaluation.scores import Scores as score
 from collections import OrderedDict
 
 log = logging.getLogger(__name__)

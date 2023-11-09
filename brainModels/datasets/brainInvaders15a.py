@@ -11,8 +11,8 @@ import numpy as np
 import yaml
 from mne.channels import make_standard_montage
 from scipy.io import loadmat
-from deeb.datasets import download as dl
-from deeb.datasets.base import BaseDataset
+from brainModels.datasets import download as dl
+from brainModels.datasets.base import BaseDataset
 
 BI2015a_URL = "https://zenodo.org/record/3266930/files/"
 

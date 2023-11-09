@@ -1,5 +1,5 @@
-from deeb.Evaluation.base import BaseEvaluation
-from deeb.analysis.results import Results as res
+from brainModels.Evaluation.base import BaseEvaluation
+from brainModels.analysis.results import Results as res
 import matplotlib.pyplot as plt
 import numpy as np
 from matplotlib.ticker import ScalarFormatter, AutoMinorLocator

@@ -6,19 +6,19 @@ import logging
 import mne
 import numpy as np
 import pandas as pd
-from deeb.paradigms.base_old import BaseParadigm
-from deeb.paradigms.p300 import N400
-from deeb.paradigms.p300 import P300
-from deeb.datasets.brainInvaders15a import BrainInvaders2015a
-from deeb.datasets.mantegna2019 import Mantegna2019
-from deeb.datasets.draschkow2018 import Draschkow2018
-from deeb.datasets.won2022 import Won2022
-from deeb.pipelines.features import AutoRegressive as AR
-from deeb.pipelines.features import PowerSpectralDensity as PSD
+from brainModels.paradigms.base_old import BaseParadigm
+from brainModels.paradigms.p300 import N400
+from brainModels.paradigms.p300 import P300
+from brainModels.datasets.brainInvaders15a import BrainInvaders2015a
+from brainModels.datasets.mantegna2019 import Mantegna2019
+from brainModels.datasets.draschkow2018 import Draschkow2018
+from brainModels.datasets.won2022 import Won2022
+from brainModels.pipelines.features import AutoRegressive as AR
+from brainModels.pipelines.features import PowerSpectralDensity as PSD
 #from deeb.pipelines.siamese_old import Siamese
-from deeb.pipelines.base import Basepipeline
+from brainModels.pipelines.base import Basepipeline
 #from deeb.evaluation.evaluation import CloseSetEvaluation, OpenSetEvaluation
-from deeb.datasets import utils
+from brainModels.datasets import utils
 from autoreject import AutoReject, get_rejection_threshold
 from sklearn.pipeline import make_pipeline
 from sklearn.preprocessing import StandardScaler 

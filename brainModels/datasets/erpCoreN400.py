@@ -9,8 +9,8 @@ import numpy as np
 import yaml
 from mne.channels import make_standard_montage
 from scipy.io import loadmat
-from deeb.datasets import download as dl
-from deeb.datasets.base import BaseDataset
+from brainModels.datasets import download as dl
+from brainModels.datasets.base import BaseDataset
 from mne.io import read_raw_eeglab, read_raw
 from mne.channels import read_dig_polhemus_isotrak, read_custom_montage
 import numpy as np
@@ -21,8 +21,8 @@ from mne.utils import _url_to_local_path, verbose
 import pooch
 from pooch import file_hash, retrieve
 from requests.exceptions import HTTPError
-from deeb.datasets import download as dl
-from deeb.datasets.base import BaseDataset
+from brainModels.datasets import download as dl
+from brainModels.datasets.base import BaseDataset
 from collections import OrderedDict
 from mne.utils import _url_to_local_path, verbose
 import shutil

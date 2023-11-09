@@ -2,18 +2,18 @@ import sys
 sys.path.append('/Users/avinashkumarchaurasia/Master_Thesis/deeb/')
 
 # Importing the datasets
-from deeb.datasets.brainInvaders15a import BrainInvaders2015a
-from deeb.datasets.mantegna2019 import Mantegna2019
-from deeb.datasets.draschkow2018 import Draschkow2018
-from deeb.datasets.won2022 import Won2022
+from brainModels.datasets.brainInvaders15a import BrainInvaders2015a
+from brainModels.datasets.mantegna2019 import Mantegna2019
+from brainModels.datasets.draschkow2018 import Draschkow2018
+from brainModels.datasets.won2022 import Won2022
 
 # Importing the paradigms
-from deeb.paradigms.n400 import N400
-from deeb.paradigms.p300 import P300
+from brainModels.paradigms.n400 import N400
+from brainModels.paradigms.p300 import P300
 
 # Importing the pipelines
-from deeb.pipelines.features import AutoRegressive 
-from deeb.pipelines.features import PowerSpectralDensity 
+from brainModels.pipelines.features import AutoRegressive 
+from brainModels.pipelines.features import PowerSpectralDensity 
 
 # Importing the evaluation
 #from deeb.evaluation.evaluation import CloseSetEvaluation

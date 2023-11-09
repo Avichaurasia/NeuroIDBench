@@ -19,7 +19,7 @@ import pandas as pd
 from sklearn.preprocessing import LabelEncoder
 from tqdm import tqdm
 from sklearn.preprocessing import StandardScaler
-from deeb.Evaluation.base import BaseEvaluation
+from brainModels.Evaluation.base import BaseEvaluation
 #from deeb.evaluation.scores import Scores as score
 from collections import OrderedDict
 import tensorflow as tf
@@ -27,10 +27,10 @@ from sklearn.metrics.pairwise import cosine_similarity as cs
 from collections import defaultdict
 from sklearn.preprocessing import LabelEncoder
 from sklearn.preprocessing import StandardScaler
-from deeb.pipelines.siamese import Siamese
+from brainModels.pipelines.siamese import Siamese
 from keras.callbacks import EarlyStopping
 from collections import defaultdict
-from deeb.Evaluation.scores import Scores as score
+from brainModels.Evaluation.scores import Scores as score
 import pickle
 #from deeb.Evaluation.siamese_cross import Siamese_Cross_session_evaluation
 import mne

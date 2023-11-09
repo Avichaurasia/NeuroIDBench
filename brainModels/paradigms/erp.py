@@ -4,8 +4,8 @@ import logging
 import mne
 import numpy as np
 import pandas as pd
-from deeb.paradigms.base import BaseParadigm
-from deeb.datasets import utils
+from brainModels.paradigms.base import BaseParadigm
+from brainModels.datasets import utils
 
 log = logging.getLogger(__name__)
 

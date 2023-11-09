@@ -8,8 +8,8 @@ from sklearn.svm import SVC
 # from deeb.paradigms.erp import N400
 # from deeb.paradigms.p300 import P300
 # from deeb.paradigms.n400 import N400
-from deeb.paradigms.erp import ERP
-from deeb.pipelines.utils import (
+from brainModels.paradigms.erp import ERP
+from brainModels.pipelines.utils import (
     parse_pipelines_from_directory,
     generate_paradigms,
     parse_pipelines_for_single_dataset,
@@ -27,8 +27,8 @@ import mne
 import numpy as np
 import yaml
 import pandas as pd
-from deeb.datasets import (BrainInvaders2015a, Mantegna2019, ERPCOREN400, Lee2019, utils)
-from deeb.Evaluation import (WithinSessionEvaluation, CrossSessionEvaluation, 
+from brainModels.datasets import (BrainInvaders2015a, Mantegna2019, ERPCOREN400, Lee2019, utils)
+from brainModels.Evaluation import (WithinSessionEvaluation, CrossSessionEvaluation, 
                              Siamese_WithinSessionEvaluation, Siamese_CrossSessionEvaluation)
 log = logging.getLogger(__name__)
 

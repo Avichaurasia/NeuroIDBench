@@ -6,10 +6,10 @@ from sklearn.pipeline import make_pipeline
 from sklearn.svm import SVC
 
 
-from deeb.datasets import brainInvaders15a, mantegna2019, utils
+from brainModels.datasets import brainInvaders15a, mantegna2019, utils
 #from deeb.evaluation.evaluation import CloseSetEvaluation
-from deeb.paradigms.p300 import P300
-from deeb.paradigms.p300 import N400
+from brainModels.paradigms.p300 import P300
+from brainModels.paradigms.p300 import N400
 import os
 from collections import OrderedDict
 from copy import deepcopy
@@ -26,7 +26,7 @@ import yaml
 import pandas as pd
 
 
-from deeb import paradigms as deeb_paradigms
+from brainModels import paradigms as deeb_paradigms
 #from deeb.evaluation import (CloseSetEvaluation, OpenSetEvaluation,)
 log = logging.getLogger(__name__)
 

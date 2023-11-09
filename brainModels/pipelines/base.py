@@ -39,6 +39,20 @@ class Basepipeline(metaclass=ABCMeta):
         pass
 
     def get_data(self, dataset, paradigm, subjects=None, return_epochs=False):
+        """
+        Retrieve EEG features and data for a specific dataset and paradigm.
+
+        Parameters:
+            - dataset (object): An object representing the EEG dataset.
+            - paradigm (object): An object representing the specific paradigm.
+            - subjects (list, optional): A list of subject IDs to include (default is None, includes all subjects).
+            - return_epochs (bool, optional): If True, return EEG epochs (default is False, returns features).
+
+        Returns:
+            - data (pd.DataFrame or mne.Epochs): EEG features as a DataFrame or EEG epochs.
+
+        """
+    
         if not self.is_valid(dataset):
             message = f"Dataset {dataset.code} is not valid for paradigm"
             raise AssertionError(message)
