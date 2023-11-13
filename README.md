@@ -371,6 +371,7 @@ pipelines:
     from: brainModels.pipelines
       
   - name: RandomForestClassifier
+  
     from: sklearn.ensemble
     parameters: 
         class_weight: "balanced"
