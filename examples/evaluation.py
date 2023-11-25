@@ -1,5 +1,5 @@
 import sys
-sys.path.append('/Users/avinashkumarchaurasia/Master_Thesis/deeb/deeb')
+sys.path.append('/Users/avinashkumarchaurasia/Desktop/project/BrainModels/brainmodels')
 import abc
 import logging
 import mne

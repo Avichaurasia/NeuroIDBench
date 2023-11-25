@@ -1,5 +1,5 @@
 import sys
-sys.path.append('/Users/avinashkumarchaurasia/Master_Thesis/deeb/')
+sys.path.append('/Users/avinashkumarchaurasia/Desktop/project/Brain-Models/brainmodels')
 
 # Importing the datasets
 from brainModels.datasets.brainInvaders15a import BrainInvaders2015a

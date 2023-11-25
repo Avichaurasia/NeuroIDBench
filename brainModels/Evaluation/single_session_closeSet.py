@@ -88,25 +88,13 @@ class SingleSessionCloseSet(BaseEvaluation):
         dicr3={}
         dicr2={}
         dicr1={}
-        accuracy_list=[]
-        auc_list=[]
-        eer_list=[]
-        eer_threshold_list=[]
-        fpr_list=[]
-        tpr_list=[]
-        thresholds_list=[]
-        fnr_list=[] 
-        frr_1_far_list=[]
-        mean_fpr = np.linspace(0, 1, 100)
         skfold = StratifiedKFold(n_splits=4,shuffle=True,random_state=42)
-        #print("skfold", skold)
         for train_index, test_index in skfold.split(data, y):
             x_train, x_test, y_train, y_test =data[train_index],data[test_index],y[train_index],y[test_index]
 
             scaler = StandardScaler()
             x_train = scaler.fit_transform(x_train.reshape((x_train.shape[0], -1))).reshape(x_train.shape)
             x_test = scaler.transform(x_test.reshape((x_test.shape[0], -1))).reshape(x_test.shape)
-
             tf.keras.backend.clear_session()
             model=siamese._siamese_embeddings(x_train.shape[1], x_train.shape[2])
             embedding_network=model
@@ -238,13 +226,9 @@ class SingleSessionCloseSet(BaseEvaluation):
             frr_1_far_list.append(frr_1_far)
         average_scores=score._calculate_average_scores(accuracy_list, tpr_list, eer_list, mean_fpr, auc_list, frr_1_far_list)
         return average_scores
-    
-    def _close_set(self, df_session, pipeline):
-        labels=np.array(df_session['Label'])
-        X=np.array(df_session.drop(['Label','Event_id','Subject','session'],axis=1))
-        return self._authenticate_single_subject_close_set(X,labels, pipeline)
 
-    def _prepare_dataset(self, dataset, features):
+
+    def _prepare_data(self, dataset, features):
         df_final=pd.DataFrame()
         for feat in range(0, len(features)-1):
             df=features[feat].get_data(dataset, self.paradigm)
@@ -275,21 +259,25 @@ class SingleSessionCloseSet(BaseEvaluation):
         #print("len of pipelines", pipelines.keys())
         for key, features in pipelines.items():
             print("features", features)
-            data=self._prepare_dataset(dataset, features)
+            data=self._prepare_data(dataset, features)
             #data=features[0].get_data(dataset, self.paradigm)
             for subject in tqdm(np.unique(data.Subject), desc=f"{key}-WithinSessionEvaluation"):
                 df_subj=data.copy(deep=True)
+
+                # Assign label 0 to all subjects
                 df_subj['Label']=0
+
+                # Updating the label to 1 for the subject being authenticated
                 df_subj.loc[df_subj['Subject'] == subject, 'Label'] = 1
-                #print("After Epochs rejection: ", len(df_subj))
                 for session in np.unique(df_subj.session):
                     df_session= df_subj[df_subj.session==session]
+                    labels=np.array(df_session['Label'])
+                    X=np.array(df_session.drop(['Label','Event_id','Subject','session'],axis=1))
 
                     if not self._valid_subject(df_session, subject, session):
                         continue
-
-                    close_set_scores=self._close_set(df_session, pipelines[key])
-
+                    
+                    close_set_scores=self._authenticate_single_subject_close_set(X,labels, pipelines[key])
                     mean_accuracy, mean_auc, mean_eer, mean_tpr, tprs_upper, tprr_lower, std_auc, mean_frr_1_far=close_set_scores
                     res_close_set = {
                     # "time": duration / 5.0,  # 5 fold CV
@@ -312,8 +300,6 @@ class SingleSessionCloseSet(BaseEvaluation):
                     #"n_channels": data.columns.size
                         }
                     results_close_set.append(res_close_set)
-            
-
 
     def _evaluate(self, dataset, pipelines, algorithms_type):
         if algorithms_type=='DL':
@@ -321,30 +307,6 @@ class SingleSessionCloseSet(BaseEvaluation):
 
         else:
             self.traditional_classification_methods(dataset, pipelines)
-
-            
-
-        # else:
-        #     self.
-
-
-        # results_close_set=[]
-        # results_open_set=[]
-        # eeg_data_dict=dataset.get_data()
-        # # Extract the data and labels from the dictionary
-        # data = []
-        # labels = []
-
-        # for subject_id, sessions in eeg_data_dict.items():
-        #     for session_id, runs in sessions.items():
-        #         for run_id, raw_data in runs.items():
-        #         # Assuming 'raw_data' contains your EEG data
-        #             print("Subject", subject_id, raw_data.get_data().shape)
-        #             data.append(raw_data)
-        #             labels.append(subject_id)  # Use subject ID as a label
-
-        # d=mne.concatenate_raws(data, preload=True, verbose=False)
-        # print("raw data shape", d.get_data().shape)
 
         return 0
    

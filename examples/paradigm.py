@@ -1,24 +1,24 @@
 import sys
-sys.path.append('/Users/avinashkumarchaurasia/Master_Thesis/deeb/deeb')
+sys.path.append('/Users/avinashkumarchaurasia/Desktop/project/Brain-Models/')
 import abc
 import logging
 import mne
 import numpy as np
 import pandas as pd
-from brainModels.paradigms.base_old import BaseParadigm
+#from brainmodels.paradigms.base_old import BaseParadigm
 #from deeb.paradigms.erp import N400
-from brainModels.paradigms.n400 import N400
-from brainModels.paradigms.p300 import P300
-from brainModels.datasets.brainInvaders15a import BrainInvaders2015a
-from brainModels.datasets.mantegna2019 import Mantegna2019
-from brainModels.datasets.draschkow2018 import Draschkow2018
-from brainModels.datasets.won2022 import Won2022
-from brainModels.pipelines.features import AutoRegressive as AR
-from brainModels.pipelines.features import PowerSpectralDensity as PSD
+#from brainmodels.paradigms.n400 import N400
+from brainmodels.paradigms.erp import ERP
+from brainmodels.datasets.brainInvaders15a import BrainInvaders2015a
+from brainmodels.datasets.mantegna2019 import Mantegna2019
+#from brainmodels.datasets.draschkow2018 import Draschkow2018
+from brainmodels.datasets.won2022 import Won2022
+from brainmodels.pipelines.features import AutoRegressive as AR
+from brainmodels.pipelines.features import PowerSpectralDensity as PSD
 #from deeb.pipelines.siamese_old import Siamese
-from brainModels.pipelines.base import Basepipeline
+from brainmodels.pipelines.base import Basepipeline
 #from deeb.evaluation.evaluation import CloseSetEvaluation, OpenSetEvaluation
-from brainModels.datasets import utils
+from brainmodels.datasets import utils
 from autoreject import AutoReject, get_rejection_threshold
 from sklearn.pipeline import make_pipeline
 from sklearn.preprocessing import StandardScaler 
@@ -26,7 +26,7 @@ from sklearn.discriminant_analysis import LinearDiscriminantAnalysis as LDA
 from sklearn.naive_bayes import GaussianNB
 from sklearn.svm import SVC
 #from deeb.pipelines.siamese import Siamese
-from brainModels.datasets.erpCoreN400 import ERPCOREN400
+from brainmodels.datasets.erpCoreN400 import ERPCOREN400
 
 # Intializing the datasets 
 erpcore = ERPCOREN400()
@@ -46,8 +46,8 @@ mantegna=Mantegna2019()
 #mantegna.subject_list = mantegna.subject_list[0:10]
 
 # Initializing the p300 paradigm
-paradigm_p300=P300()
-paradigm_n400=N400()
+#paradigm_p300=P300()
+paradigm_n400=ERP()
 
 # Getting the pre-prpcessed data for the p300 paradigm
 X, sub, meta=paradigm_n400.get_data(mantegna, return_epochs=True)
