@@ -1,5 +1,5 @@
 import sys
-sys.path.append('/Users/avinashkumarchaurasia/Desktop/project/Brain-Models/')
+sys.path.append('/Users/avinashkumarchaurasia/Desktop/project/BrainModels/')
 import abc
 import logging
 import mne
@@ -8,15 +8,15 @@ import pandas as pd
 #from brainmodels.paradigms.base_old import BaseParadigm
 #from deeb.paradigms.erp import N400
 #from brainmodels.paradigms.n400 import N400
-from brainmodels.paradigms.erp import ERP
+from brainmodels.preprocessing.erp import ERP
 from brainmodels.datasets.brainInvaders15a import BrainInvaders2015a
 from brainmodels.datasets.mantegna2019 import Mantegna2019
 #from brainmodels.datasets.draschkow2018 import Draschkow2018
 from brainmodels.datasets.won2022 import Won2022
-from brainmodels.pipelines.features import AutoRegressive as AR
-from brainmodels.pipelines.features import PowerSpectralDensity as PSD
+from brainmodels.featureExtraction.features import AutoRegressive as AR
+from brainmodels.featureExtraction.features import PowerSpectralDensity as PSD
 #from deeb.pipelines.siamese_old import Siamese
-from brainmodels.pipelines.base import Basepipeline
+from brainmodels.featureExtraction.base import Basepipeline
 #from deeb.evaluation.evaluation import CloseSetEvaluation, OpenSetEvaluation
 from brainmodels.datasets import utils
 from autoreject import AutoReject, get_rejection_threshold
@@ -28,58 +28,37 @@ from sklearn.svm import SVC
 #from deeb.pipelines.siamese import Siamese
 from brainmodels.datasets.erpCoreN400 import ERPCOREN400
 
-# Intializing the datasets 
-erpcore = ERPCOREN400()
+def _evaluate():
+    # Intializing the datasets 
+    erpcore = ERPCOREN400()
 
-# Intiaizing the datasets
-won = Won2022()
-brain=BrainInvaders2015a()
-mantegna=Mantegna2019()
+    # Intiaizing the datasets
+    won = Won2022()
+    brain=BrainInvaders2015a()
+    mantegna=Mantegna2019()
 
-# # Selecting the first 3 subjects from the Won2022 dataset
-# won.subject_list = won.subject_list[0:10]
+    # # Selecting the first 3 subjects from the Won2022 dataset
+    # won.subject_list = won.subject_list[0:10]
 
-# Selecting the first 5 subjects from the brainInvaders2015a dataset
-#brain.subject_list = brain.subject_list[0:10]
+    # Selecting the first 5 subjects from the brainInvaders2015a dataset
+    #brain.subject_list = brain.subject_list[0:10]
 
-# selecting the first 3 subjects from the Mantegna dataset
-#mantegna.subject_list = mantegna.subject_list[0:10]
+    # selecting the first 3 subjects from the Mantegna dataset
+    #mantegna.subject_list = mantegna.subject_list[0:10]
 
-# Initializing the p300 paradigm
-#paradigm_p300=P300()
-paradigm_n400=ERP()
+    # Initializing the p300 paradigm
+    #paradigm_p300=P300()
+    paradigm_n400=ERP()
 
-# Getting the pre-prpcessed data for the p300 paradigm
-X, sub, meta=paradigm_n400.get_data(mantegna, return_epochs=True)
-print("length of X", len(X))
-# print("BrainInvaders", sub)
-
-# for i, epochs in enumerate(X):
-#     print("event id", epochs.event_id.values)
-
-# #print(meta[['subject', 'event_id']].value_counts())
-# target_index=meta[meta['event_id']=="Target"].index.tolist()
-
-# print("lenght of target index", len(target_index))
-
-# target_epochs=X[target_index]
-
-# print("length of target epochs", len(target_epochs))
-
-# print("subject labels", meta.iloc[target_index]["subject"].value_counts())
+    # Getting the pre-prpcessed data for the p300 paradigm
+    X, sub, meta=paradigm_n400.get_data(mantegna, return_epochs=True)
+    print("length of X", len(X))
 
 
-
-# # Getting the pre-prpcessed data for the p300 paradigm
-# X, sub, meta=paradigm_p300.get_data(won, return_epochs=True)
-# print("Won ", sub)
-
-
-# getting the pre-processed data from n400 paradigm
-# X, sub, meta=paradigm_n400.get_data(mantegna, return_epochs=True)
-#print("length of X", len(X))
-
-#print("length of meta", meta['subject'])
-#print("Mantegna", sub)
-
-
+if __name__ == '__main__':
+#    package = 'deeb.Evaluation'  # Change to your package/module name
+#    for importer, modname, ispkg in pkgutil.walk_packages(path=['/Users/avinashkumarchaurasia/Desktop/deeb/deeb/Evaluation'], prefix=package + '.'):
+#         print('Found submodule %s (is a package: %s)' % (modname, ispkg))
+    print(sys.path)
+    result= _evaluate()
+    

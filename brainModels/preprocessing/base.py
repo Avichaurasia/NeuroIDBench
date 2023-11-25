@@ -110,7 +110,7 @@ class BaseParadigm(metaclass=ABCMeta):
         """
         # get events id
         event_id = self.used_events(dataset)
-        #print("")
+
         # picks channels
         if self.channels is None:
             picks = mne.pick_types(raw.info, eeg=True, stim=False)
@@ -139,7 +139,6 @@ class BaseParadigm(metaclass=ABCMeta):
             self.baseline=(None, 0)
         else:
             self.baseline=None
-
         
         X = []
         for bandpass in self.filters:

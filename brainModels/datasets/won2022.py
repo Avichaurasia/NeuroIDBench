@@ -16,8 +16,8 @@ import pooch
 from pooch import file_hash, retrieve
 from requests.exceptions import HTTPError
 from scipy.io import loadmat
-from brainModels.datasets import download as dl
-from brainModels.datasets.base import BaseDataset
+from . import download as dl
+from .base import BaseDataset
 from collections import OrderedDict
 from mne.utils import _url_to_local_path, verbose
 import shutil
@@ -36,13 +36,13 @@ urls=['32398631', '32398637', '32398625', '32398613', '32398628', '32398631', '3
 
 class Won2022(BaseDataset):
     """
-    P300 dataset BI2015a from a "Brain Invaders" experiment.
+    P300 dataset 
 
     .. admonition:: Dataset summary
         ================ ======= ======= ================ =============== =============== ===========
          Name             #Subj   #Chan   #Trials/class    Trials length   Sampling Rate   #Sessions
         ================ ======= ======= ================ =============== =============== ===========
-         won2022           43      32        5 NT x 1 T         1s              512Hz           3
+         won2022           56      32        5 NT x 1 T         1s              512Hz           1
         ================ ======= ======= ================ =============== =============== ===========
 
     """
@@ -50,10 +50,10 @@ class Won2022(BaseDataset):
         super().__init__(
             subjects=list(range(1, 56)),
             sessions_per_subject=1,
-            events=dict(Target=1, NonTarget=2),
+            events=dict(Deviant=1, Standard=2),
             code="won 2022",
             interval=[-0.1, 0.9],
-            paradigm="p300",
+            paradigm="erp",
             doi=None,
             dataset_path=None,
             rejection_threshold=None,

@@ -14,10 +14,9 @@ import matplotlib.pyplot as plt
 import os
 import pandas as pd
 import seaborn as sns
-from brainModels.pipelines.base import Basepipeline
+from .base import Basepipeline
 
 class Siamese():
-
     """
     A Siamese Neural Network for EEG-based authentication.
 
@@ -65,7 +64,7 @@ class Siamese():
         - bool: True if the dataset is valid; False otherwise.
         """
         ret = True
-        if not ((dataset.paradigm == "p300") | (dataset.paradigm == "n400")):
+        if not ((dataset.paradigm == "erp")) :
             ret = False
         return ret
     

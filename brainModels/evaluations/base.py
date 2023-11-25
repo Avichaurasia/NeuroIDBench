@@ -2,9 +2,9 @@ import logging
 from abc import ABC, abstractmethod
 import os
 from sklearn.base import BaseEstimator
-from brainModels.datasets.base import BaseDataset
-from brainModels.paradigms.base import BaseParadigm
-from brainModels.analysis.results import Results
+from brainmodels.datasets.base import BaseDataset
+from brainmodels.preprocessing.base import BaseParadigm
+from brainmodels.analysis.results import Results
 import pandas as pd
 import numpy as np
 

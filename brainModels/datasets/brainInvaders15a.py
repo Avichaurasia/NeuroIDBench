@@ -11,8 +11,8 @@ import numpy as np
 import yaml
 from mne.channels import make_standard_montage
 from scipy.io import loadmat
-from brainModels.datasets import download as dl
-from brainModels.datasets.base import BaseDataset
+from . import download as dl
+from .base import BaseDataset
 
 BI2015a_URL = "https://zenodo.org/record/3266930/files/"
 
@@ -62,10 +62,10 @@ class BrainInvaders2015a(BaseDataset):
         super().__init__(
             subjects=list(range(1, 44)),
             sessions_per_subject=1,
-            events=dict(Target=2, NonTarget=1),
+            events=dict(Deviant=2, Standard=1),
             code="Brain Invaders 2015a",
             interval=[-0.2,0.8],
-            paradigm="p300",
+            paradigm="erp",
             doi="https://doi.org/10.5281/zenodo.3266929",
             dataset_path=None,
             rejection_threshold=None,

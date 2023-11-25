@@ -1,7 +1,7 @@
 # BrainModels
 
 <div align="center">
-<img src="logo.png" alt="My Logo" width="400" height="380">
+<img src="/images/logo.png" alt="My Logo" width="400" height="380">
 </div>
 
 
@@ -261,7 +261,7 @@ classifiers for the specified dataset
 # Benchmarking Architecture and Main Concepts
 
 <div align="center">
-<img src="Architecture.png" alt="Architecture" width="800" height="380">
+<img src="/images/Architecture.png" alt="Architecture" width="800" height="380">
 </div>
 
 There are four main concepts for this framework: datasets, paradigm, pipeline, Evalaution. Furthermore, 

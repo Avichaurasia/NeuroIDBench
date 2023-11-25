@@ -13,15 +13,11 @@ import statsmodels.api as sm
 import numpy as np
 import seaborn as sns
 from datetime import datetime as dt
-import os
 import pandas as pd
-from collections import OrderedDict
 import logging
 from tqdm import tqdm
 from mne.utils import _url_to_local_path, verbose
-from brainModels.pipelines.base import Basepipeline
-from sklearn.base import BaseEstimator, TransformerMixin
-from sklearn.preprocessing import StandardScaler
+from .base import Basepipeline
 from scipy.signal import welch
 
 log = logging.getLogger(__name__)
@@ -51,7 +47,7 @@ class AutoRegressive(Basepipeline):
         """
 
         ret = True
-        if not ((dataset.paradigm == "p300") | (dataset.paradigm == "n400")) :
+        if not ((dataset.paradigm == "erp")) :
             ret = False
         return ret
       
@@ -82,12 +78,9 @@ class AutoRegressive(Basepipeline):
                     if not epochs:
                         continue
 
-                    if (dataset.paradigm == "p300"):
-                        epochs= epochs['Target']
-
-                    elif (dataset.paradigm == "n400"):
-                        epochs = epochs['Inconsistent']
-                        
+                    if (dataset.paradigm == "erp"):
+                        epochs= epochs['Deviant']
+    
                     if (len(epochs)==0):
                             continue
                     epochs_data = epochs.get_data()   
@@ -113,7 +106,7 @@ class PowerSpectralDensity(Basepipeline):
         """Verify the dataset is compatible with the paradigm"""
 
         ret = True
-        if not ((dataset.paradigm == "p300") | (dataset.paradigm == "n400")) :
+        if not ((dataset.paradigm == "erp")) :
             ret = False
         return ret
 
@@ -185,12 +178,9 @@ class PowerSpectralDensity(Basepipeline):
                     if not epochs:
                         continue
 
-                    if (dataset.paradigm == "p300"):
-                        epochs = epochs['Target']
+                    if (dataset.paradigm == "erp"):
+                        epochs = epochs['Deviant']
                         
-                    elif (dataset.paradigm == "n400"):
-                        epochs = epochs['Inconsistent']
-
                     if (len(epochs)==0):
                             continue
                     else:

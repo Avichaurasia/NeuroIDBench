@@ -1,6 +1,5 @@
 import logging
 from abc import ABCMeta, abstractmethod
-
 import mne
 import numpy as np
 import pandas as pd

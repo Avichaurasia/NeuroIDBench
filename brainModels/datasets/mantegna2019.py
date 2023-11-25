@@ -16,8 +16,8 @@ import pooch
 from pooch import file_hash, retrieve
 from requests.exceptions import HTTPError
 from scipy.io import loadmat
-from brainModels.datasets import download as dl
-from brainModels.datasets.base import BaseDataset
+from . import download as dl
+from .base import BaseDataset
 from collections import OrderedDict
 from mne.utils import _url_to_local_path, verbose
 import shutil
@@ -28,7 +28,7 @@ Mantegna2019_URL = "https://files.de-1.osf.io/v1/resources/rp4jy/providers/osfst
 class Mantegna2019(BaseDataset):
 
     """
-    P300 dataset BI2015a from a "Brain Invaders" experiment.
+    N400 dataset
 
     .. admonition:: Dataset summary
         ================ ======= ======= ================ =============== =============== ===========
@@ -59,10 +59,10 @@ class Mantegna2019(BaseDataset):
         super().__init__(
             subjects=list(range(1, 32)),
             sessions_per_subject=1,
-            events=dict(Inconsistent=9, Consistent=7),
+            events=dict(Deviant=9, Standard=7),
             code="mantegna 2019",
             interval=[-0.2, 0.8],
-            paradigm="n400",
+            paradigm="erp",
             doi=None,
             dataset_path=None, 
             rejection_threshold=None,

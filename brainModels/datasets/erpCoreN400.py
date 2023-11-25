@@ -9,8 +9,8 @@ import numpy as np
 import yaml
 from mne.channels import make_standard_montage
 from scipy.io import loadmat
-from brainModels.datasets import download as dl
-from brainModels.datasets.base import BaseDataset
+from brainmodels.datasets import download as dl
+from brainmodels.datasets.base import BaseDataset
 from mne.io import read_raw_eeglab, read_raw
 from mne.channels import read_dig_polhemus_isotrak, read_custom_montage
 import numpy as np
@@ -21,8 +21,8 @@ from mne.utils import _url_to_local_path, verbose
 import pooch
 from pooch import file_hash, retrieve
 from requests.exceptions import HTTPError
-from brainModels.datasets import download as dl
-from brainModels.datasets.base import BaseDataset
+from . import download as dl
+from .base import BaseDataset
 from collections import OrderedDict
 from mne.utils import _url_to_local_path, verbose
 import shutil
@@ -33,7 +33,7 @@ ERPCORE_N400_URL = "https://files.osf.io/v1/resources/29xpq/providers/osfstorage
 
 class ERPCOREN400(BaseDataset):
     """
-    P300 dataset BI2015a from a "Brain Invaders" experiment.
+    P300 dataset from ERP Core.
 
     .. admonition:: Dataset summary
         ================ ======= ======= ================ =============== =============== ===========
@@ -66,10 +66,10 @@ class ERPCOREN400(BaseDataset):
         super().__init__(
             subjects=list(range(1, 41)),
             sessions_per_subject=1, 
-            events=dict(Inconsistent=222, Consistent=212),
+            events=dict(Deviant=222, Standard=212),
             code="erpcore n400",
             interval=[-0.2, 0.8],
-            paradigm="n400",
+            paradigm="erp",
             doi=None,
             dataset_path=None,
             rejection_threshold=None,

@@ -20,13 +20,13 @@ import pandas as pd
 from sklearn.preprocessing import LabelEncoder
 from tqdm import tqdm
 from sklearn.preprocessing import StandardScaler, MinMaxScaler
-from brainModels.Evaluation.base import BaseEvaluation
+from brainmodels.evaluations.base import BaseEvaluation
 from sklearn import metrics
 from sklearn.metrics import accuracy_score
 import random
 #from scipy.optimize import brentq
 from scipy.interpolate import interp1d
-from brainModels.Evaluation import score
+from brainmodels.evaluations import score
 from collections import OrderedDict
 from sklearn.utils import shuffle
 #from sklearn.mo
@@ -42,7 +42,7 @@ import mne
 import tensorflow as tf
 import pickle
 import importlib
-from brainModels.Evaluation.similarity import CalculateSimilarity
+from brainmodels.evaluations.similarity import CalculateSimilarity
 
 log = logging.getLogger(__name__)
 

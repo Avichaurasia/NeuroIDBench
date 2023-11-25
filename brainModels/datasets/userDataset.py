@@ -9,8 +9,8 @@ from pathlib import Path
 import mne
 import numpy as np
 import yaml
-from brainModels.datasets import download as dl
-from brainModels.datasets.base import BaseDataset
+from . import download as dl
+from .base import BaseDataset
 
 class USERDATASET(BaseDataset): 
     def __init__(self):

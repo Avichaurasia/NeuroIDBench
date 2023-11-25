@@ -4,8 +4,8 @@ import logging
 import mne
 import numpy as np
 import pandas as pd
-from brainModels.paradigms.base import BaseParadigm
-from brainModels.datasets import utils
+from .base import BaseParadigm
+from ..datasets import utils
 
 log = logging.getLogger(__name__)
 
@@ -166,7 +166,6 @@ class ERP(SinglePass):
     Metric is 'roc_auc'
 
     """
-
     def __init__(self, **kwargs):
         if "events" in kwargs.keys():
             raise (ValueError("ERP dont accept events"))
