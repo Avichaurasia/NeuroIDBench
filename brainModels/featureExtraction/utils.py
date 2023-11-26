@@ -37,6 +37,10 @@ def create_pipeline_from_config(config):
             mod = __import__(component["from"], fromlist=[component["name"]])
             if "parameters" in component.keys():
                 params = component["parameters"]
+
+                if "user_siamese_path" in component["parameters"].keys():
+                    params["user_siamese_path"] = component["parameters"]["user_siamese_path"]
+                    
                 if "optimizer" in component["parameters"].keys():
                     for optm in component["parameters"]["optimizer"]:
                         mod_optm = __import__(name=optm["from"], fromlist=[optm["name"]])
@@ -59,6 +63,7 @@ def create_pipeline_from_config(config):
 
                 if "order" in component['parameters'].keys():
                     params['order'] = component['parameters']['order']
+
 
             else:
                 params = {}

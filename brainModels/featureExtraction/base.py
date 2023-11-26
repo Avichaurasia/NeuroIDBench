@@ -37,7 +37,7 @@ class Basepipeline(metaclass=ABCMeta):
         """
         pass
 
-    def get_data(self, dataset, paradigm, subjects=None, return_epochs=False):
+    def get_data(self, dataset, subjects_dict, subjects=None, return_epochs=False):
         """
         Retrieve EEG features and data for a specific dataset and paradigm.
 
@@ -57,8 +57,8 @@ class Basepipeline(metaclass=ABCMeta):
             raise AssertionError(message)
         
         # Get the pre-processed data for the dataset
-        X, subjects_dict , metadata = paradigm.get_data(
-                dataset, return_epochs)
+        #X, subjects_dict , metadata = paradigm.get_data(
+         #       dataset, return_epochs)
         data=self._get_features(subjects_dict, dataset)
         return data
  

@@ -85,7 +85,7 @@ class AutoRegressive(Basepipeline):
                             continue
                     epochs_data = epochs.get_data()   
                     for i in range(len(epochs_data)):
-                        dictemp = {'Subject': subject, "session": session, 'Event_id': list(epochs[i].event_id.values())[0]}
+                        dictemp = {'subject': subject, "session": session, 'Event_id': list(epochs[i].event_id.values())[0]}
                         for j in range(len(epochs_data[i])):
                             rho, _ = sm.regression.yule_walker(epochs_data[i][j], order=self.order, method="mle")
                             first = epochs.ch_names[j]
@@ -191,7 +191,7 @@ class PowerSpectralDensity(Basepipeline):
         for result, subject, session, epochs in results:
             psds, freqs = result
             for i in range(len(psds)):
-                features = {'Subject': subject, 'session': session, 'Event_id': list(epochs[i].event_id.values())[0]}
+                features = {'subject': subject, 'session': session, 'Event_id': list(epochs[i].event_id.values())[0]}
                 for j in range(len(psds[i])):
                     welch_psd=psds[i][j]
                     X=[]

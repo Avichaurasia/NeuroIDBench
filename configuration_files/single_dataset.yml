@@ -11,26 +11,27 @@ dataset:
 
 pipelines:
 
-  "AR+PSD+SVM": 
-    - name: AutoRegressive
-      from: brainModels.pipelines
-      parameters: 
-        order: 6
+  # "AR+PSD+SVM": 
+  #   - name: AutoRegressive
+  #     from: brainModels.pipelines
+  #     parameters: 
+  #       order: 6
         
-    - name: PowerSpectralDensity
-      from: brainModels.pipelines
+  #   - name: PowerSpectralDensity
+  #     from: brainModels.pipelines
         
-    - name: SVC
-      from: sklearn.svm
-      parameters: 
-        kernel: 'rbf'
-        class_weight: "balanced"
-        probability: True
+  #   - name: SVC
+  #     from: sklearn.svm
+  #     parameters: 
+  #       kernel: 'rbf'
+  #       class_weight: "balanced"
+  #       probability: True
 
   "Siamese": 
     - name : Siamese
       from: brainModels.pipelines
       parameters: 
+        user_siamese_path: "configuration_files/siamese.yml"
         EPOCHS: 10
         batch_size: 256
         verbose: 1
