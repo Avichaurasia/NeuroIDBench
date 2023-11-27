@@ -17,19 +17,19 @@ import pandas as pd
 from sklearn.preprocessing import LabelEncoder
 from tqdm import tqdm
 from sklearn.preprocessing import StandardScaler, MinMaxScaler
-from brainmodels.evaluations.base import BaseEvaluation
+from .base import BaseEvaluation
 from sklearn import metrics
 from sklearn.metrics import accuracy_score
 import random
 from scipy.interpolate import interp1d
-from brainmodels.evaluations import metrics as score
+from .metrics import Scores as score
 from collections import OrderedDict
 from sklearn.utils import shuffle
 import mne
 import tensorflow as tf
 import pickle
 import importlib
-from brainmodels.evaluations.similarity import CalculateSimilarity
+from .similarity import CalculateSimilarity
 
 log = logging.getLogger(__name__)
 
@@ -115,7 +115,7 @@ class SingleSessionCloseSet(BaseEvaluation):
             count_cv=count_cv+1
         return (dicr1, dicr2, dicr3)
 
-    def deep_learning_method(self, dataset, X, metadata, key, features):
+    def deep_learning_method(self, X, dataset, metadata, key, features):
 
         """
         Perform authentication for single-session evaluation using Siamese networks.
@@ -334,21 +334,21 @@ class SingleSessionCloseSet(BaseEvaluation):
         """ 
         results_close_set=[]
         data=self._prepare_data(dataset, features, subject_dict)
-        for subject in tqdm(np.unique(data.Subject), desc=f"{key}-SingleSessionCloseSet"):
+        for subject in tqdm(np.unique(data.subject), desc=f"{key}-SingleSessionCloseSet"):
             df_subj=data.copy(deep=True)
 
             # Assign label 0 to all subjects
             df_subj['Label']=0
 
             # Updating the label to 1 for the subject being authenticated
-            df_subj.loc[df_subj['Subject'] == subject, 'Label'] = 1
+            df_subj.loc[df_subj['subject'] == subject, 'Label'] = 1
             for session in np.unique(df_subj.session):
                 df_session= df_subj[df_subj.session==session]
                 labels=np.array(df_session['Label'])
-                X=np.array(df_session.drop(['Label','Event_id','Subject','session'],axis=1))
+                X=np.array(df_session.drop(['Label','Event_id','subject','session'],axis=1))
 
-                if not self._valid_subject(df_session, subject, session):
-                    continue
+                # if not self._valid_subject_samples(df_session):
+                #     continue
                 
                 close_set_scores=self._authenticate_single_subject_close_set(X,labels, features)
                 mean_accuracy, mean_auc, mean_eer, mean_tpr, tprs_upper, tprr_lower, std_auc, mean_frr_1_far=close_set_scores
@@ -368,11 +368,13 @@ class SingleSessionCloseSet(BaseEvaluation):
                 "tprs_upper": tprs_upper,
                 "tprs_lower": tprr_lower,
                 "std_auc": std_auc,
-                    "n_samples": len(df_subj)
+                "n_samples": len(df_subj)
                 #"n_samples": len(data)  # not training sample
                 #"n_channels": data.columns.size
                     }
                 results_close_set.append(res_close_set)
+    
+        return results_close_set
 
     def _evaluate(self, dataset, pipelines):
 
@@ -396,7 +398,8 @@ class SingleSessionCloseSet(BaseEvaluation):
         results_pipeline=[]
         for key, features in pipelines.items():   
             if (key.upper()=='SIAMESE'):
-
+                
+                #print("Avinash")
                 # If the key is Siamese, then we use the deep learning method
                 results=self.deep_learning_method(X, dataset, metadata, key, features)
                 results_pipeline.append(results) 

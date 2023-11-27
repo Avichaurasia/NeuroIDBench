@@ -86,13 +86,13 @@ name: "BrainInvaders2015a"
 
 dataset: 
   - name: BrainInvaders2015a
-    from: brainModels.datasets
+    from: datasets
 
 pipelines:
 
   "AR+PSD+SVM": 
     - name: AutoRegressive
-      from: brainModels.pipelines
+      from: featureExtraction
 
     - name: SVC
       from: sklearn.svm
@@ -114,7 +114,7 @@ name: "BrainInvaders2015a"
 
 dataset: 
   - name: BrainInvaders2015a
-    from: brainModels.datasets
+    from: datasets
     parameters:
         subjects: 10
         interval: [-0.1, 0.9] 
@@ -124,7 +124,7 @@ dataset:
 
   "AR+SVM":
     - name: AutoRegressive 
-      from: brainModels.pipelines 
+      from: featureExtraction 
       parameters:
         order: 5
 
@@ -148,7 +148,7 @@ name: "BrainInvaders2015a"
 
 dataset: 
   - name: BrainInvaders2015a
-    from: brainModels.datasets
+    from: datasets
     parameters:
         subjects: 10
         interval: [-0.1, 0.9] 
@@ -159,12 +159,12 @@ dataset:
   
   "AR+SVM":
     - name: AutoRegressive 
-      from: brainModels.pipelines 
+      from: featureExtraction
       parameters:
         order: 5
 
     - name: PowerSpectralDensity 
-      from: brainModels.pipelines
+      from: featureExtraction
 
     - name: SVC
       from: sklearn.svm 
@@ -185,7 +185,7 @@ name: "BrainInvaders2015a"
 
 dataset: 
   - name: BrainInvaders2015a
-    from: brainModels.datasets
+    from: datasets
     parameters:
         subjects: 10
         interval: [-0.1, 0.9] 
@@ -195,7 +195,7 @@ dataset:
 
   "Siamese":
     - name : Siamese
-    from: brainModels.pipelines 
+    from: featureExtraction
     parameters:
         EPOCHS: 10 
         batch_size: 256 
@@ -215,7 +215,7 @@ name: "BrainInvaders2015a"
 
 dataset: 
   - name: BrainInvaders2015a
-    from: brainModels.datasets
+    from: datasets
     parameters:
         subjects: 10
         interval: [-0.1, 0.9] 
@@ -225,12 +225,12 @@ dataset:
 
    "AR+SVM":
     - name: AutoRegressive 
-      from: brainModels.pipelines 
+      from: featureExtraction 
       parameters:
         order: 5
 
     - name: PowerSpectralDensity 
-      from: brainModels.pipelines
+      from: featureExtraction
 
     - name: SVC
       from: sklearn.svm 
@@ -241,7 +241,7 @@ dataset:
 
    "Siamese":
     - name : Siamese
-    from: brainModels.pipelines 
+    from: featureExtraction
     parameters:
         EPOCHS: 10 
         batch_size: 256 
@@ -272,26 +272,26 @@ we provide statistical and visualization tools to streamline the process.
 This module offers abstract access to open datasets. It entails downloading open datasets from the internet and 
 providing effective data management.
 
-## Paradigm: 
+## PreProcesing: 
 
 The purpose of this module is to conduct pre-processing on the unprocessed EEG data. 
 Datasets exhibit distinct characteristics based on ERP paradigms such as P300 and N400. Nevertheless, both conditions 
 elicit ERP responses after the individual’s exposure to unexpected stimuli. Consequently, the datasets for the P300 
 and N400 paradigms undergo pre-processing using identical parameters.
 
-## Pipeline: 
+## FeatureExtraction: 
 
 This module extracts features from data that has been pre-processed. These characteristics are extracted in the time 
 domain using Auto Regressive Coeffecients and in the frequency domain using Power Spectral Density. Furthermore, this module
 also provides Siamese Network Architecture.  
 
-## Evaluation: 
+## Evaluations: 
 
 Evaluation defines the different authentication strategy which involves within-session(single session recordings) evalaution 
 and cross-session (multi-session recordings) evalaution under both close-set and open-set attack scenarios. 
 Results for within-session and cross-session are presented with metrics like EER, AUC, FRR at 1% FAR.
 
-## Results and Visualization
+## Analysis
 
 Once an evaluation has been run, the raw results are returned as a DataFrame. The results such as ROC-Curve or EER can be 
 visualized by calling functions from this module. 
@@ -308,17 +308,17 @@ Following steps needs to be followed to add new EEG data.
     can be found at https://mne.tools/stable/auto_tutorials/io/index.html. 
 
 2. Once the raw EEG data is converted into mne. Save the state of MNE object into .fif format. 
-    The mne data should be saved in hierarchy of folders like "sujectID"--> "Sesssion number" --> EEG_data.fif.
+    The mne data should be saved in hierarchy of folders like "sujectID"--> "Sesssion number" --> "Run number" --> EEG_data.fif.
     For example: Assume an EEG dataset comprises of 2 subjects. Each subject has performed EEG task across 2 sessions
     and each session contains two runs. Then the mne data should be saved in the following ways: 
 
     <b>Subject 1</b>: 
-    "Subject_1" --> "Session_1" --> EEG_data.fif, 
+    "Subject_1" --> "Session_1" --> "Run_1" --> EEG_data.fif, 
     "Subject_1" --> "Session_2" --> EEG_data.fif 
 
     <b>Subject</b>:
-    "Subject_2" --> "Session_1" --> EEG_data.fif, 
-    "Subject_2" --> "Session_2" --> EEG_data.fif 
+    "Subject_2" --> "Session_1" --> "Run_1" --> EEG_data.fif, 
+    "Subject_2" --> "Session_2" --> "Run_1" --> EEG_data.fif 
 
 3. Edit the single_dataset.yml with the below configurations:
 
@@ -329,20 +329,20 @@ name: "User"
 
 dataset: 
   - name: UserDataset
-    from: brainModels.datasets
+    from: datasets
     parameters: 
-      dataset_path: '/Users/avinashkumarchaurasia/mne_data/Matin/dataset'
+      dataset_path: '/Users/avinashkumarchaurasia/mne_data/New_data/dataset'
     
 pipelines:
 
   "AR+PSD+SVM": 
     - name: AutoRegressive
-      from: brainModels.pipelines
+      from: featureExtraction
       parameters: 
         order: 6
         
     - name: PowerSpectralDensity
-      from: brainModels.pipelines
+      from: featureExtraction
         
     - name: SVC
       from: sklearn.svm
@@ -353,7 +353,7 @@ pipelines:
 
   "Siamese": 
     - name : Siamese
-      from: brainModels.pipelines
+      from: featureExtraction
       parameters: 
         EPOCHS: 10
         batch_size: 256
@@ -363,12 +363,12 @@ pipelines:
   
   "AR+PSD+RF": 
   - name: AutoRegressive
-    from: brainModels.pipelines
+    from: featureExtraction
     parameters: 
       order: 6
     
   - name: PowerSpectralDensity
-    from: brainModels.pipelines
+    from: featureExtraction
       
   - name: RandomForestClassifier
   
@@ -382,6 +382,111 @@ and create a dataset instance. Afterwards, the pipeline consisiting of tradition
 deep learning method like Siamese Neural Networks is made.  
 
 4. Launch the python file run.py from terminal which has a main method and internally calls the automation script for benchmark.py 
+
+
+# How to integrate researchers customized siamese neural network into the tool?
+
+Reserachers can also evaluate their own approach of Siamese Neural Network(SNN). This benchmarking tool
+faciliates the reserachers to write their own customized SNN method in a python file, store it locally
+on the machine. This tool imports the researcher method during the run time and trains and test the EEG
+data with their SNN method. Following are some of the steps that need to be followed in order to integrate 
+reserachers method.
+
+1.  Create python file, imports all the necessary tensorflow packages, and then write a function which
+    accepts two parameters. First parameter is "number of channels in EEG data" and second is 
+    "time points". The function should be names "_siamese_embeddings" and returns the model which converts the
+    high dimensional EEG data into compact brain embeddings. 
+    Below is an example of siamese function that can be written in a .py file. 
+
+```bash
+import tensorflow as tf
+from keras import backend as K
+from keras.constraints import max_norm
+from keras.layers import (
+    Input, Dense, Activation, Lambda, Reshape, BatchNormalization,
+  LeakyReLU, Flatten, Dropout, Add,
+  MaxPooling1D, Conv2D, MaxPooling2D, GlobalAveragePooling2D, AveragePooling2D)
+from keras.models import Sequential, Model, load_model, save_model
+from keras.callbacks import LearningRateScheduler
+from keras.optimizers import Adam
+import tensorflow_addons as tfa
+import tensorflow_addons as tfa
+from tensorflow_addons.losses import TripletSemiHardLoss
+  
+# # Make a function for siamese network embeddings with triplet loss function
+def _siamese_embeddings(no_channels, time_steps):
+
+  activef="selu"
+  chn=no_channels
+  sn=time_steps
+
+  input = tf.keras.layers.Input((chn, sn, 1))
+  x = tf.keras.layers.AveragePooling2D(pool_size=(1, 2))(input)
+  x = tf.keras.layers.Conv2D(128, (1, 15), activation=activef, kernel_initializer='lecun_normal')(input)
+  x = tf.keras.layers.AveragePooling2D(pool_size=(1, 2))(x)
+  x = tf.keras.layers.Dropout(0.3)(x)
+  #x = keras.layers.MaxPooling2D(pool_size=(1, 4))(x)
+  x = tf.keras.layers.Conv2D(32, (1, 15), activation=activef, kernel_initializer='lecun_normal')(x)
+  x = tf.keras.layers.AveragePooling2D(pool_size=(1, 2))(x)
+  x = tf.keras.layers.Dropout(0.3)(x)
+  #x = keras.layers.AveragePooling2D(pool_size=(1, 5))(x)
+  x = tf.keras.layers.Conv2D(16, (1, 15), activation=activef, kernel_initializer='lecun_normal')(x)
+  x = tf.keras.layers.AveragePooling2D(pool_size=(1,2))(x)
+  x = tf.keras.layers.Dropout(0.3)(x)
+  x = tf.keras.layers.Conv2D(8, (1, 15), activation=activef, kernel_initializer='lecun_normal')(x)
+  x = tf.keras.layers.AveragePooling2D(pool_size=(1,2))(x)
+  x = tf.keras.layers.Dropout(0.3)(x)
+  x = tf.keras.layers.Conv2D(4, (1, 15), activation=activef, kernel_initializer='lecun_normal')(x)
+  x = tf.keras.layers.AveragePooling2D(pool_size=(1,2))(x)
+  x = tf.keras.layers.Dropout(0.3)(x)
+  x = tf.keras.layers.Flatten()(x)
+  x = tf.keras. layers.Dense(32, activation=None, kernel_initializer='lecun_normal')(x)
+  embedding_network = tf.keras.Model(input, x, name="Embedding")
+  embedding_network.compile(
+  optimizer=tf.keras.optimizers.Adam(),
+  loss=tfa.losses.TripletSemiHardLoss(margin=1.0))
+  embedding_network.summary()
+  return embedding_network
+  
+```
+
+This function is written inside a .py named "siamese_method.py" and stored locally anywhere on the machine.
+
+2. Edit the single_dataset.yml with the below configurations:
+
+Benchamrking pipeline for User i.e., Reseracher's own customized method for Siamese Neural Network
+
+```bash
+name: "ERPCORE400"
+
+dataset: 
+  - name: ERPCOREN400
+    from: datasets
+    parameters: 
+      subjects: 10
+      interval: [-0.1, 0.9]
+      rejection_threshold: 200
+
+
+pipelines:
+
+  "Siamese": 
+    - name : Siamese
+      from:  featureExtraction
+      parameters: 
+        user_siamese_path: "/scratch/hpc-prf-bbam/avinashk/mne_data/User_method/siamese_method.py"
+        EPOCHS: 10
+        batch_size: 256
+        verbose: 1
+        workers: 1
+```
+
+In the above configuration, user_siamese_path is the path to python file containing the customized Siamse method.
+This benchmarking pipeline performs benchmarking on EEG data of ERPCOREN400 with the researchers customized 
+Siamese method. If the reseracher has its own EEG data, then they can follow the instructions mentioned in the above section
+to add new EEG data and then can evaulate their EEG data on their own Siamese method.
+
+4. Launch the python file run.py from terminal which has a main method and internally calls the automation script benchmark.py.
 
 
 

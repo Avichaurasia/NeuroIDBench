@@ -8,17 +8,17 @@ import pandas as pd
 #from brainmodels.paradigms.base_old import BaseParadigm
 #from deeb.paradigms.erp import N400
 #from brainmodels.paradigms.n400 import N400
-from brainmodels.preprocessing.erp import ERP
-from brainmodels.datasets.brainInvaders15a import BrainInvaders2015a
-from brainmodels.datasets.mantegna2019 import Mantegna2019
+from brainModels.preprocessing.erp import ERP
+from brainModels.datasets.brainInvaders15a import BrainInvaders2015a
+from brainModels.datasets.mantegna2019 import Mantegna2019
 #from brainmodels.datasets.draschkow2018 import Draschkow2018
-from brainmodels.datasets.won2022 import Won2022
-from brainmodels.featureExtraction.features import AutoRegressive as AR
-from brainmodels.featureExtraction.features import PowerSpectralDensity as PSD
+from brainModels.datasets.won2022 import Won2022
+from brainModels.featureExtraction.features import AutoRegressive as AR
+from brainModels.featureExtraction.features import PowerSpectralDensity as PSD
 #from deeb.pipelines.siamese_old import Siamese
-from brainmodels.featureExtraction.base import Basepipeline
+from brainModels.featureExtraction.base import Basepipeline
 #from deeb.evaluation.evaluation import CloseSetEvaluation, OpenSetEvaluation
-from brainmodels.datasets import utils
+from brainModels.datasets import utils
 from autoreject import AutoReject, get_rejection_threshold
 from sklearn.pipeline import make_pipeline
 from sklearn.preprocessing import StandardScaler 
@@ -26,7 +26,7 @@ from sklearn.discriminant_analysis import LinearDiscriminantAnalysis as LDA
 from sklearn.naive_bayes import GaussianNB
 from sklearn.svm import SVC
 #from deeb.pipelines.siamese import Siamese
-from brainmodels.datasets.erpCoreN400 import ERPCOREN400
+from brainModels.datasets.erpCoreN400 import ERPCOREN400
 
 def _evaluate():
     # Intializing the datasets 

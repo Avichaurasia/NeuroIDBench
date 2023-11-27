@@ -99,8 +99,11 @@ class Results():
             fname="results_"+scenario+".json"
             with open(os.path.join(results_path, fname), 'r') as f:
                 results_list = json.load(f) 
-            df_results_close_set=pd.DataFrame(results_list)
+
+            flattened_data = [item for sublist in results_list for item in sublist]
+            df_results_close_set=pd.DataFrame(flattened_data)
             df_results = df_results_close_set
+            #print(df_results)
         return df_results
 
 

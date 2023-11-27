@@ -4,8 +4,9 @@ Utils for easy database selection
 
 import inspect
 
-import brainmodels.datasets as db
+import datasets as db
 from .base import BaseDataset
+
 
 
 dataset_list = []

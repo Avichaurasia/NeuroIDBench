@@ -2,9 +2,9 @@ import logging
 from abc import ABC, abstractmethod
 import os
 from sklearn.base import BaseEstimator
-from brainmodels.datasets.base import BaseDataset
-from brainmodels.preprocessing.base import BaseParadigm
-from brainmodels.analysis.results import Results
+from datasets import BaseDataset
+from preprocessing import BaseParadigm
+from analysis import Results
 import pandas as pd
 import numpy as np
 
@@ -142,7 +142,7 @@ class BaseEvaluation(ABC):
         for dataset in self.datasets:
             dataframe=pd.DataFrame()
             log.info("Processing dataset: {}".format(dataset.code))
-            results, results_path, scenario= self.evaluate(dataset, pipelines, param_grid)
+            results, results_path, scenario= self.evaluate(dataset, pipelines)
             get_results=self.results._add_results(results, results_path, scenario)
             dataframe=dataframe.append(get_results, ignore_index=True)
         df_final = pd.concat([df_final, dataframe], ignore_index=True)

@@ -1,4 +1,4 @@
-from brainModels.Evaluation.base import BaseEvaluation
+from evaluations import BaseEvaluation
 from brainModels.analysis.results import Results as res
 import matplotlib.pyplot as plt
 import numpy as np

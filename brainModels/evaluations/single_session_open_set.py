@@ -20,13 +20,13 @@ import pandas as pd
 from sklearn.preprocessing import LabelEncoder
 from tqdm import tqdm
 from sklearn.preprocessing import StandardScaler, MinMaxScaler
-from brainmodels.evaluations.base import BaseEvaluation
+from .base import BaseEvaluation
 from sklearn import metrics
 from sklearn.metrics import accuracy_score
 import random
 #from scipy.optimize import brentq
 from scipy.interpolate import interp1d
-from brainmodels.evaluations import score
+from .metrics import Scores as score
 from collections import OrderedDict
 from sklearn.utils import shuffle
 #from sklearn.mo
@@ -34,7 +34,7 @@ import mne
 import tensorflow as tf
 import pickle
 import importlib
-from brainmodels.evaluations.similarity import CalculateSimilarity
+from .similarity import CalculateSimilarity
 
 log = logging.getLogger(__name__)
 
@@ -112,7 +112,7 @@ class SingleSessionOpenSet(BaseEvaluation):
             else:
 
                 # If the user siamese path is provided, then we utilize the user siamese network
-                model=siamese._user_siamese_embeddings(x_train.shape[1], x_train.shape[2])  
+                model=siamese._user_embeddings(x_train.shape[1], x_train.shape[2])  
             embedding_network=model
             #early_stopping_callback = EarlyStopping(monitor='val_loss', patience=10)
             train_dataset = tf.data.Dataset.from_tensor_slices((x_train, y_train)).shuffle(1000).batch(siamese.batch_size)
@@ -128,7 +128,7 @@ class SingleSessionOpenSet(BaseEvaluation):
             count_cv=count_cv+1
         return (dicr1, dicr2, dicr3)
 
-    def deep_learning_method(self, dataset, X, metadata, key, features):
+    def deep_learning_method(self, X, dataset, metadata, key, features):
 
         """Perform deep learning-based evaluation on provided datasets using Siamese networks.
 
@@ -163,8 +163,6 @@ class SingleSessionOpenSet(BaseEvaluation):
         results_open_set=[]
         for session in np.unique(metadata.session):
             ix = metadata.session == session
-            #for name, clf in pipelines.items():
-                #siamese = clf[0]
             siamese = features[0]
             le = LabelEncoder()
             X_=data[ix]
@@ -189,7 +187,7 @@ class SingleSessionOpenSet(BaseEvaluation):
                 true_lables=np.array(result[:,1])
                 predicted_scores=np.array(result[:,0])
                 inter_tpr, auc, eer, frr_1_far=score._calculate_siamese_scores(true_lables, predicted_scores)
-                res_close_set = {
+                res_open_set = {
                 'evaluation': 'Within Session',
                     "eval Type": "Open Set",
                     "dataset": dataset.code,
@@ -205,7 +203,7 @@ class SingleSessionOpenSet(BaseEvaluation):
                     "n_samples": len(X_)  # not training sample
                     #"n_channels": data.columns.size
                     }
-                results_open_set.append(res_close_set)
+                results_open_set.append(res_open_set)
 
 
         return results_open_set
@@ -263,10 +261,10 @@ class SingleSessionOpenSet(BaseEvaluation):
             df_authenticated_test=df_authenticated.drop(df_authenticated_train.index)
 
             authenticated_train_lables=np.array(df_authenticated_train['Label'])
-            authenticated_train_data=np.array(df_authenticated_train.drop(['Label','Event_id','Subject','session'],axis=1))
+            authenticated_train_data=np.array(df_authenticated_train.drop(['Label','Event_id','subject','session'],axis=1))
 
             authenticated_test_lables=np.array(df_authenticated_test['Label'])
-            authenticated_test_data=np.array(df_authenticated_test.drop(['Label','Event_id','Subject','session'],axis=1))
+            authenticated_test_data=np.array(df_authenticated_test.drop(['Label','Event_id','subject','session'],axis=1))
 
             X_train = np.concatenate((X_train, authenticated_train_data))
             y_train = np.concatenate((y_train, authenticated_train_lables))
@@ -301,19 +299,6 @@ class SingleSessionOpenSet(BaseEvaluation):
         average_scores=score._calculate_average_scores(accuracy_list, tpr_list, eer_list, mean_fpr, auc_list, frr_1_far_list)
         return average_scores
      
-    # def _open_set(self, df_session, pipeline, subject):
-    #     df_authenticated=df_session[df_session['Subject']==subject]
-
-    #     # getting the dataframe for rejected subjects
-    #     df_imposters=df_session.drop(df_authenticated.index)
-
-    #     # getting the subject IDs of the rejected subjects
-    #     imposter_subject_ids = df_imposters.Subject.values
-
-    #     imposters_labels=np.array(df_imposters['Label'])
-    #     imposters_X=np.array(df_imposters.drop(['Label','Event_id','Subject','session'],axis=1))
-    #     return self._authenticate_single_subject_open_set(imposters_X, imposters_labels, imposter_subject_ids, df_authenticated, pipeline)
-
    
     def _prepare_data(self, dataset, features, subject_dict):
         """Prepares and combines data from various features for the given dataset.
@@ -378,9 +363,9 @@ class SingleSessionOpenSet(BaseEvaluation):
         and features. Evaluation metrics are collected and returned in a list of dictionaries, containing detailed results 
         for each subject's session.
         """
-        results_close_set=[]
+        results_open_set=[]
         data=self._prepare_data(dataset, features, subject_dict)
-        for subject in tqdm(np.unique(data.Subject), desc=f"{key}-SingleSessionOpenSet"):
+        for subject in tqdm(np.unique(data.subject), desc=f"{key}-SingleSessionOpenSet"):
             df_subj=data.copy(deep=True)
 
             # Assign label 0 to all subjects
@@ -396,13 +381,13 @@ class SingleSessionOpenSet(BaseEvaluation):
                 df_imposters=df_session.drop(df_authenticated.index)
 
                 # getting the subject IDs of the rejected subjects
-                imposter_subject_ids = df_imposters.Subject.values
+                imposter_subject_ids = df_imposters.subject.values
 
                 imposters_labels=np.array(df_imposters['Label'])
                 imposters_X=np.array(df_imposters.drop(['Label','Event_id','subject','session'],axis=1))
 
-                if not self._valid_subject(df_session, subject, session):
-                    continue
+                # if not self._valid_subject(df_session, subject, session):
+                #     continue
                 
                 close_set_scores=self._authenticate_single_subject_open_set(imposters_X, imposters_labels, imposter_subject_ids, df_authenticated, features)
                 mean_accuracy, mean_auc, mean_eer, mean_tpr, tprs_upper, tprr_lower, std_auc, mean_frr_1_far=close_set_scores
@@ -426,7 +411,9 @@ class SingleSessionOpenSet(BaseEvaluation):
                 #"n_samples": len(data)  # not training sample
                 #"n_channels": data.columns.size
                     }
-                results_close_set.append(res_open_set)
+                results_open_set.append(res_open_set)
+    
+        return results_open_set
 
     def _evaluate(self, dataset, pipelines):
 

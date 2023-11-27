@@ -5,7 +5,7 @@ import mne
 import numpy as np
 import pandas as pd
 from .base import BaseParadigm
-from ..datasets import utils
+from datasets import utils
 
 log = logging.getLogger(__name__)
 

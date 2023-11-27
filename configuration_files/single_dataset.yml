@@ -1,8 +1,8 @@
 name: "UserDataset"
 
 dataset: 
-  - name: COGBCIFLANKER
-    from: brainModels.datasets
+  - name: ERPCOREN400
+    from: datasets
     parameters: 
       subjects: 10
       interval: [-0.1, 0.9]
@@ -29,9 +29,9 @@ pipelines:
 
   "Siamese": 
     - name : Siamese
-      from: brainModels.pipelines
+      from: featureExtraction
       parameters: 
-        user_siamese_path: "configuration_files/siamese.yml"
+        #user_siamese_path: "configuration_files/siamese.yml"
         EPOCHS: 10
         batch_size: 256
         verbose: 1
@@ -40,12 +40,12 @@ pipelines:
   
   "AR+PSD+RF": 
   - name: AutoRegressive
-    from: brainModels.pipelines
+    from: featureExtraction
     parameters: 
       order: 6
     
   - name: PowerSpectralDensity
-    from: brainModels.pipelines
+    from: featureExtraction
       
   - name: RandomForestClassifier
     from: sklearn.ensemble

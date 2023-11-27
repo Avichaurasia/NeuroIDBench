@@ -6,5 +6,5 @@ processed by a decoding algorithm. This is a function of the paradigm used
 # from deeb.paradigms.p300 import P300
 # from deeb.paradigms.n400 import N400
 from .base import BaseParadigm
-from brainmodels.preprocessing.erp import ERP
+from .erp import ERP
 #from deeb.paradigms.n400 import N400

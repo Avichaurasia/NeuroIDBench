@@ -9,8 +9,8 @@ import numpy as np
 import yaml
 from mne.channels import make_standard_montage
 from scipy.io import loadmat
-from brainmodels.datasets import download as dl
-from brainmodels.datasets.base import BaseDataset
+from . import download as dl
+from .base import BaseDataset
 from mne.io import read_raw_eeglab, read_raw
 import sys
 from mne.channels import read_dig_polhemus_isotrak, read_custom_montage
