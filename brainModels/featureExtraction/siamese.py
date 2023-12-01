@@ -144,8 +144,8 @@ class Siamese():
         Siamese embeddings based on the provided data parameters (no_channels and time_steps).
 
         Example:
-            Suppose there exists a user-defined Siamese function '_siamese_function' within the specified .py file path. 
-            Calling '_user_embeddings(10, 100)' will import the '_normal_function' from the given path and generate Siamese 
+            Suppose there exists a user-defined Siamese function '_siamese_embeddings' within the specified .py file path. 
+            Calling '_user_embeddings(10, 100)' will import the '_siamese_embeddings' from the given path and generate Siamese 
             embeddings using this function based on the data parameters: no_channels=10 and time_steps=100.
 
         """
@@ -153,7 +153,7 @@ class Siamese():
         module_path=self.user_siamese_path
 
         # Specify the name of the function you want to import
-        function_name = '_siamese_function'
+        function_name = '_siamese_embeddings'
 
         # Create a module spec
         spec = importlib.util.spec_from_file_location("custom_module", module_path)
