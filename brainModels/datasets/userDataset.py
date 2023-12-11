@@ -11,6 +11,8 @@ import numpy as np
 import yaml
 from . import download as dl
 from .base import BaseDataset
+import logging
+log = logging.getLogger(__name__)
 
 class USERDATASET(BaseDataset): 
     def __init__(self):
@@ -40,7 +42,18 @@ class USERDATASET(BaseDataset):
                 for eeg_data in os.listdir(run_dir):
                     raw_data_path=Path(os.path.join(run_dir, eeg_data))
                     raw=mne.io.read_raw_fif(raw_data_path, preload = True, verbose=False)
-                    events = mne.find_events(raw, shortest_event=0, verbose=False)
+
+                    # find the events, first check stim_channels then annotations
+                    stim_channels = mne.utils._get_stim_channel(None, raw.info, raise_error=False)
+                    if len(stim_channels) > 0:
+                        events = mne.find_events(raw, shortest_event=0, verbose=False)
+                    else:
+                        try:
+                            events, _ = mne.events_from_annotations(raw, verbose=False)
+                        except ValueError:
+                            log.warning(f"No matching annotations in {raw.filenames}")
+                            return
+                    #events = mne.find_events(raw, shortest_event=0, verbose=False)
                     sessions[session][run]=raw, events
         return sessions
          

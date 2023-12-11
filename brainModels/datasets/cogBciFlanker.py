@@ -78,6 +78,7 @@ class COGBCIFLANKER(BaseDataset):
             )
     def _get_single_subject_data(self, subject):
         """return data for a single subject"""
+        
         file_path_list = self.data_path(subject)
         sessions = {}
         for file_path, session in zip(file_path_list, [1, 2, 3]):

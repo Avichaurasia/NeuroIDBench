@@ -2,6 +2,9 @@ from tqdm import tqdm
 import numpy as np
 import tensorflow as tf
 from collections import defaultdict
+from sklearn.model_selection import (
+    LeaveOneGroupOut,
+)
 
 class CalculateSimilarity():
 
@@ -159,17 +162,120 @@ class CalculateSimilarity():
                     else:
                         TN+=1
         return resutls,resutls2,resutls3
-                
-    def euclidean_distance2(self, x, y):
+    
+
+    def _multi_session_open_set_verification(embedding_network, test_eeg_data, test_subjects, sessions):
+
         """
-        Computes the Euclidean distance between two vectors x and y.
+        Performs multi-session open-set verification using EEG data.
 
         Parameters:
-        - x (numpy.ndarray): Input vector x.
-        - y (numpy.ndarray): Input vector y.
+            - embedding_network (function): Siamese network to generate embeddings.
+            - test_eeg_data (numpy.ndarray): Test data for EEG embeddings.
+            - test_subjects (numpy.ndarray): Labels for test data subjects.
+            - sessions (numpy.ndarray): Session numbers for the test data.
 
         Returns:
-        - distance (float): Euclidean distance between vectors x and y.
+        - resutls3 (defaultdict(list)): A dictionary containing similarity values and labels for pairs of brain samples across multiple sessions.
+            Keys represent subject IDs, and each value is a list of results for that particular subject across different sessions.
+            Each result entry consists of:
+                - Similarity score
+                - Label (1.0 for same subject, 0.0 for different subjects)
+                - Subject ID
+                - Current session number
+                - Session(s) being compared
         """
-        sum_square = tf.math.reduce_sum(tf.math.square(x - y), axis=None, keepdims=True)
-        return tf.math.sqrt(tf.math.maximum(sum_square, tf.keras.backend.epsilon()))
+        resutls3=defaultdict(list)
+
+        # Intiliase the leave one group out cross validation
+        lkfold=LeaveOneGroupOut()
+
+        # Grouped done based on sessions. So testing data consists of single session to be test and training data 
+        # consists data from the remaning sessions. 
+        for train_index, test_index in lkfold.split(test_eeg_data, test_subjects, groups=sessions):
+            X_train, X_test = test_eeg_data[train_index], test_eeg_data[test_index]
+            y_train, y_test = test_subjects[train_index], test_subjects[test_index]
+            train_session, test_session=sessions[train_index], sessions[test_index]
+
+            # Getting the embeddings for all the subjects ptresent in the current session to be tested
+            test_embeddings=embedding_network(X_test)
+
+            # Iterate over all brain samples in testing session. It has single session data
+            for i in tqdm(range(len(X_test)), desc="Calculating similarity in multi-session(Open Set)"):
+
+                # Iterate over the sessions in the training data. It can have single session or multi-session
+                # data
+                for sess in np.unique(train_session):
+                    
+                    # Finding the indicces of the session need to be compared with the test samples in the 
+                    # current session
+                    session_indices=np.where(train_session==sess)[0]
+
+                    # Get the subjects data from the session need to be compared with the test samples in the 
+                    # current session
+                    session_subjects=y_train[session_indices]
+
+                    # Get the embeddings of all the subjects from the session need to be compared with 
+                    # the test samples in the current session
+                    session_embeddings=embedding_network(X_train[session_indices])
+
+                    # Intilaise the list to store the similarity score between test sample(anchor sample) with 
+                    # brain samples from the subject's brain samples from the session to be compared
+                    prediction=[]
+
+                    # Iterate over all the brain samples present in the session to be tested
+                    for j in range(len(session_embeddings)):
+
+                        # Getting the similarity between the test sample from the current session with 
+                        # the brain sample from the session to be compared
+                        similarity_scores=-1*euclidean_distance2(session_embeddings[j], test_embeddings[i]).numpy()[0]
+
+                        # Store the similarity score in the list
+                        prediction.append(similarity_scores)
+                    
+                    # Convert the predictions list which contains the similarity score into numpy array
+                    prediction=np.array(prediction)
+
+                    # Iterate over all the subjects in th session to be compared
+                    for sub in np.unique(session_subjects):
+
+                        # Get the similairity score of the subject in the session to be compared
+                        indices=np.where(session_subjects==sub)[0]
+
+                        # get the maximum similarity of that subject
+                        spredict=max(prediction[indices])
+                        
+
+                        # Check if the subject is same in the current session and the session to be compared
+                        if(y_test[i]==sub):
+
+                            # If yes, then store similairy score, label 1 , subject ID, Current session number
+                            # and session to be compared
+                            resutls3[sub].append([spredict,1.0,y_test[i],sub, np.unique(test_session),sess])
+                            #print("same subject", spredict, np.unique(test_session), sess)
+
+                        else:
+
+                            # If No, then store similairy score, label 0 , subject ID, Current session number
+                            # and session to be compared. This is for the different subjects or 
+                            # unmatching subjects
+                            resutls3[sub].append([spredict,0.0,y_test[i],sub, test_session[0],sess])
+
+        # Return the results in the dictionary results3 which contains the results of all the subjects
+        # in the form of dictionary which keys representing subject Id and the value of that corrosponding 
+        # contains the list of results for that particular subjects in all the sessions
+        return resutls3     
+                
+def euclidean_distance2(self, x, y):
+    """
+    Computes the Euclidean distance between two vectors x and y.
+
+    Parameters:
+    - x (numpy.ndarray): Input vector x.
+    - y (numpy.ndarray): Input vector y.
+
+    Returns:
+    - distance (float): Euclidean distance between vectors x and y.
+    """
+    sum_square = tf.math.reduce_sum(tf.math.square(x - y), axis=None, keepdims=True)
+    return tf.math.sqrt(tf.math.maximum(sum_square, tf.keras.backend.epsilon()))
