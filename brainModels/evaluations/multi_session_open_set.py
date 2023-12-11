@@ -42,7 +42,7 @@ Vector = Union[list, tuple, np.ndarray]
 
 #########################################################################################################################################################
 ##########################################################################################################################################################
-                                                    #Close-set Scenario
+                                                    #Open-set Scenario
 ##########################################################################################################################################################
 ##########################################################################################################################################################
 
@@ -90,10 +90,10 @@ class MultiSessionOpenSet(BaseEvaluation):
         This method performs Open-Set Authentication using EEG-based data and Siamese networks. It utilizes GroupKFold
         cross-validation with 4 splits for training and evaluation. The function trains the Siamese network using the
         provided data, validates the model on test data, and collects results for each fold. The results are stored in
-        dictionaries 'dicr1', 'dicr2', and 'dicr3', which contain evaluation metrics for each fold of the cross-validation.
+        dictionaries 'dicr3', which contain evaluation metrics for each fold of the cross-validation.
         Metrics include verification results like ROC-AUC, EER, and other relevant scores.
         """
-        groupfold = GroupKFold(n_splits=2)
+        groupfold = GroupKFold(n_splits=4)
         count_cv=0
         dicr3={}
         dicr2={}
