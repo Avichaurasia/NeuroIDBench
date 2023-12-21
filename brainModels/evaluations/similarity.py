@@ -8,12 +8,6 @@ from sklearn.model_selection import (
 
 class CalculateSimilarity():
 
-    # def calculate_embeddings(self, data, embedding_network, chunk_size=500):
-    #     embeddings = embedding_network(data[:min(chunk_size, len(data))])
-    #     for i in range(len(data) // chunk_size):
-    #         embeddings = tf.concat(axis=0, values=[embeddings, embedding_network(data[(i + 1) * chunk_size:min((i + 2) * chunk_size, len(data))])])
-    #     return embeddings
-
     # This function has been sourced from https://git.scc.kit.edu/ps-chair/brainnet licensed under the Creative Commons
     def _close_set_identification(self, embedding_network, x_train_val, y_train_val, x_test, y_test):
         """
@@ -164,10 +158,117 @@ class CalculateSimilarity():
         return resutls,resutls2,resutls3
     
 
-    def _multi_session_open_set_verification(embedding_network, test_eeg_data, test_subjects, sessions):
+    # def _multi_session_open_set_verification_old(embedding_network, test_eeg_data, test_subjects, sessions):
+
+    #     """
+    #     Performs multi-session open-set verification using EEG data.
+
+    #     Parameters:
+    #         - embedding_network (function): Siamese network to generate embeddings.
+    #         - test_eeg_data (numpy.ndarray): Test data for EEG embeddings.
+    #         - test_subjects (numpy.ndarray): Labels for test data subjects.
+    #         - sessions (numpy.ndarray): Session numbers for the test data.
+
+    #     Returns:
+    #     - resutls3 (defaultdict(list)): A dictionary containing similarity values and labels for pairs of brain samples across multiple sessions.
+    #         Keys represent subject IDs, and each value is a list of results for that particular subject across different sessions.
+    #         Each result entry consists of:
+    #             - Similarity score
+    #             - Label (1.0 for same subject, 0.0 for different subjects)
+    #             - Subject ID
+    #             - Current session number
+    #             - Session(s) being compared
+    #     """
+    #     resutls3=defaultdict(list)
+
+    #     # Intiliase the leave one group out cross validation
+    #     lkfold=LeaveOneGroupOut()
+
+    #     # Grouped done based on sessions. So testing data consists of single session to be test and training data 
+    #     # consists data from the remaning sessions. 
+    #     for train_index, test_index in lkfold.split(test_eeg_data, test_subjects, groups=sessions):
+    #         X_train, X_test = test_eeg_data[train_index], test_eeg_data[test_index]
+    #         y_train, y_test = test_subjects[train_index], test_subjects[test_index]
+    #         train_session, test_session=sessions[train_index], sessions[test_index]
+
+    #         # Getting the embeddings for all the subjects ptresent in the current session to be tested
+    #         test_embeddings=embedding_network(X_test)
+
+    #         # Iterate over all brain samples in testing session. It has single session data
+    #         for i in tqdm(range(len(X_test)), desc="Calculating similarity in multi-session(Open Set)"):
+
+    #             # Iterate over the sessions in the training data. It can have single session or multi-session
+    #             # data
+    #             for sess in np.unique(train_session):
+                    
+    #                 # Finding the indicces of the session need to be compared with the test samples in the 
+    #                 # current session
+    #                 session_indices=np.where(train_session==sess)[0]
+
+    #                 # Get the subjects data from the session need to be compared with the test samples in the 
+    #                 # current session
+    #                 session_subjects=y_train[session_indices]
+
+    #                 # Get the embeddings of all the subjects from the session need to be compared with 
+    #                 # the test samples in the current session
+    #                 session_embeddings=embedding_network(X_train[session_indices])
+
+    #                 # Intilaise the list to store the similarity score between test sample(anchor sample) with 
+    #                 # brain samples from the subject's brain samples from the session to be compared
+    #                 prediction=[]
+
+    #                 # Iterate over all the brain samples present in the session to be tested
+    #                 for j in range(len(session_embeddings)):
+
+    #                     # Getting the similarity between the test sample from the current session with 
+    #                     # the brain sample from the session to be compared
+    #                     similarity_scores=-1*euclidean_distance2(session_embeddings[j], test_embeddings[i]).numpy()[0]
+
+    #                     # Store the similarity score in the list
+    #                     prediction.append(similarity_scores)
+                    
+    #                 # Convert the predictions list which contains the similarity score into numpy array
+    #                 prediction=np.array(prediction)
+
+    #                 # Iterate over all the subjects in th session to be compared
+    #                 for sub in np.unique(session_subjects):
+
+    #                     # Get the similairity score of the subject in the session to be compared
+    #                     indices=np.where(session_subjects==sub)[0]
+
+    #                     # get the maximum similarity of that subject
+    #                     spredict=max(prediction[indices])
+                        
+
+    #                     # Check if the subject is same in the current session and the session to be compared
+    #                     if(y_test[i]==sub):
+
+    #                         # If yes, then store similairy score, label 1 , subject ID, Current session number
+    #                         # and session to be compared
+    #                         resutls3[sub].append([spredict,1.0,y_test[i],sub, np.unique(test_session),sess])
+    #                         #print("same subject", spredict, np.unique(test_session), sess)
+
+    #                     else:
+
+    #                         # If No, then store similairy score, label 0 , subject ID, Current session number
+    #                         # and session to be compared. This is for the different subjects or 
+    #                         # unmatching subjects
+    #                         resutls3[sub].append([spredict,0.0,y_test[i],sub, test_session[0],sess])
+
+    #     # Return the results in the dictionary results3 which contains the results of all the subjects
+    #     # in the form of dictionary which keys representing subject Id and the value of that corrosponding 
+    #     # contains the list of results for that particular subjects in all the sessions
+    #     return resutls3    
+
+    def _multi_session_open_set_verification(embedding_network, eeg_data, subjects, sessions):
 
         """
         Performs multi-session open-set verification using EEG data.
+
+        This function accepts the EEG data, subjects and sessions as input and returns the similarity values for
+        each pair of brain samples across multiple sessions. It computes similarity by calculating euclidean distance
+        between each pair of embeddings and creates pairs of faces with labels: 1 for the same individual, 0 for
+        different individuals. The enrollment session should always be less than the test session.
 
         Parameters:
             - embedding_network (function): Siamese network to generate embeddings.
@@ -187,86 +288,76 @@ class CalculateSimilarity():
         """
         resutls3=defaultdict(list)
 
-        # Intiliase the leave one group out cross validation
-        lkfold=LeaveOneGroupOut()
+        # Iterate over all the sessions in the test data except the last session
+        for enroll_sessions in range(0, len(np.unique(sessions))-1):
 
-        # Grouped done based on sessions. So testing data consists of single session to be test and training data 
-        # consists data from the remaning sessions. 
-        for train_index, test_index in lkfold.split(test_eeg_data, test_subjects, groups=sessions):
-            X_train, X_test = test_eeg_data[train_index], test_eeg_data[test_index]
-            y_train, y_test = test_subjects[train_index], test_subjects[test_index]
-            train_session, test_session=sessions[train_index], sessions[test_index]
+            # Get the session number of the session to be enrolled
+            enroll_session=np.unique(sessions)[enroll_sessions]
 
-            # Getting the embeddings for all the subjects ptresent in the current session to be tested
-            test_embeddings=embedding_network(X_test)
+            # Get the indices of the session to be enrolled
+            enroll_indices=np.where(sessions==enroll_session)[0]
 
-            # Iterate over all brain samples in testing session. It has single session data
-            for i in tqdm(range(len(X_test)), desc="Calculating similarity in multi-session(Open Set)"):
+            # Get the subjects of the session to be enrolled
+            enroll_subjects=subjects[enroll_indices]
 
-                # Iterate over the sessions in the training data. It can have single session or multi-session
-                # data
-                for sess in np.unique(train_session):
-                    
-                    # Finding the indicces of the session need to be compared with the test samples in the 
-                    # current session
-                    session_indices=np.where(train_session==sess)[0]
+            # Get the embeddings of the session to be enrolled
+            enroll_embeddings=embedding_network(eeg_data[enroll_indices])
 
-                    # Get the subjects data from the session need to be compared with the test samples in the 
-                    # current session
-                    session_subjects=y_train[session_indices]
+            # Iterate over all the sessions except the session already enrolled
+            for test_sessions in range(enroll_sessions+1, len(np.unique(sessions))):
 
-                    # Get the embeddings of all the subjects from the session need to be compared with 
-                    # the test samples in the current session
-                    session_embeddings=embedding_network(X_train[session_indices])
+                # Get the session number of the session to be tested
+                test_session=np.unique(sessions)[test_sessions]
 
-                    # Intilaise the list to store the similarity score between test sample(anchor sample) with 
-                    # brain samples from the subject's brain samples from the session to be compared
+                # Get the indices of the session to be tested
+                test_indices=np.where(sessions==test_session)[0]
+
+                # Get the subjects of the session to be tested
+                test_subjects=subjects[test_indices]
+
+                # Get the embeddings of the session to be tested
+                test_embeddings=embedding_network(eeg_data[test_indices])
+
+                # Iterate over all the brain samples in the session to be tested
+                for i in tqdm(range(len(test_embeddings)), desc="Calculating similarity in multi-session(Open Set)"):
+
                     prediction=[]
 
-                    # Iterate over all the brain samples present in the session to be tested
-                    for j in range(len(session_embeddings)):
+                    # Iterate over all the brain samples in the session already enrolled
+                    for j in range(len(enroll_embeddings)):
 
-                        # Getting the similarity between the test sample from the current session with 
-                        # the brain sample from the session to be compared
-                        similarity_scores=-1*euclidean_distance2(session_embeddings[j], test_embeddings[i]).numpy()[0]
+                        # Getting the similarity between the test sample from the enrolled session with
+                        # the brain sample from the testing session 
+                        similarity_scores=-1*euclidean_distance2(enroll_embeddings[j], test_embeddings[i]).numpy()[0]
 
                         # Store the similarity score in the list
                         prediction.append(similarity_scores)
-                    
+
                     # Convert the predictions list which contains the similarity score into numpy array
                     prediction=np.array(prediction)
 
-                    # Iterate over all the subjects in th session to be compared
-                    for sub in np.unique(session_subjects):
+                    # Iterate over all the subjects in th enrolled session
+                    for sub in np.unique(enroll_subjects):
 
-                        # Get the similairity score of the subject in the session to be compared
-                        indices=np.where(session_subjects==sub)[0]
+                        # get the indices of the subject in the enrolled session
+                        indices=np.where(enroll_subjects==sub)[0]
 
                         # get the maximum similarity of that subject
                         spredict=max(prediction[indices])
-                        
 
-                        # Check if the subject is same in the current session and the session to be compared
-                        if(y_test[i]==sub):
+                        # Check if the subject is same in the enrolled session and the session to be compared
+                        if(test_subjects[i]==sub):
 
                             # If yes, then store similairy score, label 1 , subject ID, Current session number
-                            # and session to be compared
-                            resutls3[sub].append([spredict,1.0,y_test[i],sub, np.unique(test_session),sess])
-                            #print("same subject", spredict, np.unique(test_session), sess)
-
+                            resutls3[sub].append([spredict,1.0,test_subjects[i],sub, enroll_session,test_session])
                         else:
 
                             # If No, then store similairy score, label 0 , subject ID, Current session number
-                            # and session to be compared. This is for the different subjects or 
-                            # unmatching subjects
-                            resutls3[sub].append([spredict,0.0,y_test[i],sub, test_session[0],sess])
+                            resutls3[sub].append([spredict,0.0,test_subjects[i],sub, enroll_session,test_session])
 
-        # Return the results in the dictionary results3 which contains the results of all the subjects
-        # in the form of dictionary which keys representing subject Id and the value of that corrosponding 
-        # contains the list of results for that particular subjects in all the sessions
-        return resutls3     
+        return resutls3          
                 
-def euclidean_distance2(self, x, y):
+def euclidean_distance2(x, y):
     """
     Computes the Euclidean distance between two vectors x and y.
 

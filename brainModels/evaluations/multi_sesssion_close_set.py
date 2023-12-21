@@ -8,10 +8,7 @@ from mne.epochs import BaseEpochs
 from sklearn.base import clone
 from sklearn.metrics import get_scorer
 from sklearn.model_selection import (
-    GridSearchCV,
-    LeaveOneGroupOut,
     StratifiedKFold,
-    StratifiedShuffleSplit,
     RepeatedStratifiedKFold,
     GroupKFold,
     cross_val_score,
@@ -24,12 +21,10 @@ from .base import BaseEvaluation
 from sklearn import metrics
 from sklearn.metrics import accuracy_score
 import random
-#from scipy.optimize import brentq
 from scipy.interpolate import interp1d
 from .metrics import Scores as score
 from collections import OrderedDict
 from sklearn.utils import shuffle
-#from sklearn.mo
 import mne
 import tensorflow as tf
 import pickle
@@ -42,180 +37,111 @@ Vector = Union[list, tuple, np.ndarray]
 
 #########################################################################################################################################################
 ##########################################################################################################################################################
-                                                    #Open-set Scenario
+                                                    #Close-set Scenario
 ##########################################################################################################################################################
 ##########################################################################################################################################################
 
-class MultiSessionOpenSet(BaseEvaluation):
+class SingleSessionCloseSet(BaseEvaluation):
 
     def __init__(
         self,
         n_perms: Optional[Union[int, Vector]] = None,
         data_size: Optional[dict] = None,
-        # dataset=None,
         return_close_set=True,
-        return_open_set=True,
-        # paradigm=None,
-        #paradigm=None,
         **kwargs
     ):
-        # self.dataset = dataset
-        # self.paradigm = paradigm
-        #self.paradigm = paradigm
         self.n_perms = n_perms
         self.data_size = data_size
         self.return_close_set = return_close_set
-        self.return_open_set = return_open_set
         super().__init__(**kwargs)
 
+    
 ##########################################################################################################################################################
 ##########################################################################################################################################################
-                                                #multi Session Evaluatiom for Siamese Network(Open-set Scenario)
+                                        #Multiple Session Evaluatiom for State-of-the-algorithms(Close-set Scenario)
 ##########################################################################################################################################################
 ##########################################################################################################################################################
+    
 
+    def _authenticate_single_subject_close_set(self, X,labels, subject_ids,  pipeline, session_groups=None):
 
-    def _siamese_training(self, data, y, siamese, sessions):
         """
-        Train Siamese networks for close-set authentication.
+        Perform authentication for a single subject in a multi-session evaluation (close-set scenario)
 
         Parameters:
-            data (numpy.ndarray): The input data for training.
-            y (numpy.ndarray): The labels/targets corresponding to the input data.
-            siamese (Siamese): The Siamese network used for embeddings.
+            X (numpy.ndarray): The input features for authentication.
+            y (numpy.ndarray): The labels for the input features.
+            pipeline (list): The authentication pipeline including classifier.
 
         Returns:
-            tuple: A tuple containing dictionaries for different evaluation metrics.
+            dict: Tuple containing the average authentication scores across the k-fold
+                  for each subject.
 
-        This method performs Open-Set Authentication using EEG-based data and Siamese networks. It utilizes GroupKFold
-        cross-validation with 4 splits for training and evaluation. The function trains the Siamese network using the
-        provided data, validates the model on test data, and collects results for each fold. The results are stored in
-        dictionaries 'dicr3', which contain evaluation metrics for each fold of the cross-validation.
-        Metrics include verification results like ROC-AUC, EER, and other relevant scores.
+        This method evaluates the authentication performance for a single subject in a close-set scenario.
+        It uses RepeatedStratifiedKFold cross-validation to split the data into training and test sets.
+        The function normalizes the data, trains the model, predicts test set results, and calculates
+        various authentication metrics (such as accuracy, AUC, EER, FPR, TPR) for each fold in the cross-validation.
+        The average scores for accuracy, AUC, EER, and FRR_1_FAR are then computed and returned as a dictionary.
         """
-        groupfold = GroupKFold(n_splits=4)
-        count_cv=0
-        dicr3={}
-        dicr2={}
-        dicr1={}
+        accuracy_list=[]
+        auc_list=[]
+        eer_list=[]
+        fpr_list=[]
+        tpr_list=[]
+        fnr_list=[] 
+        frr_1_far_list=[]
+        classifer=pipeline[-1]
         mean_fpr = np.linspace(0, 1, 100)
-        
-        for train_index, test_index in groupfold.split(data, y, groups=y):
-            x_train, x_test, y_train, y_test =data[train_index],data[test_index],y[train_index],y[test_index]
-            train_sessions, test_sessions=sessions[train_index], sessions[test_index]
 
-            scaler = StandardScaler()
-            x_train = scaler.fit_transform(x_train.reshape((x_train.shape[0], -1))).reshape(x_train.shape)
-            x_test = scaler.transform(x_test.reshape((x_test.shape[0], -1))).reshape(x_test.shape)
-            tf.keras.backend.clear_session()
-            if (siamese.user_siamese_path is None):
+        for enroll_sessions in range(0, len(np.unique(session_groups))-1):
 
-                # If the user siamese path is not provided, then we utilize the default siamese network
-                model=siamese._siamese_embeddings(x_train.shape[1], x_train.shape[2])
-            else:
+            # Get the session number of the session to be enrolled
+            enroll_session=np.unique(session_groups)[enroll_sessions]
 
-                # If the user siamese path is provided, then we utilize the user siamese network
-                model=siamese._user_embeddings(x_train.shape[1], x_train.shape[2])  
-            embedding_network=model
-            #early_stopping_callback = EarlyStopping(monitor='val_loss', patience=10)
-            train_dataset = tf.data.Dataset.from_tensor_slices((x_train, y_train)).shuffle(1000).batch(siamese.batch_size)
-            history = embedding_network.fit(train_dataset,
-                                        workers=siamese.workers,
-                                        epochs=siamese.EPOCHS,
-                                        verbose=siamese.verbose)
+            # Get the indices of the session to be enrolled
+            enroll_indices=np.where(session_groups==enroll_session)[0]
 
-            resutls3=CalculateSimilarity._multi_session_open_set_verification(model, x_test, y_test, test_sessions) 
-            dicr3.update(dict(resutls3))
-            count_cv=count_cv+1
-        return dicr3
+            X_train=X[enroll_indices]
+            y_train=labels[enroll_indices]
 
-    def deep_learning_method(self, X, dataset, metadata, key, features):
+            # Normalizing training and testing data using StandardScaler
+            sc=StandardScaler()
+            X_train=sc.fit_transform(X_train)
+            clf=clone(classifer)
 
-        """Perform deep learning-based evaluation on provided datasets using Siamese networks.
+            # Training the model
+            model=clf.fit(X_train,y_train)
 
-        Parameters:
-            dataset (Dataset): The dataset to be evaluated.
-            pipelines (dict): Dictionary containing Siamese networks for evaluation.
+            #  Iterate over all the sessions except the session to be enrolled
+            for test_sessions in range(enroll_sessions+1, len(np.unique(session_groups))):
 
-        Returns:
-            list: List containing evaluation results for the Siamese networks.
+                # Get the session number of the session to be tested
+                test_session=np.unique(session_groups)[test_sessions]
 
-        This method conducts within-session evaluation of Siamese networks for provided datasets. It retrieves necessary data
-        from the dataset and organizes the results for both open and close set evaluations. For each session in the metadata,
-        it iterates through the provided pipelines (Siamese networks) and performs training and evaluation using the
-        '_siamese_training' method. The results are saved in 'd1_dicr1.pkl', 'd1_dicr2.pkl', and 'd1_dicr3.pkl' files for
-        each session within the 'open_set' directory. Evaluation metrics including AUC, EER, FRR_1_FAR, TPR, and the number of
-        samples are recorded for each pipeline and session, then appended to 'results_close_set' for subsequent analysis.
-        """
-        #X, _, metadata=self.paradigm.get_data(dataset)
-        results_saving_path=os.path.join(
-            dataset.dataset_path,
-            "Results",
-            "SiameseMultiSessionEvaluation"
-        )
-        if not os.path.exists(results_saving_path):
-            os.makedirs(results_saving_path)
+                # Get the indices of the session to be tested
+                test_indices=np.where(session_groups==test_session)[0]
 
-        metadata=metadata[metadata['event_id']=="Deviant"]
-        metadata=self._valid_subject_samples(metadata)
-        target_index=metadata['event_id'].index.tolist()
-        data=X[target_index]
-        y=np.array(metadata["subject"])
-        results_open_set=[]
-        groups = metadata.session.values
-        siamese = features[0]
-        le = LabelEncoder()
-        X_=data
-        y_=y
-        open_dicr3=self._siamese_training(X_, y_, siamese, groups)
-        open_set_path=os.path.join(results_saving_path,"open_set")
-        if not os.path.exists(open_set_path):
-            os.makedirs(open_set_path)
+                X_test=X[test_indices]
+                y_test=labels[test_indices]
+                X_test=sc.transform(X_test)
 
-        with open(os.path.join(open_set_path, "d1_dicr3.pkl"), 'wb') as f:
-            pickle.dump(open_dicr3, f)
+                # Predicting the test set result
+                y_pred=model.predict(X_test)
+                y_pred_proba=model.predict_proba(X_test)[:,-1]
 
-        for sub in open_dicr3.keys():
-            #print("subject ", sub)
-            result=open_dicr3[sub]
-            result=np.array(result)
-            true_lables=np.array(result[:,1])
-            true_lables=true_lables.astype(np.float64)
-            #print("true labels", true_lables)
-            predicted_scores=np.array(result[:,0])
-            #print("predicted scores", predicted_scores)
-            inter_tpr, auc, eer, frr_1_far=score._calculate_siamese_scores(true_lables, predicted_scores)
-            res_open_set = {
-            'evaluation': 'Multi Session',
-                "eval Type": "Open Set",
-                "dataset": dataset.code,
-                "pipeline": key,
-                "subject": sub,
-                #"session": session,
-                "frr_1_far": frr_1_far,
-                #"accuracy": mean_accuracy,
-                "auc": auc,
-                "eer": eer,
-                "tpr": inter_tpr,
-                #"std_auc": std_auc,
-                "n_samples": len(X_)  # not training sample
-                #"n_channels": data.columns.size
-                }
-            results_open_set.append(res_open_set)
+                # calculating auc, eer, eer_threshold, fpr, tpr, thresholds for each k-fold
+                auc, eer, eer_theshold, inter_tpr, tpr, fnr, frr_1_far=score._calculate_scores(y_pred_proba,y_test, mean_fpr)
+                accuracy_list.append(accuracy_score(y_test,y_pred))
+                auc_list.append(auc)
+                eer_list.append(eer)
+                tpr_list.append(inter_tpr)
+                fnr_list.append(fnr)
+                frr_1_far_list.append(frr_1_far)
 
-        return results_open_set
-    
-##########################################################################################################################################################
-##########################################################################################################################################################
-                                        #Multi Session Evaluatiom for State-of-the-algorithms(Open-set Scenario)
-##########################################################################################################################################################
-##########################################################################################################################################################
-    
+        average_scores=score._calculate_average_scores(accuracy_list, tpr_list, eer_list, mean_fpr, auc_list, frr_1_far_list)
+        return average_scores
 
-    def _authenticate_single_subject_open_set(self, X,labels, subject_ids, features, session_groups):
-               
-        return 0
-   
+
     def _prepare_data(self, dataset, features, subject_dict):
         """Prepares and combines data from various features for the given dataset.
 
@@ -278,9 +204,9 @@ class MultiSessionOpenSet(BaseEvaluation):
             label 0 to the rest. The method then authenticates each subject using the provided features and gathers 
             evaluation metrics. Metrics include accuracy, AUC, EER, TPR, among others.
         """ 
-        results_open_set=[]
+        results_close_set=[]
         data=self._prepare_data(dataset, features, subject_dict)
-        for subject in tqdm(np.unique(data.subject), desc=f"{key}-MultiSessionOpenSet"):
+        for subject in tqdm(np.unique(data.subject), desc=f"{key}-MultiSessionCloseSet"):
             df_subj=data.copy(deep=True)
 
             # Assign label 0 to all subjects
@@ -293,12 +219,12 @@ class MultiSessionOpenSet(BaseEvaluation):
             labels=np.array(df_subj['Label'])
             X=np.array(df_subj.drop(['Label','Event_id','Subject','session'],axis=1))
 
-            open_set_scores=self._authenticate_single_subject_open_set(X,labels, subject_ids, features, session_groups=session_groups)
-            mean_accuracy, mean_auc, mean_eer, mean_tpr, tprs_upper, tprr_lower, std_auc, mean_frr_1_far=open_set_scores
-            res_open_set = {
+            close_set_scores=self._authenticate_single_subject_close_set(X,labels, subject_ids, features, session_groups=session_groups)
+            mean_accuracy, mean_auc, mean_eer, mean_tpr, tprs_upper, tprr_lower, std_auc, mean_frr_1_far=close_set_scores
+            res_close_set = {
             # "time": duration / 5.0,  # 5 fold CV
             'evaluation': 'Multi Session',
-            "eval Type": "Open Set",
+            "eval Type": "Close Set",
             "dataset": dataset.code,
             "pipeline": key,
             "subject": subject,
@@ -316,8 +242,9 @@ class MultiSessionOpenSet(BaseEvaluation):
             #"n_channels": data.columns.size
                 }
             #print(res_close_set)
-            results_open_set.append(res_open_set)
-        return results_open_set 
+            results_close_set.append(res_close_set)
+    #print(results_close_set)
+        return results_close_set
 
     def _evaluate(self, dataset, pipelines):
 
@@ -341,7 +268,8 @@ class MultiSessionOpenSet(BaseEvaluation):
         results_pipeline=[]
         for key, features in pipelines.items():   
             if (key.upper()=='SIAMESE'):
-
+                
+                #print("Avinash")
                 # If the key is Siamese, then we use the deep learning method
                 results=self.deep_learning_method(X, dataset, metadata, key, features)
                 results_pipeline.append(results) 
@@ -351,35 +279,34 @@ class MultiSessionOpenSet(BaseEvaluation):
                 results=self.traditional_authentication_methods(dataset, subject_dict, key, features)
                 results_pipeline.append(results)
         return results_pipeline
-   
     
     def evaluate(self, dataset, pipelines):
 
-            """
-            Evaluate a dataset using a set of pipelines.
+        """
+        Evaluate a dataset using a set of pipelines.
 
-            Parameters:
-                - dataset: The dataset for evaluation.
-                - pipelines (dict): A dictionary containing authentication and feature methods as keys
-                                and their corresponding features as values.
-                                For example: {'AR+PSD+LR': [AutoRegressive(order=6), PowerSpectralDensity(), LogisticRegression()],
-                                                'AR+PSD+SVM': [AutoRegressive(order=6), PowerSpectralDensity(), SVC()],
-                                                'Siamese': Siamese()}
-            
-            Returns:
-                - results: Evaluation results.
-                - results_path: Path to save the results.
-                - scenario: Evaluation scenario (Open-set).
-            """
+        Parameters:
+            - dataset: The dataset for evaluation.
+            - pipelines (dict): A dictionary containing authentication and feature methods as keys
+                              and their corresponding features as values.
+                              For example: {'AR+PSD+LR': [AutoRegressive(order=6), PowerSpectralDensity(), LogisticRegression()],
+                                            'AR+PSD+SVM': [AutoRegressive(order=6), PowerSpectralDensity(), SVC()],
+                                             'Siamese': Siamese()}
+        
+        Returns:
+            - results: Evaluation results.
+            - results_path: Path to save the results.
+            - scenario: Evaluation scenario (close-set).
+        """
 
-            results=self._evaluate(dataset, pipelines)
-            scenario="open_Set"
-            results_path=os.path.join(
-                dataset.dataset_path,
-                "Results",
-                "MultiSessionEvaluation"
-            )
-            return results, results_path, scenario
+        results=self._evaluate(dataset, pipelines)
+        scenario="close_Set"
+        results_path=os.path.join(
+            dataset.dataset_path,
+            "Results",
+            "SingleSessionEvaluation"
+        )
+        return results, results_path, scenario
     
     def _valid_subject_samples(self, metadata):
 
@@ -437,7 +364,6 @@ class MultiSessionOpenSet(BaseEvaluation):
         """
 
         return True
-
 
 
 
