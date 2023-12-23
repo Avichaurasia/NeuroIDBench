@@ -212,9 +212,108 @@ class MultiSessionOpenSet(BaseEvaluation):
 ##########################################################################################################################################################
     
 
-    def _authenticate_single_subject_open_set(self, X,labels, subject_ids, features, session_groups):
-               
-        return 0
+    def _authenticate_single_subject_open_set(self, X,labels, subject_ids, features, session_groups=None):    
+        """Perform authentication for a single subject for multi-session datasets (open-set scenario).
+
+        Parameters:
+            X (numpy.ndarray): The input features for authentication.
+            y (numpy.ndarray): The labels for the input features.
+            pipeline (list): The authentication pipeline including classifier.
+
+        Returns:
+            dict: Tuple containing the average authentication scores across the k-fold
+                  for each subject.
+
+        This method performs authentication for a single subject for multi-session datasets (open-set scenario).
+        It iterates through eac session except the session to be enrolled and trains the model on the enrolled
+        session. It then authenticates the subject on each session and gathers the results for each fold.
+        """
+        accuracy_list=[]
+        auc_list=[]
+        eer_list=[]
+        eer_threshold_list=[]
+        fpr_list=[]
+        tpr_list=[]
+        thresholds_list=[]
+        fnr_list=[] 
+        frr_1_far_list=[]
+        mean_fpr = np.linspace(0, 1, 100)
+        classifier=features[-1]
+        for enroll_sessions in range(0, len(np.unique(session_groups))-1):
+
+            # Get the session number of the session to be enrolled
+            enroll_session=np.unique(session_groups)[enroll_sessions]
+
+            # Get the indices of the session to be enrolled
+            enroll_indices=np.where(session_groups==enroll_session)[0]
+            train_session_eeg_data=X[enroll_indices]
+            train_session_labels=labels[enroll_indices]
+            train_session_subjects=subject_ids[enroll_indices]
+
+            auth_subject = np.unique(train_session_subjects[train_session_labels == 1])
+            rej_subjects = np.unique(train_session_subjects[train_session_labels == 0])
+            np.random.shuffle(rej_subjects)
+
+            # Select 75% of rejected subjects for training and 25% for testing
+            n_train_rej = int(np.ceil(0.75 * len(rej_subjects)))
+
+            
+            train_rej_subjects = rej_subjects[:n_train_rej]
+            test_rej_subjects = rej_subjects[n_train_rej:]
+
+            # Combine authenticated and selected rejected subjects for training 
+            train_subjects = np.concatenate((auth_subject, train_rej_subjects))
+            test_subjects = np.concatenate((auth_subject, test_rej_subjects))
+
+            # Get indices for subjects for training
+            train_indices = np.isin(train_session_subjects, train_subjects)
+
+            X_train=train_session_eeg_data[train_indices]
+            y_train=train_session_labels[train_indices]
+
+            # Normalizing training and testing data using StandardScaler
+            sc=StandardScaler()
+            X_train=sc.fit_transform(X_train)
+
+            clf=clone(classifier)
+
+            # Training the model
+            model=clf.fit(X_train,y_train)
+
+            #  Iterate over all the sessions except the session to be enrolled
+            for test_sessions in range(enroll_sessions+1, len(np.unique(session_groups))):
+
+                # Get the session number of the session to be tested
+                test_session=np.unique(session_groups)[test_sessions]
+
+                # Get the indices of the session to be tested
+                test_session_indices=np.where(session_groups==test_session)[0]
+
+                test_session_eeg_data=X[test_session_indices]
+                test_session_labels=labels[test_session_indices]
+                test_session_subjects=subject_ids[test_session_indices]
+
+                # Get indices for subjects for training
+                test_indices = np.isin(test_session_subjects, test_subjects)
+                X_test=test_session_eeg_data[test_indices]
+                y_test=test_session_labels[test_indices]
+                X_test=sc.transform(X_test)
+
+                # Predicting the test set result
+                y_pred=model.predict(X_test)
+                y_pred_proba=model.predict_proba(X_test)[:,-1]
+
+                # calculating auc, eer, eer_threshold, fpr, tpr, thresholds for each k-fold
+                auc, eer, eer_theshold, inter_tpr, tpr, fnr, frr_1_far=score._calculate_scores(y_pred_proba,y_test, mean_fpr)
+                accuracy_list.append(accuracy_score(y_test,y_pred))
+                auc_list.append(auc)
+                eer_list.append(eer)
+                tpr_list.append(inter_tpr)
+                fnr_list.append(fnr)
+                frr_1_far_list.append(frr_1_far)
+
+        average_scores=score._calculate_average_scores(accuracy_list, tpr_list, eer_list, mean_fpr, auc_list, frr_1_far_list)
+        return average_scores
    
     def _prepare_data(self, dataset, features, subject_dict):
         """Prepares and combines data from various features for the given dataset.
