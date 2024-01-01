@@ -154,14 +154,17 @@ class BaseParadigm(metaclass=ABCMeta):
                 baseline=self.baseline,
                 reject= peak_to_peak_reject, 
                 preload=True,
-                verbose=True,
+                verbose=False,
                 picks=picks,
                 event_repeated="drop",
                 on_missing="ignore",
             )
         inv_events = {k: v for v, k in event_id.items()}
         labels = np.array([inv_events[e] for e in events[:, -1]]) 
-        X=epochs
+        if (dataset.code=='Lee2019_ERP'):
+            X=epochs[0:50]
+        else:
+            X=epochs
         return X, labels
        
     def get_data(self, dataset, subjects=None, return_epochs=False):

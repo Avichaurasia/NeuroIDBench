@@ -6,15 +6,15 @@ import mne
 import numpy as np
 import pandas as pd
 from brainModels.datasets.lee2019 import Lee2019
-from brainModels.preprocessing.erp import ERP
 from brainModels.datasets.erpCoreN400 import ERPCOREN400
+from brainModels.preprocessing.erp import ERP
 from brainModels.featureExtraction.siamese import Siamese
 from brainModels.datasets import utils
 from autoreject import AutoReject, get_rejection_threshold
 from sklearn.pipeline import make_pipeline
 from sklearn.preprocessing import StandardScaler 
 from sklearn.discriminant_analysis import LinearDiscriminantAnalysis as LDA
-from brainModels.evaluations.single_session_close_set import SingleSessionCloseSet
+from brainModels.evaluations.single_session_open_set import SingleSessionOpenSet
 from sklearn.linear_model import LogisticRegression
 from sklearn.naive_bayes import GaussianNB
 from sklearn.neighbors import KNeighborsClassifier
@@ -29,7 +29,7 @@ import pkgutil
 def _evaluate():
     # Intiaizing the datasets
 
-    erpcore=ERPCOREN400()
+    lee=Lee2019()
     paradigm=ERP()
     #erp_core.rejection_threshold=200e-6
     #print("Rejection threshold:", erp_core.rejection_threshold)
@@ -38,10 +38,13 @@ def _evaluate():
     
     # Intializing the pipelines
     pipeline={}
+    pipeline['siamese']=make_pipeline(Siamese(batch_size=256, EPOCHS=5))
+
+    #pipeline['AR+SVM']=make_pipeline(AutoRegressive(order=6), SVC(kernel='rbf', probability=True))
     # pipeline['AR+PSD+LR']=make_pipeline(AutoRegressive(order=6), PowerSpectralDensity(), LogisticRegression())
     # # #pipeline['PSD+LR']=make_pipeline(AutoRegressive(order=6), PowerSpectralDensity(), LogisticRegression())
     # pipeline['AR+PSD+LDA']=make_pipeline(AutoRegressive(order=6), PowerSpectralDensity(), LDA(solver='lsqr', shrinkage='auto'))
-    pipeline['siamese']=make_pipeline(Siamese(batch_size=256, EPOCHS=5))
+    #pipeline['siamese']=make_pipeline(Siamese())
     # #pipeline['PSD+LDA']=make_pipeline(AutoRegressive(order=6), PowerSpectralDensity(), LDA(solver='lsqr', shrinkage='auto'))
     #pipeline['AR+PSD+NB']=make_pipeline(AutoRegressive(order=6), PowerSpectralDensity(), GaussianNB())
     # #pipeline['PSD+NB']=make_pipeline(AutoRegressive(order=6), PowerSpectralDensity(), GaussianNB())
@@ -50,7 +53,7 @@ def _evaluate():
     # pipeline['AR+PSD+RF']=make_pipeline(AutoRegressive(order=6), PowerSpectralDensity(), RandomForestClassifier())
     #pipeline['PSD+RF']=make_pipeline(AutoRegressive(order=6), PowerSpectralDensity(), RandomForestClassifier(n_estimators=100))
  
-    evaluation=SingleSessionCloseSet(paradigm=paradigm, datasets=erpcore)
+    evaluation=MultiSessionOpenSet(paradigm=paradigm, datasets=lee)
     results=evaluation.process(pipeline)
 
     grouped_df=results.groupby(['eval Type','dataset','pipeline']).agg({

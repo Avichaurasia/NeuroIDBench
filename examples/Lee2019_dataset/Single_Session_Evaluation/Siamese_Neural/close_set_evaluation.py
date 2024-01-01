@@ -7,7 +7,6 @@ import numpy as np
 import pandas as pd
 from brainModels.datasets.lee2019 import Lee2019
 from brainModels.preprocessing.erp import ERP
-from brainModels.datasets.erpCoreN400 import ERPCOREN400
 from brainModels.featureExtraction.siamese import Siamese
 from brainModels.datasets import utils
 from autoreject import AutoReject, get_rejection_threshold
@@ -29,7 +28,7 @@ import pkgutil
 def _evaluate():
     # Intiaizing the datasets
 
-    erpcore=ERPCOREN400()
+    lee=Lee2019()
     paradigm=ERP()
     #erp_core.rejection_threshold=200e-6
     #print("Rejection threshold:", erp_core.rejection_threshold)
@@ -50,7 +49,7 @@ def _evaluate():
     # pipeline['AR+PSD+RF']=make_pipeline(AutoRegressive(order=6), PowerSpectralDensity(), RandomForestClassifier())
     #pipeline['PSD+RF']=make_pipeline(AutoRegressive(order=6), PowerSpectralDensity(), RandomForestClassifier(n_estimators=100))
  
-    evaluation=SingleSessionCloseSet(paradigm=paradigm, datasets=erpcore)
+    evaluation=SingleSessionCloseSet(paradigm=paradigm, datasets=lee)
     results=evaluation.process(pipeline)
 
     grouped_df=results.groupby(['eval Type','dataset','pipeline']).agg({
