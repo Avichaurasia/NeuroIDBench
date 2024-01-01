@@ -29,7 +29,7 @@ class Lee2019(BaseDataset):
         super().__init__(
             subjects=list(range(1, 55)),
             sessions_per_subject=2,
-            events=dict(Target=1, NonTarget=2),
+            events=dict(Deviant=1, Standard=2),
             code="Lee2019_" + code_suffix,
             interval=[-0.2, 0.8],
             paradigm="erp",
