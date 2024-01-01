@@ -32,14 +32,14 @@ class Lee2019(BaseDataset):
             events=dict(Target=1, NonTarget=2),
             code="Lee2019_" + code_suffix,
             interval=[-0.2, 0.8],
-            paradigm="p300",
+            paradigm="erp",
             doi="10.5524/100542",
             dataset_path=None,
             rejection_threshold=None,
             )
         self.train_run = train_run
         self.code_suffix=code_suffix
-        self.test_run =  self.paradigm == "p300" if test_run is None else test_run
+        self.test_run =  self.paradigm == "erp" if test_run is None else test_run
 
     _scalings = dict(eeg=1e-6, emg=1e-6, stim=1)  # to load the signal in Volts
     
