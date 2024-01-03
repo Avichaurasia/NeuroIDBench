@@ -2,7 +2,7 @@ import re
 import zipfile
 from abc import ABC
 from pathlib import Path
-
+import os
 import mne
 import numpy as np
 
@@ -23,11 +23,11 @@ class _BaseVisualMatrixSpellerDataset(BaseDataset, ABC):
         self.n_channels = 31  # all channels except 5 times x_* CH and EOGvu
         if kwargs["interval"] is None:
             # "Epochs were windowed to [−200, 700] ms relative to the stimulus onset [...]."
-            kwargs["interval"] = [-0.2, 0.7]
+            kwargs["interval"] = [-0.2, 0.8]
 
         super().__init__(
-            events=dict(Target=10002, NonTarget=10001),
-            paradigm="p300",
+            events=dict(Deviant=10002, Standard=10001),
+            paradigm="erp",
             subjects=(np.arange(n_subjects) + 1).tolist(),
             **kwargs,
         )
@@ -69,13 +69,17 @@ class _BaseVisualMatrixSpellerDataset(BaseDataset, ABC):
                 verbose=None,
             )
 
-            if self.use_blocks_as_sessions:
-                session_name = f"{session_name}_block_{block_idx}"
-            else:
-                session_name = f"{session_name}"
+            # if self.use_blocks_as_sessions:
+            #     session_name = f"{session_name}_block_{block_idx}"
+            # else:
+            #     session_name = f"{session_name}"
+
+            session_name = "session_1"
             if session_name not in sessions.keys():
                 sessions[session_name] = dict()
-            sessions[session_name][run_idx] = raw_bvr_list[0]
+            raw_data=raw_bvr_list[0]
+            events, _=mne.events_from_annotations(raw_data, verbose=False)
+            sessions[session_name][run_idx] = raw_data, events
 
         return sessions
 
@@ -84,7 +88,9 @@ class _BaseVisualMatrixSpellerDataset(BaseDataset, ABC):
     ):
         url = f"{self._src_url}subject{subject:02d}.zip"
         zipfile_path = Path(dl.data_dl(url, "llp"))
+        
         zipfile_extracted_path = zipfile_path.parent
+        self.dataset_path=os.path.dirname(Path(zipfile_extracted_path))
 
         subject_dir_path = zipfile_extracted_path / f"subject{subject:02d}"
 
@@ -160,6 +166,9 @@ class Huebner2017(_BaseVisualMatrixSpellerDataset):
             interval=interval,
             doi=llp_speller_paper_doi,
             use_blocks_as_sessions=use_blocks_as_sessions,
+            dataset_path=None,
+            rejection_threshold=None,
+            baseline_correction=True,
         )
 
 

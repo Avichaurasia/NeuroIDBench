@@ -4,7 +4,7 @@ import re
 import zipfile
 
 import mne
-
+from pathlib import Path
 from . import download as dl
 from .base import BaseDataset
 
@@ -97,15 +97,18 @@ class Sosulski2019(BaseDataset):
         self.n_channels = 31
         self.use_soas_as_sessions = use_soas_as_sessions
         code = "Spot Pilot P300 dataset"
-        interval = [-0.2, 1] if interval is None else interval
+        interval = [-0.2, 0.8] if interval is None else interval
         super().__init__(
             subjects=list(range(1, 13 + 1)),
             sessions_per_subject=1,
-            events=dict(Target=21, NonTarget=1),
+            events=dict(Deviant=21, Standard=1),
             code=code,
             interval=interval,
-            paradigm="p300",
+            paradigm="erp",
             doi="10.6094/UNIFR/154576",
+            dataset_path=None,
+            rejection_threshold=None,
+            baseline_correction=True,
         )
 
     @staticmethod
@@ -133,7 +136,9 @@ class Sosulski2019(BaseDataset):
         raw.set_montage("standard_1020")
         if self.reject_non_iid:
             raw.set_annotations(raw.annotations[7:85])  # non-iid rejection
-        return raw
+
+        events, _=mne.events_from_annotations(raw, verbose=False)
+        return raw, events
 
     def _get_single_subject_data(self, subject):
         """return data for a single subject"""
@@ -147,10 +152,10 @@ class Sosulski2019(BaseDataset):
             # trial = file_exp_info["trial"]
             if soa == 60 and not self.load_soa_60:
                 continue
-            if self.use_soas_as_sessions:
-                session_name = f"session_1_soa_{soa}"
-            else:
-                session_name = "session_1"
+            # if self.use_soas_as_sessions:
+            #     session_name = f"session_1_soa_{soa}"
+            # else:
+            session_name = "session_1"
 
             if session_name not in sessions.keys():
                 sessions[session_name] = {}
@@ -170,6 +175,7 @@ class Sosulski2019(BaseDataset):
         file_number = Sosulski2019._map_subject_to_filenumber(subject)
         url = f"{SPOT_PILOT_P300_URL}/FILE{file_number}/content"
         path_zip = dl.data_dl(url, "spot")
+        self.dataset_path=os.path.dirname(Path(path_zip))
         path_folder = path_zip[:-8] + f"/subject{subject}"
 
         # check if has to unzip

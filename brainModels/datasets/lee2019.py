@@ -29,13 +29,14 @@ class Lee2019(BaseDataset):
         super().__init__(
             subjects=list(range(1, 55)),
             sessions_per_subject=2,
-            events=dict(Deviant=1, Standard=2),
+            events=dict(Deviant=1),
             code="Lee2019_" + code_suffix,
             interval=[-0.2, 0.8],
             paradigm="erp",
             doi="10.5524/100542",
             dataset_path=None,
             rejection_threshold=None,
+            baseline_correction=True,
             )
         self.train_run = train_run
         self.code_suffix=code_suffix

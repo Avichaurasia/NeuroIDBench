@@ -200,7 +200,7 @@ class PowerSpectralDensity(Basepipeline):
                         # Calculating average power in each frequency band
                         psds_band=welch_psd[(freqs >= fmin) & (freqs < fmax)].mean()
                         X.append(psds_band)
-            
+                        
                     channel=epochs.ch_names[j]
                     for d in range(len(X)):
                         band_name=[*FREQ_BANDS][d]

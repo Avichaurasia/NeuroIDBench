@@ -60,7 +60,7 @@ def dataset_search(  # noqa: C901
         n_classes = len(events)
     else:
         n_classes = None
-    assert paradigm in ["p300", "n400"]
+    assert paradigm in ["erp"]
 
     for type_d in dataset_list:
         d = type_d()

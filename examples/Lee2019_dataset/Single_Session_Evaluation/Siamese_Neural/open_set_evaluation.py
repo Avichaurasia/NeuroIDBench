@@ -53,12 +53,12 @@ def _evaluate():
     # pipeline['AR+PSD+RF']=make_pipeline(AutoRegressive(order=6), PowerSpectralDensity(), RandomForestClassifier())
     #pipeline['PSD+RF']=make_pipeline(AutoRegressive(order=6), PowerSpectralDensity(), RandomForestClassifier(n_estimators=100))
  
-    evaluation=MultiSessionOpenSet(paradigm=paradigm, datasets=lee)
+    evaluation=SingleSessionOpenSet(paradigm=paradigm, datasets=lee)
     results=evaluation.process(pipeline)
 
     grouped_df=results.groupby(['eval Type','dataset','pipeline']).agg({
                 #'accuracy': 'mean',
-                'auc': 'mean',
+                #'auc': 'mean',
                 'eer': lambda x: f'{np.mean(x)*100:.3f} ± {np.std(x)*100:.3f}',
                 'frr_1_far': lambda x: f'{np.mean(x)*100:.3f}'
             }).reset_index()

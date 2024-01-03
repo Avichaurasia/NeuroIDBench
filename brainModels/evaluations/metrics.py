@@ -6,6 +6,7 @@ import random
 from scipy.optimize import brentq
 from scipy.interpolate import interp1d
 import numpy as np
+from pyeer.eer_info import get_eer_stats
 import pandas as pd
 
 class Scores():
@@ -55,18 +56,30 @@ class Scores():
 
         # Threshold for Equal Error Rate
         eer_thresh = interp1d(fpr, thresholds)(eer)
+
+        # FRR at 1% FAR
         frr_1_far = 1-inter_tpr[1]
         return (auc, eer, eer_thresh, inter_tpr, tpr, fnr, frr_1_far)
     
-    def _calculate_siamese_scores(true_lables, predicted_scores):
-        mean_fpr=np.linspace(0, 1, 100)
-        fpr, tpr, thresholds=metrics.roc_curve(true_lables, predicted_scores, pos_label=1)
-        inter_tpr=np.interp(mean_fpr, fpr, tpr)
-        inter_tpr[0]=0.0
-        auc=metrics.auc(fpr, tpr)
-        eer = brentq(lambda x : 1. - x - interp1d(mean_fpr, inter_tpr)(x), 0., 1.)
-        frr_1_far = 1-inter_tpr[1]
-        return (inter_tpr, auc, eer, frr_1_far)
+    def _calculate_siamese_scores(results):
+        # mean_fpr=np.linspace(0, 1, 100)
+        # fpr, tpr, thresholds=metrics.roc_curve(true_lables, predicted_scores, pos_label=1)
+        # inter_tpr=np.interp(mean_fpr, fpr, tpr)
+        # inter_tpr[0]=0.0
+        # auc=metrics.auc(fpr, tpr)
+        # eer = brentq(lambda x : 1. - x - interp1d(mean_fpr, inter_tpr)(x), 0., 1.)
+        # frr_1_far = 1-inter_tpr[1]
+        genuine_scores  = results[results[:, 1] == 1][:, 0]
+        impostor_scores = results[results[:, 1] == 0][:, 0]
+        stats_a = get_eer_stats(genuine_scores, impostor_scores)
+
+        # Computing Equal Error rate
+        eer= stats_a.eer
+
+        # False Rejection rate at 1% False Acceptance rate
+        fmr100= stats_a.fmr100
+        fmr1000= stats_a.fmr1000
+        return (eer, fmr100) 
     
     def _calculate_average_siamese_scores(tpr_list, eer_list, mean_fpr, auc_list, frr_1_far_list):
 

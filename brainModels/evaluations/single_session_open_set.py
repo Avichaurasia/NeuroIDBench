@@ -167,26 +167,31 @@ class SingleSessionOpenSet(BaseEvaluation):
             le = LabelEncoder()
             X_=data[ix]
             y_=y[ix]
-            close_dicr1, close_dicr2, close_dicr3=self._siamese_training(X_, y_, siamese)
-            close_set_path=os.path.join(results_saving_path,"open_set")
-            if not os.path.exists(close_set_path):
-                os.makedirs(close_set_path)
+            open_dicr1, open_dicr2, open_dicr3=self._siamese_training(X_, y_, siamese)
+            open_set_path=os.path.join(results_saving_path,"open_set")
+            if not os.path.exists(open_set_path):
+                os.makedirs(open_set_path)
 
-            with open(os.path.join(close_set_path, "d1_dicr1.pkl"), 'wb') as f:
-                pickle.dump(close_dicr1, f)
+            with open(os.path.join(open_set_path, "d1_dicr1.pkl"), 'wb') as f:
+                pickle.dump(open_dicr1, f)
 
-            with open(os.path.join(close_set_path, "d1_dicr2.pkl"), 'wb') as f:
-                pickle.dump(close_dicr2, f)
+            with open(os.path.join(open_set_path, "d1_dicr2.pkl"), 'wb') as f:
+                pickle.dump(open_dicr2, f)
 
-            with open(os.path.join(close_set_path, "d1_dicr3.pkl"), 'wb') as f:
-                pickle.dump(close_dicr3, f)
+            with open(os.path.join(open_set_path, "d1_dicr3.pkl"), 'wb') as f:
+                pickle.dump(open_dicr3, f)
 
-            for sub in close_dicr3.keys():
-                result=close_dicr3[sub]
-                result=np.array(result)
-                true_lables=np.array(result[:,1])
-                predicted_scores=np.array(result[:,0])
-                inter_tpr, auc, eer, frr_1_far=score._calculate_siamese_scores(true_lables, predicted_scores)
+            for sub in open_dicr3.keys():
+                #print("subject ", sub)
+                results=open_dicr3[sub]
+                results=np.array(results)
+
+                #true_lables=np.array(result[:,1])
+                #true_lables=true_lables.astype(np.float64)
+                #print("true labels", true_lables)
+                #predicted_scores=np.array(result[:,0])
+                #print("predicted scores", predicted_scores)
+                eer, frr_1_far=score._calculate_siamese_scores(results)
                 res_open_set = {
                 'evaluation': 'Within Session',
                     "eval Type": "Open Set",
@@ -196,9 +201,9 @@ class SingleSessionOpenSet(BaseEvaluation):
                     "session": session,
                     "frr_1_far": frr_1_far,
                     #"accuracy": mean_accuracy,
-                    "auc": auc,
+                   # "auc": auc,
                     "eer": eer,
-                    "tpr": inter_tpr,
+                   # "tpr": inter_tpr,
                     #"std_auc": std_auc,
                     "n_samples": len(X_)  # not training sample
                     #"n_channels": data.columns.size

@@ -57,7 +57,7 @@ def _evaluate():
 
     grouped_df=results.groupby(['eval Type','dataset','pipeline']).agg({
                 #'accuracy': 'mean',
-                'auc': 'mean',
+                #'auc': 'mean',
                 'eer': lambda x: f'{np.mean(x)*100:.3f} ± {np.std(x)*100:.3f}',
                 'frr_1_far': lambda x: f'{np.mean(x)*100:.3f}'
             }).reset_index()

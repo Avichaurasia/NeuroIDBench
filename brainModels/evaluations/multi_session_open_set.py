@@ -177,14 +177,15 @@ class MultiSessionOpenSet(BaseEvaluation):
 
         for sub in open_dicr3.keys():
             #print("subject ", sub)
-            result=open_dicr3[sub]
-            result=np.array(result)
-            true_lables=np.array(result[:,1])
-            true_lables=true_lables.astype(np.float64)
+            results=open_dicr3[sub]
+            results=np.array(results)
+
+            #true_lables=np.array(result[:,1])
+            #true_lables=true_lables.astype(np.float64)
             #print("true labels", true_lables)
-            predicted_scores=np.array(result[:,0])
+            #predicted_scores=np.array(result[:,0])
             #print("predicted scores", predicted_scores)
-            inter_tpr, auc, eer, frr_1_far=score._calculate_siamese_scores(true_lables, predicted_scores)
+            eer, frr_1_far=score._calculate_siamese_scores(results)
             res_open_set = {
             'evaluation': 'Multi Session',
                 "eval Type": "Open Set",
@@ -194,9 +195,9 @@ class MultiSessionOpenSet(BaseEvaluation):
                 #"session": session,
                 "frr_1_far": frr_1_far,
                 #"accuracy": mean_accuracy,
-                "auc": auc,
+                #"auc": auc,
                 "eer": eer,
-                "tpr": inter_tpr,
+                #"tpr": inter_tpr,
                 #"std_auc": std_auc,
                 "n_samples": len(X_)  # not training sample
                 #"n_channels": data.columns.size
