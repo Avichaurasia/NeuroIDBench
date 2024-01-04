@@ -58,7 +58,7 @@ class Scores():
         eer_thresh = interp1d(fpr, thresholds)(eer)
 
         # FRR at 1% FAR
-        frr_1_far = 1-inter_tpr[1]
+        frr_1_far = 1-inter_tpr[100]
         return (auc, eer, eer_thresh, inter_tpr, tpr, fnr, frr_1_far)
     
     def _calculate_siamese_scores(results):

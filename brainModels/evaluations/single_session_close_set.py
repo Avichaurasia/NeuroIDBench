@@ -244,7 +244,7 @@ class SingleSessionCloseSet(BaseEvaluation):
 
         # Intializing the classifier from the pipeline
         classifer=pipeline[-1]
-        mean_fpr = np.linspace(0, 1, 100)
+        mean_fpr = np.linspace(0, 1, 10000)
 
         # Splitting the dataset into the Training set and Test set
         for fold, (train_index, test_index) in enumerate(skfold.split(X, y)):

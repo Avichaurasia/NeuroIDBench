@@ -91,7 +91,7 @@ class MultiSessionCloseSet(BaseEvaluation):
         fnr_list=[] 
         frr_1_far_list=[]
         classifer=pipeline[-1]
-        mean_fpr = np.linspace(0, 1, 100)
+        mean_fpr = np.linspace(0, 1, 10000)
 
         for enroll_sessions in range(0, len(np.unique(session_groups))-1):
 
