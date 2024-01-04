@@ -29,6 +29,7 @@ def _evaluate():
     # Intiaizing the datasets
 
     lee=Lee2019()
+    lee.subject_list=lee.subject_list[0:10]
     paradigm=ERP()
     #erp_core.rejection_threshold=200e-6
     #print("Rejection threshold:", erp_core.rejection_threshold)
@@ -37,7 +38,7 @@ def _evaluate():
     
     # Intializing the pipelines
     pipeline={}
-    pipeline['siamese']=make_pipeline(Siamese(batch_size=256, EPOCHS=5))
+    pipeline['siamese']=make_pipeline(Siamese(batch_size=256, EPOCHS=100))
 
     #pipeline['AR+SVM']=make_pipeline(AutoRegressive(order=6), SVC(kernel='rbf', probability=True))
     # pipeline['AR+PSD+LR']=make_pipeline(AutoRegressive(order=6), PowerSpectralDensity(), LogisticRegression())

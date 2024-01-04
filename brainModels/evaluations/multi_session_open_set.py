@@ -176,16 +176,14 @@ class MultiSessionOpenSet(BaseEvaluation):
         #     pickle.dump(open_dicr3, f)
 
         for sub in open_dicr3.keys():
-            #print("subject ", sub)
-            results=open_dicr3[sub]
-            results=np.array(results)
+            result=open_dicr3[sub]
+            result=np.array(result)
 
-            #true_lables=np.array(result[:,1])
-            #true_lables=true_lables.astype(np.float64)
-            #print("true labels", true_lables)
-            #predicted_scores=np.array(result[:,0])
-            #print("predicted scores", predicted_scores)
-            eer, frr_1_far=score._calculate_siamese_scores(results)
+            true_lables=np.array(result[:,1])
+            true_lables=true_lables.astype(np.float64)
+            predicted_scores=np.array(result[:,0])
+            # print("predicted scores", predicted_scores)
+            eer, frr_1_far=score._calculate_siamese_scores(true_lables, predicted_scores)
             res_open_set = {
             'evaluation': 'Multi Session',
                 "eval Type": "Open Set",
