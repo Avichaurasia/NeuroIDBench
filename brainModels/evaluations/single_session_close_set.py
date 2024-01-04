@@ -113,7 +113,7 @@ class SingleSessionCloseSet(BaseEvaluation):
             dicr2[count_cv] = resutls2
             dicr3.update(dict(resutls3))
             count_cv=count_cv+1
-        return (dicr1, dicr2, dicr3)
+        return dicr3
 
     def deep_learning_method(self, X, dataset, metadata, key, features):
 
@@ -138,13 +138,13 @@ class SingleSessionCloseSet(BaseEvaluation):
         dictionaries, each containing evaluation results for a particular subject and session.
 
         """
-        results_saving_path=os.path.join(
-            dataset.dataset_path,
-            "Results",
-            "SiameseWithinSessionEvaluation"
-        )
-        if not os.path.exists(results_saving_path):
-            os.makedirs(results_saving_path)
+        # results_saving_path=os.path.join(
+        #     dataset.dataset_path,
+        #     "Results",
+        #     "SiameseWithinSessionEvaluation"
+        # )
+        # if not os.path.exists(results_saving_path):
+        #     os.makedirs(results_saving_path)
 
         metadata=metadata[metadata['event_id']=="Deviant"]
         metadata=self._valid_subject_samples(metadata)
@@ -159,19 +159,19 @@ class SingleSessionCloseSet(BaseEvaluation):
             le = LabelEncoder()
             X_=data[ix]
             y_=y[ix]
-            close_dicr1, close_dicr2, close_dicr3=self._siamese_training(X_, y_, siamese)
-            close_set_path=os.path.join(results_saving_path,"close_set")
-            if not os.path.exists(close_set_path):
-                os.makedirs(close_set_path)
+            close_dicr3=self._siamese_training(X_, y_, siamese)
+            # close_set_path=os.path.join(results_saving_path,"close_set")
+            # if not os.path.exists(close_set_path):
+            #     os.makedirs(close_set_path)
 
-            with open(os.path.join(close_set_path, "d1_dicr1.pkl"), 'wb') as f:
-                pickle.dump(close_dicr1, f)
+            # with open(os.path.join(close_set_path, "d1_dicr1.pkl"), 'wb') as f:
+            #     pickle.dump(close_dicr1, f)
 
-            with open(os.path.join(close_set_path, "d1_dicr2.pkl"), 'wb') as f:
-                pickle.dump(close_dicr2, f)
+            # with open(os.path.join(close_set_path, "d1_dicr2.pkl"), 'wb') as f:
+            #     pickle.dump(close_dicr2, f)
 
-            with open(os.path.join(close_set_path, "d1_dicr3.pkl"), 'wb') as f:
-                pickle.dump(close_dicr3, f)
+            # with open(os.path.join(close_set_path, "d1_dicr3.pkl"), 'wb') as f:
+            #     pickle.dump(close_dicr3, f)
 
             for sub in close_dicr3.keys():
                 #print("subject ", sub)
@@ -436,7 +436,7 @@ class SingleSessionCloseSet(BaseEvaluation):
         """
 
         results=self._evaluate(dataset, pipelines)
-        scenario="Close_Set"
+        scenario="close_Set"
         results_path=os.path.join(
             dataset.dataset_path,
             "Results",

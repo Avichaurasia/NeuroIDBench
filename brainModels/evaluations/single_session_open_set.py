@@ -126,7 +126,7 @@ class SingleSessionOpenSet(BaseEvaluation):
             dicr2[count_cv] = resutls2
             dicr3.update(dict(resutls3))
             count_cv=count_cv+1
-        return (dicr1, dicr2, dicr3)
+        return dicr3
 
     def deep_learning_method(self, X, dataset, metadata, key, features):
 
@@ -147,13 +147,13 @@ class SingleSessionOpenSet(BaseEvaluation):
         samples are recorded for each pipeline and session, then appended to 'results_close_set' for subsequent analysis.
         """
         #X, _, metadata=self.paradigm.get_data(dataset)
-        results_saving_path=os.path.join(
-            dataset.dataset_path,
-            "Results",
-            "SiameseWithinSessionEvaluation"
-        )
-        if not os.path.exists(results_saving_path):
-            os.makedirs(results_saving_path)
+        # results_saving_path=os.path.join(
+        #     dataset.dataset_path,
+        #     "Results",
+        #     "SiameseWithinSessionEvaluation"
+        # )
+        # if not os.path.exists(results_saving_path):
+        #     os.makedirs(results_saving_path)
 
         metadata=metadata[metadata['event_id']=="Deviant"]
         metadata=self._valid_subject_samples(metadata)
@@ -167,19 +167,19 @@ class SingleSessionOpenSet(BaseEvaluation):
             le = LabelEncoder()
             X_=data[ix]
             y_=y[ix]
-            open_dicr1, open_dicr2, open_dicr3=self._siamese_training(X_, y_, siamese)
-            open_set_path=os.path.join(results_saving_path,"open_set")
-            if not os.path.exists(open_set_path):
-                os.makedirs(open_set_path)
+            open_dicr3=self._siamese_training(X_, y_, siamese)
+            # open_set_path=os.path.join(results_saving_path,"open_set")
+            # if not os.path.exists(open_set_path):
+            #     os.makedirs(open_set_path)
 
-            with open(os.path.join(open_set_path, "d1_dicr1.pkl"), 'wb') as f:
-                pickle.dump(open_dicr1, f)
+            # with open(os.path.join(open_set_path, "d1_dicr1.pkl"), 'wb') as f:
+            #     pickle.dump(open_dicr1, f)
 
-            with open(os.path.join(open_set_path, "d1_dicr2.pkl"), 'wb') as f:
-                pickle.dump(open_dicr2, f)
+            # with open(os.path.join(open_set_path, "d1_dicr2.pkl"), 'wb') as f:
+            #     pickle.dump(open_dicr2, f)
 
-            with open(os.path.join(open_set_path, "d1_dicr3.pkl"), 'wb') as f:
-                pickle.dump(open_dicr3, f)
+            # with open(os.path.join(open_set_path, "d1_dicr3.pkl"), 'wb') as f:
+            #     pickle.dump(open_dicr3, f)
 
             for sub in open_dicr3.keys():
                 #print("subject ", sub)
@@ -193,7 +193,7 @@ class SingleSessionOpenSet(BaseEvaluation):
                 #print("predicted scores", predicted_scores)
                 eer, frr_1_far=score._calculate_siamese_scores(results)
                 res_open_set = {
-                'evaluation': 'Within Session',
+                'evaluation': 'Single Session',
                     "eval Type": "Open Set",
                     "dataset": dataset.code,
                     "pipeline": key,
@@ -474,7 +474,7 @@ class SingleSessionOpenSet(BaseEvaluation):
             """
 
             results=self._evaluate(dataset, pipelines)
-            scenario="Close_Set"
+            scenario="open_Set"
             results_path=os.path.join(
                 dataset.dataset_path,
                 "Results",

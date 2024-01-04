@@ -9,8 +9,8 @@ import numpy as np
 import yaml
 from mne.channels import make_standard_montage
 from scipy.io import loadmat
-#from brainmodels.datasets import download as dl
-#from brainmodels.datasets.base import BaseDataset
+from . import download as dl
+from .base import BaseDataset
 from mne.io import read_raw_eeglab, read_raw
 from mne.channels import read_dig_polhemus_isotrak, read_custom_montage
 import numpy as np
@@ -29,9 +29,9 @@ import shutil
 import io
 from pooch import Unzip, retrieve
 
-ERPCORE_N400_URL = "https://files.osf.io/v1/resources/29xpq/providers/osfstorage/5f24a0c45f705a011461ec9d/?zip="
+ERPCORE_P300_URL = 'https://files.osf.io/v1/resources/etdkz/providers/osfstorage/5f2492d55f705a010e61b15d/?zip='
 
-class ERPCOREN400(BaseDataset):
+class ERPCORENP300(BaseDataset):
     """
     P300 dataset from ERP Core.
 
@@ -57,9 +57,6 @@ class ERPCOREN400(BaseDataset):
 
         [1] Kappenman, Emily S., et al. "ERP CORE: An open resource for human event-related potential 
         research." NeuroImage 225 (2021): 117465.
-
-
-
     """
 
     def __init__(self):
@@ -67,7 +64,7 @@ class ERPCOREN400(BaseDataset):
             subjects=list(range(1, 41)),
             sessions_per_subject=1, 
             events=dict(Deviant=222, Standard=212),
-            code="erpcore n400",
+            code="erpcore p300",
             interval=[-0.2, 0.8],
             paradigm="erp",
             doi=None,
@@ -126,35 +123,32 @@ class ERPCOREN400(BaseDataset):
         raw.rename_channels(dict(FP1 = 'Fp1', FP2 = 'Fp2'))
         raw.drop_channels(['HEOG_left', 'HEOG_right', 'VEOG_lower'])
         raw.set_montage('standard_1020')
-
-        # events, event_ids = mne.events_from_annotations(raw,verbose=False)
-
-        # print("event id's", event_ids)
-        # print("events", events)
-
-        description_dict = {'111' : 'Prime/Related/L1',
-             '112' : 'Prime/Related/L2',
-             '121' : 'Prime/Unrelated/L1',
-             '122' : 'Prime/Unrelated/L2',
-             '211' : 'Target/Related/L1',
-             '212' : 'Target/Related/L2',
-             '221' : 'Target/Unrelated/L1',
-             '222' : 'Target/Unrelated/L2',
-             '201' : 'Hit',
-             '202' : 'Miss',
-             'BAD_seg': 'BAD_seg'      
-                   }
-        raw.annotations.description=pd.Series(raw.annotations.description).map(description_dict).to_numpy()
-        event_ids = {'Prime/Related/L1': 111,
-             'Prime/Related/L2': 112,
-             'Prime/Unrelated/L1' : 121,
-             'Prime/Unrelated/L2' : 122,
-             'Target/Related/L1' : 211,
-             'Target/Related/L2' : 212,
-             'Target/Unrelated/L1' : 221,
-             'Target/Unrelated/L2' : 222}
+        # description_dict = {'111' : 'Prime/Related/L1',
+        #      '112' : 'Prime/Related/L2',
+        #      '121' : 'Prime/Unrelated/L1',
+        #      '122' : 'Prime/Unrelated/L2',
+        #      '211' : 'Target/Related/L1',
+        #      '212' : 'Target/Related/L2',
+        #      '221' : 'Target/Unrelated/L1',
+        #      '222' : 'Target/Unrelated/L2',
+        #      '201' : 'Hit',
+        #      '202' : 'Miss',
+        #      'BAD_seg': 'BAD_seg'      
+        #            }
+        # raw.annotations.description=pd.Series(raw.annotations.description).map(description_dict).to_numpy()
+        # event_ids = {'Prime/Related/L1': 111,
+        #      'Prime/Related/L2': 112,
+        #      'Prime/Unrelated/L1' : 121,
+        #      'Prime/Unrelated/L2' : 122,
+        #      'Target/Related/L1' : 211,
+        #      'Target/Related/L2' : 212,
+        #      'Target/Unrelated/L1' : 221,
+        #      'Target/Unrelated/L2' : 222}
         
-        events, event_ids = mne.events_from_annotations(raw, event_ids, verbose=False)
+        events, event_ids = mne.events_from_annotations(raw,verbose=False)
+
+        print("event id's", event_ids)
+        print("events", events)
 
         # Merge events of event_id's "Target/Related because nature of the trails is same, just they
         # came from two diffrerent lists"
@@ -170,12 +164,12 @@ class ERPCOREN400(BaseDataset):
             raise ValueError("Invalid subject number") 
         
         # define url and paths
-        url = ERPCORE_N400_URL
+        url = ERPCORE_P300_URL
         zip_filename = f"raw_data.zip."
         main_directory='raw_data'
 
          # download and extract data if needed
-        path_zip = self.download_dataset(url, "ERPCOREN400")
+        path_zip = self.download_dataset(url, "ERPCOREP300")
         self.dataset_path=os.path.dirname(Path(path_zip))
         subject_dir = Path(path_zip.strip(zip_filename))/main_directory
         if not subject_dir.exists():
@@ -185,7 +179,7 @@ class ERPCOREN400(BaseDataset):
         subject_dir=os.path.join(subject_dir, str(subject))
         raw_data_path = os.listdir(subject_dir)
         for sub in raw_data_path:
-            if sub.endswith(".set") and sub.split('.')[0].split('_')[1]=='N400' and len(sub.split('.')[0].split('_'))==2:
+            if sub.endswith(".set") and sub.split('.')[0].split('_')[1]=='P3' and len(sub.split('.')[0].split('_'))==2:
                 return os.path.join(subject_dir, sub)
 
         

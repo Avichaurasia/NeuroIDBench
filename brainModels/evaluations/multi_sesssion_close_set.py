@@ -304,7 +304,7 @@ class MultiSessionCloseSet(BaseEvaluation):
         results_path=os.path.join(
             dataset.dataset_path,
             "Results",
-            "SingleSessionEvaluation"
+            "MultiSessionEvaluation"
         )
         return results, results_path, scenario
     

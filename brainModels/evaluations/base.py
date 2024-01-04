@@ -138,14 +138,22 @@ class BaseEvaluation(ABC):
         for _, pipeline in pipelines.items():
             if not (isinstance(pipeline, BaseEstimator)):
                 raise (ValueError("pipelines must only contains Pipelines " "instance"))
-        df_final=pd.DataFrame()
+        #df_final=pd.DataFrame()
+        df_list=[]
         for dataset in self.datasets:
-            dataframe=pd.DataFrame()
+            #df_temp=pd.DataFrame()
             log.info("Processing dataset: {}".format(dataset.code))
             results, results_path, scenario= self.evaluate(dataset, pipelines)
+
+            # Return the results as a dataframe
             get_results=self.results._add_results(results, results_path, scenario)
-            dataframe=dataframe.append(get_results, ignore_index=True)
-        df_final = pd.concat([df_final, dataframe], ignore_index=True)
+
+            # Appending the results of each dataset to the list
+            df_list.append(get_results)
+            #dataframe=df_temp.append(get_results, ignore_index=True)
+
+        # Concatenating the results of all datasets
+        df_final = pd.concat(df_list, ignore_index=True)
         return df_final
     
     def get_results(self):
