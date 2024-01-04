@@ -83,6 +83,7 @@ class Scores():
 
     def _calculate_siamese_scores(true_lables, predicted_scores):
         mean_fpr=np.linspace(0, 1, 10000)
+        predicted_scores=predicted_scores.astype(np.float64)
         fpr, tpr, thresholds=metrics.roc_curve(true_lables, predicted_scores, pos_label=1)
         inter_tpr=np.interp(mean_fpr, fpr, tpr)
         inter_tpr[0]=0.0
