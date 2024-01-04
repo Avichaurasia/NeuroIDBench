@@ -100,7 +100,7 @@ class Siamese():
         if (sn>512):
             input = tf.keras.layers.Input((chn, sn, 1))
             x = tf.keras.layers.AveragePooling2D(pool_size=(1, 2))(input)
-            x = tf.keras.layers.Conv2D(128, (1, 15), activation=activef, kernel_initializer='lecun_normal')(input)
+            x = tf.keras.layers.Conv2D(128, (1, 15), activation=activef, kernel_initializer='lecun_normal')(x)
         else:
             input = tf.keras.layers.Input((chn, sn, 1))
             x = tf.keras.layers.Conv2D(128, (1, 15), activation=activef, kernel_initializer='lecun_normal')(input)
