@@ -260,23 +260,17 @@ class CalculateSimilarity():
     #     # contains the list of results for that particular subjects in all the sessions
     #     return resutls3    
 
-    def _compute_embedding_batch(x_test_batch,embedding_network):
-        embeddings = embedding_network(x_test_batch[0:min(500, len(x_test_batch))])
-
-        for c in range(len(x_test_batch) // 500):
-            embeddings = tf.concat(axis=0, values=[anchor_embeddings,                             embedding_network(x_test_batch[(c+1)*500:min((c+2)*500,len(x_test_batch))])])
-
-        return embeddings
     
     def _multi_session_open_set_verification(embedding_network, eeg_data, subjects, sessions):
         
         
         def compute_embedding_batch(x_test_batch,embedding_network):
-            embeddings = embedding_network(x_test_batch[0:min(500, len(x_test_batch))])
+            embeddings = embedding_network(x_test_batch[0:min(100, len(x_test_batch))])
 
-            for c in range(len(x_test_batch) // 500):
-                embeddings = tf.concat(axis=0, values=[embeddings,                             embedding_network(x_test_batch[(c+1)*500:min((c+2)*500,len(x_test_batch))])])
-
+            for c in range(len(x_test_batch) // 100):
+                embeddings = tf.concat(axis=0, values=[embeddings,                             embedding_network(x_test_batch[(c+1)*100:min((c+2)*100,len(x_test_batch))])])
+            print(type(embeddings))
+            embeddings = embeddings.numpy()            
             return embeddings
 
         """
@@ -304,6 +298,10 @@ class CalculateSimilarity():
                 - Session(s) being compared
         """
         resutls3=defaultdict(list)
+        
+        
+        
+        eeg_data=compute_embedding_batch(eeg_data,embedding_network)
 
         # Iterate over all the sessions in the test data except the last session
         for enroll_sessions in range(0, len(np.unique(sessions))-1):
@@ -318,7 +316,7 @@ class CalculateSimilarity():
             enroll_subjects=subjects[enroll_indices]
 
             # Get the embeddings of the session to be enrolled
-            enroll_embeddings=compute_embedding_batch(eeg_data[enroll_indices],embedding_network)
+            enroll_embeddings=eeg_data[enroll_indices]
 
             # Iterate over all the sessions except the session already enrolled
             for test_sessions in range(enroll_sessions+1, len(np.unique(sessions))):
@@ -333,7 +331,7 @@ class CalculateSimilarity():
                 test_subjects=subjects[test_indices]
 
                 # Get the embeddings of the session to be tested
-                test_embeddings=compute_embedding_batch(eeg_data[test_indices],embedding_network)
+                test_embeddings=eeg_data[test_indices]
 
 
                 # Iterate over all the brain samples in the session to be tested
