@@ -31,7 +31,7 @@ import pkgutil
 def _evaluate():
     # Intiaizing the datasets
 
-    erpcore=ERPCOREN400()
+    erpcore=ERPCORENP300()
     erpcore.subject_list=erpcore.subject_list[0:1]
     paradigm=ERP()
     print(erpcore.get_data())

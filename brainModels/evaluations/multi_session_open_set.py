@@ -182,6 +182,7 @@ class MultiSessionOpenSet(BaseEvaluation):
             true_lables=np.array(result[:,1])
             true_lables=true_lables.astype(np.float64)
             predicted_scores=np.array(result[:,0])
+            predicted_scores=predicted_scores.astype(np.float64)
             # print("predicted scores", predicted_scores)
             eer, frr_1_far=score._calculate_siamese_scores(true_lables, predicted_scores)
             res_open_set = {

@@ -57,13 +57,16 @@ class ERPCORENP300(BaseDataset):
 
         [1] Kappenman, Emily S., et al. "ERP CORE: An open resource for human event-related potential 
         research." NeuroImage 225 (2021): 117465.
+
+
+
     """
 
     def __init__(self):
         super().__init__(
             subjects=list(range(1, 41)),
             sessions_per_subject=1, 
-            events=dict(Deviant=222, Standard=212),
+            events=dict(Deviant=2, Standard=1),
             code="erpcore p300",
             interval=[-0.2, 0.8],
             paradigm="erp",
@@ -147,14 +150,22 @@ class ERPCORENP300(BaseDataset):
         
         events, event_ids = mne.events_from_annotations(raw,verbose=False)
 
-        print("event id's", event_ids)
-        print("events", events)
+        # Getting the targeted events
+        P300_events=[event_ids['11'],event_ids['22'],event_ids['33'],event_ids['44'],event_ids['55']]
 
-        # Merge events of event_id's "Target/Related because nature of the trails is same, just they
-        # came from two diffrerent lists"
-        events[events[:, 2] == 211, 2] = 212
-        events[events[:, 2] == 221, 2] = 222
-        sessions[session_name][run_name]=raw, events
+        fevents=[]
+        for i, val in enumerate(events[:,2]):
+            if val in [7,6]:
+                continue
+            if events[i+1,2]==6:
+                temp_event=events[i,:]
+                if val in P300_events:
+                    temp_event[2]=2
+                else:
+                    temp_event[2]=1
+                fevents.append(temp_event)
+        fevents = np.array(fevents)
+        sessions[session_name][run_name]=raw, fevents
         return sessions
     
     def data_path(self, subject, path=None, force_update=False,
