@@ -98,7 +98,7 @@ class MultiSessionOpenSet(BaseEvaluation):
         dicr3={}
         dicr2={}
         dicr1={}
-        mean_fpr = np.linspace(0, 1, 10000)
+        mean_fpr=np.linspace(0, 1, 100000)
         
         for train_index, test_index in groupfold.split(data, y, groups=y):
             x_train, x_test, y_train, y_test =data[train_index],data[test_index],y[train_index],y[test_index]
@@ -237,7 +237,7 @@ class MultiSessionOpenSet(BaseEvaluation):
         thresholds_list=[]
         fnr_list=[] 
         frr_1_far_list=[]
-        mean_fpr = np.linspace(0, 1, 10000)
+        mean_fpr=np.linspace(0, 1, 100000)
         classifier=features[-1]
         for enroll_sessions in range(0, len(np.unique(session_groups))-1):
 
