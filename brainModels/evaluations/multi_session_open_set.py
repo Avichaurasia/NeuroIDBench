@@ -35,7 +35,7 @@ import tensorflow as tf
 import pickle
 import importlib
 from .similarity import CalculateSimilarity
-
+import gc
 log = logging.getLogger(__name__)
 
 Vector = Union[list, tuple, np.ndarray]
@@ -98,7 +98,7 @@ class MultiSessionOpenSet(BaseEvaluation):
         dicr3={}
         dicr2={}
         dicr1={}
-        mean_fpr=np.linspace(0, 1, 100000)
+        mean_fpr = np.linspace(0, 1, 10000)
         
         for train_index, test_index in groupfold.split(data, y, groups=y):
             x_train, x_test, y_train, y_test =data[train_index],data[test_index],y[train_index],y[test_index]
@@ -107,7 +107,7 @@ class MultiSessionOpenSet(BaseEvaluation):
             scaler = StandardScaler()
             x_train = scaler.fit_transform(x_train.reshape((x_train.shape[0], -1))).reshape(x_train.shape)
             x_test = scaler.transform(x_test.reshape((x_test.shape[0], -1))).reshape(x_test.shape)
-            tf.keras.backend.clear_session()
+            
             if (siamese.user_siamese_path is None):
 
                 # If the user siamese path is not provided, then we utilize the default siamese network
@@ -127,6 +127,9 @@ class MultiSessionOpenSet(BaseEvaluation):
             resutls3=CalculateSimilarity._multi_session_open_set_verification(model, x_test, y_test, test_sessions) 
             dicr3.update(dict(resutls3))
             count_cv=count_cv+1
+            tf.keras.backend.clear_session()
+            del model, embedding_network, train_dataset, history
+            gc.collect()
         return dicr3
 
     def deep_learning_method(self, X, dataset, metadata, key, features):
@@ -182,7 +185,6 @@ class MultiSessionOpenSet(BaseEvaluation):
             true_lables=np.array(result[:,1])
             true_lables=true_lables.astype(np.float64)
             predicted_scores=np.array(result[:,0])
-            predicted_scores=predicted_scores.astype(np.float64)
             # print("predicted scores", predicted_scores)
             eer, frr_1_far=score._calculate_siamese_scores(true_lables, predicted_scores)
             res_open_set = {
@@ -237,7 +239,7 @@ class MultiSessionOpenSet(BaseEvaluation):
         thresholds_list=[]
         fnr_list=[] 
         frr_1_far_list=[]
-        mean_fpr=np.linspace(0, 1, 100000)
+        mean_fpr = np.linspace(0, 1, 10000)
         classifier=features[-1]
         for enroll_sessions in range(0, len(np.unique(session_groups))-1):
 
