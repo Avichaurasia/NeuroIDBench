@@ -9,7 +9,7 @@ from sklearn.model_selection import (
 class CalculateSimilarity():
 
     # This function has been sourced from https://git.scc.kit.edu/ps-chair/brainnet licensed under the Creative Commons
-    def _close_set_identification(self, embedding_network, x_train_val, y_train_val, x_test, y_test):
+    def _close_set_identification(embedding_network, x_train_val, y_train_val, x_test, y_test):
         """
         Calculates similarity values for closed-set recognition by comparing each brain embedding in the test set
         with all face embeddings in the training set, then computes similarity by calculating euclidean distance 
@@ -83,7 +83,7 @@ class CalculateSimilarity():
                         TN+=1
         return resutls,resutls2,resutls3
     
-    def _open_set_verification(self, embedding_network, x_test, y_test):
+    def _open_set_verification(embedding_network, x_test, y_test):
         """
         Calculates similarity values for authentication (verification) by comparing each brain embedding in the test set
         with all other brain embeddings in the test. It computes similarity by calculating euclidean disnatncebetween each 

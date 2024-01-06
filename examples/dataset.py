@@ -5,9 +5,11 @@ import logging
 import mne
 import numpy as np
 import pandas as pd
+#from bra.datasets.
 from brainModels.datasets.lee2019 import Lee2019
 from brainModels.datasets.erpCoreN400 import ERPCOREN400
 from brainModels.datasets.erpCoreP300 import ERPCORENP300
+from brainModels.datasets.cogBciFlanker import COGBCIFLANKER
 from brainModels.preprocessing.erp import ERP
 from brainModels.featureExtraction.features import PowerSpectralDensity
 from brainModels.featureExtraction.features import AutoRegressive
@@ -32,9 +34,10 @@ def _evaluate():
     # Intiaizing the datasets
 
     erpcore=ERPCORENP300()
-    erpcore.subject_list=erpcore.subject_list[0:1]
+    cogbci=COGBCIFLANKER()
+    cogbci.subject_list=cogbci.subject_list[0:7]
     paradigm=ERP()
-    print(erpcore.get_data())
+    print(cogbci.get_data())
 
 
 if __name__ == '__main__':

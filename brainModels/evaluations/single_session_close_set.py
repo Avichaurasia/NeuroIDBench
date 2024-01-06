@@ -30,6 +30,7 @@ import tensorflow as tf
 import pickle
 import importlib
 from .similarity import CalculateSimilarity
+import gc
 
 log = logging.getLogger(__name__)
 
@@ -92,7 +93,6 @@ class SingleSessionCloseSet(BaseEvaluation):
             # Normalizing training and testing data using StandardScaler
             x_train = scaler.fit_transform(x_train.reshape((x_train.shape[0], -1))).reshape(x_train.shape)
             x_test = scaler.transform(x_test.reshape((x_test.shape[0], -1))).reshape(x_test.shape)
-            tf.keras.backend.clear_session()
             if (siamese.user_siamese_path is None):
 
                 # If the user siamese path is not provided, then we utilize the default siamese network
@@ -113,6 +113,9 @@ class SingleSessionCloseSet(BaseEvaluation):
             dicr2[count_cv] = resutls2
             dicr3.update(dict(resutls3))
             count_cv=count_cv+1
+            tf.keras.backend.clear_session()
+            del model, embedding_network, train_dataset, history
+            gc.collect()
         return dicr3
 
     def deep_learning_method(self, X, dataset, metadata, key, features):
