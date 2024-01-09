@@ -26,7 +26,7 @@ from sklearn.metrics import accuracy_score
 import random
 #from scipy.optimize import brentq
 from scipy.interpolate import interp1d
-from .metrics import Scores as score
+from ..analysis.metrics import Scores as score
 from collections import OrderedDict
 from sklearn.utils import shuffle
 #from sklearn.mo
@@ -36,14 +36,13 @@ import pickle
 import importlib
 from .similarity import CalculateSimilarity
 import gc
-
 log = logging.getLogger(__name__)
 
 Vector = Union[list, tuple, np.ndarray]
 
 #########################################################################################################################################################
 ##########################################################################################################################################################
-                                                    #Open-set Scenario
+                                                    #Close-set Scenario
 ##########################################################################################################################################################
 ##########################################################################################################################################################
 
@@ -167,33 +166,32 @@ class SingleSessionOpenSet(BaseEvaluation):
         results_open_set=[]
         for session in np.unique(metadata.session):
             ix = metadata.session == session
+            #for name, clf in pipelines.items():
+                #siamese = clf[0]
             siamese = features[0]
             le = LabelEncoder()
             X_=data[ix]
             y_=y[ix]
             open_dicr3=self._siamese_training(X_, y_, siamese)
-            # open_set_path=os.path.join(results_saving_path,"open_set")
-            # if not os.path.exists(open_set_path):
-            #     os.makedirs(open_set_path)
+            #close_set_path=os.path.join(results_saving_path,"open_set")
+            # if not os.path.exists(close_set_path):
+            #     os.makedirs(close_set_path)
 
-            # with open(os.path.join(open_set_path, "d1_dicr1.pkl"), 'wb') as f:
-            #     pickle.dump(open_dicr1, f)
+            # with open(os.path.join(close_set_path, "d1_dicr1.pkl"), 'wb') as f:
+            #     pickle.dump(close_dicr1, f)
 
-            # with open(os.path.join(open_set_path, "d1_dicr2.pkl"), 'wb') as f:
-            #     pickle.dump(open_dicr2, f)
+            # with open(os.path.join(close_set_path, "d1_dicr2.pkl"), 'wb') as f:
+            #     pickle.dump(close_dicr2, f)
 
-            # with open(os.path.join(open_set_path, "d1_dicr3.pkl"), 'wb') as f:
-            #     pickle.dump(open_dicr3, f)
+            # with open(os.path.join(close_set_path, "d1_dicr3.pkl"), 'wb') as f:
+            #     pickle.dump(close_dicr3, f)
 
             for sub in open_dicr3.keys():
                 result=open_dicr3[sub]
                 result=np.array(result)
-
                 true_lables=np.array(result[:,1])
-                true_lables=true_lables.astype(np.float64)
                 predicted_scores=np.array(result[:,0])
-                # print("predicted scores", predicted_scores)
-                eer, frr_1_far=score._calculate_siamese_scores(true_lables, predicted_scores)
+                eer, frr_1_far, frr_01_far, frr_001_far=score._calculate_siamese_scores(true_lables, predicted_scores)
                 res_open_set = {
                 'evaluation': 'Single Session',
                     "eval Type": "Open Set",
@@ -202,8 +200,10 @@ class SingleSessionOpenSet(BaseEvaluation):
                     "subject": sub,
                     "session": session,
                     "frr_1_far": frr_1_far,
+                    "frr_0.1_far": frr_01_far,
+                    "frr_0.01_far": frr_001_far,
                     #"accuracy": mean_accuracy,
-                   # "auc": auc,
+                    #"auc": auc,
                     "eer": eer,
                    # "tpr": inter_tpr,
                     #"std_auc": std_auc,
@@ -211,7 +211,6 @@ class SingleSessionOpenSet(BaseEvaluation):
                     #"n_channels": data.columns.size
                     }
                 results_open_set.append(res_open_set)
-
 
         return results_open_set
     
@@ -250,6 +249,8 @@ class SingleSessionOpenSet(BaseEvaluation):
         thresholds_list=[]
         fnr_list=[] 
         frr_1_far_list=[]
+        frr_01_far_list=[]
+        frr_001_far_list=[]
         #for name, clf in pipelines.items():
         mean_fpr=np.linspace(0, 1, 100000)
         classifier=pipeline[-1]
@@ -293,19 +294,27 @@ class SingleSessionOpenSet(BaseEvaluation):
 
             # Predicting the test set result
             y_pred=model.predict(X_test)
+
+            #print("complete y_pred_proba", model.predict_proba(X_test))
             y_pred_proba=model.predict_proba(X_test)[:,-1]
 
+            #print("y_pred_proba", y_pred_proba)
+
             # calculating auc, eer, eer_threshold, fpr, tpr, thresholds for each k-fold
-            auc, eer, eer_theshold, inter_tpr, tpr, fnr, frr_1_far=score._calculate_scores(y_pred_proba,y_test, mean_fpr)
-            accuracy_list.append(accuracy_score(y_test,y_pred))
-            auc_list.append(auc)
+            #auc, eer, eer_theshold, inter_tpr, tpr, fnr, frr_1_far=score._calculate_scores(y_pred_proba,y_test, mean_fpr)
+
+            eer, frr_1_far, frr_01_far, frr_001_far=score._calculate_scores(y_pred_proba,y_test, mean_fpr)
+            #accuracy_list.append(accuracy_score(y_test,y_pred))
+            #auc_list.append(auc)
             eer_list.append(eer)
-            tpr_list.append(inter_tpr)
-            fnr_list.append(fnr)
+            #tpr_list.append(inter_tpr)
+            #fnr_list.append(fnr)
             frr_1_far_list.append(frr_1_far)
-        average_scores=score._calculate_average_scores(accuracy_list, tpr_list, eer_list, mean_fpr, auc_list, frr_1_far_list)
+            frr_01_far_list.append(frr_01_far)
+            frr_001_far_list.append(frr_001_far)
+
+        average_scores=score._calculate_average_scores(eer_list, frr_1_far_list, frr_01_far_list, frr_001_far_list)
         return average_scores
-     
    
     def _prepare_data(self, dataset, features, subject_dict):
         """Prepares and combines data from various features for the given dataset.
@@ -342,10 +351,6 @@ class SingleSessionOpenSet(BaseEvaluation):
         
         # Filter out rows with invalid subject and session combinations
         df_final = df_final[~df_final.set_index(['subject', 'session']).index.isin(invalid_subject_sessions.set_index(['subject', 'session']).index)]
-        #print(df_final[['session', 'Subject']].value_counts())
-
-        #print(df[['session', 'Subject']].value_counts())
-
         return df_final
     
     def traditional_authentication_methods(self, dataset, subject_dict, key, features):  
@@ -372,6 +377,8 @@ class SingleSessionOpenSet(BaseEvaluation):
         """
         results_open_set=[]
         data=self._prepare_data(dataset, features, subject_dict)
+        print("Total sample size without any epochs rejection", len(data))
+        #print("number of nan values", data.isna().sum())
         for subject in tqdm(np.unique(data.subject), desc=f"{key}-SingleSessionOpenSet"):
             df_subj=data.copy(deep=True)
 
@@ -381,6 +388,8 @@ class SingleSessionOpenSet(BaseEvaluation):
             # Updating the label to 1 for the subject being authenticated
             df_subj.loc[df_subj['subject'] == subject, 'Label'] = 1
             for session in np.unique(df_subj.session):
+                if not self._valid_subject_session(df_subj, subject, session):
+                    continue
                 df_session= df_subj[df_subj.session==session]
                 df_authenticated=df_session[df_session['subject']==subject]
 
@@ -397,7 +406,8 @@ class SingleSessionOpenSet(BaseEvaluation):
                 #     continue
                 
                 close_set_scores=self._authenticate_single_subject_open_set(imposters_X, imposters_labels, imposter_subject_ids, df_authenticated, features)
-                mean_accuracy, mean_auc, mean_eer, mean_tpr, tprs_upper, tprr_lower, std_auc, mean_frr_1_far=close_set_scores
+                #mean_accuracy, mean_auc, mean_eer, mean_tpr, tprs_upper, tprr_lower, std_auc, mean_frr_1_far=close_set_scores
+                mean_eer, mean_frr_1_far, mean_frr_01_far, mean_frr_001_far=close_set_scores
                 res_open_set = {
                 # "time": duration / 5.0,  # 5 fold CV
                 'evaluation': 'Single Session',
@@ -407,19 +417,21 @@ class SingleSessionOpenSet(BaseEvaluation):
                 "subject": subject,
                 "session": session,
                 "frr_1_far": mean_frr_1_far,
-                "accuracy": mean_accuracy,
-                "auc": mean_auc,
+                "frr_0.1_far": mean_frr_01_far,
+                "frr_0.01_far": mean_frr_001_far,
+                #"accuracy": mean_accuracy,
+                #"auc": mean_auc,
                 "eer": mean_eer,
-                "tpr": mean_tpr,
-                "tprs_upper": tprs_upper,
-                "tprs_lower": tprr_lower,
-                "std_auc": std_auc,
-                    "n_samples": len(df_subj)
+                #"tpr": mean_tpr,
+                #"tprs_upper": tprs_upper,
+                #"tprs_lower": tprr_lower,
+                #"std_auc": std_auc,
+                "n_samples": len(df_subj)
                 #"n_samples": len(data)  # not training sample
                 #"n_channels": data.columns.size
                     }
                 results_open_set.append(res_open_set)
-    
+
         return results_open_set
 
     def _evaluate(self, dataset, pipelines):
@@ -440,7 +452,17 @@ class SingleSessionOpenSet(BaseEvaluation):
             list: A list containing the evaluation results for each specified authentication method.
         """
 
-        X, subject_dict, metadata=self.paradigm.get_data(dataset)
+        # X, subject_dict, metadata=self.paradigm.get_data(dataset)
+
+        if (dataset.code=='Lee2019_ERP'):
+            X, subject_dict, metadata=self.paradigm.lee_get_data(dataset)
+
+        else:
+            X, subject_dict, metadata=self.paradigm.get_data(dataset)
+        
+        
+        if not self._valid_number_of_subjects(metadata):
+            raise AssertionError("Dataset should have at least 4 subjects")
         results_pipeline=[]
         for key, features in pipelines.items():   
             if (key.upper()=='SIAMESE'):
@@ -448,8 +470,9 @@ class SingleSessionOpenSet(BaseEvaluation):
                 # If the key is Siamese, then we use the deep learning method
                 results=self.deep_learning_method(X, dataset, metadata, key, features)
                 results_pipeline.append(results) 
-            else:
+            else:   
 
+                #shallow_classifers_results_path=os.path.join(results_path, "Shallow_Classifiers")
                 # If the key is not Siamese, then we use the traditional authentication methods
                 results=self.traditional_authentication_methods(dataset, subject_dict, key, features)
                 results_pipeline.append(results)
@@ -524,6 +547,12 @@ class SingleSessionOpenSet(BaseEvaluation):
         if (session not in sessions):
             return False
         
+        else:
+            return True
+        
+    def _valid_number_of_subjects(self, metadata):
+        if(len(metadata.subject.unique())<4):
+            return False
         else:
             return True
     

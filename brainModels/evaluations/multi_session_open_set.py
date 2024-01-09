@@ -26,7 +26,7 @@ from sklearn.metrics import accuracy_score
 import random
 #from scipy.optimize import brentq
 from scipy.interpolate import interp1d
-from .metrics import Scores as score
+from ..analysis.metrics import Scores as score
 from collections import OrderedDict
 from sklearn.utils import shuffle
 #from sklearn.mo
@@ -90,7 +90,7 @@ class MultiSessionOpenSet(BaseEvaluation):
         This method performs Open-Set Authentication using EEG-based data and Siamese networks. It utilizes GroupKFold
         cross-validation with 4 splits for training and evaluation. The function trains the Siamese network using the
         provided data, validates the model on test data, and collects results for each fold. The results are stored in
-        dictionaries 'dicr3', which contain evaluation metrics for each fold of the cross-validation.
+        dictionaries 'dicr1', 'dicr2', and 'dicr3', which contain evaluation metrics for each fold of the cross-validation.
         Metrics include verification results like ROC-AUC, EER, and other relevant scores.
         """
         groupfold = GroupKFold(n_splits=4)
@@ -98,16 +98,20 @@ class MultiSessionOpenSet(BaseEvaluation):
         dicr3={}
         dicr2={}
         dicr1={}
-        mean_fpr = np.linspace(0, 1, 100000)
-        
+        mean_fpr=np.linspace(0, 1, 100000)
         for train_index, test_index in groupfold.split(data, y, groups=y):
             x_train, x_test, y_train, y_test =data[train_index],data[test_index],y[train_index],y[test_index]
+            print("subjects in train", np.unique(y_train))
+            print("subjects in test", np.unique(y_test))
             train_sessions, test_sessions=sessions[train_index], sessions[test_index]
+            # print("sessions in train", np.unique(train_sessions))
+            # print("sessions in train", np.unique(test_sessions))
+
 
             scaler = StandardScaler()
             x_train = scaler.fit_transform(x_train.reshape((x_train.shape[0], -1))).reshape(x_train.shape)
             x_test = scaler.transform(x_test.reshape((x_test.shape[0], -1))).reshape(x_test.shape)
-            
+            #tf.keras.backend.clear_session()
             if (siamese.user_siamese_path is None):
 
                 # If the user siamese path is not provided, then we utilize the default siamese network
@@ -158,9 +162,15 @@ class MultiSessionOpenSet(BaseEvaluation):
         # )
         # if not os.path.exists(results_saving_path):
         #     os.makedirs(results_saving_path)
-
+   
         metadata=metadata[metadata['event_id']=="Deviant"]
+        # print("total samples after rejection threshold", len(metadata))
+        # for i in range(1,30):
+        #     print("subject", i, metadata[metadata['subject']==i]['session'].value_counts())
+        # #print("after rejection threshold", metadata[['subject', 'session']].value_counts())
+            
         metadata=self._valid_subject_samples(metadata)
+        #print("subjects and sessions", metadata[['subject', 'session']].value_counts())
         target_index=metadata['event_id'].index.tolist()
         data=X[target_index]
         y=np.array(metadata["subject"])
@@ -171,22 +181,30 @@ class MultiSessionOpenSet(BaseEvaluation):
         X_=data
         y_=y
         open_dicr3=self._siamese_training(X_, y_, siamese, groups)
-        # open_set_path=os.path.join(results_saving_path,"open_set")
+        #open_set_path=os.path.join(results_saving_path,"open_set")
         # if not os.path.exists(open_set_path):
         #     os.makedirs(open_set_path)
+
+        # # with open(os.path.join(open_set_path, "d1_dicr1.pkl"), 'wb') as f:
+        # #     pickle.dump(open_dicr1, f)
+
+        # # with open(os.path.join(open_set_path, "d1_dicr2.pkl"), 'wb') as f:
+        # #     pickle.dump(open_dicr2, f)
 
         # with open(os.path.join(open_set_path, "d1_dicr3.pkl"), 'wb') as f:
         #     pickle.dump(open_dicr3, f)
 
         for sub in open_dicr3.keys():
+            #print("subject ", sub)
             result=open_dicr3[sub]
             result=np.array(result)
 
             true_lables=np.array(result[:,1])
             true_lables=true_lables.astype(np.float64)
             predicted_scores=np.array(result[:,0])
+            predicted_scores=predicted_scores.astype(np.float64)
             # print("predicted scores", predicted_scores)
-            eer, frr_1_far=score._calculate_siamese_scores(true_lables, predicted_scores)
+            eer, frr_1_far, frr_01_far, frr_001_far=score._calculate_siamese_scores(true_lables, predicted_scores)
             res_open_set = {
             'evaluation': 'Multi Session',
                 "eval Type": "Open Set",
@@ -195,8 +213,10 @@ class MultiSessionOpenSet(BaseEvaluation):
                 "subject": sub,
                 #"session": session,
                 "frr_1_far": frr_1_far,
+                "frr_0.1_far": frr_01_far,
+                "frr_0.01_far": frr_001_far,
                 #"accuracy": mean_accuracy,
-                #"auc": auc,
+               # "auc": auc,
                 "eer": eer,
                 #"tpr": inter_tpr,
                 #"std_auc": std_auc,
@@ -209,7 +229,7 @@ class MultiSessionOpenSet(BaseEvaluation):
     
 ##########################################################################################################################################################
 ##########################################################################################################################################################
-                                        #Multi Session Evaluatiom for State-of-the-algorithms(Open-set Scenario)
+                                        #Single Session Evaluatiom for State-of-the-algorithms(Open-set Scenario)
 ##########################################################################################################################################################
 ##########################################################################################################################################################
     
@@ -226,9 +246,11 @@ class MultiSessionOpenSet(BaseEvaluation):
             dict: Tuple containing the average authentication scores across the k-fold
                   for each subject.
 
-        This method performs authentication for a single subject for multi-session datasets (open-set scenario).
-        It iterates through eac session except the session to be enrolled and trains the model on the enrolled
-        session. It then authenticates the subject on each session and gathers the results for each fold.
+        This method evaluates the authentication performance for a single subject in a close-set scenario.
+        It uses RepeatedStratifiedKFold cross-validation to split the data into training and test sets.
+        The function normalizes the data, trains the model, predicts test set results, and calculates
+        various authentication metrics (such as accuracy, AUC, EER, FPR, TPR) for each fold in the cross-validation.
+        The average scores for accuracy, AUC, EER, and FRR_1_FAR are then computed and returned as a dictionary.
         """
         accuracy_list=[]
         auc_list=[]
@@ -239,12 +261,16 @@ class MultiSessionOpenSet(BaseEvaluation):
         thresholds_list=[]
         fnr_list=[] 
         frr_1_far_list=[]
-        mean_fpr = np.linspace(0, 1, 10000)
+        frr_01_far_list=[]
+        frr_001_far_list=[]
+        #for name, clf in pipelines.items():
+        mean_fpr=np.linspace(0, 1, 100000)
         classifier=features[-1]
         for enroll_sessions in range(0, len(np.unique(session_groups))-1):
 
             # Get the session number of the session to be enrolled
             enroll_session=np.unique(session_groups)[enroll_sessions]
+            #print("Train session", enroll_session)
 
             # Get the indices of the session to be enrolled
             enroll_indices=np.where(session_groups==enroll_session)[0]
@@ -255,12 +281,15 @@ class MultiSessionOpenSet(BaseEvaluation):
             auth_subject = np.unique(train_session_subjects[train_session_labels == 1])
             rej_subjects = np.unique(train_session_subjects[train_session_labels == 0])
             np.random.shuffle(rej_subjects)
+            #print("All imposters", rej_subjects)
 
             # Select 75% of rejected subjects for training and 25% for testing
             n_train_rej = int(np.ceil(0.75 * len(rej_subjects)))
 
             
             train_rej_subjects = rej_subjects[:n_train_rej]
+            #print("imposters for training", rej_subjects)
+
             test_rej_subjects = rej_subjects[n_train_rej:]
 
             # Combine authenticated and selected rejected subjects for training 
@@ -269,6 +298,8 @@ class MultiSessionOpenSet(BaseEvaluation):
 
             # Get indices for subjects for training
             train_indices = np.isin(train_session_subjects, train_subjects)
+
+            #print("Training subjects", np.unique(train_session_subjects[train_indices]))
 
             X_train=train_session_eeg_data[train_indices]
             y_train=train_session_labels[train_indices]
@@ -288,6 +319,8 @@ class MultiSessionOpenSet(BaseEvaluation):
                 # Get the session number of the session to be tested
                 test_session=np.unique(session_groups)[test_sessions]
 
+                #print("test session", test_session)
+
                 # Get the indices of the session to be tested
                 test_session_indices=np.where(session_groups==test_session)[0]
 
@@ -297,6 +330,8 @@ class MultiSessionOpenSet(BaseEvaluation):
 
                 # Get indices for subjects for training
                 test_indices = np.isin(test_session_subjects, test_subjects)
+                
+                #print("Testing subjects", np.unique(test_session_subjects[test_indices]))
                 X_test=test_session_eeg_data[test_indices]
                 y_test=test_session_labels[test_indices]
                 X_test=sc.transform(X_test)
@@ -306,16 +341,23 @@ class MultiSessionOpenSet(BaseEvaluation):
                 y_pred_proba=model.predict_proba(X_test)[:,-1]
 
                 # calculating auc, eer, eer_threshold, fpr, tpr, thresholds for each k-fold
-                auc, eer, eer_theshold, inter_tpr, tpr, fnr, frr_1_far=score._calculate_scores(y_pred_proba,y_test, mean_fpr)
-                accuracy_list.append(accuracy_score(y_test,y_pred))
-                auc_list.append(auc)
+                #auc, eer, eer_theshold, inter_tpr, tpr, fnr, frr_1_far=score._calculate_scores(y_pred_proba,y_test, mean_fpr)
+                eer, frr_1_far, frr_01_far, frr_001_far=score._calculate_scores(y_pred_proba,y_test, mean_fpr)
+                #accuracy_list.append(accuracy_score(y_test,y_pred))
+                #auc_list.append(auc)
                 eer_list.append(eer)
-                tpr_list.append(inter_tpr)
-                fnr_list.append(fnr)
+                #tpr_list.append(inter_tpr)
+                #fnr_list.append(fnr)
                 frr_1_far_list.append(frr_1_far)
+                frr_01_far_list.append(frr_01_far)
+                frr_001_far_list.append(frr_001_far)
 
-        average_scores=score._calculate_average_scores(accuracy_list, tpr_list, eer_list, mean_fpr, auc_list, frr_1_far_list)
+        average_scores=score._calculate_average_scores(eer_list, frr_1_far_list, frr_01_far_list, frr_001_far_list)
         return average_scores
+
+        # print("=======================================================================================================")
+        # print("========================================================================================================")
+        #return average_scores
    
     def _prepare_data(self, dataset, features, subject_dict):
         """Prepares and combines data from various features for the given dataset.
@@ -358,11 +400,12 @@ class MultiSessionOpenSet(BaseEvaluation):
 
         return df_final
     
-    def traditional_authentication_methods(self, dataset, subject_dict, key, features): 
-        """
-        Perform traditional authentication methods for single-session close-set evaluation.
+    def traditional_authentication_methods(self, dataset, subject_dict, key, features):  
 
-        Parameters:
+        """
+        Perform Traditional Authentication Methods for Single Session Open-Set Evaluation.
+
+        parameters:
             dataset (Dataset): The dataset to be evaluated.
             subject_dict (dict): A dictionary containing subject information.
             key (str): The key identifier for the authentication method.
@@ -371,18 +414,20 @@ class MultiSessionOpenSet(BaseEvaluation):
         Returns:
             list: A list of dictionaries containing evaluation metrics for each subject's session.
 
-
-        Description:
-            This method executes traditional authentication methods for single-session close-set evaluation.
-            It prepares the data for evaluation and iterates through each subject in the dataset. For each 
-            subject, it assigns label 1 to the sessions belonging to the subject being authenticated and 
-            label 0 to the rest. The method then authenticates each subject using the provided features and gathers 
-            evaluation metrics. Metrics include accuracy, AUC, EER, TPR, among others.
-        """ 
+        This method executes traditional authentication methods for single-session open-set evaluation. It prepares the data
+        for evaluation and iterates through each subject in the dataset. For each subject, it assigns label 1 to the sessions
+        belonging to that subject and label 0 to the rest. The method then authenticates each session for the subject using
+        the provided features and gathers evaluation metrics. Metrics include accuracy, AUC, EER, TPR, among others. It also
+        identifies and evaluates sessions with rejected subjects, determining performance against imposter subjects, labels, 
+        and features. Evaluation metrics are collected and returned in a list of dictionaries, containing detailed results 
+        for each subject's session.
+        """
         results_open_set=[]
         data=self._prepare_data(dataset, features, subject_dict)
         for subject in tqdm(np.unique(data.subject), desc=f"{key}-MultiSessionOpenSet"):
             df_subj=data.copy(deep=True)
+            if not self._valid_sessions(df_subj, subject, dataset):
+                continue
 
             # Assign label 0 to all subjects
             df_subj['Label']=0
@@ -390,12 +435,14 @@ class MultiSessionOpenSet(BaseEvaluation):
             # Updating the label to 1 for the subject being authenticated
             df_subj.loc[df_subj['subject'] == subject, 'Label'] = 1
             session_groups = df_subj.session.values
-            subject_ids=df_subj.Subject.values
+            subject_ids=df_subj.subject.values
             labels=np.array(df_subj['Label'])
-            X=np.array(df_subj.drop(['Label','Event_id','Subject','session'],axis=1))
-
+            X=np.array(df_subj.drop(['Label','Event_id','subject','session'],axis=1))
+                
             open_set_scores=self._authenticate_single_subject_open_set(X,labels, subject_ids, features, session_groups=session_groups)
-            mean_accuracy, mean_auc, mean_eer, mean_tpr, tprs_upper, tprr_lower, std_auc, mean_frr_1_far=open_set_scores
+            #mean_accuracy, mean_auc, mean_eer, mean_tpr, tprs_upper, tprr_lower, std_auc, mean_frr_1_far=open_set_scores
+            mean_eer, mean_frr_1_far, mean_frr_01_far, mean_frr_001_far=open_set_scores
+
             res_open_set = {
             # "time": duration / 5.0,  # 5 fold CV
             'evaluation': 'Multi Session',
@@ -405,20 +452,22 @@ class MultiSessionOpenSet(BaseEvaluation):
             "subject": subject,
             #"session": session,
             "frr_1_far": mean_frr_1_far,
-            "accuracy": mean_accuracy,
-            "auc": mean_auc,
+            "frr_0.1_far": mean_frr_01_far,
+            "frr_0.01_far": mean_frr_001_far,
+            #"accuracy": mean_accuracy,
+            #"auc": mean_auc,
             "eer": mean_eer,
-            "tpr": mean_tpr,
-            "tprs_upper": tprs_upper,
-            "tprs_lower": tprr_lower,
-            "std_auc": std_auc,
+            #"tpr": mean_tpr,
+            #"tprs_upper": tprs_upper,
+            #"tprs_lower": tprr_lower,
+            #"std_auc": std_auc,
             "n_samples": len(df_subj)
             #"n_samples": len(data)  # not training sample
             #"n_channels": data.columns.size
                 }
-            #print(res_close_set)
             results_open_set.append(res_open_set)
-        return results_open_set 
+
+        return results_open_set
 
     def _evaluate(self, dataset, pipelines):
 
@@ -439,6 +488,15 @@ class MultiSessionOpenSet(BaseEvaluation):
         """
 
         X, subject_dict, metadata=self.paradigm.get_data(dataset)
+        if not self._valid_number_of_subjects(metadata):
+            raise AssertionError("Dataset should have at least 4 subjects")
+        
+        # if (dataset.code=='Lee2019_ERP'):
+        #     X, subject_dict, metadata=self.paradigm.lee_get_data(dataset)
+
+        # else:
+        #     X, subject_dict, metadata=self.paradigm.get_data(dataset)
+        #print("type of metadata", type(metadata))
         results_pipeline=[]
         for key, features in pipelines.items():   
             if (key.upper()=='SIAMESE'):
@@ -475,7 +533,7 @@ class MultiSessionOpenSet(BaseEvaluation):
 
             if not self.is_valid(dataset):
                 raise AssertionError("Dataset is not appropriate for multi session evaluation")
-            
+    
             results=self._evaluate(dataset, pipelines)
             scenario="open_Set"
             results_path=os.path.join(
@@ -506,44 +564,45 @@ class MultiSessionOpenSet(BaseEvaluation):
         metadata = metadata[~metadata.set_index(['subject', 'session']).index.isin(invalid_subject_sessions.set_index(['subject', 'session']).index)]  
         return metadata
     
-    def _valid_subject_session(self, df, subject, session):
+    # def _valid_subject_session(self, df, subject, session):
     
-        """
-        Check if a subject has the required session for single-session evaluation.
+    #     """
+    #     Check if a subject has the required session for single-session evaluation.
 
-        Parameters:
-            - df: The data for the subject.
-            - subject: The subject to be evaluated.
-            - session: The session to be evaluated.
+    #     Parameters:
+    #         - df: The data for the subject.
+    #         - subject: The subject to be evaluated.
+    #         - session: The session to be evaluated.
 
-        Returns:
-            - valid: A boolean indicating if the subject has the required session.
-        """
+    #     Returns:
+    #         - valid: A boolean indicating if the subject has the required session.
+    #     """
 
-        df_subject=df[df['subject']==subject]
-        sessions=df_subject.session.values
-        if (session not in sessions):
-            return False
+    #     df_subject=df[df['subject']==subject]
+    #     sessions=df_subject.session.values
+    #     if (session not in sessions):
+    #         return False
         
+    #     else:
+    #         return True
+        
+    def _valid_sessions(self, df, subject, dataset):
+        df_subject=df[df['subject']==subject]
+        if (len(df_subject['session'].unique())!=dataset.n_sessions):
+            return False
         else:
             return True
+        
+    
+    def _valid_number_of_subjects(self, metadata):
+        if(len(metadata.subject.unique())<4):
+            return False
+        else:
+            return True
+
     
     def is_valid(self, dataset):
-
-        """
-        Check if a dataset is valid for performing mulyi-session evaluation.
-
-        Parameters:
-            - dataset: The dataset for evaluation.
-
-        Returns:
-            - True if the dataset is valid, otherwise False.
-        """
-
         return dataset.n_sessions > 1
-
-
-
 
 
 

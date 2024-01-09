@@ -22,7 +22,7 @@ from sklearn import metrics
 from sklearn.metrics import accuracy_score
 import random
 from scipy.interpolate import interp1d
-from .metrics import Scores as score
+from ..analysis.metrics import Scores as score
 from collections import OrderedDict
 from sklearn.utils import shuffle
 import mne
@@ -66,7 +66,8 @@ class MultiSessionCloseSet(BaseEvaluation):
     def _authenticate_single_subject_close_set(self, X,labels, subject_ids,  pipeline, session_groups=None):
 
         """
-        Perform authentication for a single subject in a multi-session evaluation (close-set scenario)
+        Perform authentication for a single subject in a multi-session evaluation (close-set scenario) for tradtional 
+        shallow classifiers using one vs all strategy
 
         Parameters:
             X (numpy.ndarray): The input features for authentication.
@@ -90,6 +91,8 @@ class MultiSessionCloseSet(BaseEvaluation):
         tpr_list=[]
         fnr_list=[] 
         frr_1_far_list=[]
+        frr_01_far_list=[]
+        frr_001_far_list=[]
         classifer=pipeline[-1]
         mean_fpr=np.linspace(0, 1, 100000)
 
@@ -97,6 +100,8 @@ class MultiSessionCloseSet(BaseEvaluation):
 
             # Get the session number of the session to be enrolled
             enroll_session=np.unique(session_groups)[enroll_sessions]
+
+            #print("enroll session", enroll_session)
 
             # Get the indices of the session to be enrolled
             enroll_indices=np.where(session_groups==enroll_session)[0]
@@ -118,6 +123,8 @@ class MultiSessionCloseSet(BaseEvaluation):
                 # Get the session number of the session to be tested
                 test_session=np.unique(session_groups)[test_sessions]
 
+                #print("test session", test_session)
+
                 # Get the indices of the session to be tested
                 test_indices=np.where(session_groups==test_session)[0]
 
@@ -130,15 +137,19 @@ class MultiSessionCloseSet(BaseEvaluation):
                 y_pred_proba=model.predict_proba(X_test)[:,-1]
 
                 # calculating auc, eer, eer_threshold, fpr, tpr, thresholds for each k-fold
-                auc, eer, eer_theshold, inter_tpr, tpr, fnr, frr_1_far=score._calculate_scores(y_pred_proba,y_test, mean_fpr)
-                accuracy_list.append(accuracy_score(y_test,y_pred))
-                auc_list.append(auc)
-                eer_list.append(eer)
-                tpr_list.append(inter_tpr)
-                fnr_list.append(fnr)
-                frr_1_far_list.append(frr_1_far)
+                #auc, eer, eer_theshold, inter_tpr, tpr, fnr, frr_1_far=score._calculate_scores(y_pred_proba,y_test, mean_fpr)
 
-        average_scores=score._calculate_average_scores(accuracy_list, tpr_list, eer_list, mean_fpr, auc_list, frr_1_far_list)
+                eer, frr_1_far, frr_01_far, frr_001_far=score._calculate_scores(y_pred_proba,y_test, mean_fpr)
+                #accuracy_list.append(accuracy_score(y_test,y_pred))
+                #auc_list.append(auc)
+                eer_list.append(eer)
+                #tpr_list.append(inter_tpr)
+                #fnr_list.append(fnr)
+                frr_1_far_list.append(frr_1_far)
+                frr_01_far_list.append(frr_01_far)
+                frr_001_far_list.append(frr_001_far)
+
+        average_scores=score._calculate_average_scores(eer_list, frr_1_far_list, frr_01_far_list, frr_001_far_list)
         return average_scores
 
 
@@ -177,6 +188,10 @@ class MultiSessionCloseSet(BaseEvaluation):
         
         # Filter out rows with invalid subject and session combinations
         df_final = df_final[~df_final.set_index(['subject', 'session']).index.isin(invalid_subject_sessions.set_index(['subject', 'session']).index)]
+        #print(df_final[['session', 'Subject']].value_counts())
+
+        #print(df[['session', 'Subject']].value_counts())
+
         return df_final
     
     def traditional_authentication_methods(self, dataset, subject_dict, key, features): 
@@ -204,6 +219,8 @@ class MultiSessionCloseSet(BaseEvaluation):
         data=self._prepare_data(dataset, features, subject_dict)
         for subject in tqdm(np.unique(data.subject), desc=f"{key}-MultiSessionCloseSet"):
             df_subj=data.copy(deep=True)
+            if not self._valid_sessions(df_subj, subject, dataset):
+                continue
 
             # Assign label 0 to all subjects
             df_subj['Label']=0
@@ -211,12 +228,14 @@ class MultiSessionCloseSet(BaseEvaluation):
             # Updating the label to 1 for the subject being authenticated
             df_subj.loc[df_subj['subject'] == subject, 'Label'] = 1
             session_groups = df_subj.session.values
-            subject_ids=df_subj.Subject.values
+            subject_ids=df_subj.subject.values
             labels=np.array(df_subj['Label'])
-            X=np.array(df_subj.drop(['Label','Event_id','Subject','session'],axis=1))
+            X=np.array(df_subj.drop(['Label','Event_id','subject','session'],axis=1))
 
             close_set_scores=self._authenticate_single_subject_close_set(X,labels, subject_ids, features, session_groups=session_groups)
-            mean_accuracy, mean_auc, mean_eer, mean_tpr, tprs_upper, tprr_lower, std_auc, mean_frr_1_far=close_set_scores
+            #mean_accuracy, mean_auc, mean_eer, mean_tpr, tprs_upper, tprr_lower, std_auc, mean_frr_1_far=close_set_scores
+
+            mean_eer, mean_frr_1_far, mean_frr_01_far, mean_frr_001_far=close_set_scores
             res_close_set = {
             # "time": duration / 5.0,  # 5 fold CV
             'evaluation': 'Multi Session',
@@ -226,13 +245,15 @@ class MultiSessionCloseSet(BaseEvaluation):
             "subject": subject,
             #"session": session,
             "frr_1_far": mean_frr_1_far,
-            "accuracy": mean_accuracy,
-            "auc": mean_auc,
+            "frr_0.1_far": mean_frr_01_far,
+            "frr_0.01_far": mean_frr_001_far,
+            #"accuracy": mean_accuracy,
+           # "auc": mean_auc,
             "eer": mean_eer,
-            "tpr": mean_tpr,
-            "tprs_upper": tprs_upper,
-            "tprs_lower": tprr_lower,
-            "std_auc": std_auc,
+           # "tpr": mean_tpr,
+            #"tprs_upper": tprs_upper,
+            #"tprs_lower": tprr_lower,
+           # "std_auc": std_auc,
             "n_samples": len(df_subj)
             #"n_samples": len(data)  # not training sample
             #"n_channels": data.columns.size
@@ -261,6 +282,12 @@ class MultiSessionCloseSet(BaseEvaluation):
         """
 
         X, subject_dict, metadata=self.paradigm.get_data(dataset)
+
+        # if (dataset.code=='Lee2019_ERP'):
+        #     X, subject_dict, metadata=self.paradigm.lee_get_data(dataset)
+
+        # else:
+        #     X, subject_dict, metadata=self.paradigm.get_data(dataset)
         results_pipeline=[]
         for key, features in pipelines.items():   
             if (key.upper()=='SIAMESE'):
@@ -295,9 +322,8 @@ class MultiSessionCloseSet(BaseEvaluation):
             - scenario: Evaluation scenario (close-set).
         """
 
-
         if not self.is_valid(dataset):
-                raise AssertionError("Dataset is not appropriate for multi session evaluation")
+            raise AssertionError("Dataset is not appropriate for multi session evaluation")
         
         results=self._evaluate(dataset, pipelines)
         scenario="close_Set"
@@ -329,42 +355,39 @@ class MultiSessionCloseSet(BaseEvaluation):
         metadata = metadata[~metadata.set_index(['subject', 'session']).index.isin(invalid_subject_sessions.set_index(['subject', 'session']).index)]  
         return metadata
     
-    def _valid_subject_session(self, df, subject, session):
+    # def _valid_subject_session(self, df, subject, session):
     
-        """
-        Check if a subject has the required session for single-session evaluation.
+    #     """
+    #     Check if a subject has the required session for single-session evaluation.
 
-        Parameters:
-            - df: The data for the subject.
-            - subject: The subject to be evaluated.
-            - session: The session to be evaluated.
+    #     Parameters:
+    #         - df: The data for the subject.
+    #         - subject: The subject to be evaluated.
+    #         - session: The session to be evaluated.
 
-        Returns:
-            - valid: A boolean indicating if the subject has the required session.
-        """
+    #     Returns:
+    #         - valid: A boolean indicating if the subject has the required session.
+    #     """
 
-        df_subject=df[df['subject']==subject]
-        sessions=df_subject.session.values
-        if (session not in sessions):
-            return False
+    #     df_subject=df[df['subject']==subject]
+    #     sessions=df_subject.session.values
+    #     if (session not in sessions):
+    #         return False
         
+    #     else:
+    #         return True
+        
+    def _valid_sessions(self, df, subject, dataset):
+        df_subject=df[df['subject']==subject]
+        #print(df_subject['session'].unique())
+        if (len(df_subject['session'].unique())!=dataset.n_sessions):
+            return False
         else:
             return True
+
     
     def is_valid(self, dataset):
-        """
-        Check if a dataset is valid for performing mulyi-session evaluation.
-
-        Parameters:
-            - dataset: The dataset for evaluation.
-
-        Returns:
-            - True if the dataset is valid, otherwise False.
-        """
         return dataset.n_sessions > 1
-
-
-
 
 
     

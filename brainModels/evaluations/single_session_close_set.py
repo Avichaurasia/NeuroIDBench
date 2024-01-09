@@ -22,7 +22,7 @@ from sklearn import metrics
 from sklearn.metrics import accuracy_score
 import random
 from scipy.interpolate import interp1d
-from .metrics import Scores as score
+from ..analysis.metrics import Scores as score
 from collections import OrderedDict
 from sklearn.utils import shuffle
 import mne
@@ -31,7 +31,6 @@ import pickle
 import importlib
 from .similarity import CalculateSimilarity
 import gc
-
 log = logging.getLogger(__name__)
 
 Vector = Union[list, tuple, np.ndarray]
@@ -93,6 +92,7 @@ class SingleSessionCloseSet(BaseEvaluation):
             # Normalizing training and testing data using StandardScaler
             x_train = scaler.fit_transform(x_train.reshape((x_train.shape[0], -1))).reshape(x_train.shape)
             x_test = scaler.transform(x_test.reshape((x_test.shape[0], -1))).reshape(x_test.shape)
+            #tf.keras.backend.clear_session()
             if (siamese.user_siamese_path is None):
 
                 # If the user siamese path is not provided, then we utilize the default siamese network
@@ -100,7 +100,7 @@ class SingleSessionCloseSet(BaseEvaluation):
             else:
 
                 # If the user siamese path is provided, then we utilize the user siamese network
-                model=siamese._user_siamese_embeddings(x_train.shape[1], x_train.shape[2])     
+                model=siamese._user_embeddings(x_train.shape[1], x_train.shape[2])     
             embedding_network=model
             #early_stopping_callback = EarlyStopping(monitor='val_loss', patience=10)
             train_dataset = tf.data.Dataset.from_tensor_slices((x_train, y_train)).shuffle(1000).batch(siamese.batch_size)
@@ -116,7 +116,7 @@ class SingleSessionCloseSet(BaseEvaluation):
             tf.keras.backend.clear_session()
             del model, embedding_network, train_dataset, history
             gc.collect()
-        return dicr3
+        return (dicr1, dicr2, dicr3)
 
     def deep_learning_method(self, X, dataset, metadata, key, features):
 
@@ -157,12 +157,11 @@ class SingleSessionCloseSet(BaseEvaluation):
         results_close_set=[]
         for session in np.unique(metadata.session):
             ix = metadata.session == session
-            #for name, clf in pipelines.items():
             siamese = features[0]
             le = LabelEncoder()
             X_=data[ix]
             y_=y[ix]
-            close_dicr3=self._siamese_training(X_, y_, siamese)
+            close_dicr1, close_dicr2, close_dicr3=self._siamese_training(X_, y_, siamese)
             # close_set_path=os.path.join(results_saving_path,"close_set")
             # if not os.path.exists(close_set_path):
             #     os.makedirs(close_set_path)
@@ -179,12 +178,9 @@ class SingleSessionCloseSet(BaseEvaluation):
             for sub in close_dicr3.keys():
                 result=close_dicr3[sub]
                 result=np.array(result)
-
                 true_lables=np.array(result[:,1])
-                true_lables=true_lables.astype(np.float64)
                 predicted_scores=np.array(result[:,0])
-                # print("predicted scores", predicted_scores)
-                eer, frr_1_far=score._calculate_siamese_scores(true_lables, predicted_scores)
+                eer, frr_1_far, frr_01_far, frr_001_far=score._calculate_siamese_scores(true_lables, predicted_scores)
                 res_close_set = {
                 'evaluation': 'Single Session',
                     "eval Type": "Close Set",
@@ -193,14 +189,17 @@ class SingleSessionCloseSet(BaseEvaluation):
                     "subject": sub,
                     "session": session,
                     "frr_1_far": frr_1_far,
+                    "frr_0.1_far": frr_01_far,
+                    "frr_0.01_far": frr_001_far,
                     #"accuracy": mean_accuracy,
-                   # "auc": auc,
+                    #"auc": auc,
                     "eer": eer,
                     #"tpr": inter_tpr,
                     #"std_auc": std_auc,
                     "n_samples": len(X_)  # not training sample
                     #"n_channels": data.columns.size
                     }
+                #print(res_close_set)
                 results_close_set.append(res_close_set)
 
         return results_close_set
@@ -235,11 +234,14 @@ class SingleSessionCloseSet(BaseEvaluation):
         accuracy_list=[]
         auc_list=[]
         eer_list=[]
+        eer_threshold_list=[]
         fpr_list=[]
         tpr_list=[]
+        thresholds_list=[]
         fnr_list=[] 
         frr_1_far_list=[]
-
+        frr_01_far_list=[]
+        frr_001_far_list=[]
         # Defining the Stratified KFold
         skfold = RepeatedStratifiedKFold(n_splits=4, n_repeats=10, random_state=42)
 
@@ -262,17 +264,26 @@ class SingleSessionCloseSet(BaseEvaluation):
 
             # Predicting the test set result
             y_pred=model.predict(X_test)
+
+            #print("complete y_pred_proba", model.predict_proba(X_test))
             y_pred_proba=model.predict_proba(X_test)[:,-1]
 
+            #print("y_pred_proba", y_pred_proba)
+
             # calculating auc, eer, eer_threshold, fpr, tpr, thresholds for each k-fold
-            auc, eer, eer_theshold, inter_tpr, tpr, fnr, frr_1_far=score._calculate_scores(y_pred_proba,y_test, mean_fpr)
-            accuracy_list.append(accuracy_score(y_test,y_pred))
-            auc_list.append(auc)
+            #auc, eer, eer_theshold, inter_tpr, tpr, fnr, frr_1_far=score._calculate_scores(y_pred_proba,y_test, mean_fpr)
+
+            eer, frr_1_far, frr_01_far, frr_001_far=score._calculate_scores(y_pred_proba,y_test, mean_fpr)
+            #accuracy_list.append(accuracy_score(y_test,y_pred))
+            #auc_list.append(auc)
             eer_list.append(eer)
-            tpr_list.append(inter_tpr)
-            fnr_list.append(fnr)
+            #tpr_list.append(inter_tpr)
+            #fnr_list.append(fnr)
             frr_1_far_list.append(frr_1_far)
-        average_scores=score._calculate_average_scores(accuracy_list, tpr_list, eer_list, mean_fpr, auc_list, frr_1_far_list)
+            frr_01_far_list.append(frr_01_far)
+            frr_001_far_list.append(frr_001_far)
+
+        average_scores=score._calculate_average_scores(eer_list, frr_1_far_list, frr_01_far_list, frr_001_far_list)
         return average_scores
 
 
@@ -311,10 +322,6 @@ class SingleSessionCloseSet(BaseEvaluation):
         
         # Filter out rows with invalid subject and session combinations
         df_final = df_final[~df_final.set_index(['subject', 'session']).index.isin(invalid_subject_sessions.set_index(['subject', 'session']).index)]
-        #print(df_final[['session', 'Subject']].value_counts())
-
-        #print(df[['session', 'Subject']].value_counts())
-
         return df_final
     
     def traditional_authentication_methods(self, dataset, subject_dict, key, features): 
@@ -340,6 +347,8 @@ class SingleSessionCloseSet(BaseEvaluation):
         """ 
         results_close_set=[]
         data=self._prepare_data(dataset, features, subject_dict)
+        #data=self._valid_subject_samples(data)
+        #print("length of data", data)
         for subject in tqdm(np.unique(data.subject), desc=f"{key}-SingleSessionCloseSet"):
             df_subj=data.copy(deep=True)
 
@@ -348,9 +357,12 @@ class SingleSessionCloseSet(BaseEvaluation):
 
             # Updating the label to 1 for the subject being authenticated
             df_subj.loc[df_subj['subject'] == subject, 'Label'] = 1
-            #print("'")
-            for session in np.unique(df_subj.session):
+            for session in np.unique(df_subj.session):   
+                if not self._valid_subject_session(df_subj, subject, session):
+                    continue
+
                 df_session= df_subj[df_subj.session==session]
+                #print("labels for session", df_session['Label'].value_counts())
                 labels=np.array(df_session['Label'])
                 X=np.array(df_session.drop(['Label','Event_id','subject','session'],axis=1))
 
@@ -358,7 +370,8 @@ class SingleSessionCloseSet(BaseEvaluation):
                 #     continue
                 
                 close_set_scores=self._authenticate_single_subject_close_set(X,labels, features)
-                mean_accuracy, mean_auc, mean_eer, mean_tpr, tprs_upper, tprr_lower, std_auc, mean_frr_1_far=close_set_scores
+                #mean_accuracy, mean_auc, mean_eer, mean_tpr, tprs_upper, tprr_lower, std_auc, mean_frr_1_far=close_set_scores
+                mean_eer, mean_frr_1_far, mean_frr_01_far, mean_frr_001_far=close_set_scores
                 res_close_set = {
                 # "time": duration / 5.0,  # 5 fold CV
                 'evaluation': 'Single Session',
@@ -368,19 +381,22 @@ class SingleSessionCloseSet(BaseEvaluation):
                 "subject": subject,
                 "session": session,
                 "frr_1_far": mean_frr_1_far,
-                "accuracy": mean_accuracy,
-                "auc": mean_auc,
+                "frr_0.1_far": mean_frr_01_far,
+                "frr_0.01_far": mean_frr_001_far,
+                #"accuracy": mean_accuracy,
+                #"auc": mean_auc,
                 "eer": mean_eer,
-                "tpr": mean_tpr,
-                "tprs_upper": tprs_upper,
-                "tprs_lower": tprr_lower,
-                "std_auc": std_auc,
+                #"tpr": mean_tpr,
+                #"tprs_upper": tprs_upper,
+                #"tprs_lower": tprr_lower,
+                #"std_auc": std_auc,
                 "n_samples": len(df_subj)
                 #"n_samples": len(data)  # not training sample
                 #"n_channels": data.columns.size
                     }
+                #print(res_close_set)
                 results_close_set.append(res_close_set)
-    
+        #print(results_close_set)
         return results_close_set
 
     def _evaluate(self, dataset, pipelines):
@@ -400,8 +416,14 @@ class SingleSessionCloseSet(BaseEvaluation):
         Returns:
             list: A list containing the evaluation results for each specified authentication method.
         """
+        
+        # X, subject_dict, metadata=self.paradigm.get_data(dataset)
 
-        X, subject_dict, metadata=self.paradigm.get_data(dataset)
+        if (dataset.code=='Lee2019_ERP'):
+            X, subject_dict, metadata=self.paradigm.lee_get_data(dataset)
+
+        else:
+            X, subject_dict, metadata=self.paradigm.get_data(dataset)
         results_pipeline=[]
         for key, features in pipelines.items():   
             if (key.upper()=='SIAMESE'):
