@@ -177,10 +177,6 @@ class MultiSessionCloseSet(BaseEvaluation):
         
         # Filter out rows with invalid subject and session combinations
         df_final = df_final[~df_final.set_index(['subject', 'session']).index.isin(invalid_subject_sessions.set_index(['subject', 'session']).index)]
-        #print(df_final[['session', 'Subject']].value_counts())
-
-        #print(df[['session', 'Subject']].value_counts())
-
         return df_final
     
     def traditional_authentication_methods(self, dataset, subject_dict, key, features): 
@@ -299,6 +295,10 @@ class MultiSessionCloseSet(BaseEvaluation):
             - scenario: Evaluation scenario (close-set).
         """
 
+
+        if not self.is_valid(dataset):
+                raise AssertionError("Dataset is not appropriate for multi session evaluation")
+        
         results=self._evaluate(dataset, pipelines)
         scenario="close_Set"
         results_path=os.path.join(
@@ -352,9 +352,8 @@ class MultiSessionCloseSet(BaseEvaluation):
             return True
     
     def is_valid(self, dataset):
-
         """
-        Check if a dataset is valid for evaluation.
+        Check if a dataset is valid for performing mulyi-session evaluation.
 
         Parameters:
             - dataset: The dataset for evaluation.
@@ -362,8 +361,9 @@ class MultiSessionCloseSet(BaseEvaluation):
         Returns:
             - True if the dataset is valid, otherwise False.
         """
+        return dataset.n_sessions > 1
 
-        return True
+
 
 
 

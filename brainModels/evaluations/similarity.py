@@ -268,7 +268,7 @@ class CalculateSimilarity():
             embeddings = embedding_network(x_test_batch[0:min(100, len(x_test_batch))])
 
             for c in range(len(x_test_batch) // 100):
-                embeddings = tf.concat(axis=0, values=[embeddings,                             embedding_network(x_test_batch[(c+1)*100:min((c+2)*100,len(x_test_batch))])])
+                embeddings = tf.concat(axis=0, values=[embeddings, embedding_network(x_test_batch[(c+1)*100:min((c+2)*100,len(x_test_batch))])])
             print(type(embeddings))
             embeddings = embeddings.numpy()            
             return embeddings

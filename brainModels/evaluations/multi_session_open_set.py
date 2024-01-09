@@ -473,6 +473,9 @@ class MultiSessionOpenSet(BaseEvaluation):
                 - scenario: Evaluation scenario (Open-set).
             """
 
+            if not self.is_valid(dataset):
+                raise AssertionError("Dataset is not appropriate for multi session evaluation")
+            
             results=self._evaluate(dataset, pipelines)
             scenario="open_Set"
             results_path=os.path.join(
@@ -528,7 +531,7 @@ class MultiSessionOpenSet(BaseEvaluation):
     def is_valid(self, dataset):
 
         """
-        Check if a dataset is valid for evaluation.
+        Check if a dataset is valid for performing mulyi-session evaluation.
 
         Parameters:
             - dataset: The dataset for evaluation.
@@ -537,7 +540,9 @@ class MultiSessionOpenSet(BaseEvaluation):
             - True if the dataset is valid, otherwise False.
         """
 
-        return True
+        return dataset.n_sessions > 1
+
+
 
 
 
