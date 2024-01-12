@@ -56,22 +56,26 @@ class Results():
         - average_results: A DataFrame of averaged results if multiple JSON files are used.
         """
 
-        if not os.path.exists(results_path):
-            os.makedirs(results_path)
-        if ("close_set" in scenario) and ("open_set" in scenario):
-            results_close_set, results_open_set = results
-            with open(os.path.join(results_path, "results_close_set.json"), 'w') as f:
-                json.dump(results_close_set, f, cls=NumpyEncoder)
+        # if not os.path.exists(results_path):
+        #     os.makedirs(results_path)
+        # if ("close_set" in scenario) and ("open_set" in scenario):
+        #     results_close_set, results_open_set = results
+        #     with open(os.path.join(results_path, "results_close_set.json"), 'w') as f:
+        #         json.dump(results_close_set, f, cls=NumpyEncoder)
 
-            with open(os.path.join(results_path, "results_open_set.json"), 'w') as f:
-                json.dump(results_open_set, f, cls=NumpyEncoder)
-        else:
-            fname="results_"+scenario+".json"
-            with open(os.path.join(results_path, fname), 'w') as f:
-                json.dump(results, f, cls=NumpyEncoder)
+        #     with open(os.path.join(results_path, "results_open_set.json"), 'w') as f:
+        #         json.dump(results_open_set, f, cls=NumpyEncoder)
+        # else:
+        #     fname="results_"+scenario+".json"
+        #     with open(os.path.join(results_path, fname), 'w') as f:
+        #         json.dump(results, f, cls=NumpyEncoder)
 
         # getting average results across subjects
-        average_results = self._add_dataframe(results_path, scenario)
+        #average_results = self._add_dataframe(results_path, scenario)
+
+        flattened_data = [item for sublist in results for item in sublist]
+        df_results_close_set=pd.DataFrame(flattened_data)
+        average_results = df_results_close_set
         return average_results
     
     def _add_dataframe(self, results_path, scenario):

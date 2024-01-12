@@ -1,0 +1,14 @@
+,evaluation,eval Type,dataset,pipeline,subject,session,frr_1_far,frr_0.1_far,frr_0.01_far,eer,n_samples,Rejection_Threshold
+0,Single Session,Open Set,Visual Speller LLP,siamese,1,session_1,0.0,0.0,0.0,0.0001,11815,100
+1,Single Session,Open Set,Visual Speller LLP,siamese,7,session_1,0.0,0.0,0.0,0.0001,11815,100
+2,Single Session,Open Set,Visual Speller LLP,siamese,10,session_1,0.0,0.0,0.0,0.0001,11815,100
+3,Single Session,Open Set,Visual Speller LLP,siamese,3,session_1,0.0,0.0,0.0,0.0001,11815,100
+4,Single Session,Open Set,Visual Speller LLP,siamese,4,session_1,0.0,0.0,0.0010224948875255935,0.001022494887525572,11815,100
+5,Single Session,Open Set,Visual Speller LLP,siamese,13,session_1,0.0,0.0,0.0023014959723820505,0.0020127474002012724,11815,100
+6,Single Session,Open Set,Visual Speller LLP,siamese,2,session_1,0.0,0.0,0.0,0.0001,11815,100
+7,Single Session,Open Set,Visual Speller LLP,siamese,6,session_1,0.0,0.0,0.0,0.0001,11815,100
+8,Single Session,Open Set,Visual Speller LLP,siamese,12,session_1,0.0,0.0,0.0,0.0001,11815,100
+9,Single Session,Open Set,Visual Speller LLP,siamese,5,session_1,0.0,0.0,0.0,0.0001,11815,100
+10,Single Session,Open Set,Visual Speller LLP,siamese,8,session_1,0.0,0.0,0.0,0.0001,11815,100
+11,Single Session,Open Set,Visual Speller LLP,siamese,9,session_1,0.0,0.0,0.0,0.0001,11815,100
+12,Single Session,Open Set,Visual Speller LLP,siamese,11,session_1,0.0,0.0,0.0,0.0001,11815,100

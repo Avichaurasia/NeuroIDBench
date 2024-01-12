@@ -1,0 +1,14 @@
+,evaluation,eval Type,dataset,pipeline,subject,session,frr_1_far,frr_0.1_far,frr_0.01_far,eer,n_samples,Rejection_Threshold
+0,Single Session,Open Set,Spot Pilot P300 dataset,siamese,1,session_1,0.0,0.0,0.0,0.0001,11775,400
+1,Single Session,Open Set,Spot Pilot P300 dataset,siamese,3,session_1,0.0,0.0,0.0,0.0001,11775,400
+2,Single Session,Open Set,Spot Pilot P300 dataset,siamese,4,session_1,0.0,0.0,0.0,0.0001,11775,400
+3,Single Session,Open Set,Spot Pilot P300 dataset,siamese,5,session_1,0.00111358574610243,0.006681514476614692,0.012249443207126953,0.006681514476398059,11775,400
+4,Single Session,Open Set,Spot Pilot P300 dataset,siamese,9,session_1,0.0,0.0,0.0022222222222222365,0.0011484352569623897,11775,400
+5,Single Session,Open Set,Spot Pilot P300 dataset,siamese,13,session_1,0.0,0.0,0.0,0.0001,11775,400
+6,Single Session,Open Set,Spot Pilot P300 dataset,siamese,7,session_1,0.002244668911335568,0.002244668911335568,0.002244668911335568,0.002244668911474246,11775,400
+7,Single Session,Open Set,Spot Pilot P300 dataset,siamese,8,session_1,0.0,0.0011111111111110628,0.0022222222222222365,0.0022222222222221337,11775,400
+8,Single Session,Open Set,Spot Pilot P300 dataset,siamese,11,session_1,0.0,0.0,0.0,0.0001,11775,400
+9,Single Session,Open Set,Spot Pilot P300 dataset,siamese,2,session_1,0.0,0.0,0.0,0.0001,11775,400
+10,Single Session,Open Set,Spot Pilot P300 dataset,siamese,6,session_1,0.0,0.0,0.0,0.0001,11775,400
+11,Single Session,Open Set,Spot Pilot P300 dataset,siamese,10,session_1,0.0,0.0,0.0,0.0001,11775,400
+12,Single Session,Open Set,Spot Pilot P300 dataset,siamese,12,session_1,0.0,0.0,0.0013003901170350884,0.00130039011703512,11775,400
