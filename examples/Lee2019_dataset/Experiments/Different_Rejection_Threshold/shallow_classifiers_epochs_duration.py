@@ -67,9 +67,9 @@ def _evaluate():
 
     df=pd.concat(rejection_threshold_list,axis=0)
     curent_dir=os.getcwd()
-    fname='epochs_duration_res_dataframe.csv'
+    fname='epochs_rejection_shallow_classifiers_results.csv'
     results_directory=os.path.join(curent_dir, "Shallow_Classifiers_Results", fname)
-    df.to_csv(results_directory)
+    df.to_csv(fname)
 
 if __name__ == '__main__':
     result= _evaluate()
