@@ -97,7 +97,7 @@ class Siamese():
         activef="selu"
         chn=no_channels
         sn=time_steps
-        if (sn>513):
+        if (sn>3000):
             input = tf.keras.layers.Input((chn, sn, 1))
             x = tf.keras.layers.AveragePooling2D(pool_size=(1, 2))(input)
             x = tf.keras.layers.Conv2D(128, (1, 15), activation=activef, kernel_initializer='lecun_normal')(x)
