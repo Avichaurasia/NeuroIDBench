@@ -206,9 +206,10 @@ class PowerSpectralDensity(Basepipeline):
                         band_name=[*FREQ_BANDS][d]
                         colum_name=channel+"-"+band_name
                         features[colum_name]=X[d]
-                data_step = [features]
-                df_psd=df_psd.append(data_step,ignore_index=True)
-
+                #data_step = [features]
+                df_list.append(features)
+        df_psd=pd.DataFrame(df_list)
+        #print(df_psd)
         return df_psd
     
     
