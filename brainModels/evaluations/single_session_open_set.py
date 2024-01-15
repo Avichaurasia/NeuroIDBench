@@ -452,13 +452,13 @@ class SingleSessionOpenSet(BaseEvaluation):
             list: A list containing the evaluation results for each specified authentication method.
         """
 
-        # X, subject_dict, metadata=self.paradigm.get_data(dataset)
+        X, subject_dict, metadata=self.paradigm.get_data(dataset)
 
-        if (dataset.code=='Lee2019_ERP'):
-            X, subject_dict, metadata=self.paradigm.lee_get_data(dataset)
+        # if (dataset.code=='Lee2019_ERP'):
+        #     X, subject_dict, metadata=self.paradigm.lee_get_data(dataset)
 
-        else:
-            X, subject_dict, metadata=self.paradigm.get_data(dataset)
+        # else:
+        #     X, subject_dict, metadata=self.paradigm.get_data(dataset)
         
         
         if not self._valid_number_of_subjects(metadata):
