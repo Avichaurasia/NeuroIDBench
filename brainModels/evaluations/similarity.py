@@ -53,7 +53,7 @@ class CalculateSimilarity():
             same_in=digit_indices[np.where(calsstrain == y_train_val[i])[0][0]]
             
             for t in range(len(x_train_val)):
-                tempp=-1*self.euclidean_distance2(anc_et[t],test_e).numpy()[0][0] 
+                tempp=-1*euclidean_distance2(anc_et[t],test_e).numpy()[0][0] 
                 if y_test[i] ==y_train_val[t]:
                     resutls.append([tempp,1,y_test[i],y_train_val[t]])
                 else:
@@ -121,7 +121,7 @@ class CalculateSimilarity():
             prediction=[]
             same_in=digit_indices[np.where(calss == y_test[i])[0][0]]
             for t in range(len(x_test_1)):
-                tempp=-1*self.euclidean_distance2(anc_e[t],anc_e[i]).numpy()[0]
+                tempp=-1*euclidean_distance2(anc_e[t],anc_e[i]).numpy()[0]
         
                 if t in same_in:
                     if t==i:

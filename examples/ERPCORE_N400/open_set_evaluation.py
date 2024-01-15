@@ -42,7 +42,7 @@ def _evaluate():
     pipeline['siamese']=make_pipeline(Siamese(batch_size=256, EPOCHS=100, learning_rate=0.0001))
 
     #pipeline['AR+SVM']=make_pipeline(AutoRegressive(order=6), SVC(kernel='rbf', probability=True))
-    # pipeline['AR+PSD+LR']=make_pipeline(AutoRegressive(order=6), PowerSpectralDensity(), LogisticRegression())
+    #pipeline['AR+PSD+LR']=make_pipeline(AutoRegressive(order=6), PowerSpectralDensity(), LogisticRegression())
     # # #pipeline['PSD+LR']=make_pipeline(AutoRegressive(order=6), PowerSpectralDensity(), LogisticRegression())
     # pipeline['AR+PSD+LDA']=make_pipeline(AutoRegressive(order=6), PowerSpectralDensity(), LDA(solver='lsqr', shrinkage='auto'))
     #pipeline['siamese']=make_pipeline(Siamese())
