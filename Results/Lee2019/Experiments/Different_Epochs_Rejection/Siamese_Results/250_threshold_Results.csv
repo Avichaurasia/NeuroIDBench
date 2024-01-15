@@ -1,0 +1,24 @@
+,evaluation,eval Type,dataset,pipeline,subject,session,frr_1_far,frr_0.1_far,frr_0.01_far,eer,n_samples,Rejection_Threshold
+0,Single Session,Open Set,Brain Invaders 2015a,siamese,2,session_1,0.0,0.0,0.0,0.0001,4539,250
+1,Single Session,Open Set,Brain Invaders 2015a,siamese,13,session_1,0.0,0.0,0.0,0.0001,4539,250
+2,Single Session,Open Set,Brain Invaders 2015a,siamese,21,session_1,0.0,0.0,0.0,0.0001,4539,250
+3,Single Session,Open Set,Brain Invaders 2015a,siamese,27,session_1,0.0,0.0,0.0,0.0001,4539,250
+4,Single Session,Open Set,Brain Invaders 2015a,siamese,34,session_1,0.0,0.0,0.0,0.0001,4539,250
+5,Single Session,Open Set,Brain Invaders 2015a,siamese,10,session_1,0.0,0.0,0.0,0.0001,4539,250
+6,Single Session,Open Set,Brain Invaders 2015a,siamese,19,session_1,0.0,0.0,0.0,0.0001,4539,250
+7,Single Session,Open Set,Brain Invaders 2015a,siamese,23,session_1,0.0,0.004545454545454519,0.009090909090909038,0.004545454545474001,4539,250
+8,Single Session,Open Set,Brain Invaders 2015a,siamese,24,session_1,0.0,0.0,0.0,0.0001,4539,250
+9,Single Session,Open Set,Brain Invaders 2015a,siamese,31,session_1,0.0,0.0,0.0,0.0001,4539,250
+10,Single Session,Open Set,Brain Invaders 2015a,siamese,40,session_1,0.0,0.0,0.0,0.0001,4539,250
+11,Single Session,Open Set,Brain Invaders 2015a,siamese,4,session_1,0.0,0.0,0.0,0.0001,4539,250
+12,Single Session,Open Set,Brain Invaders 2015a,siamese,15,session_1,0.0,0.042857142857142816,0.2142857142857143,0.019047619047618595,4539,250
+13,Single Session,Open Set,Brain Invaders 2015a,siamese,26,session_1,0.0,0.0,0.0,0.0001,4539,250
+14,Single Session,Open Set,Brain Invaders 2015a,siamese,28,session_1,0.28523489932885904,0.6241610738255033,0.7953020134228188,0.16053264287035326,4539,250
+15,Single Session,Open Set,Brain Invaders 2015a,siamese,33,session_1,0.0,0.004016064257028162,0.02008032128514059,0.008032128514041304,4539,250
+16,Single Session,Open Set,Brain Invaders 2015a,siamese,43,session_1,0.0,0.0,0.0,0.0001,4539,250
+17,Single Session,Open Set,Brain Invaders 2015a,siamese,8,session_1,0.0,0.0,0.04761904761904767,0.0011976047904191617,4539,250
+18,Single Session,Open Set,Brain Invaders 2015a,siamese,9,session_1,0.0,0.0,0.0,0.0001,4539,250
+19,Single Session,Open Set,Brain Invaders 2015a,siamese,16,session_1,0.0,0.01449275362318836,0.05797101449275366,0.01390744865132393,4539,250
+20,Single Session,Open Set,Brain Invaders 2015a,siamese,17,session_1,0.0038610038610038533,0.08108108108108103,0.18918918918918914,0.03197504386820043,4539,250
+21,Single Session,Open Set,Brain Invaders 2015a,siamese,38,session_1,0.018433179723502335,0.055299539170506895,0.16589861751152069,0.042430661282849017,4539,250
+22,Single Session,Open Set,Brain Invaders 2015a,siamese,41,session_1,0.0,0.0,0.0,0.0001,4539,250
