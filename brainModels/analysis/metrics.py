@@ -44,11 +44,11 @@ class Scores():
         return (eer, frr_1_far, frr_01_far, frr_001_far)     
     
     def _calculate_siamese_scores(true_lables, predicted_scores):
-        mean_fpr=np.linspace(0, 1, 10000)
+        mean_fpr=np.linspace(0, 1, 100000)
         fpr, tpr, thresholds=metrics.roc_curve(true_lables, predicted_scores, pos_label=1)
         inter_tpr=np.interp(mean_fpr, fpr, tpr)
         inter_tpr[0]=0.0
-        auc=metrics.auc(fpr, tpr)
+        #auc=metrics.auc(fpr, tpr)
         eer = brentq(lambda x : 1. - x - interp1d(mean_fpr, inter_tpr)(x), 0., 1.)
         frr_1_far = 1-inter_tpr[1000]
         frr_01_far = 1-inter_tpr[100]
