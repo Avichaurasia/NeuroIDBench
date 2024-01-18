@@ -1,0 +1,419 @@
+# absl-py @ file:///home/conda/feedstock_root/build_artifacts/absl-py_1665754496418/work
+absl-py==1.3.0 --hash=sha256:34995df9bd7a09b3b8749e230408f5a2a2dd7a68a0d33c12a3d0cb15a041a507
+# aiohttp @ file:///Users/runner/miniforge3/conda-bld/aiohttp_1666878726950/work
+# aiosignal @ file:///home/conda/feedstock_root/build_artifacts/aiosignal_1667935791922/work
+appdirs==1.4.4 --hash=sha256:a841dacd6b99318a741b166adb07e19ee71a274450e68237b4650ca1055ab128
+# appdirs @ file:///home/conda/feedstock_root/build_artifacts/appdirs_1603108395799/work
+# appnope @ file:///home/conda/feedstock_root/build_artifacts/appnope_1649077682618/work
+# asttokens @ file:///home/conda/feedstock_root/build_artifacts/asttokens_1618968359944/work
+# astunparse @ file:///home/conda/feedstock_root/build_artifacts/astunparse_1610696312422/work
+
+astunparse==1.6.3 --hash=sha256:c2652417f2c8b5bb325c885ae329bdf3f86424075c4fd1a128674bc6fba4b8e8
+# async-timeout @ file:///home/conda/feedstock_root/build_artifacts/async-timeout_1640026696943/work
+# attrs @ file:///home/conda/feedstock_root/build_artifacts/attrs_1671632566681/work
+# autoreject @ file:///home/conda/feedstock_root/build_artifacts/autoreject_1665353529490/work
+# backcall @ file:///home/conda/feedstock_root/build_artifacts/backcall_1592338393461/work
+# backports.functools-lru-cache @ file:///home/conda/feedstock_root/build_artifacts/backports.functools_lru_cache_1618230623929/work
+#beautifulsoup4==4.11.2
+
+#beautifulsoup4==4.11.2 --hash=sha256:0e79446b10b3ecb499c1556f7e228a53e64a2bfcebd455f370d8927cb5b59e39
+# blinker @ file:///home/conda/feedstock_root/build_artifacts/blinker_1664823096650/work
+# Bottleneck @ file:///Users/runner/miniforge3/conda-bld/bottleneck_1666839229396/work
+# brotlipy @ file:///Users/runner/miniforge3/conda-bld/brotlipy_1666764778428/work
+#bs4==0.0.1
+
+#bs4==0.0.1 --hash=sha256:36ecea1fd7cc5c0c6e4a1ff075df26d50da647b75376626cc186e2212886dd3a
+# cached-property @ file:///home/conda/feedstock_root/build_artifacts/cached_property_1615209429212/work
+# cachetools @ file:///home/conda/feedstock_root/build_artifacts/cachetools_1660055382950/work
+
+cachetools==5.2.0 --hash=sha256:f9f17d2aec496a9aa6b76f53e3b614c965223c061982d434d160f930c698a9db
+#certifi==2022.12.7
+
+certifi==2022.12.7 --hash=sha256:4ad3232f5e926d6718ec31cfc1fcadfde020920e278684144551c91769c7bc18
+# cffi @ file:///Users/runner/miniforge3/conda-bld/cffi_1671179432479/work
+
+charset-normalizer==2.1.1 --hash=sha256:83e9a75d1911279afd89352c68b45348559d1fc0506b054b346651b5e7fee29f
+# charset-normalizer @ file:///home/conda/feedstock_root/build_artifacts/charset-normalizer_1661170624537/work
+# click @ file:///home/conda/feedstock_root/build_artifacts/click_1666798198223/work
+#cloudpickle==2.2.1
+
+click==8.1.3 --hash=sha256:bb4d8133cb15a609f44e8213d9b391b0809795062913b383c62be0ee95b1db48
+
+cloudpickle==2.2.1 --hash=sha256:61f594d1f4c295fa5cd9014ceb3a1fc4a70b0de1164b94fbc2d854ccba056f9f
+colorama==0.4.6 --hash=sha256:4f1d9991f5acc0ca119f9d443620b77f9d6b33703e51011c16baf57afb285fc6
+# colorama @ file:///home/conda/feedstock_root/build_artifacts/colorama_1666700638685/work
+#colorlog==6.7.0
+
+colorlog==6.7.0 --hash=sha256:0d33ca236784a1ba3ff9c532d4964126d8a2c44f1f0cb1d2b0728196f512f662
+contourpy==1.0.6 --hash=sha256:a79d239fc22c3b8d9d3de492aa0c245533f4f4c7608e5749af866949c0f1b1b9
+# contourpy @ file:///Users/runner/miniforge3/conda-bld/contourpy_1667248076842/work
+#coverage==5.5
+
+coverage==5.5 --hash=sha256:ebe78fe9a0e874362175b02371bdfbee64d8edc42a044253ddf4ee7d3c15212c
+cycler==0.11.0 --hash=sha256:3a27e95f763a428a739d2add979fa7494c912a32c17c4c38c4d5f082cad165a3
+# cryptography @ file:///Users/runner/miniforge3/conda-bld/cryptography-split_1672673285537/work
+# cycler @ file:///home/conda/feedstock_root/build_artifacts/cycler_1635519461629/work
+#dask==2023.1.1
+
+dask==2023.1.1 --hash=sha256:de7c1da6eb669f6fd082ed6deba60b5f99c16c8a01fccda2f0cfe9712753ca6a
+toolz==0.12.0 --hash=sha256:2059bd4148deb1884bb0eb770a3cde70e7f954cfbbdc2285f1f2de01fd21eb6f
+
+
+#dask==2023.1.1 --hash=sha256:de7c1da6eb669f6fd082ed6deba60b5f99c16c8a01fccda2f0cfe9712753ca6a
+#debugpy @ file:///Users/runner/miniforge3/conda-bld/debugpy_1649574379629/work
+decorator==5.1.1; python_version >= "3.7" \
+    --hash=sha256:b8c3f85900b9dc423225913c5aace94729fe1fa9763b38939a95226f02d37186 \
+    --hash=sha256:637996211036b6385ef91435e4fae22989472f9d571faba8927ba8253acbc330
+#distributed==2023.1.1
+
+distributed==2023.1.1 --hash=sha256:9b18dc9acbbbe885612dc5ba08571f38ccfb89d648048d3e48be2e4e1122877f
+#easydev==0.12.0
+
+easydev==0.12.0 --hash=sha256:f4a340c5ffe193654c387d271bcd466d1fe56bf9850f2704122d3b52b1e6090d
+# executing @ file:///home/conda/feedstock_root/build_artifacts/executing_1646044401614/work
+# flatbuffers @ file:///home/conda/feedstock_root/build_artifacts/python-flatbuffers_1670726765190/work
+flatbuffers==2.0.7 --hash=sha256:71e135d533be527192819aaab757c5e3d109cb10fbb01e687f6bdb7a61ad39d1
+fonttools==4.38.0 --hash=sha256:820466f43c8be8c3009aef8b87e785014133508f0de64ec469e4efb643ae54fb
+# fonttools @ file:///Users/runner/miniforge3/conda-bld/fonttools_1666827107313/work
+# frozenlist @ file:///Users/runner/miniforge3/conda-bld/frozenlist_1667935560987/work
+#fsspec==2023.1.0
+
+fsspec==2023.1.0 --hash=sha256:b833e2e541e9e8cde0ab549414187871243177feb3d344f9d27b25a93f5d8139
+# future @ file:///home/conda/feedstock_root/build_artifacts/future_1673596611778/work
+# gast @ file:///home/conda/feedstock_root/build_artifacts/gast_1596839682936/work
+gast==0.4.0 --hash=sha256:b7adcdd5adbebf1adf17378da5ba3f543684dbec47b1cda1f3997e573cd542c4
+# google-auth @ file:///home/conda/feedstock_root/build_artifacts/google-auth_1669953359096/work
+
+google-auth==2.15.0 --hash=sha256:6897b93556d8d807ad70701bb89f000183aea366ca7ed94680828b37437a4994
+# google-auth-oauthlib @ file:///home/conda/feedstock_root/build_artifacts/google-auth-oauthlib_1630497468950/work
+
+google-auth-oauthlib==0.4.6 --hash=sha256:3f2a6e802eebbb6fb736a370fbf3b055edcb6b52878bf2f26330b5e041316c73
+#google-pasta==0.2.0
+
+google-pasta==0.2.0 --hash=sha256:b32482794a366b5366a32c92a9a9201b107821889935a02b3e51f6b432ea84ed
+grpcio==1.49.1 --hash=sha256:cf0a1fb18a7204b9c44623dfbd1465b363236ce70c7a4ed30402f9f60d8b743b
+#grpcio @ file:///Users/runner/miniforge3/conda-bld/grpc-split_1666813479356/work
+# h5io @ file:///home/conda/feedstock_root/build_artifacts/h5io_1642481976949/work
+# h5py @ file:///Users/runner/miniforge3/conda-bld/h5py_1666839443956/work
+#h5py==3.7.0 --hash=sha256:3fcf37884383c5da64846ab510190720027dca0768def34dd8dcb659dbe5cbf3
+
+#HeapDict==1.0.1
+
+HeapDict==1.0.1 --hash=sha256:6065f90933ab1bb7e50db403b90cab653c853690c5992e69294c2de2b253fc92
+idna==3.4 --hash=sha256:90b77e79eaa3eba6de819a0c442c0b4ceefc341a7a2ab77d7562bf49f425c5c2
+#idna @ file:///home/conda/feedstock_root/build_artifacts/idna_1663625384323/work
+# imbalanced-learn @ file:///home/conda/feedstock_root/build_artifacts/imbalanced-learn_1672235740107/work
+# importlib-metadata @ file:///home/conda/feedstock_root/build_artifacts/importlib-metadata_1672612343532/work
+
+importlib-metadata==6.0.0 --hash=sha256:7efb448ec9a5e313a57655d35aa54cd3e01b7e1fbcf72dce1bf06119420f5bad
+# ipykernel @ file:///Users/runner/miniforge3/conda-bld/ipykernel_1661804896699/work
+# ipython @ file:///Users/runner/miniforge3/conda-bld/ipython_1669904367927/work
+# jedi @ file:///home/conda/feedstock_root/build_artifacts/jedi_1659959867326/work
+
+jinja2==3.1.2 --hash=sha256:6088930bfe239f0e6710546ab9c19c9ef35e29792895fed6e6e31a023a182a61
+#joblib==1.2.0; python_version >= "3.8"
+joblib==1.2.0 --hash=sha256:091138ed78f800342968c523bdde947e7a305b8594b910a0fea2ab83c3c6d385
+# Jinja2 @ file:///home/conda/feedstock_root/build_artifacts/jinja2_1654302431367/work
+# joblib @ file:///home/conda/feedstock_root/build_artifacts/joblib_1665409724659/work
+# jupyter-client @ file:///home/conda/feedstock_root/build_artifacts/jupyter_client_1615693636836/work
+# jupyter_core @ file:///Users/runner/miniforge3/conda-bld/jupyter_core_1666827827886/work
+# keras @ file:///home/conda/feedstock_root/build_artifacts/keras_1662254869273/work/keras-2.10.0-py2.py3-none-any.whl
+
+keras==2.10.0 --hash=sha256:26a6e2c2522e7468ddea22710a99b3290493768fc08a39e75d1173a0e3452fdf
+#Keras-Preprocessing @ file:///home/conda/feedstock_root/build_artifacts/keras-preprocessing_1610713559828/work
+
+libclang==13.0.0 --hash=sha256:b7de34393ed46c6cf7b22178d0d43cec2f2dab2f5f95450520a47fc1cf2df5ac
+keras-preprocessing==1.1.2 --hash=sha256:7b82029b130ff61cc99b55f3bd27427df4838576838c5b2f65940e4fcec99a7b
+kiwisolver==1.4.4 --hash=sha256:d41997519fcba4a1e46eb4a2fe31bc12f0ff957b2b81bac28db24744f333e955
+#kiwisolver @ file:///Users/runner/miniforge3/conda-bld/kiwisolver_1666805901953/work
+#locket==1.0.0
+
+
+locket==1.0.0 --hash=sha256:b6c819a722f7b6bd955b80781788e4a66a55628b858d347536b7e81325a3a5e3
+markdown==3.4.1 --hash=sha256:08fb8465cffd03d10b9dd34a5c3fea908e20391a2a90b88d66362cb05beed186
+#Markdown @ file:///home/conda/feedstock_root/build_artifacts/markdown_1657921053229/work
+#MarkupSafe @ file:///Users/runner/miniforge3/conda-bld/markupsafe_1666770330366/work
+
+markupsafe==2.1.1; python_version >= "3.7" \
+    --hash=sha256:86b1f75c4e7c2ac2ccdaec2b9022845dbb81880ca318bb7a0a01fbf7813e3812 \
+    --hash=sha256:f121a1420d4e173a5d96e47e9a0c0dcff965afdf1626d28de1460815f7c4ee7a \
+    --hash=sha256:a49907dd8420c5685cfa064a1335b6754b74541bbb3706c259c02ed65b644b3e \
+    --hash=sha256:10c1bfff05d95783da83491be968e8fe789263689c02724e0c691933c52994f5 \
+    --hash=sha256:b7bd98b796e2b6553da7225aeb61f447f80a1ca64f41d83612e6139ca5213aa4 \
+    --hash=sha256:b09bf97215625a311f669476f44b8b318b075847b49316d3e28c08e41a7a573f \
+    --hash=sha256:694deca8d702d5db21ec83983ce0bb4b26a578e71fbdbd4fdcd387daa90e4d5e \
+    --hash=sha256:efc1913fd2ca4f334418481c7e595c00aad186563bbc1ec76067848c7ca0a933 \
+    --hash=sha256:4a33dea2b688b3190ee12bd7cfa29d39c9ed176bda40bfa11099a3ce5d3a7ac6 \
+    --hash=sha256:dda30ba7e87fbbb7eab1ec9f58678558fd9a6b8b853530e176eabd064da81417 \
+    --hash=sha256:671cd1187ed5e62818414afe79ed29da836dde67166a9fac6d435873c44fdd02 \
+    --hash=sha256:3799351e2336dc91ea70b034983ee71cf2f9533cdff7c14c90ea126bfd95d65a \
+    --hash=sha256:e72591e9ecd94d7feb70c1cbd7be7b3ebea3f548870aa91e2732960fa4d57a37 \
+    --hash=sha256:6fbf47b5d3728c6aea2abb0589b5d30459e369baa772e0f37a0320185e87c980 \
+    --hash=sha256:d5ee4f386140395a2c818d149221149c54849dfcfcb9f1debfe07a8b8bd63f9a \
+    --hash=sha256:bcb3ed405ed3222f9904899563d6fc492ff75cce56cba05e32eff40e6acbeaa3 \
+    --hash=sha256:e1c0b87e09fa55a220f058d1d49d3fb8df88fbfab58558f1198e08c1e1de842a \
+    --hash=sha256:8dc1c72a69aa7e082593c4a203dcf94ddb74bb5c8a731e4e1eb68d031e8498ff \
+    --hash=sha256:97a68e6ada378df82bc9f16b800ab77cbf4b2fada0081794318520138c088e4a \
+    --hash=sha256:e8c843bbcda3a2f1e3c2ab25913c80a3c5376cd00c6e8c4a86a89a28c8dc5452 \
+    --hash=sha256:0212a68688482dc52b2d45013df70d169f542b7394fc744c02a57374a4207003 \
+    --hash=sha256:8e576a51ad59e4bfaac456023a78f6b5e6e7651dcd383bcc3e18d06f9b55d6d1 \
+    --hash=sha256:4b9fe39a2ccc108a4accc2676e77da025ce383c108593d65cc909add5c3bd601 \
+    --hash=sha256:96e37a3dc86e80bf81758c152fe66dbf60ed5eca3d26305edf01892257049925 \
+    --hash=sha256:6d0072fea50feec76a4c418096652f2c3238eaa014b2f94aeb1d56a66b41403f \
+    --hash=sha256:089cf3dbf0cd6c100f02945abeb18484bd1ee57a079aefd52cffd17fba910b88 \
+    --hash=sha256:6a074d34ee7a5ce3effbc526b7083ec9731bb3cbf921bbe1d3005d4d2bdb3a63 \
+    --hash=sha256:421be9fbf0ffe9ffd7a378aafebbf6f4602d564d34be190fc19a193232fd12b1 \
+    --hash=sha256:fc7b548b17d238737688817ab67deebb30e8073c95749d55538ed473130ec0c7 \
+    --hash=sha256:e04e26803c9c3851c931eac40c695602c6295b8d432cbe78609649ad9bd2da8a \
+    --hash=sha256:b87db4360013327109564f0e591bd2a3b318547bcef31b468a92ee504d07ae4f \
+    --hash=sha256:99a2a507ed3ac881b975a2976d59f38c19386d128e7a9a18b7df6fff1fd4c1d6 \
+    --hash=sha256:56442863ed2b06d19c37f94d999035e15ee982988920e12a5b4ba29b62ad1f77 \
+    --hash=sha256:3ce11ee3f23f79dbd06fb3d63e2f6af7b12db1d46932fe7bd8afa259a5996603 \
+    --hash=sha256:33b74d289bd2f5e527beadcaa3f401e0df0a89927c1559c8566c066fa4248ab7 \
+    --hash=sha256:43093fb83d8343aac0b1baa75516da6092f58f41200907ef92448ecab8825135 \
+    --hash=sha256:8e3dcf21f367459434c18e71b2a9532d96547aef8a871872a5bd69a715c15f96 \
+    --hash=sha256:d4306c36ca495956b6d568d276ac11fdd9c30a36f1b6eb928070dc5360b22e1c \
+    --hash=sha256:46d00d6cfecdde84d40e572d63735ef81423ad31184100411e6e3388d405e247 \
+    --hash=sha256:7f91197cc9e48f989d12e4e6fbc46495c446636dfc81b9ccf50bb0ec74b91d4b
+#mat73==0.60
+
+mat73==0.60 --hash=sha256:a1529110b0e1674281f212f62c23707b44a810fde4b2fde6b9cc53ef8f62fa86
+# matplotlib @ file:///Users/runner/miniforge3/conda-bld/matplotlib-suite_1667505025107/work
+# matplotlib-inline @ file:///home/conda/feedstock_root/build_artifacts/matplotlib-inline_1660814786464/work
+
+matplotlib==3.6.2 --hash=sha256:f41e57ad63d336fe50d3a67bb8eaa26c09f6dda6a59f76777a99b8ccd8e26aec
+#mne==1.3.1
+
+mne==1.3.0 --hash=sha256:d5cf5885658780fc99e8537e678637528fbc3eeae571e12577ff58346f08e9af
+#moabb==0.4.6
+#modin==0.18.1
+
+modin==0.18.1 --hash=sha256:ce2a928de715b64c37de8d6f8c5547c3cc0696fd11a99795a27fc96079f65551
+#msgpack==1.0.4
+
+msgpack==1.0.4 --hash=sha256:48f5d88c99f64c456413d74a975bd605a9b0526293218a3b77220a2c15458ba9
+#multidict @ file:///Users/runner/miniforge3/conda-bld/multidict_1672339583149/work
+munkres==1.1.4 --hash=sha256:6b01867d4a8480d865aea2326e4b8f7c46431e9e55b4a2e32d989307d7bced2a
+
+#munkres==1.1.4
+#nest-asyncio @ file:///home/conda/feedstock_root/build_artifacts/nest-asyncio_1664684991461/work
+#numexpr @ file:///private/var/folders/nz/j6p8yfhx1mv_0grj5xl4650h0000gp/T/abs_98sxk8lloi/croot/numexpr_1668713874222/work
+numpy==1.24.1 --hash=sha256:2386da9a471cc00a1f47845e27d916d5ec5346ae9696e01a8a34760858fe9dd2
+#numpy @ file:///private/var/folders/nz/j6p8yfhx1mv_0grj5xl4650h0000gp/T/abs_d18vvv3mag/croot/numpy_and_numpy_base_1672336185310/work
+#numpyencoder==0.3.0
+
+numpyencoder==0.3.0 --hash=sha256:e3f7cec9b40fc026ec4ea9fc2d0ef69d4f5f171edec8f51b4cf1c5144545495b
+
+# dependecy and hash for oauthlib
+#oauthlib==3.2.0 
+oauthlib==3.2.0 --hash=sha256:6db33440354787f9b7f3a6dbd4febf5d0f93758354060e802f6c06cb493022fe
+
+packaging==22.0 --hash=sha256:957e2148ba0e1a3b282772e791ef1d8083648bc131c8ab0c1feba110ce1146c3
+#pandas==1.5.2; python_version >= "3.8"
+pandas==1.5.3 --hash=sha256:5fbcb19d6fceb9e946b3e23258757c7b225ba450990d9ed63ccceeb8cae609f7
+#pillow==9.3.0; python_version >= "3.8"
+pillow==9.3.0 --hash=sha256:15c42fb9dea42465dfd902fb0ecf584b8848ceb28b41ee2b58f866411be33f07
+pooch==1.6.0; python_version >= "3.6" \
+    --hash=sha256:3bf0e20027096836b8dbce0152dbb785a269abeb621618eb4bdd275ff1e23c9c \
+    --hash=sha256:57d20ec4b10dd694d2b05bb64bc6b109c6e85a6c1405794ce87ed8b341ab3f44
+#pyparsing==3.0.9; python_full_version >= "3.6.8" and python_version >= "3.8"
+pyparsing==3.0.9 --hash=sha256:5026bae9a10eeaefb61dab2f09052b9f4307d44aee4eda64b309723d8d206bbc
+#pyriemann==0.3; python_version >= "3.7"
+python-dateutil==2.8.2; python_version >= "3.8" and python_full_version < "3.0.0" or python_full_version >= "3.3.0" and python_version >= "3.8" \
+    --hash=sha256:0123cacc1627ae19ddf3c27a5de5bd67ee4586fbdd6440d9748f8abb483d3e86 \
+    --hash=sha256:961d03dc3453ebbc59dbdea9e4e11c5651520a876d0f4db161e8674aae935da9
+#pytz==2022.7; python_version >= "3.8"
+
+pytz==2022.7 --hash=sha256:93007def75ae22f7cd991c84e02d434876818661f8df9ad5df9e950ff4e52cfd
+pyyaml==6.0; python_version >= "3.6" \
+    --hash=sha256:d4db7c7aef085872ef65a8fd7d6d09a14ae91f691dec3e87ee5ee0539d516f53 \
+    --hash=sha256:9df7ed3b3d2e0ecfe09e14741b857df43adb5a3ddadc919a2d94fbdf78fea53c \
+    --hash=sha256:77f396e6ef4c73fdc33a9157446466f1cff553d979bd00ecb64385760c6babdc \
+    --hash=sha256:a80a78046a72361de73f8f395f1f1e49f956c6be882eed58505a15f3e430962b \
+    --hash=sha256:f84fbc98b019fef2ee9a1cb3ce93e3187a6df0b2538a651bfb890254ba9f90b5 \
+    --hash=sha256:2cd5df3de48857ed0544b34e2d40e9fac445930039f3cfe4bcc592a1f836d513 \
+    --hash=sha256:daf496c58a8c52083df09b80c860005194014c3698698d1a57cbcfa182142a3a \
+    --hash=sha256:897b80890765f037df3403d22bab41627ca8811ae55e9a722fd0392850ec4d86 \
+    --hash=sha256:50602afada6d6cbfad699b0c7bb50d5ccffa7e46a3d738092afddc1f9758427f \
+    --hash=sha256:48c346915c114f5fdb3ead70312bd042a953a8ce5c7106d5bfb1a5254e47da92 \
+    --hash=sha256:98c4d36e99714e55cfbaaee6dd5badbc9a1ec339ebfc3b1f52e293aee6bb71a4 \
+    --hash=sha256:0283c35a6a9fbf047493e3a0ce8d79ef5030852c51e9d911a27badfde0605293 \
+    --hash=sha256:07751360502caac1c067a8132d150cf3d61339af5691fe9e87803040dbc5db57 \
+    --hash=sha256:819b3830a1543db06c4d4b865e70ded25be52a2e0631ccd2f6a47a2822f2fd7c \
+    --hash=sha256:473f9edb243cb1935ab5a084eb238d842fb8f404ed2193a915d1784b5a6b5fc0 \
+    --hash=sha256:0ce82d761c532fe4ec3f87fc45688bdd3a4c1dc5e0b4a19814b9009a29baefd4 \
+    --hash=sha256:231710d57adfd809ef5d34183b8ed1eeae3f76459c18fb4a0b373ad56bedcdd9 \
+    --hash=sha256:c5687b8d43cf58545ade1fe3e055f70eac7a5a1a0bf42824308d868289a95737 \
+    --hash=sha256:d15a181d1ecd0d4270dc32edb46f7cb7733c7c508857278d3d378d14d606db2d \
+    --hash=sha256:0b4624f379dab24d3725ffde76559cff63d9ec94e1736b556dacdfebe5ab6d4b \
+    --hash=sha256:213c60cd50106436cc818accf5baa1aba61c0189ff610f64f4a3e8c6726218ba \
+    --hash=sha256:9fa600030013c4de8165339db93d182b9431076eb98eb40ee068700c9c813e34 \
+    --hash=sha256:277a0ef2981ca40581a47093e9e2d13b3f1fbbeffae064c1d21bfceba2030287 \
+    --hash=sha256:d4eccecf9adf6fbcc6861a38015c2a64f38b9d94838ac1810a9023a0609e1b78 \
+    --hash=sha256:1e4747bc279b4f613a09eb64bba2ba602d8a6664c6ce6396a4d0cd413a50ce07 \
+    --hash=sha256:055d937d65826939cb044fc8c9b08889e8c743fdc6a32b33e2390f66013e449b \
+    --hash=sha256:e61ceaab6f49fb8bdfaa0f92c4b57bcfbea54c09277b1b4f7ac376bfb7a7c174 \
+    --hash=sha256:d67d839ede4ed1b28a4e8909735fc992a923cdb84e618544973d7dfc71540803 \
+    --hash=sha256:cba8c411ef271aa037d7357a2bc8f9ee8b58b9965831d9e51baf703280dc73d3 \
+    --hash=sha256:40527857252b61eacd1d9af500c3337ba8deb8fc298940291486c465c8b46ec0 \
+    --hash=sha256:b5b9eccad747aabaaffbc6064800670f0c297e52c12754eb1d976c57e4f74dcb \
+    --hash=sha256:b3d267842bf12586ba6c734f89d1f5b871df0273157918b0ccefa29deb05c21c \
+    --hash=sha256:68fb519c14306fec9720a2a5b45bc9f0c8d1b9c72adf45c37baedfcd949c35a2
+#requests==2.28.1; python_version >= "3.7" and python_version < "4"
+requests==2.28.1 --hash=sha256:8fefa2a1a1365bf5520aac41836fbee479da67864514bdb821f31ce07ce65349
+
+scikit-learn==1.2.0 --hash=sha256:83c772fa8c64776ad769fd764752c8452844307adcf10dee3adcc43988260f21
+#scikit-learn==1.2.0; python_version >= "3.8"
+#scipy==1.9.3; python_version >= "3.8"
+
+scipy==1.9.3 --hash=sha256:0d54222d7a3ba6022fdf5773931b5d7c56efe41ede7f7128c7b1637700409108
+#seaborn==0.12.2; python_version >= "3.7"
+seaborn==0.12.2 --hash=sha256:ebf15355a4dba46037dfd65b7350f014ceb1f13c05e814eda2c9f5fd731afc08
+#setuptools-scm==7.1.0; python_version >= "3.8"
+setuptools-scm==7.1.0 --hash=sha256:73988b6d848709e2af142aa48c986ea29592bbcfca5375678064708205253d8e
+six==1.16.0; python_version >= "3.8" and python_full_version < "3.0.0" or python_full_version >= "3.3.0" and python_version >= "3.8" \
+    --hash=sha256:8abb2f1d86890a2dfb989f9a77cfcfd3e47c2a354b01111771326f8aa26e0254 \
+    --hash=sha256:1e61c37477a1626458e36f7b1d82aa5c9b094fa4802892072e49de9c60c4c926
+threadpoolctl==3.1.0; python_version >= "3.8" \
+    --hash=sha256:8b99adda265feb6773280df41eece7b2e6561b772d21ffd52e372f999024907b \
+    --hash=sha256:a335baacfaa4400ae1f0d8e3a58d6674d2f8828e3716bb2802c44955ad391380
+tomli==2.0.1; python_version < "3.11" and python_version >= "3.8" \
+    --hash=sha256:939de3e7a6161af0c887ef91b7d41a53e7c5a1ca976325f429cb46ea9bc30ecc \
+    --hash=sha256:de526c12914f0c550d15924c62d72abc48d6fe7364aa87328337a31007fe8a4f
+#tqdm==4.64.1; (python_version >= "2.7" and python_full_version < "3.0.0") or (python_full_version >= "3.4.0")
+tqdm==4.64.1 --hash=sha256:6fee160d6ffcd1b1c68c65f14c829c22832bc401726335ce92c52d395944a6a1
+#typing-extensions==4.4.0; python_version >= "3.8"
+
+typing-extensions==4.4.0 --hash=sha256:16fa4864408f655d35ec496218b85f79b3437c829e93320c7c9215ccfd92489e
+#urllib3==1.26.13; python_version >= "3.7" and python_full_version < "3.0.0" and python_version < "4" or python_version >= "3.7" and python_version < "4" and python_full_version >= "3.6.0"
+urllib3==1.26.13 --hash=sha256:47cc05d99aaa09c9e72ed5809b60e7ba354e64b59c9c173ac3018642d8bb41fc
+
+#oauthlib @ file:///home/conda/feedstock_root/build_artifacts/oauthlib_1666056362788/work
+#opencv-python==4.7.0
+#opt-einsum @ file:///home/conda/feedstock_root/build_artifacts/opt_einsum_1617859230218/work
+
+opt_einsum==3.3.0 --hash=sha256:2455e59e3947d3c275477df7f5205b30635e266fe6dc300e3d9f9646bfcea147
+#packaging @ file:///home/conda/feedstock_root/build_artifacts/packaging_1670530880680/work
+#pandas==1.5.3
+#parso @ file:///home/conda/feedstock_root/build_artifacts/parso_1638334955874/work
+partd==1.3.0 --hash=sha256:6393a0c898a0ad945728e34e52de0df3ae295c5aff2e2926ba7cc3c60a734a15
+
+pooch==1.6.0 --hash=sha256:3bf0e20027096836b8dbce0152dbb785a269abeb621618eb4bdd275ff1e23c9c
+patsy==0.5.2 --hash=sha256:cc80955ae8c13a7e7c4051eda7b277c8f909f50bc7d73e124bc38e2ee3d95041
+#patsy @ file:///home/conda/feedstock_root/build_artifacts/patsy_1632667180946/work
+#pexpect @ file:///home/conda/feedstock_root/build_artifacts/pexpect_1667297516076/work
+
+pexpect==4.8.0 --hash=sha256:0b48a55dcb3c05f3329815901ea4fc1537514d6ba867a152b581d69ae3710937
+philistine==0.2.0 --hash=sha256:82183dff5b0e34d1179dc4ce40902b10809749c63efbd4634455c82c9cc21dbc
+
+psutil==5.9.0 --hash=sha256:869842dbd66bb80c3217158e629d6fceaecc3a3166d3d1faee515b05dd26ca25
+
+#pickleshare @ file:///home/conda/feedstock_root/build_artifacts/pickleshare_1602536217715/work
+#Pillow @ file:///Users/runner/miniforge3/conda-bld/pillow_1672675372759/work
+#pooch @ file:///home/conda/feedstock_root/build_artifacts/pooch_1643032624649/work
+#prompt-toolkit @ file:///home/conda/feedstock_root/build_artifacts/prompt-toolkit_1670414775770/work
+#protobuf==4.21.12
+
+protobuf==3.9.2 --hash=sha256:368f1bae6dd22d04fd2254d30cd301863408a96ff604422e3ddd8ab601f095a4
+#psutil @ file:///Users/runner/miniforge3/conda-bld/psutil_1648873047707/work
+ptyprocess==0.7.0 --hash=sha256:4b41f3967fce3af57cc7e94b888626c18bf37a083e3651ca8feeb66d492fef35
+#ptyprocess @ file:///home/conda/feedstock_root/build_artifacts/ptyprocess_1609419310487/work/dist/ptyprocess-0.7.0-py2.py3-none-any.whl
+#pure-eval @ file:///home/conda/feedstock_root/build_artifacts/pure_eval_1642875951954/work
+pyasn1==0.4.8 --hash=sha256:39c7e2ec30515947ff4e87fb6f456dfc6e84857d34be479c9d4a4ba4bf46aa5d
+pyasn1-modules==0.2.7 --hash=sha256:b6ada4f840fe51abf5a6bd545b45bf537bea62221fa0dde2e8a553ed9f06a4e3
+#pycparser @ file:///home/conda/feedstock_root/build_artifacts/pycparser_1636257122734/work
+#pyeer==0.5.6
+
+pyeer==0.5.6 --hash=sha256:58b5041abac56133d047b878d032a82faa8f8b7fecdc404b4a62089dbaf919f9
+#Pygments @ file:///home/conda/feedstock_root/build_artifacts/pygments_1641580240686/work
+#PyJWT @ file:///home/conda/feedstock_root/build_artifacts/pyjwt_1666240235902/work
+#pyOpenSSL @ file:///home/conda/feedstock_root/build_artifacts/pyopenssl_1672659226110/work
+#pyparsing @ file:///home/conda/feedstock_root/build_artifacts/pyparsing_1652235407899/work
+#PySocks @ file:///home/conda/feedstock_root/build_artifacts/pysocks_1661604839144/work
+#python-dateutil @ file:///home/conda/feedstock_root/build_artifacts/python-dateutil_1626286286081/work
+#pytz @ file:///home/conda/feedstock_root/build_artifacts/pytz_1673864280276/work
+#pyu2f @ file:///home/conda/feedstock_root/build_artifacts/pyu2f_1604248910016/work
+#PyYAML==5.4.1
+#pyzmq @ file:///Users/runner/miniforge3/conda-bld/pyzmq_1656183620094/work
+#requests @ file:///home/conda/feedstock_root/build_artifacts/requests_1661872987712/work
+#requests-oauthlib @ file:///home/conda/feedstock_root/build_artifacts/requests-oauthlib_1643557462909/work
+
+requests-oauthlib==1.3.1 --hash=sha256:2577c501a2fb8d05a304c09d090d6e47c306fef15809d102b327cf8364bddab5
+#rsa @ file:///home/conda/feedstock_root/build_artifacts/rsa_1658328885051/work
+
+rsa==4.9 --hash=sha256:90260d9058e514786967344d0ef75fa8727eed8a7d2e43ce9f4bcf1b536174f7
+#scikit-learn @ file:///Users/runner/miniforge3/conda-bld/scikit-learn_1666884887477/work
+#scipy==1.10.0
+#seaborn @ file:///home/conda/feedstock_root/build_artifacts/seaborn-split_1666117478708/work
+#six @ file:///home/conda/feedstock_root/build_artifacts/six_1620240208055/work
+sortedcontainers==2.4.0 --hash=sha256:a163dcaede0f1c021485e957a39245190e74249897e2ae4b2aa38595db237ee0
+#soupsieve==2.4
+#spectrum==0.8.1
+#stack-data @ file:///home/conda/feedstock_root/build_artifacts/stack_data_1644872665635/work
+#statsmodels @ file:///Users/runner/miniforge3/conda-bld/statsmodels_1654787168703/work
+
+# dependency and hash for statsmodels
+#statsmodels==0.13.0; python_version >= "3.7"
+
+statsmodels==0.13.2 --hash=sha256:45b80fac4a63308b1e93fa9dc27a8598930fd5dfd77c850ca077bb850254c6d7
+tblib==1.7.0 --hash=sha256:289fa7359e580950e7d9743eab36b0691f0310fce64dee7d9c31065b8f723e23
+#tenacity @ file:///home/conda/feedstock_root/build_artifacts/tenacity_1626090218611/work
+#tensorboard @ file:///home/conda/feedstock_root/build_artifacts/tensorboard_1662755296950/work/tensorboard-2.10.0-py3-none-any.whl
+
+
+tensorboard==2.10.0 --hash=sha256:76c91a5e8959cd2208cc32cb17a0cb002badabb66a06ac2af02a7810f49a59e3
+tensorboard-data-server==0.6.1 --hash=sha256:809fe9887682d35c1f7d1f54f0f40f98bb1f771b14265b453ca051e2ce58fca7
+
+#tensorboard-data-server @ file:///Users/runner/miniforge3/conda-bld/tensorboard-data-server_1670043861058/work/tensorboard_data_server-0.6.1-py3-none-macosx_11_0_arm64.whl
+#tensorboard-plugin-wit @ file:///home/conda/feedstock_root/build_artifacts/tensorboard-plugin-wit_1641458951060/work/tensorboard_plugin_wit-1.8.1-py3-none-any.whl
+
+tensorboard-plugin-wit==1.8.1 --hash=sha256:ff26bdd583d155aa951ee3b152b3d0cffae8005dc697f72b44a8e8c2a77a8cbe
+
+# dependency and hash for tensorflow
+#tensorflow==2.10.0; python_version >= "3.7" and python_version < "4" and python_full_version >= "3.6.0"
+
+tensorflow-cpu-aws==2.10.0 --hash=sha256:2fe56d8506dae3891af6b62f26f16597e8416f9c6b788fe5dd98b602136f6cf6
+tensorflow==2.10.0 --hash=sha256:5806d4645bce5eb415863d757b5f056364b9d1cfa2c34f711f69d46cac605eee
+tensorflow-io-gcs-filesystem==0.24.0 --hash=sha256:658764aaaf9419ddefb3daa95bdc84e5210c691ff73b8ac2606d5c839040206b
+#tensorflow @ file:///Users/ngam/Repos/tensorflow-feedstock/miniforge3/conda-bld/tensorflow-split_1663980924661/work/tensorflow_pkg/tensorflow-2.10.0-cp39-cp39-macosx_11_0_arm64.whl
+
+# dependency and hash for tensorflow-addons
+#tensorflow-addons==0.19.0
+
+# dependency and hash for tensorflow-estimator
+#tensorflow-estimator==2.10.0; python_version >= "3.7" and python_version < "4" and python_full_version >= "3.6.0"
+
+tensorflow-estimator==2.10.0 --hash=sha256:f324ea17cd57f16e33bf188711d5077e6b2e5f5a12c328d6e01a07b23888edcd
+#tensorflow-estimator @ file:///Users/ngam/Repos/tensorflow-feedstock/miniforge3/conda-bld/tensorflow-split_1663980924661/work/tensorflow-estimator/wheel_dir/tensorflow_estimator-2.10.0-py2.py3-none-any.whl
+#termcolor @ file:///home/conda/feedstock_root/build_artifacts/termcolor_1672833821273/work
+
+termcolor==2.2.0 --hash=sha256:91ddd848e7251200eac969846cbae2dacd7d71c2871e92733289e7e3666f48e7
+#threadpoolctl @ file:///home/conda/feedstock_root/build_artifacts/threadpoolctl_1626092076920/work
+#toolz==0.12.0
+
+tornado==6.2 --hash=sha256:ba09ef14ca9893954244fd872798b4ccb2367c165946ce2dd7376aebdde8e3ac
+#tornado @ file:///Users/runner/miniforge3/conda-bld/tornado_1666788824966/work
+#tqdm @ file:///home/conda/feedstock_root/build_artifacts/tqdm_1662214488106/work
+#traitlets @ file:///home/conda/feedstock_root/build_artifacts/traitlets_1670956230469/work
+#typeguard==3.0.2
+#typing_extensions @ file:///home/conda/feedstock_root/build_artifacts/typing_extensions_1665144421445/work
+#uncertainties @ file:///home/conda/feedstock_root/build_artifacts/uncertainties_1655664167081/work
+#unicodedata2 @ file:///Users/runner/miniforge3/conda-bld/unicodedata2_1667239959992/work
+#urllib3 @ file:///home/conda/feedstock_root/build_artifacts/urllib3_1669259737463/work
+#wcwidth @ file:///home/conda/feedstock_root/build_artifacts/wcwidth_1600965781394/work
+#Werkzeug @ file:///home/conda/feedstock_root/build_artifacts/werkzeug_1660053523487/work
+werkzeug==2.2.2 --hash=sha256:f979ab81f58d7318e064e99c4506445d60135ac5cd2e177a2de0089bfd4c9bd5
+#wrapt @ file:///Users/runner/miniforge3/conda-bld/wrapt_1666806126518/work
+
+wrapt==1.14.1 --hash=sha256:642c2e7a804fcf18c222e1060df25fc210b9c58db7c91416fb055897fc27e8cc
+#yarl @ file:///Users/runner/miniforge3/conda-bld/yarl_1672341025811/work
+#zict==2.2.0
+zict==2.2.0 --hash=sha256:dabcc8c8b6833aa3b6602daad50f03da068322c1a90999ff78aed9eecc8fa92c
+#toolz>=0.8.2 
+
+
+# dependency and hash for zipp
+#zipp==3.11.0
+
+zipp==3.11.0 --hash=sha256:83a28fcb75844b5c0cdaf5aa4003c2d728c77e05f5aeabe8e95e56727005fbaa
+#zipp @ file:///home/conda/feedstock_root/build_artifacts/zipp_1669453021653/work
