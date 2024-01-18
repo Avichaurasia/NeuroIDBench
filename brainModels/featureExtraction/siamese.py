@@ -44,6 +44,7 @@ class Siamese():
         user_siamese_path=None,
         EPOCHS=250,
         batch_size=256,
+        learning_rate=0.001,
         verbose=1,
         workers=5,
         **kwargs,
@@ -52,6 +53,7 @@ class Siamese():
         self.user_siamese_path=user_siamese_path
         self.EPOCHS = EPOCHS
         self.batch_size = batch_size
+        self.learning_rate=learning_rate
         self.verbose = verbose
         self.workers=workers
 

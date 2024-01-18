@@ -9,8 +9,8 @@ import numpy as np
 import yaml
 from mne.channels import make_standard_montage
 from scipy.io import loadmat
-#from brainmodels.datasets import download as dl
-#from brainmodels.datasets.base import BaseDataset
+# from brainmodels.datasets import download as dl
+# from brainmodels.datasets.base import BaseDataset
 from mne.io import read_raw_eeglab, read_raw
 from mne.channels import read_dig_polhemus_isotrak, read_custom_montage
 import numpy as np
@@ -33,7 +33,7 @@ ERPCORE_N400_URL = "https://files.osf.io/v1/resources/29xpq/providers/osfstorage
 
 class ERPCOREN400(BaseDataset):
     """
-    P300 dataset from ERP Core.
+    N400 dataset from ERP Core.
 
     .. admonition:: Dataset summary
         ================ ======= ======= ================ =============== =============== ===========

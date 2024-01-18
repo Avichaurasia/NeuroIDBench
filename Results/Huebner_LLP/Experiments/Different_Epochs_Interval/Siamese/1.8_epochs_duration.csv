@@ -1,0 +1,14 @@
+,evaluation,eval Type,dataset,pipeline,subject,session,frr_1_far,frr_0.1_far,frr_0.01_far,eer,n_samples,Epochs_Interval
+0,Single Session,Open Set,Visual Speller LLP,siamese,3,session_1,0.0009920634920634885,0.0009920634920634885,0.0009920634920634885,0.0009920634920709515,13102,1.8
+1,Single Session,Open Set,Visual Speller LLP,siamese,7,session_1,0.0,0.0,0.0,0.0001,13102,1.8
+2,Single Session,Open Set,Visual Speller LLP,siamese,13,session_1,0.0009920634920634885,0.0009920634920634885,0.004960317460317443,0.002976190476190525,13102,1.8
+3,Single Session,Open Set,Visual Speller LLP,siamese,2,session_1,0.0,0.0,0.0,0.0001,13102,1.8
+4,Single Session,Open Set,Visual Speller LLP,siamese,6,session_1,0.0,0.0,0.0,0.0001,13102,1.8
+5,Single Session,Open Set,Visual Speller LLP,siamese,12,session_1,0.0,0.0,0.0,0.0001,13102,1.8
+6,Single Session,Open Set,Visual Speller LLP,siamese,1,session_1,0.0,0.0,0.0,0.0001,13102,1.8
+7,Single Session,Open Set,Visual Speller LLP,siamese,5,session_1,0.0,0.0,0.0,0.0001,13102,1.8
+8,Single Session,Open Set,Visual Speller LLP,siamese,9,session_1,0.0,0.0,0.0,0.0001,13102,1.8
+9,Single Session,Open Set,Visual Speller LLP,siamese,4,session_1,0.0,0.0,0.001984126984126977,0.0019841269841268136,13102,1.8
+10,Single Session,Open Set,Visual Speller LLP,siamese,8,session_1,0.0,0.0,0.0,0.0001,13102,1.8
+11,Single Session,Open Set,Visual Speller LLP,siamese,10,session_1,0.0,0.0,0.0,0.0001,13102,1.8
+12,Single Session,Open Set,Visual Speller LLP,siamese,11,session_1,0.0,0.0,0.0,0.0001,13102,1.8

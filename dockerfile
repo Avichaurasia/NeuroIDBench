@@ -12,8 +12,6 @@ COPY requirements.txt ./
 RUN pip install --upgrade pip
 
 # Install the necessary packages to compile C extensions
-# Install the necessary packages to compile C extensions
-# Install the necessary packages to compile C extensions
 RUN apt-get update && apt-get install -y \
     build-essential \
     libblas-dev \
@@ -29,5 +27,11 @@ RUN pip install --no-binary=h5py h5py
 # Install any needed packages specified in requirements.txt
 RUN pip install -r new_requirements.txt
 
+# Change the working directory to /app/brainModels
+WORKDIR /app/brainModels
+
 # Run run.py when the container launches
-CMD ["python", "brainModels/run.py"]
+CMD ["python", "run.py"]
+
+# Run run.py when the container launches
+#CMD ["python", "run.py"]
