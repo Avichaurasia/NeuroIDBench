@@ -38,7 +38,7 @@ def _evaluate():
     
     # Intializing the pipelines
     pipeline={}
-    pipeline['siamese']=make_pipeline(Siamese(batch_size=256, EPOCHS=100))
+    pipeline['siamese']=make_pipeline(Siamese(batch_size=192, EPOCHS=100))
 
     #pipeline['AR+SVM']=make_pipeline(AutoRegressive(order=6), SVC(kernel='rbf', probability=True))
     # pipeline['AR+PSD+LR']=make_pipeline(AutoRegressive(order=6), PowerSpectralDensity(), LogisticRegression())
@@ -55,12 +55,16 @@ def _evaluate():
  
     evaluation=MultiSessionOpenSet(paradigm=paradigm, datasets=lee)
     results=evaluation.process(pipeline)
-
+    
+    fname='multi_session_siamese_open_set_res_dataframe.csv'
+    results.to_csv(fname)
     grouped_df=results.groupby(['eval Type','dataset','pipeline']).agg({
                 #'accuracy': 'mean',
                 #'auc': 'mean',
                 'eer': lambda x: f'{np.mean(x)*100:.3f} ± {np.std(x)*100:.3f}',
-                'frr_1_far': lambda x: f'{np.mean(x)*100:.3f}'
+                'frr_1_far': lambda x: f'{np.mean(x)*100:.3f}',
+                'frr_0.1_far': lambda x: f'{np.mean(x)*100:.3f}',
+                "frr_0.01_far": lambda x: f'{np.mean(x)*100:.3f}'
             }).reset_index()
 
     return grouped_df
