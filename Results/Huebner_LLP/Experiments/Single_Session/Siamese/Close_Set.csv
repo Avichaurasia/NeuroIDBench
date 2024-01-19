@@ -1,0 +1,14 @@
+,evaluation,eval Type,dataset,pipeline,subject,session,frr_1_far,frr_0.1_far,frr_0.01_far,eer,n_samples
+0,Single Session,Close Set,Visual Speller LLP,siamese,1,session_1,0.0,0.0,0.0,1e-05,13102
+1,Single Session,Close Set,Visual Speller LLP,siamese,2,session_1,0.0,0.0,0.0,1e-05,13102
+2,Single Session,Close Set,Visual Speller LLP,siamese,3,session_1,0.0,0.0,0.0,1e-05,13102
+3,Single Session,Close Set,Visual Speller LLP,siamese,4,session_1,0.0,0.0,0.0,1e-05,13102
+4,Single Session,Close Set,Visual Speller LLP,siamese,5,session_1,0.0,0.0,0.0,1e-05,13102
+5,Single Session,Close Set,Visual Speller LLP,siamese,6,session_1,0.0,0.0,0.0,1e-05,13102
+6,Single Session,Close Set,Visual Speller LLP,siamese,7,session_1,0.0,0.0,0.0,1e-05,13102
+7,Single Session,Close Set,Visual Speller LLP,siamese,8,session_1,0.0,0.0,0.0,1e-05,13102
+8,Single Session,Close Set,Visual Speller LLP,siamese,9,session_1,0.0,0.0,0.0,1e-05,13102
+9,Single Session,Close Set,Visual Speller LLP,siamese,10,session_1,0.0,0.0,0.0,1e-05,13102
+10,Single Session,Close Set,Visual Speller LLP,siamese,11,session_1,0.0,0.0,0.0,1e-05,13102
+11,Single Session,Close Set,Visual Speller LLP,siamese,12,session_1,0.0,0.0,0.0,1e-05,13102
+12,Single Session,Close Set,Visual Speller LLP,siamese,13,session_1,0.0,0.0,0.0,1e-05,13102
