@@ -42,7 +42,7 @@ def _evaluate():
     
     # Intializing the pipelines
     pipeline={}
-    pipeline['siamese']=make_pipeline(Siamese(batch_size=256, EPOCHS=100))
+    pipeline['siamese']=make_pipeline(Siamese(batch_size=192, EPOCHS=100))
 
     #pipeline['AR+SVM']=make_pipeline(AutoRegressive(order=6), SVC(kernel='rbf', probability=True))
     #pipeline['AR+PSD+LR']=make_pipeline(AutoRegressive(order=6), PowerSpectralDensity(), LogisticRegression())
