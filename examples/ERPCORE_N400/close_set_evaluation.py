@@ -1,12 +1,12 @@
 import sys
-#sys.path.append('/Users/avinashkumarchaurasia/Desktop/project/BrainModels/')
+sys.path.append('/Users/avinashkumarchaurasia/Desktop/project/BrainModels/')
 import abc
 import logging
 import mne
 import numpy as np
 import pandas as pd
-#from brainModels.datasets.lee2019 import Lee2019
-from ...brainModels.datasets.erpCoreN400 import ERPCOREN400
+from brainModels.datasets.lee2019 import Lee2019
+from brainModels.datasets.erpCoreN400 import ERPCOREN400
 from brainModels.preprocessing.erp import ERP
 from brainModels.featureExtraction.siamese import Siamese
 from brainModels.datasets import utils
@@ -29,7 +29,7 @@ import pkgutil
 def _evaluate():
     # Intiaizing the datasets
 
-    #lee=Lee2019()
+    lee=Lee2019()
     erpcore=ERPCOREN400
     paradigm=ERP()
     #erp_core.rejection_threshold=200e-6

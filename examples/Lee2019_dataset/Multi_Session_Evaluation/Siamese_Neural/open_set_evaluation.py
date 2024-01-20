@@ -29,7 +29,6 @@ def _evaluate():
     # Intiaizing the datasets
 
     lee=Lee2019()
-    #lee.subject_list=lee.subject_list[0:10]
     paradigm=ERP()
     
     # Intializing the pipelines
