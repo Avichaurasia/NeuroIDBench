@@ -1,0 +1,27 @@
+,dataset,evaluation,eval Type,pipeline,subject,eer,frr_1_far,frr_0.1_far,frr_0.01_far
+0,COG_BCI_Flanker,Multi Session,Close Set,KNN,29,38.584,84.691,94.688,97.195
+1,COG_BCI_Flanker,Multi Session,Close Set,LDA,29,23.150,84.139,97.007,99.670
+2,COG_BCI_Flanker,Multi Session,Close Set,LR,29,25.065,76.312,92.363,95.880
+3,COG_BCI_Flanker,Multi Session,Close Set,NB,29,42.902,96.650,99.648,99.965
+4,COG_BCI_Flanker,Multi Session,Close Set,RF,29,36.846,88.040,94.817,95.985
+5,COG_BCI_Flanker,Multi Session,Close Set,SVM,29,29.756,77.055,87.003,89.224
+6,COG_BCI_Flanker,Multi Session,Open Set,KNN,29,38.355,82.359,92.437,94.106
+7,COG_BCI_Flanker,Multi Session,Open Set,LDA,29,24.801,82.629,90.178,90.292
+8,COG_BCI_Flanker,Multi Session,Open Set,LR,29,27.753,79.675,88.062,88.063
+9,COG_BCI_Flanker,Multi Session,Open Set,NB,29,43.543,92.201,96.646,97.110
+10,COG_BCI_Flanker,Multi Session,Open Set,RF,29,37.442,83.635,88.677,88.875
+11,COG_BCI_Flanker,Multi Session,Open Set,SVM,29,32.386,76.984,84.077,84.083
+12,COG_BCI_Flanker,Multi Session,Open Set,Siamese,29,30.370,84.427,94.055,94.092
+13,Lee2019,Multi Session,Close Set,KNN,54,27.705,58.858,81.289,93.035
+14,Lee2019,Multi Session,Close Set,LDA,54,12.270,68.389,95.023,99.638
+15,Lee2019,Multi Session,Close Set,LR,54,11.607,53.630,90.333,97.121
+16,Lee2019,Multi Session,Close Set,NB,54,31.429,96.134,99.613,99.961
+17,Lee2019,Multi Session,Close Set,RF,54,16.707,53.399,73.895,83.075
+18,Lee2019,Multi Session,Close Set,SVM,54,11.347,44.778,65.407,78.667
+19,Lee2019,Multi Session,Open Set,KNN,54,26.130,63.666,82.233,89.965
+20,Lee2019,Multi Session,Open Set,LDA,54,13.630,66.562,85.205,88.156
+21,Lee2019,Multi Session,Open Set,LR,54,12.648,58.926,84.531,89.794
+22,Lee2019,Multi Session,Open Set,NB,54,31.637,94.843,99.499,99.950
+23,Lee2019,Multi Session,Open Set,RF,54,17.726,55.842,70.388,74.923
+24,Lee2019,Multi Session,Open Set,SVM,54,11.994,45.574,62.537,67.815
+25,Lee2019,Multi Session,Open Set,Siamese,54,20.680,72.611,86.704,89.500

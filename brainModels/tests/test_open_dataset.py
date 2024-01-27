@@ -6,8 +6,12 @@ import unittest
 import mne
 import numpy as np
 import pytest
-import brainModels.datasets as datasets
-from brainModels.datasets import (BrainInvaders2015a, ERPCOREN400, COGBCIFLANKER, Mantegna2019)#
+import sys
+sys.path.append('/Users/avinashkumarchaurasia/Desktop/project/BrainModels/')
+import brainModels.datasets as db
+from brainModels.datasets import BrainInvaders2015a, ERPCOREN400, erpCoreP300
+from brainModels.datasets.base import BaseDataset
+from brainModels.datasets.utils import dataset_list
 from brainModels.preprocessing import ERP
 
 _ = mne.set_log_level("CRITICAL")
@@ -30,22 +34,48 @@ def _run_tests_on_dataset(d):
         assert issubclass(type(events), np.ndarray), type(events)
         assert events.shape[1] == 3, events.shape
 
+class Test_Datasets(unittest.TestCase):
+    def setUp(self):
+        self.dataset = BrainInvaders2015a()
 
-class TestDatasets(unittest.TestCase):
-    """Tests for all datasets."""
+    def test_invalid_subject(self):
+        with self.assertRaises(ValueError):  # assuming ValueError for invalid subject
+            self.dataset.get_data(subjects=['1'])
 
+    # Test invlaid session name, session name should "session_1, session_2, session_3". Basically, it should not be an integer
+    def test_invalid_session(self):
+        rawdata, events = tuple(self.dataset.get_data(subjects=[1]).values())[0].values()
+        with self.assertRaises(ValueError):
+            # if rawdata which is dictionary has second key not as session_1, session_2, session_3, then it should raise an error
+            rawdata[1]['1']
+            
+
+
+    def test_empty_data(self):
+        with self.assertRaises(ValueError):  # assuming ValueError for empty data
+            self.dataset.get_data(subjects=0)
+    
     def test_dataset_accept(self):
         """Verify that accept licence is working."""
-        # Only BaseShin2017 (bbci_eeg_fnirs) for now
-        for ds in [BrainInvaders2015a(), ERPCOREN400()]:
+        for ds in [BrainInvaders2015a()]:
             # if the data is already downloaded:
-            if mne.get_config("MNE_DATASETS_BBCIFNIRS_PATH") is None:
+            if mne.get_config("MNE_DATASETS_BRAININVADERS2015A_PATH") is None:
                 self.assertRaises(AttributeError, ds.get_data, [1])
 
+    def test_dataset_list(self):
+        all_datasets = [
+            c
+            for c in db.__dict__.values()
+            if (
+                inspect.isclass(c)
+                and issubclass(c, BaseDataset)
+            )
+        ]
+        assert len(dataset_list) == len(all_datasets)
+        assert set(dataset_list) == set(all_datasets)
 
+if __name__ == "__main__":
+    unittest.main()
 
-        # print events
-        #print(mne.find_events(rawdata))
-        #print(d.event_id)
     
 

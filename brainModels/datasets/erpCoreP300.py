@@ -125,29 +125,7 @@ class ERPCORENP300(BaseDataset):
         raw = read_raw_eeglab(file_path_list, preload = True, verbose=False)
         raw.rename_channels(dict(FP1 = 'Fp1', FP2 = 'Fp2'))
         raw.drop_channels(['HEOG_left', 'HEOG_right', 'VEOG_lower'])
-        raw.set_montage('standard_1020')
-        # description_dict = {'111' : 'Prime/Related/L1',
-        #      '112' : 'Prime/Related/L2',
-        #      '121' : 'Prime/Unrelated/L1',
-        #      '122' : 'Prime/Unrelated/L2',
-        #      '211' : 'Target/Related/L1',
-        #      '212' : 'Target/Related/L2',
-        #      '221' : 'Target/Unrelated/L1',
-        #      '222' : 'Target/Unrelated/L2',
-        #      '201' : 'Hit',
-        #      '202' : 'Miss',
-        #      'BAD_seg': 'BAD_seg'      
-        #            }
-        # raw.annotations.description=pd.Series(raw.annotations.description).map(description_dict).to_numpy()
-        # event_ids = {'Prime/Related/L1': 111,
-        #      'Prime/Related/L2': 112,
-        #      'Prime/Unrelated/L1' : 121,
-        #      'Prime/Unrelated/L2' : 122,
-        #      'Target/Related/L1' : 211,
-        #      'Target/Related/L2' : 212,
-        #      'Target/Unrelated/L1' : 221,
-        #      'Target/Unrelated/L2' : 222}
-        
+        raw.set_montage('standard_1020') 
         events, event_ids = mne.events_from_annotations(raw,verbose=False)
 
         # Getting the targeted events

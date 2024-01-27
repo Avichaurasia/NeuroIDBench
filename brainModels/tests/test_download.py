@@ -2,7 +2,11 @@
 import unittest
 import mne
 import numpy as np
+import sys
+sys.path.append('/Users/avinashkumarchaurasia/Desktop/project/BrainModels/')
 from brainModels.datasets import (BrainInvaders2015a, ERPCOREN400, COGBCIFLANKER, Mantegna2019)
+#from ..datasets import (BrainInvaders2015a, ERPCOREN400, COGBCIFLANKER, Mantegna2019)
+
 
 class TestDownloads(unittest.TestCase):
     @staticmethod
@@ -31,6 +35,8 @@ class TestDownloads(unittest.TestCase):
             dataset to test
             subjects: tuple (range of subjects to test)       
         """
+
+        print(f"Testing {dataset.__name__} dataset")
         if isinstance(dataset, BrainInvaders2015a):
             data_loader = dataset(accept=True)
         else:
