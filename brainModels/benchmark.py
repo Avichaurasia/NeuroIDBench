@@ -2,6 +2,7 @@ import numpy as np
 from sklearn.discriminant_analysis import LinearDiscriminantAnalysis as LDA
 from sklearn.pipeline import make_pipeline
 from sklearn.svm import SVC
+print("Running benchmark")
 from preprocessing import ERP
 from featureExtraction import (
     parse_pipelines_from_directory,
@@ -76,6 +77,7 @@ def benchmark(subjects=None,
     context_params["paradigm"] = {}
     df_eval = []
     dataset=prdgms['dataset']
+    print(type(ERP))
     p=ERP()
     log.debug(context_params['paradigm'])  
     if (dataset.n_sessions==1):

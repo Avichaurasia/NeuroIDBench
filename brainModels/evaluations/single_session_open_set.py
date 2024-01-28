@@ -26,7 +26,7 @@ from sklearn.metrics import accuracy_score
 import random
 #from scipy.optimize import brentq
 from scipy.interpolate import interp1d
-from ..analysis.metrics import Scores as score
+from brainModels.analysis.metrics import Scores as score
 from collections import OrderedDict
 from sklearn.utils import shuffle
 #from sklearn.mo

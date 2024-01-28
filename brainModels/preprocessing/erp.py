@@ -4,8 +4,11 @@ import logging
 import mne
 import numpy as np
 import pandas as pd
+print("Running benchmark in erp.py")
 from .base import BaseParadigm
-from ..datasets import utils
+print("Running benchmark in erp.py after base")
+from brainModels.datasets import utils
+print("Running benchmark in erp.py after utils")
 
 log = logging.getLogger(__name__)
 

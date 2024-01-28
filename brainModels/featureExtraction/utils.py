@@ -9,7 +9,7 @@ import scipy.signal as scp
 import yaml
 from sklearn.base import BaseEstimator, TransformerMixin
 from sklearn.pipeline import make_pipeline
-from ..datasets import BaseDataset
+from brainModels.datasets import BaseDataset
 log = logging.getLogger(__name__)
 
 def create_pipeline_from_config(config):

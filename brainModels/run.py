@@ -1,8 +1,12 @@
 import numpy as np
+import sys
+sys.path.append('/Users/avinashkumarchaurasia/Desktop/project/BrainModels/')
 from benchmark import benchmark
 
 if __name__ == "__main__":
+    #print("Running benchmark")
     result=benchmark()
+    #print
     grouped_df=result.groupby(['evaluation','pipeline', 'eval Type','dataset']).agg({
                 "subject": 'nunique',
                 'auc': 'mean',
