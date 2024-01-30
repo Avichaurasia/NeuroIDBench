@@ -33,5 +33,4 @@ WORKDIR /app/brainModels
 # Run run.py when the container launches
 CMD ["python", "run.py"]
 
-# Run run.py when the container launches
-#CMD ["python", "run.py"]
+

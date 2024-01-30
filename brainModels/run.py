@@ -1,6 +1,6 @@
 import numpy as np
 import sys
-sys.path.append('/Users/avinashkumarchaurasia/Desktop/project/BrainModels/')
+sys.path.append("../")
 from benchmark import benchmark
 
 if __name__ == "__main__":

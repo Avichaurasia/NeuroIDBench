@@ -1,0 +1,647 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>brainModels.evaluations.single_session_close_set &mdash; BrainModels documentation 1.0.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=19f00094" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../../../_static/documentation_options.js?v=8d563738"></script>
+        <script src="../../../_static/doctools.js?v=888ff710"></script>
+        <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            BrainModels documentation
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../brainModels.html">brainModels package</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">BrainModels documentation</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">brainModels.evaluations.single_session_close_set</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for brainModels.evaluations.single_session_close_set</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">from</span> <span class="nn">copy</span> <span class="kn">import</span> <span class="n">deepcopy</span>
+<span class="kn">from</span> <span class="nn">time</span> <span class="kn">import</span> <span class="n">time</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Union</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">mne.epochs</span> <span class="kn">import</span> <span class="n">BaseEpochs</span>
+<span class="kn">from</span> <span class="nn">sklearn.base</span> <span class="kn">import</span> <span class="n">clone</span>
+<span class="kn">from</span> <span class="nn">sklearn.metrics</span> <span class="kn">import</span> <span class="n">get_scorer</span>
+<span class="kn">from</span> <span class="nn">sklearn.model_selection</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">StratifiedKFold</span><span class="p">,</span>
+    <span class="n">RepeatedStratifiedKFold</span><span class="p">,</span>
+    <span class="n">GroupKFold</span><span class="p">,</span>
+    <span class="n">cross_val_score</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">from</span> <span class="nn">sklearn.preprocessing</span> <span class="kn">import</span> <span class="n">LabelEncoder</span>
+<span class="kn">from</span> <span class="nn">tqdm</span> <span class="kn">import</span> <span class="n">tqdm</span>
+<span class="kn">from</span> <span class="nn">sklearn.preprocessing</span> <span class="kn">import</span> <span class="n">StandardScaler</span><span class="p">,</span> <span class="n">MinMaxScaler</span>
+<span class="kn">from</span> <span class="nn">.base</span> <span class="kn">import</span> <span class="n">BaseEvaluation</span>
+<span class="kn">from</span> <span class="nn">sklearn</span> <span class="kn">import</span> <span class="n">metrics</span>
+<span class="kn">from</span> <span class="nn">sklearn.metrics</span> <span class="kn">import</span> <span class="n">accuracy_score</span>
+<span class="kn">import</span> <span class="nn">random</span>
+<span class="kn">from</span> <span class="nn">scipy.interpolate</span> <span class="kn">import</span> <span class="n">interp1d</span>
+<span class="kn">from</span> <span class="nn">brainModels.analysis.metrics</span> <span class="kn">import</span> <span class="n">Scores</span> <span class="k">as</span> <span class="n">score</span>
+<span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">OrderedDict</span>
+<span class="kn">from</span> <span class="nn">sklearn.utils</span> <span class="kn">import</span> <span class="n">shuffle</span>
+<span class="kn">import</span> <span class="nn">mne</span>
+<span class="kn">import</span> <span class="nn">tensorflow</span> <span class="k">as</span> <span class="nn">tf</span>
+<span class="kn">import</span> <span class="nn">pickle</span>
+<span class="kn">import</span> <span class="nn">importlib</span>
+<span class="kn">from</span> <span class="nn">.similarity</span> <span class="kn">import</span> <span class="n">CalculateSimilarity</span>
+<span class="kn">import</span> <span class="nn">gc</span>
+<span class="n">log</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+
+<span class="n">Vector</span> <span class="o">=</span> <span class="n">Union</span><span class="p">[</span><span class="nb">list</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]</span>
+
+<span class="c1">#########################################################################################################################################################</span>
+<span class="c1">##########################################################################################################################################################</span>
+                                                    <span class="c1">#Close-set Scenario</span>
+<span class="c1">##########################################################################################################################################################</span>
+<span class="c1">##########################################################################################################################################################</span>
+
+<div class="viewcode-block" id="SingleSessionCloseSet">
+<a class="viewcode-back" href="../../../brainModels.evaluations.html#brainModels.evaluations.single_session_close_set.SingleSessionCloseSet">[docs]</a>
+<span class="k">class</span> <span class="nc">SingleSessionCloseSet</span><span class="p">(</span><span class="n">BaseEvaluation</span><span class="p">):</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">n_perms</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">Vector</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">data_size</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">dict</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">return_close_set</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">kwargs</span>
+    <span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">n_perms</span> <span class="o">=</span> <span class="n">n_perms</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">data_size</span> <span class="o">=</span> <span class="n">data_size</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">return_close_set</span> <span class="o">=</span> <span class="n">return_close_set</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+<span class="c1">##########################################################################################################################################################</span>
+<span class="c1">##########################################################################################################################################################</span>
+                                                <span class="c1">#Single Session Evaluatiom for Siamese Network(Close-set Scenario)</span>
+<span class="c1">##########################################################################################################################################################</span>
+<span class="c1">##########################################################################################################################################################</span>
+
+
+    <span class="k">def</span> <span class="nf">_siamese_training</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">siamese</span><span class="p">):</span>
+
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Train Siamese networks for close-set authentication.</span>
+
+<span class="sd">        Parameters:</span>
+<span class="sd">            data (numpy.ndarray): Input data for training.</span>
+<span class="sd">            y (numpy.ndarray): Labels associated with the input data.</span>
+<span class="sd">            siamese (SiameseNetwork): Siamese network object for training.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            tuple: Tuple containing dictionaries of Siamese network results.</span>
+
+<span class="sd">        Description:</span>
+<span class="sd">            This method trains Siamese networks for single-session authentication. It utilizes Stratified K-Fold cross-validation</span>
+<span class="sd">            to split the data into training and test sets for model evaluation. The Siamese network is then trained on the training</span>
+<span class="sd">            dataset and evaluated on the test dataset for each fold. The results are stored in dictionaries (dicr1, dicr2, dicr3),</span>
+<span class="sd">            containing the outcomes of different evaluation metrics for each fold. The method returns a tuple containing these dictionaries.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">count_cv</span><span class="o">=</span><span class="mi">0</span>
+        <span class="n">dicr3</span><span class="o">=</span><span class="p">{}</span>
+        <span class="n">dicr2</span><span class="o">=</span><span class="p">{}</span>
+        <span class="n">dicr1</span><span class="o">=</span><span class="p">{}</span>
+        <span class="n">skfold</span> <span class="o">=</span> <span class="n">StratifiedKFold</span><span class="p">(</span><span class="n">n_splits</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span><span class="n">shuffle</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span><span class="n">random_state</span><span class="o">=</span><span class="mi">42</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">train_index</span><span class="p">,</span> <span class="n">test_index</span> <span class="ow">in</span> <span class="n">skfold</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
+            <span class="n">x_train</span><span class="p">,</span> <span class="n">x_test</span><span class="p">,</span> <span class="n">y_train</span><span class="p">,</span> <span class="n">y_test</span> <span class="o">=</span><span class="n">data</span><span class="p">[</span><span class="n">train_index</span><span class="p">],</span><span class="n">data</span><span class="p">[</span><span class="n">test_index</span><span class="p">],</span><span class="n">y</span><span class="p">[</span><span class="n">train_index</span><span class="p">],</span><span class="n">y</span><span class="p">[</span><span class="n">test_index</span><span class="p">]</span>
+            <span class="n">scaler</span> <span class="o">=</span> <span class="n">StandardScaler</span><span class="p">()</span>
+
+            <span class="c1"># Normalizing training and testing data using StandardScaler</span>
+            <span class="n">x_train</span> <span class="o">=</span> <span class="n">scaler</span><span class="o">.</span><span class="n">fit_transform</span><span class="p">(</span><span class="n">x_train</span><span class="o">.</span><span class="n">reshape</span><span class="p">((</span><span class="n">x_train</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="o">-</span><span class="mi">1</span><span class="p">)))</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">x_train</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+            <span class="n">x_test</span> <span class="o">=</span> <span class="n">scaler</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">x_test</span><span class="o">.</span><span class="n">reshape</span><span class="p">((</span><span class="n">x_test</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="o">-</span><span class="mi">1</span><span class="p">)))</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">x_test</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+            <span class="c1">#tf.keras.backend.clear_session()</span>
+            <span class="k">if</span> <span class="p">(</span><span class="n">siamese</span><span class="o">.</span><span class="n">user_siamese_path</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">):</span>
+
+                <span class="c1"># If the user siamese path is not provided, then we utilize the default siamese network</span>
+                <span class="n">model</span><span class="o">=</span><span class="n">siamese</span><span class="o">.</span><span class="n">_siamese_embeddings</span><span class="p">(</span><span class="n">x_train</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">x_train</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span>
+            <span class="k">else</span><span class="p">:</span>
+
+                <span class="c1"># If the user siamese path is provided, then we utilize the user siamese network</span>
+                <span class="n">model</span><span class="o">=</span><span class="n">siamese</span><span class="o">.</span><span class="n">_user_embeddings</span><span class="p">(</span><span class="n">x_train</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">x_train</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span>     
+            <span class="n">embedding_network</span><span class="o">=</span><span class="n">model</span>
+            <span class="c1">#early_stopping_callback = EarlyStopping(monitor=&#39;val_loss&#39;, patience=10)</span>
+            <span class="n">train_dataset</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">Dataset</span><span class="o">.</span><span class="n">from_tensor_slices</span><span class="p">((</span><span class="n">x_train</span><span class="p">,</span> <span class="n">y_train</span><span class="p">))</span><span class="o">.</span><span class="n">shuffle</span><span class="p">(</span><span class="mi">1000</span><span class="p">)</span><span class="o">.</span><span class="n">batch</span><span class="p">(</span><span class="n">siamese</span><span class="o">.</span><span class="n">batch_size</span><span class="p">)</span>
+            <span class="n">history</span> <span class="o">=</span> <span class="n">embedding_network</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">train_dataset</span><span class="p">,</span>
+                                        <span class="n">workers</span><span class="o">=</span><span class="n">siamese</span><span class="o">.</span><span class="n">workers</span><span class="p">,</span>
+                                        <span class="n">epochs</span><span class="o">=</span><span class="n">siamese</span><span class="o">.</span><span class="n">EPOCHS</span><span class="p">,</span>
+                                        <span class="n">verbose</span><span class="o">=</span><span class="n">siamese</span><span class="o">.</span><span class="n">verbose</span><span class="p">)</span>
+            <span class="n">resutls1</span><span class="p">,</span><span class="n">resutls2</span><span class="p">,</span><span class="n">resutls3</span><span class="o">=</span> <span class="n">CalculateSimilarity</span><span class="o">.</span><span class="n">_close_set_identification</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">x_train</span><span class="p">,</span> <span class="n">y_train</span><span class="p">,</span> <span class="n">x_test</span><span class="p">,</span> <span class="n">y_test</span><span class="p">)</span> 
+            <span class="n">dicr1</span><span class="p">[</span><span class="n">count_cv</span><span class="p">]</span> <span class="o">=</span> <span class="n">resutls1</span>
+            <span class="n">dicr2</span><span class="p">[</span><span class="n">count_cv</span><span class="p">]</span> <span class="o">=</span> <span class="n">resutls2</span>
+            <span class="n">dicr3</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="nb">dict</span><span class="p">(</span><span class="n">resutls3</span><span class="p">))</span>
+            <span class="n">count_cv</span><span class="o">=</span><span class="n">count_cv</span><span class="o">+</span><span class="mi">1</span>
+            <span class="n">tf</span><span class="o">.</span><span class="n">keras</span><span class="o">.</span><span class="n">backend</span><span class="o">.</span><span class="n">clear_session</span><span class="p">()</span>
+            <span class="k">del</span> <span class="n">model</span><span class="p">,</span> <span class="n">embedding_network</span><span class="p">,</span> <span class="n">train_dataset</span><span class="p">,</span> <span class="n">history</span>
+            <span class="n">gc</span><span class="o">.</span><span class="n">collect</span><span class="p">()</span>
+        <span class="k">return</span> <span class="p">(</span><span class="n">dicr1</span><span class="p">,</span> <span class="n">dicr2</span><span class="p">,</span> <span class="n">dicr3</span><span class="p">)</span>
+
+<div class="viewcode-block" id="SingleSessionCloseSet.deep_learning_method">
+<a class="viewcode-back" href="../../../brainModels.evaluations.html#brainModels.evaluations.single_session_close_set.SingleSessionCloseSet.deep_learning_method">[docs]</a>
+    <span class="k">def</span> <span class="nf">deep_learning_method</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">dataset</span><span class="p">,</span> <span class="n">metadata</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">features</span><span class="p">):</span>
+
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Perform authentication for single-session evaluation using Siamese networks.</span>
+
+<span class="sd">        Parameters:</span>
+<span class="sd">            dataset (Dataset): The dataset being used for evaluation.</span>
+<span class="sd">            X (numpy.ndarray): The input features for evaluation.</span>
+<span class="sd">            metadata (pandas.DataFrame): Metadata associated with the input features.</span>
+<span class="sd">            key (str): Identifier for the specific evaluation pipeline.</span>
+<span class="sd">            features (list): List of features used for evaluation.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            list: List of dictionaries containing evaluation results for each subject and session.</span>
+
+<span class="sd">        This method utilizes Siamese networks for within-session evaluation in the context of biometric</span>
+<span class="sd">        authentication. It involves creating and training Siamese networks to compute various authentication </span>
+<span class="sd">        metrics such as AUC, EER, FRR_1_FAR, and TPR for each subject and session combination in the dataset.</span>
+<span class="sd">        The results are stored as dictionaries containing evaluation details like evaluation type, dataset, </span>
+<span class="sd">        pipeline used, subject, session, and corresponding evaluation metrics. The function returns a list of </span>
+<span class="sd">        dictionaries, each containing evaluation results for a particular subject and session.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># results_saving_path=os.path.join(</span>
+        <span class="c1">#     dataset.dataset_path,</span>
+        <span class="c1">#     &quot;Results&quot;,</span>
+        <span class="c1">#     &quot;SiameseWithinSessionEvaluation&quot;</span>
+        <span class="c1"># )</span>
+        <span class="c1"># if not os.path.exists(results_saving_path):</span>
+        <span class="c1">#     os.makedirs(results_saving_path)</span>
+
+        <span class="n">metadata</span><span class="o">=</span><span class="n">metadata</span><span class="p">[</span><span class="n">metadata</span><span class="p">[</span><span class="s1">&#39;event_id&#39;</span><span class="p">]</span><span class="o">==</span><span class="s2">&quot;Deviant&quot;</span><span class="p">]</span>
+        <span class="n">metadata</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_valid_subject_samples</span><span class="p">(</span><span class="n">metadata</span><span class="p">)</span>
+        <span class="n">target_index</span><span class="o">=</span><span class="n">metadata</span><span class="p">[</span><span class="s1">&#39;event_id&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+        <span class="n">data</span><span class="o">=</span><span class="n">X</span><span class="p">[</span><span class="n">target_index</span><span class="p">]</span>
+        <span class="n">y</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">metadata</span><span class="p">[</span><span class="s2">&quot;subject&quot;</span><span class="p">])</span>
+        <span class="n">results_close_set</span><span class="o">=</span><span class="p">[]</span>
+        <span class="k">for</span> <span class="n">session</span> <span class="ow">in</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">metadata</span><span class="o">.</span><span class="n">session</span><span class="p">):</span>
+            <span class="n">ix</span> <span class="o">=</span> <span class="n">metadata</span><span class="o">.</span><span class="n">session</span> <span class="o">==</span> <span class="n">session</span>
+            <span class="n">siamese</span> <span class="o">=</span> <span class="n">features</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">le</span> <span class="o">=</span> <span class="n">LabelEncoder</span><span class="p">()</span>
+            <span class="n">X_</span><span class="o">=</span><span class="n">data</span><span class="p">[</span><span class="n">ix</span><span class="p">]</span>
+            <span class="n">y_</span><span class="o">=</span><span class="n">y</span><span class="p">[</span><span class="n">ix</span><span class="p">]</span>
+            <span class="n">close_dicr1</span><span class="p">,</span> <span class="n">close_dicr2</span><span class="p">,</span> <span class="n">close_dicr3</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_siamese_training</span><span class="p">(</span><span class="n">X_</span><span class="p">,</span> <span class="n">y_</span><span class="p">,</span> <span class="n">siamese</span><span class="p">)</span>
+            <span class="c1"># close_set_path=os.path.join(results_saving_path,&quot;close_set&quot;)</span>
+            <span class="c1"># if not os.path.exists(close_set_path):</span>
+            <span class="c1">#     os.makedirs(close_set_path)</span>
+
+            <span class="c1"># with open(os.path.join(close_set_path, &quot;d1_dicr1.pkl&quot;), &#39;wb&#39;) as f:</span>
+            <span class="c1">#     pickle.dump(close_dicr1, f)</span>
+
+            <span class="c1"># with open(os.path.join(close_set_path, &quot;d1_dicr2.pkl&quot;), &#39;wb&#39;) as f:</span>
+            <span class="c1">#     pickle.dump(close_dicr2, f)</span>
+
+            <span class="c1"># with open(os.path.join(close_set_path, &quot;d1_dicr3.pkl&quot;), &#39;wb&#39;) as f:</span>
+            <span class="c1">#     pickle.dump(close_dicr3, f)</span>
+
+            <span class="k">for</span> <span class="n">sub</span> <span class="ow">in</span> <span class="n">close_dicr3</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+                <span class="n">result</span><span class="o">=</span><span class="n">close_dicr3</span><span class="p">[</span><span class="n">sub</span><span class="p">]</span>
+                <span class="n">result</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
+                <span class="n">true_lables</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">result</span><span class="p">[:,</span><span class="mi">1</span><span class="p">])</span>
+                <span class="n">predicted_scores</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">result</span><span class="p">[:,</span><span class="mi">0</span><span class="p">])</span>
+                <span class="n">eer</span><span class="p">,</span> <span class="n">frr_1_far</span><span class="p">,</span> <span class="n">frr_01_far</span><span class="p">,</span> <span class="n">frr_001_far</span><span class="o">=</span><span class="n">score</span><span class="o">.</span><span class="n">_calculate_siamese_scores</span><span class="p">(</span><span class="n">true_lables</span><span class="p">,</span> <span class="n">predicted_scores</span><span class="p">)</span>
+                <span class="n">res_close_set</span> <span class="o">=</span> <span class="p">{</span>
+                <span class="s1">&#39;evaluation&#39;</span><span class="p">:</span> <span class="s1">&#39;Single Session&#39;</span><span class="p">,</span>
+                    <span class="s2">&quot;eval Type&quot;</span><span class="p">:</span> <span class="s2">&quot;Close Set&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;dataset&quot;</span><span class="p">:</span> <span class="n">dataset</span><span class="o">.</span><span class="n">code</span><span class="p">,</span>
+                    <span class="s2">&quot;pipeline&quot;</span><span class="p">:</span> <span class="n">key</span><span class="p">,</span>
+                    <span class="s2">&quot;subject&quot;</span><span class="p">:</span> <span class="n">sub</span><span class="p">,</span>
+                    <span class="s2">&quot;session&quot;</span><span class="p">:</span> <span class="n">session</span><span class="p">,</span>
+                    <span class="s2">&quot;frr_1_far&quot;</span><span class="p">:</span> <span class="n">frr_1_far</span><span class="p">,</span>
+                    <span class="s2">&quot;frr_0.1_far&quot;</span><span class="p">:</span> <span class="n">frr_01_far</span><span class="p">,</span>
+                    <span class="s2">&quot;frr_0.01_far&quot;</span><span class="p">:</span> <span class="n">frr_001_far</span><span class="p">,</span>
+                    <span class="c1">#&quot;accuracy&quot;: mean_accuracy,</span>
+                    <span class="c1">#&quot;auc&quot;: auc,</span>
+                    <span class="s2">&quot;eer&quot;</span><span class="p">:</span> <span class="n">eer</span><span class="p">,</span>
+                    <span class="c1">#&quot;tpr&quot;: inter_tpr,</span>
+                    <span class="c1">#&quot;std_auc&quot;: std_auc,</span>
+                    <span class="s2">&quot;n_samples&quot;</span><span class="p">:</span> <span class="nb">len</span><span class="p">(</span><span class="n">X_</span><span class="p">)</span>  <span class="c1"># not training sample</span>
+                    <span class="c1">#&quot;n_channels&quot;: data.columns.size</span>
+                    <span class="p">}</span>
+                <span class="c1">#print(res_close_set)</span>
+                <span class="n">results_close_set</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">res_close_set</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">results_close_set</span></div>
+
+    
+<span class="c1">##########################################################################################################################################################</span>
+<span class="c1">##########################################################################################################################################################</span>
+                                        <span class="c1">#Single Session Evaluatiom for State-of-the-algorithms(Close-set Scenario)</span>
+<span class="c1">##########################################################################################################################################################</span>
+<span class="c1">##########################################################################################################################################################</span>
+    
+
+    <span class="k">def</span> <span class="nf">_authenticate_single_subject_close_set</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">pipeline</span><span class="p">):</span>
+
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Perform authentication for a single subject in a close-set scenario.</span>
+
+<span class="sd">        Parameters:</span>
+<span class="sd">            X (numpy.ndarray): The input features for authentication.</span>
+<span class="sd">            y (numpy.ndarray): The labels for the input features.</span>
+<span class="sd">            pipeline (list): The authentication pipeline including classifier.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            dict: Tuple containing the average authentication scores across the k-fold</span>
+<span class="sd">                  for each subject.</span>
+
+<span class="sd">        This method evaluates the authentication performance for a single subject in a close-set scenario.</span>
+<span class="sd">        It uses RepeatedStratifiedKFold cross-validation to split the data into training and test sets.</span>
+<span class="sd">        The function normalizes the data, trains the model, predicts test set results, and calculates</span>
+<span class="sd">        various authentication metrics (such as accuracy, AUC, EER, FPR, TPR) for each fold in the cross-validation.</span>
+<span class="sd">        The average scores for accuracy, AUC, EER, and FRR_1_FAR are then computed and returned as a dictionary.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">accuracy_list</span><span class="o">=</span><span class="p">[]</span>
+        <span class="n">auc_list</span><span class="o">=</span><span class="p">[]</span>
+        <span class="n">eer_list</span><span class="o">=</span><span class="p">[]</span>
+        <span class="n">eer_threshold_list</span><span class="o">=</span><span class="p">[]</span>
+        <span class="n">fpr_list</span><span class="o">=</span><span class="p">[]</span>
+        <span class="n">tpr_list</span><span class="o">=</span><span class="p">[]</span>
+        <span class="n">thresholds_list</span><span class="o">=</span><span class="p">[]</span>
+        <span class="n">fnr_list</span><span class="o">=</span><span class="p">[]</span> 
+        <span class="n">frr_1_far_list</span><span class="o">=</span><span class="p">[]</span>
+        <span class="n">frr_01_far_list</span><span class="o">=</span><span class="p">[]</span>
+        <span class="n">frr_001_far_list</span><span class="o">=</span><span class="p">[]</span>
+        <span class="c1"># Defining the Stratified KFold</span>
+        <span class="n">skfold</span> <span class="o">=</span> <span class="n">RepeatedStratifiedKFold</span><span class="p">(</span><span class="n">n_splits</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">n_repeats</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="mi">42</span><span class="p">)</span>
+
+        <span class="c1"># Intializing the classifier from the pipeline</span>
+        <span class="n">classifer</span><span class="o">=</span><span class="n">pipeline</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+        <span class="n">mean_fpr</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">100000</span><span class="p">)</span>
+
+        <span class="c1"># Splitting the dataset into the Training set and Test set</span>
+        <span class="k">for</span> <span class="n">fold</span><span class="p">,</span> <span class="p">(</span><span class="n">train_index</span><span class="p">,</span> <span class="n">test_index</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">skfold</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">)):</span>
+            <span class="n">X_train</span><span class="p">,</span> <span class="n">X_test</span> <span class="o">=</span> <span class="n">X</span><span class="p">[</span><span class="n">train_index</span><span class="p">],</span> <span class="n">X</span><span class="p">[</span><span class="n">test_index</span><span class="p">]</span>
+            <span class="n">y_train</span><span class="p">,</span> <span class="n">y_test</span> <span class="o">=</span> <span class="n">y</span><span class="p">[</span><span class="n">train_index</span><span class="p">],</span> <span class="n">y</span><span class="p">[</span><span class="n">test_index</span><span class="p">]</span>
+
+            <span class="c1"># Normalizing training and testing data using StandardScaler</span>
+            <span class="n">sc</span><span class="o">=</span><span class="n">StandardScaler</span><span class="p">()</span>
+            <span class="n">X_train</span><span class="o">=</span><span class="n">sc</span><span class="o">.</span><span class="n">fit_transform</span><span class="p">(</span><span class="n">X_train</span><span class="p">)</span>
+            <span class="n">X_test</span><span class="o">=</span><span class="n">sc</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">X_test</span><span class="p">)</span>
+            <span class="n">clf</span><span class="o">=</span><span class="n">clone</span><span class="p">(</span><span class="n">classifer</span><span class="p">)</span>
+            <span class="c1"># Training the model</span>
+            <span class="n">model</span><span class="o">=</span><span class="n">clf</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X_train</span><span class="p">,</span><span class="n">y_train</span><span class="p">)</span>
+
+            <span class="c1"># Predicting the test set result</span>
+            <span class="n">y_pred</span><span class="o">=</span><span class="n">model</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">X_test</span><span class="p">)</span>
+
+            <span class="c1">#print(&quot;complete y_pred_proba&quot;, model.predict_proba(X_test))</span>
+            <span class="n">y_pred_proba</span><span class="o">=</span><span class="n">model</span><span class="o">.</span><span class="n">predict_proba</span><span class="p">(</span><span class="n">X_test</span><span class="p">)[:,</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+
+            <span class="c1">#print(&quot;y_pred_proba&quot;, y_pred_proba)</span>
+
+            <span class="c1"># calculating auc, eer, eer_threshold, fpr, tpr, thresholds for each k-fold</span>
+            <span class="c1">#auc, eer, eer_theshold, inter_tpr, tpr, fnr, frr_1_far=score._calculate_scores(y_pred_proba,y_test, mean_fpr)</span>
+
+            <span class="n">eer</span><span class="p">,</span> <span class="n">frr_1_far</span><span class="p">,</span> <span class="n">frr_01_far</span><span class="p">,</span> <span class="n">frr_001_far</span><span class="o">=</span><span class="n">score</span><span class="o">.</span><span class="n">_calculate_scores</span><span class="p">(</span><span class="n">y_pred_proba</span><span class="p">,</span><span class="n">y_test</span><span class="p">,</span> <span class="n">mean_fpr</span><span class="p">)</span>
+            <span class="c1">#accuracy_list.append(accuracy_score(y_test,y_pred))</span>
+            <span class="c1">#auc_list.append(auc)</span>
+            <span class="n">eer_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">eer</span><span class="p">)</span>
+            <span class="c1">#tpr_list.append(inter_tpr)</span>
+            <span class="c1">#fnr_list.append(fnr)</span>
+            <span class="n">frr_1_far_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">frr_1_far</span><span class="p">)</span>
+            <span class="n">frr_01_far_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">frr_01_far</span><span class="p">)</span>
+            <span class="n">frr_001_far_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">frr_001_far</span><span class="p">)</span>
+
+        <span class="n">average_scores</span><span class="o">=</span><span class="n">score</span><span class="o">.</span><span class="n">_calculate_average_scores</span><span class="p">(</span><span class="n">eer_list</span><span class="p">,</span> <span class="n">frr_1_far_list</span><span class="p">,</span> <span class="n">frr_01_far_list</span><span class="p">,</span> <span class="n">frr_001_far_list</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">average_scores</span>
+
+
+    <span class="k">def</span> <span class="nf">_prepare_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dataset</span><span class="p">,</span> <span class="n">features</span><span class="p">,</span> <span class="n">subject_dict</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Prepares and combines data from various features for the given dataset.</span>
+
+<span class="sd">        Parameters:</span>
+<span class="sd">            dataset (str): dataset instance.</span>
+<span class="sd">            features (list): A list of feature objects.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            pandas.DataFrame: A DataFrame containing the combined data from different features.</span>
+
+<span class="sd">        Description:</span>
+<span class="sd">            This function fetches data from each feature in the provided list for a given dataset.</span>
+<span class="sd">            It concatenates the retrieved data into a single DataFrame. Then, it performs data cleaning</span>
+<span class="sd">            by removing duplicate columns and filtering out rows with invalid subject and session</span>
+<span class="sd">            combinations based on a minimum row count criterion.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">df_final</span><span class="o">=</span><span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">feat</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">features</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span><span class="p">):</span>
+            <span class="n">df</span><span class="o">=</span><span class="n">features</span><span class="p">[</span><span class="n">feat</span><span class="p">]</span><span class="o">.</span><span class="n">get_data</span><span class="p">(</span><span class="n">dataset</span><span class="p">,</span> <span class="n">subject_dict</span><span class="p">)</span>
+
+            <span class="c1">#print(&quot;length of features&quot;, len(df))</span>
+            <span class="c1">#print(&quot;subject sample count&quot;, df[&#39;Subject&#39;].value_counts())</span>
+            <span class="n">df_final</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="n">df_final</span><span class="p">,</span> <span class="n">df</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">df_final</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">duplicated</span><span class="p">()</span><span class="o">.</span><span class="n">any</span><span class="p">():</span>
+            <span class="n">df_final</span> <span class="o">=</span> <span class="n">df_final</span><span class="o">.</span><span class="n">loc</span><span class="p">[:,</span> <span class="o">~</span><span class="n">df_final</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">duplicated</span><span class="p">(</span><span class="n">keep</span><span class="o">=</span><span class="s1">&#39;first&#39;</span><span class="p">)]</span>
+
+        <span class="n">subject_session_counts</span> <span class="o">=</span> <span class="n">df_final</span><span class="o">.</span><span class="n">groupby</span><span class="p">([</span><span class="s1">&#39;subject&#39;</span><span class="p">,</span> <span class="s1">&#39;session&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">size</span><span class="p">()</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;counts&#39;</span><span class="p">)</span>
+
+        <span class="c1"># Identify subjects with sessions having fewer than 4 rows</span>
+        <span class="n">invalid_subject_sessions</span> <span class="o">=</span> <span class="n">subject_session_counts</span><span class="p">[</span><span class="n">subject_session_counts</span><span class="p">[</span><span class="s1">&#39;counts&#39;</span><span class="p">]</span> <span class="o">&lt;</span> <span class="mi">4</span><span class="p">][[</span><span class="s1">&#39;subject&#39;</span><span class="p">,</span> <span class="s1">&#39;session&#39;</span><span class="p">]]</span>
+        
+        <span class="c1"># Filter out rows with invalid subject and session combinations</span>
+        <span class="n">df_final</span> <span class="o">=</span> <span class="n">df_final</span><span class="p">[</span><span class="o">~</span><span class="n">df_final</span><span class="o">.</span><span class="n">set_index</span><span class="p">([</span><span class="s1">&#39;subject&#39;</span><span class="p">,</span> <span class="s1">&#39;session&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">invalid_subject_sessions</span><span class="o">.</span><span class="n">set_index</span><span class="p">([</span><span class="s1">&#39;subject&#39;</span><span class="p">,</span> <span class="s1">&#39;session&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">index</span><span class="p">)]</span>
+        <span class="k">return</span> <span class="n">df_final</span>
+    
+<div class="viewcode-block" id="SingleSessionCloseSet.traditional_authentication_methods">
+<a class="viewcode-back" href="../../../brainModels.evaluations.html#brainModels.evaluations.single_session_close_set.SingleSessionCloseSet.traditional_authentication_methods">[docs]</a>
+    <span class="k">def</span> <span class="nf">traditional_authentication_methods</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dataset</span><span class="p">,</span> <span class="n">subject_dict</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">features</span><span class="p">):</span> 
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Perform traditional authentication methods for single-session close-set evaluation.</span>
+
+<span class="sd">        Parameters:</span>
+<span class="sd">            dataset (Dataset): The dataset to be evaluated.</span>
+<span class="sd">            subject_dict (dict): A dictionary containing subject information.</span>
+<span class="sd">            key (str): The key identifier for the authentication method.</span>
+<span class="sd">            features (list): A list of features used for authentication.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            list: A list of dictionaries containing evaluation metrics for each subject&#39;s session.</span>
+
+
+<span class="sd">        Description:</span>
+<span class="sd">            This method executes traditional authentication methods for single-session close-set evaluation.</span>
+<span class="sd">            It prepares the data for evaluation and iterates through each subject in the dataset. For each </span>
+<span class="sd">            subject, it assigns label 1 to the sessions belonging to the subject being authenticated and </span>
+<span class="sd">            label 0 to the rest. The method then authenticates each subject using the provided features and gathers </span>
+<span class="sd">            evaluation metrics. Metrics include accuracy, AUC, EER, TPR, among others.</span>
+<span class="sd">        &quot;&quot;&quot;</span> 
+        <span class="n">results_close_set</span><span class="o">=</span><span class="p">[]</span>
+        <span class="n">data</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_prepare_data</span><span class="p">(</span><span class="n">dataset</span><span class="p">,</span> <span class="n">features</span><span class="p">,</span> <span class="n">subject_dict</span><span class="p">)</span>
+        <span class="c1">#data=self._valid_subject_samples(data)</span>
+        <span class="c1">#print(&quot;length of data&quot;, data)</span>
+        <span class="k">for</span> <span class="n">subject</span> <span class="ow">in</span> <span class="n">tqdm</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">subject</span><span class="p">),</span> <span class="n">desc</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2">-SingleSessionCloseSet&quot;</span><span class="p">):</span>
+            <span class="n">df_subj</span><span class="o">=</span><span class="n">data</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">deep</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+            <span class="c1"># Assign label 0 to all subjects</span>
+            <span class="n">df_subj</span><span class="p">[</span><span class="s1">&#39;Label&#39;</span><span class="p">]</span><span class="o">=</span><span class="mi">0</span>
+
+            <span class="c1"># Updating the label to 1 for the subject being authenticated</span>
+            <span class="n">df_subj</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">df_subj</span><span class="p">[</span><span class="s1">&#39;subject&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="n">subject</span><span class="p">,</span> <span class="s1">&#39;Label&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+            <span class="k">for</span> <span class="n">session</span> <span class="ow">in</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">df_subj</span><span class="o">.</span><span class="n">session</span><span class="p">):</span>   
+                <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_valid_subject_session</span><span class="p">(</span><span class="n">df_subj</span><span class="p">,</span> <span class="n">subject</span><span class="p">,</span> <span class="n">session</span><span class="p">):</span>
+                    <span class="k">continue</span>
+
+                <span class="n">df_session</span><span class="o">=</span> <span class="n">df_subj</span><span class="p">[</span><span class="n">df_subj</span><span class="o">.</span><span class="n">session</span><span class="o">==</span><span class="n">session</span><span class="p">]</span>
+                <span class="c1">#print(&quot;labels for session&quot;, df_session[&#39;Label&#39;].value_counts())</span>
+                <span class="n">labels</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">df_session</span><span class="p">[</span><span class="s1">&#39;Label&#39;</span><span class="p">])</span>
+                <span class="n">X</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">df_session</span><span class="o">.</span><span class="n">drop</span><span class="p">([</span><span class="s1">&#39;Label&#39;</span><span class="p">,</span><span class="s1">&#39;Event_id&#39;</span><span class="p">,</span><span class="s1">&#39;subject&#39;</span><span class="p">,</span><span class="s1">&#39;session&#39;</span><span class="p">],</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">))</span>
+
+                <span class="c1"># if not self._valid_subject_samples(df_session):</span>
+                <span class="c1">#     continue</span>
+                
+                <span class="n">close_set_scores</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_authenticate_single_subject_close_set</span><span class="p">(</span><span class="n">X</span><span class="p">,</span><span class="n">labels</span><span class="p">,</span> <span class="n">features</span><span class="p">)</span>
+                <span class="c1">#mean_accuracy, mean_auc, mean_eer, mean_tpr, tprs_upper, tprr_lower, std_auc, mean_frr_1_far=close_set_scores</span>
+                <span class="n">mean_eer</span><span class="p">,</span> <span class="n">mean_frr_1_far</span><span class="p">,</span> <span class="n">mean_frr_01_far</span><span class="p">,</span> <span class="n">mean_frr_001_far</span><span class="o">=</span><span class="n">close_set_scores</span>
+                <span class="n">res_close_set</span> <span class="o">=</span> <span class="p">{</span>
+                <span class="c1"># &quot;time&quot;: duration / 5.0,  # 5 fold CV</span>
+                <span class="s1">&#39;evaluation&#39;</span><span class="p">:</span> <span class="s1">&#39;Single Session&#39;</span><span class="p">,</span>
+                <span class="s2">&quot;eval Type&quot;</span><span class="p">:</span> <span class="s2">&quot;Close Set&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;dataset&quot;</span><span class="p">:</span> <span class="n">dataset</span><span class="o">.</span><span class="n">code</span><span class="p">,</span>
+                <span class="s2">&quot;pipeline&quot;</span><span class="p">:</span> <span class="n">key</span><span class="p">,</span>
+                <span class="s2">&quot;subject&quot;</span><span class="p">:</span> <span class="n">subject</span><span class="p">,</span>
+                <span class="s2">&quot;session&quot;</span><span class="p">:</span> <span class="n">session</span><span class="p">,</span>
+                <span class="s2">&quot;frr_1_far&quot;</span><span class="p">:</span> <span class="n">mean_frr_1_far</span><span class="p">,</span>
+                <span class="s2">&quot;frr_0.1_far&quot;</span><span class="p">:</span> <span class="n">mean_frr_01_far</span><span class="p">,</span>
+                <span class="s2">&quot;frr_0.01_far&quot;</span><span class="p">:</span> <span class="n">mean_frr_001_far</span><span class="p">,</span>
+                <span class="c1">#&quot;accuracy&quot;: mean_accuracy,</span>
+                <span class="c1">#&quot;auc&quot;: mean_auc,</span>
+                <span class="s2">&quot;eer&quot;</span><span class="p">:</span> <span class="n">mean_eer</span><span class="p">,</span>
+                <span class="c1">#&quot;tpr&quot;: mean_tpr,</span>
+                <span class="c1">#&quot;tprs_upper&quot;: tprs_upper,</span>
+                <span class="c1">#&quot;tprs_lower&quot;: tprr_lower,</span>
+                <span class="c1">#&quot;std_auc&quot;: std_auc,</span>
+                <span class="s2">&quot;n_samples&quot;</span><span class="p">:</span> <span class="nb">len</span><span class="p">(</span><span class="n">df_subj</span><span class="p">)</span>
+                <span class="c1">#&quot;n_samples&quot;: len(data)  # not training sample</span>
+                <span class="c1">#&quot;n_channels&quot;: data.columns.size</span>
+                    <span class="p">}</span>
+                <span class="c1">#print(res_close_set)</span>
+                <span class="n">results_close_set</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">res_close_set</span><span class="p">)</span>
+        <span class="c1">#print(results_close_set)</span>
+        <span class="k">return</span> <span class="n">results_close_set</span></div>
+
+
+    <span class="k">def</span> <span class="nf">_evaluate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dataset</span><span class="p">,</span> <span class="n">pipelines</span><span class="p">):</span>
+
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Evaluates authentication methods on a given dataset using specified pipelines.</span>
+
+<span class="sd">        Parameters:</span>
+<span class="sd">            dataset (str): The dataset for evaluation.</span>
+<span class="sd">            pipelines (dict): A dictionary containing authentication and feature methods as keys</span>
+<span class="sd">                              and their corresponding features as values.</span>
+<span class="sd">                              For example: {&#39;AR+PSD+LR&#39;: [AutoRegressive(order=6), PowerSpectralDensity(), LogisticRegression()],</span>
+<span class="sd">                                            &#39;AR+PSD+SVM&#39;: [AutoRegressive(order=6), PowerSpectralDensity(), SVC(kernel=&#39;rbf&#39;, probability=True)],</span>
+<span class="sd">                                             &#39;Siamese&#39;: Siamese()}</span>
+
+
+<span class="sd">        Returns:</span>
+<span class="sd">            list: A list containing the evaluation results for each specified authentication method.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        
+        <span class="n">X</span><span class="p">,</span> <span class="n">subject_dict</span><span class="p">,</span> <span class="n">metadata</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">paradigm</span><span class="o">.</span><span class="n">get_data</span><span class="p">(</span><span class="n">dataset</span><span class="p">)</span>
+
+        <span class="c1"># if (dataset.code==&#39;Lee2019_ERP&#39;):</span>
+        <span class="c1">#     X, subject_dict, metadata=self.paradigm.lee_get_data(dataset)</span>
+
+        <span class="c1"># else:</span>
+        <span class="c1">#     X, subject_dict, metadata=self.paradigm.get_data(dataset)</span>
+        <span class="n">results_pipeline</span><span class="o">=</span><span class="p">[]</span>
+        <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">features</span> <span class="ow">in</span> <span class="n">pipelines</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>   
+            <span class="k">if</span> <span class="p">(</span><span class="n">key</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span><span class="o">==</span><span class="s1">&#39;SIAMESE&#39;</span><span class="p">):</span>
+                
+                <span class="c1">#print(&quot;Avinash&quot;)</span>
+                <span class="c1"># If the key is Siamese, then we use the deep learning method</span>
+                <span class="n">results</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">deep_learning_method</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">dataset</span><span class="p">,</span> <span class="n">metadata</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">features</span><span class="p">)</span>
+                <span class="n">results_pipeline</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">results</span><span class="p">)</span> 
+            <span class="k">else</span><span class="p">:</span>
+
+                <span class="c1"># If the key is not Siamese, then we use the traditional authentication methods</span>
+                <span class="n">results</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">traditional_authentication_methods</span><span class="p">(</span><span class="n">dataset</span><span class="p">,</span> <span class="n">subject_dict</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">features</span><span class="p">)</span>
+                <span class="n">results_pipeline</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">results</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">results_pipeline</span>
+    
+<div class="viewcode-block" id="SingleSessionCloseSet.evaluate">
+<a class="viewcode-back" href="../../../brainModels.evaluations.html#brainModels.evaluations.single_session_close_set.SingleSessionCloseSet.evaluate">[docs]</a>
+    <span class="k">def</span> <span class="nf">evaluate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dataset</span><span class="p">,</span> <span class="n">pipelines</span><span class="p">):</span>
+
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Evaluate a dataset using a set of pipelines.</span>
+
+<span class="sd">        Parameters:</span>
+<span class="sd">            - dataset: The dataset for evaluation.</span>
+<span class="sd">            - pipelines (dict): A dictionary containing authentication and feature methods as keys</span>
+<span class="sd">                              and their corresponding features as values.</span>
+<span class="sd">                              For example: {&#39;AR+PSD+LR&#39;: [AutoRegressive(order=6), PowerSpectralDensity(), LogisticRegression()],</span>
+<span class="sd">                                            &#39;AR+PSD+SVM&#39;: [AutoRegressive(order=6), PowerSpectralDensity(), SVC()],</span>
+<span class="sd">                                             &#39;Siamese&#39;: Siamese()}</span>
+<span class="sd">        </span>
+<span class="sd">        Returns:</span>
+<span class="sd">            - results: Evaluation results.</span>
+<span class="sd">            - results_path: Path to save the results.</span>
+<span class="sd">            - scenario: Evaluation scenario (close-set).</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">results</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_evaluate</span><span class="p">(</span><span class="n">dataset</span><span class="p">,</span> <span class="n">pipelines</span><span class="p">)</span>
+        <span class="n">scenario</span><span class="o">=</span><span class="s2">&quot;close_Set&quot;</span>
+        <span class="n">results_path</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+            <span class="n">dataset</span><span class="o">.</span><span class="n">dataset_path</span><span class="p">,</span>
+            <span class="s2">&quot;Results&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;SingleSessionEvaluation&quot;</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="n">results</span><span class="p">,</span> <span class="n">results_path</span><span class="p">,</span> <span class="n">scenario</span></div>
+
+    
+    <span class="k">def</span> <span class="nf">_valid_subject_samples</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">metadata</span><span class="p">):</span>
+
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Filter out subjects with sessions having fewer than 4 samples.</span>
+
+<span class="sd">        Parameters:</span>
+<span class="sd">            - metadata: DataFrame containing metadata.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            - metadata: Filtered metadata.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">subject_session_counts</span> <span class="o">=</span> <span class="n">metadata</span><span class="o">.</span><span class="n">groupby</span><span class="p">([</span><span class="s1">&#39;subject&#39;</span><span class="p">,</span> <span class="s1">&#39;session&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">size</span><span class="p">()</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;counts&#39;</span><span class="p">)</span>
+
+        <span class="c1"># Identify subjects with sessions having fewer than 4 samples</span>
+        <span class="n">invalid_subject_sessions</span> <span class="o">=</span> <span class="n">subject_session_counts</span><span class="p">[</span><span class="n">subject_session_counts</span><span class="p">[</span><span class="s1">&#39;counts&#39;</span><span class="p">]</span> <span class="o">&lt;</span> <span class="mi">4</span><span class="p">][[</span><span class="s1">&#39;subject&#39;</span><span class="p">,</span> <span class="s1">&#39;session&#39;</span><span class="p">]]</span>
+        
+        <span class="c1"># Filter out rows with invalid subject and session combinations</span>
+        <span class="n">metadata</span> <span class="o">=</span> <span class="n">metadata</span><span class="p">[</span><span class="o">~</span><span class="n">metadata</span><span class="o">.</span><span class="n">set_index</span><span class="p">([</span><span class="s1">&#39;subject&#39;</span><span class="p">,</span> <span class="s1">&#39;session&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">invalid_subject_sessions</span><span class="o">.</span><span class="n">set_index</span><span class="p">([</span><span class="s1">&#39;subject&#39;</span><span class="p">,</span> <span class="s1">&#39;session&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">index</span><span class="p">)]</span>  
+        <span class="k">return</span> <span class="n">metadata</span>
+    
+    <span class="k">def</span> <span class="nf">_valid_subject_session</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">df</span><span class="p">,</span> <span class="n">subject</span><span class="p">,</span> <span class="n">session</span><span class="p">):</span>
+<span class="w">    </span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Check if a subject has the required session for single-session evaluation.</span>
+
+<span class="sd">        Parameters:</span>
+<span class="sd">            - df: The data for the subject.</span>
+<span class="sd">            - subject: The subject to be evaluated.</span>
+<span class="sd">            - session: The session to be evaluated.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            - valid: A boolean indicating if the subject has the required session.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">df_subject</span><span class="o">=</span><span class="n">df</span><span class="p">[</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;subject&#39;</span><span class="p">]</span><span class="o">==</span><span class="n">subject</span><span class="p">]</span>
+        <span class="n">sessions</span><span class="o">=</span><span class="n">df_subject</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">values</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">session</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">sessions</span><span class="p">):</span>
+            <span class="k">return</span> <span class="kc">False</span>
+        
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">True</span>
+    
+<div class="viewcode-block" id="SingleSessionCloseSet.is_valid">
+<a class="viewcode-back" href="../../../brainModels.evaluations.html#brainModels.evaluations.single_session_close_set.SingleSessionCloseSet.is_valid">[docs]</a>
+    <span class="k">def</span> <span class="nf">is_valid</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dataset</span><span class="p">):</span>
+
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Check if a dataset is valid for evaluation.</span>
+
+<span class="sd">        Parameters:</span>
+<span class="sd">            - dataset: The dataset for evaluation.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            - True if the dataset is valid, otherwise False.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">return</span> <span class="kc">True</span></div>
+</div>
+
+
+
+
+    
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Avinash Kumar Chaurasia.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,1054 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>brainModels.datasets package &mdash; BrainModels documentation 1.0.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=19f00094" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="_static/jquery.js?v=5d32c60e"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="_static/documentation_options.js?v=8d563738"></script>
+        <script src="_static/doctools.js?v=888ff710"></script>
+        <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="brainModels.evaluations package" href="brainModels.evaluations.html" />
+    <link rel="prev" title="brainModels.analysis package" href="brainModels.analysis.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            BrainModels documentation
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="brainModels.html">brainModels package</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="brainModels.html#subpackages">Subpackages</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="brainModels.analysis.html">brainModels.analysis package</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">brainModels.datasets package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#submodules">Submodules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-brainModels.datasets.base">brainModels.datasets.base module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-brainModels.datasets.brainInvaders15a">brainModels.datasets.brainInvaders15a module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-brainModels.datasets.cogBciFlanker">brainModels.datasets.cogBciFlanker module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-brainModels.datasets.download">brainModels.datasets.download module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-brainModels.datasets.dummyDataset">brainModels.datasets.dummyDataset module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-brainModels.datasets.erpCoreN400">brainModels.datasets.erpCoreN400 module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-brainModels.datasets.erpCoreP300">brainModels.datasets.erpCoreP300 module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-brainModels.datasets.huebner_llp">brainModels.datasets.huebner_llp module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-brainModels.datasets.lee2019">brainModels.datasets.lee2019 module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-brainModels.datasets.mantegna2019">brainModels.datasets.mantegna2019 module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-brainModels.datasets.sosulski2019">brainModels.datasets.sosulski2019 module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-brainModels.datasets.userDataset">brainModels.datasets.userDataset module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-brainModels.datasets.utils">brainModels.datasets.utils module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-brainModels.datasets.won2022">brainModels.datasets.won2022 module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-brainModels.datasets">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="brainModels.evaluations.html">brainModels.evaluations package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="brainModels.featureExtraction.html">brainModels.featureExtraction package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="brainModels.preprocessing.html">brainModels.preprocessing package</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="brainModels.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="brainModels.html#brainmodels-benchmark-module">brainModels.benchmark module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="brainModels.html#brainmodels-run-module">brainModels.run module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="brainModels.html#module-brainModels.utils">brainModels.utils module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="brainModels.html#module-brainModels">Module contents</a></li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">BrainModels documentation</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="brainModels.html">brainModels package</a></li>
+      <li class="breadcrumb-item active">brainModels.datasets package</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/brainModels.datasets.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="brainmodels-datasets-package">
+<h1>brainModels.datasets package<a class="headerlink" href="#brainmodels-datasets-package" title="Link to this heading"></a></h1>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Link to this heading"></a></h2>
+</section>
+<section id="module-brainModels.datasets.base">
+<span id="brainmodels-datasets-base-module"></span><h2>brainModels.datasets.base module<a class="headerlink" href="#module-brainModels.datasets.base" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="brainModels.datasets.base.BaseDataset">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">brainModels.datasets.base.</span></span><span class="sig-name descname"><span class="pre">BaseDataset</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">subjects</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sessions_per_subject</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">events</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">code</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">interval</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">paradigm</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">doi</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dataset_path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rejection_threshold</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">baseline_correction</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">unit_factor</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1000000.0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/brainModels/datasets/base.html#BaseDataset"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brainModels.datasets.base.BaseDataset" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="brainModels.datasets.base.BaseDataset.data_path">
+<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">data_path</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">subject</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">force_update</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">update_path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/brainModels/datasets/base.html#BaseDataset.data_path"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brainModels.datasets.base.BaseDataset.data_path" title="Link to this definition"></a></dt>
+<dd><p>Get the Local Path of Subject Data</p>
+<p>This function retrieves the local path to a subject’s data.</p>
+<section id="parameters">
+<h3>Parameters<a class="headerlink" href="#parameters" title="Link to this heading"></a></h3>
+<dl>
+<dt>subject<span class="classifier">int</span></dt><dd><p>The subject number.</p>
+</dd>
+<dt>path<span class="classifier">str | None</span></dt><dd><p>The location to search for the data storage location. If set to None,
+it uses the environment variable or config parameter
+“MNE_DATASETS_(dataset)_PATH.” If it doesn’t exist, it defaults to the
+“~/mne_data” directory. If the dataset isn’t found under the specified
+path, the data is automatically downloaded to that folder.</p>
+<dl class="simple">
+<dt>force_update<span class="classifier">bool</span></dt><dd><p>Force an update of the dataset even if a local copy exists.</p>
+</dd>
+<dt>verbose<span class="classifier">bool, str, int, or None</span></dt><dd><p>If not None, override the default verbosity level (see <code class="xref py py-func docutils literal notranslate"><span class="pre">mne.verbose()</span></code>).</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</section>
+<section id="returns">
+<h3>Returns<a class="headerlink" href="#returns" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>path<span class="classifier">list of str</span></dt><dd><p>The local path to the given data file. This path is contained within a
+list of length one for compatibility.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="brainModels.datasets.base.BaseDataset.download">
+<span class="sig-name descname"><span class="pre">download</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">subject_list</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">force_update</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">update_path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">accept</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/brainModels/datasets/base.html#BaseDataset.download"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brainModels.datasets.base.BaseDataset.download" title="Link to this definition"></a></dt>
+<dd><p>Download All Data from the Dataset</p>
+<p>This function allows you to download all the data from the dataset in a single operation.</p>
+<section id="id1">
+<h3>Parameters<a class="headerlink" href="#id1" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>subject_list<span class="classifier">list of int | None</span></dt><dd><p>A list of subject IDs to download. If set to None, all subjects are downloaded.</p>
+</dd>
+<dt>path<span class="classifier">None | str</span></dt><dd><p>The location where the data will be stored. If set to None, the function checks for the environment 
+variable or config parameter ‘MNE_DATASETS_(dataset)_PATH’. If this doesn’t exist, 
+it defaults to the ‘~/mne_data’ directory. If the dataset is not found under the specified path, 
+the data will be automatically downloaded to that folder.</p>
+</dd>
+<dt>force_update<span class="classifier">bool</span></dt><dd><p>If True, it forces an update of the dataset even if a local copy already exists.</p>
+</dd>
+<dt>update_path<span class="classifier">bool | None</span></dt><dd><p>If set to True, it configures ‘MNE_DATASETS_(dataset)_PATH’ in the mne-python config to the provided path. 
+If set to None, the user is prompted for confirmation.</p>
+</dd>
+<dt>accept<span class="classifier">bool</span></dt><dd><p>If True, it accepts the license terms to proceed with the data download (if any). Default is set to False.</p>
+</dd>
+<dt>verbose<span class="classifier">bool, str, int, or None</span></dt><dd><p>If not set to None, it overrides the default verbose level (refer to <code class="xref py py-func docutils literal notranslate"><span class="pre">mne.verbose()</span></code>).</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="brainModels.datasets.base.BaseDataset.get_data">
+<span class="sig-name descname"><span class="pre">get_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">subjects</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/brainModels/datasets/base.html#BaseDataset.get_data"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brainModels.datasets.base.BaseDataset.get_data" title="Link to this definition"></a></dt>
+<dd><p>Retrieve Data for a List of Subjects</p>
+<p>This function returns the data corresponding to a list of subjects in the following structure:</p>
+<dl>
+<dt>data = {</dt><dd><p>‘subject_id’: {
+‘session_id’: {
+‘run_id’: run</p>
+<blockquote>
+<div><p>}</p>
+</div></blockquote>
+<p>}</p>
+</dd>
+</dl>
+<p>}</p>
+<p>The hierarchy starts with subjects, followed by sessions, and then runs. 
+In this context, a session refers to a recording conducted in a 
+single day without removing the EEG cap. A session consists of at least one run, 
+which represents a continuous recording. 
+It is worth noting that some datasets split sessions into multiple runs.</p>
+<section id="id2">
+<h3>Parameters<a class="headerlink" href="#id2" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>subjects<span class="classifier">List of int</span></dt><dd><p>A list containing subject numbers.</p>
+</dd>
+</dl>
+</section>
+<section id="id3">
+<h3>Returns<a class="headerlink" href="#id3" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>data<span class="classifier">Dict</span></dt><dd><p>A dictionary containing the raw data.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-brainModels.datasets.brainInvaders15a">
+<span id="brainmodels-datasets-braininvaders15a-module"></span><h2>brainModels.datasets.brainInvaders15a module<a class="headerlink" href="#module-brainModels.datasets.brainInvaders15a" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="brainModels.datasets.brainInvaders15a.BrainInvaders2015a">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">brainModels.datasets.brainInvaders15a.</span></span><span class="sig-name descname"><span class="pre">BrainInvaders2015a</span></span><a class="reference internal" href="_modules/brainModels/datasets/brainInvaders15a.html#BrainInvaders2015a"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brainModels.datasets.brainInvaders15a.BrainInvaders2015a" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#brainModels.datasets.base.BaseDataset" title="brainModels.datasets.base.BaseDataset"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseDataset</span></code></a></p>
+<p>P300 dataset BI2015a from a “Brain Invaders” experiment.</p>
+<p><strong>Datasets Description</strong></p>
+<p>This dataset contains electroencephalographic (EEG) recordings
+of 43 subjects playing to a visual P300 Brain-Computer Interface (BCI)
+videogame named Brain Invaders. The interface uses the oddball paradigm
+on a grid of 36 symbols (1 Target, 35 Non-Target) that are flashed
+pseudo-randomly to elicit the P300 response. EEG data were recorded using
+32 active wet electrodes with three conditions: flash duration 50ms, 80ms
+or 110ms. The experiment took place at GIPSA-lab, Grenoble, France, in 2015.
+A full description of the experiment is available at <a href="#id46"><span class="problematic" id="id4">[1]_</span></a>. The ID of this
+dataset is BI2015a.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Investigators<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Eng. Louis Korczowski, B. Sc. Martine Cederhout</p>
+</dd>
+<dt class="field-even">Technical Support<span class="colon">:</span></dt>
+<dd class="field-even"><p>Eng. Anton Andreev, Eng. Grégoire Cattan, Eng. Pedro. L. C. Rodrigues,
+M. Sc. Violette Gautheret</p>
+</dd>
+<dt class="field-odd">Scientific Supervisor<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Ph.D. Marco Congedo</p>
+</dd>
+</dl>
+<section id="notes">
+<h3>Notes<a class="headerlink" href="#notes" title="Link to this heading"></a></h3>
+<div class="versionadded">
+<p><span class="versionmodified added">New in version 0.4.6.</span></p>
+</div>
+</section>
+<section id="references">
+<h3>References<a class="headerlink" href="#references" title="Link to this heading"></a></h3>
+<aside class="footnote-list brackets">
+<aside class="footnote brackets" id="id5" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></span>
+<p>Korczowski, L., Cederhout, M., Andreev, A., Cattan, G., Rodrigues, P. L. C.,
+Gautheret, V., &amp; Congedo, M. (2019). Brain Invaders calibration-less P300-based
+BCI with modulation of flash duration Dataset (BI2015a)
+<a class="reference external" href="https://hal.archives-ouvertes.fr/hal-02172347">https://hal.archives-ouvertes.fr/hal-02172347</a></p>
+</aside>
+</aside>
+<dl class="py method">
+<dt class="sig sig-object py" id="brainModels.datasets.brainInvaders15a.BrainInvaders2015a.data_path">
+<span class="sig-name descname"><span class="pre">data_path</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">subject</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">force_update</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">update_path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/brainModels/datasets/brainInvaders15a.html#BrainInvaders2015a.data_path"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brainModels.datasets.brainInvaders15a.BrainInvaders2015a.data_path" title="Link to this definition"></a></dt>
+<dd><p>Get path to local copy of a subject data</p>
+</dd></dl>
+
+</section>
+</dd></dl>
+
+</section>
+<section id="module-brainModels.datasets.cogBciFlanker">
+<span id="brainmodels-datasets-cogbciflanker-module"></span><h2>brainModels.datasets.cogBciFlanker module<a class="headerlink" href="#module-brainModels.datasets.cogBciFlanker" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="brainModels.datasets.cogBciFlanker.COGBCIFLANKER">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">brainModels.datasets.cogBciFlanker.</span></span><span class="sig-name descname"><span class="pre">COGBCIFLANKER</span></span><a class="reference internal" href="_modules/brainModels/datasets/cogBciFlanker.html#COGBCIFLANKER"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brainModels.datasets.cogBciFlanker.COGBCIFLANKER" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#brainModels.datasets.base.BaseDataset" title="brainModels.datasets.base.BaseDataset"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseDataset</span></code></a></p>
+<p><strong>Datasets Description</strong></p>
+<p>The dataset consists of recordings from 29 participants who completed three separate sessions, 
+each conducted at an interval of 7 days. The participants are exposed to stimuli consisting 
+of five arrows positioned at the center of a computer screen. Participants are instructed to 
+respond to the central arrow while disregarding the surrounding (flanker) arrows. 
+These flanker stimuli can aim in the same direction as the central target (congruent condition) 
+or in the opposite direction (incongruent condition). 
+Upon the conclusion of the trial, the participant is provided with feedback regarding 
+the outcome of their performance, explicitly indicating whether their response was correct, 
+incorrect, or a miss. A total of 120 trials are conducted, with each complete run having 
+an approximate duration of 10 minutes.</p>
+<section id="id6">
+<h3>References<a class="headerlink" href="#id6" title="Link to this heading"></a></h3>
+<aside class="footnote-list brackets">
+<aside class="footnote brackets" id="id7" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></span>
+<p>Hinss, Marcel F., et al. “Open multi-session and multi-task EEG cognitive Dataset</p>
+</aside>
+</aside>
+<p>for passive brain-computer Interface Applications.” Scientific Data 10.1 (2023): 85.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="brainModels.datasets.cogBciFlanker.COGBCIFLANKER.data_path">
+<span class="sig-name descname"><span class="pre">data_path</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">subject</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">force_update</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">update_path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/brainModels/datasets/cogBciFlanker.html#COGBCIFLANKER.data_path"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brainModels.datasets.cogBciFlanker.COGBCIFLANKER.data_path" title="Link to this definition"></a></dt>
+<dd><p>Get the Local Path of Subject Data</p>
+<p>This function retrieves the local path to a subject’s data.</p>
+<section id="id8">
+<h4>Parameters<a class="headerlink" href="#id8" title="Link to this heading"></a></h4>
+<dl>
+<dt>subject<span class="classifier">int</span></dt><dd><p>The subject number.</p>
+</dd>
+<dt>path<span class="classifier">str | None</span></dt><dd><p>The location to search for the data storage location. If set to None,
+it uses the environment variable or config parameter
+“MNE_DATASETS_(dataset)_PATH.” If it doesn’t exist, it defaults to the
+“~/mne_data” directory. If the dataset isn’t found under the specified
+path, the data is automatically downloaded to that folder.</p>
+<dl class="simple">
+<dt>force_update<span class="classifier">bool</span></dt><dd><p>Force an update of the dataset even if a local copy exists.</p>
+</dd>
+<dt>verbose<span class="classifier">bool, str, int, or None</span></dt><dd><p>If not None, override the default verbosity level (see <code class="xref py py-func docutils literal notranslate"><span class="pre">mne.verbose()</span></code>).</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</section>
+<section id="id9">
+<h4>Returns<a class="headerlink" href="#id9" title="Link to this heading"></a></h4>
+<dl class="simple">
+<dt>path<span class="classifier">list of str</span></dt><dd><p>The local path to the given data file. This path is contained within a
+list of length one for compatibility.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+</section>
+</dd></dl>
+
+</section>
+<section id="module-brainModels.datasets.download">
+<span id="brainmodels-datasets-download-module"></span><h2>brainModels.datasets.download module<a class="headerlink" href="#module-brainModels.datasets.download" title="Link to this heading"></a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="brainModels.datasets.download.data_dl">
+<span class="sig-prename descclassname"><span class="pre">brainModels.datasets.download.</span></span><span class="sig-name descname"><span class="pre">data_dl</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">url</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sign</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">force_update</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/brainModels/datasets/download.html#data_dl"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brainModels.datasets.download.data_dl" title="Link to this definition"></a></dt>
+<dd><p>Download file from url to specified path
+This function should replace data_path as the MNE will not support the download
+of dataset anymore. This version is using Pooch.
+Parameters
+———-
+url : str</p>
+<blockquote>
+<div><p>Path to remote location of data</p>
+</div></blockquote>
+<dl class="simple">
+<dt>sign<span class="classifier">str</span></dt><dd><p>Signifier of dataset</p>
+</dd>
+<dt>path<span class="classifier">None | str</span></dt><dd><p>Location of where to look for the data storing location.
+If None, the environment variable or config parameter
+<code class="docutils literal notranslate"><span class="pre">MNE_DATASETS_(signifier)_PATH</span></code> is used. If it doesn’t exist, the
+“~/mne_data” directory is used. If the dataset
+is not found under the given path, the data
+will be automatically downloaded to the specified folder.</p>
+</dd>
+<dt>force_update<span class="classifier">bool</span></dt><dd><p>Force update of the dataset even if a local copy exists.</p>
+</dd>
+<dt>verbose<span class="classifier">bool, str, int, or None</span></dt><dd><p>If not None, override default verbose level (see <code class="xref py py-func docutils literal notranslate"><span class="pre">mne.verbose()</span></code>).</p>
+</dd>
+</dl>
+<section id="id10">
+<h3>Returns<a class="headerlink" href="#id10" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>path<span class="classifier">list of str</span></dt><dd><p>Local path to the given data file. This path is contained inside a list
+of length one, for compatibility.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="brainModels.datasets.download.get_dataset_path">
+<span class="sig-prename descclassname"><span class="pre">brainModels.datasets.download.</span></span><span class="sig-name descname"><span class="pre">get_dataset_path</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sign</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="reference internal" href="_modules/brainModels/datasets/download.html#get_dataset_path"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brainModels.datasets.download.get_dataset_path" title="Link to this definition"></a></dt>
+<dd><p>Returns the dataset path allowing for changes in MNE_DATA config.</p>
+<section id="id11">
+<h3>Parameters<a class="headerlink" href="#id11" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>sign<span class="classifier">str</span></dt><dd><p>Signifier of dataset</p>
+</dd>
+<dt>path<span class="classifier">None | str</span></dt><dd><p>Location of where to look for the data storing location.
+If None, the environment variable or config parameter
+<code class="docutils literal notranslate"><span class="pre">MNE_DATASETS_(signifier)_PATH</span></code> is used. If it doesn’t exist, the
+“~/mne_data” directory is used. If the dataset
+is not found under the given path, the data
+will be automatically downloaded to the specified folder.</p>
+</dd>
+</dl>
+</section>
+<section id="id12">
+<h3>Returns<a class="headerlink" href="#id12" title="Link to this heading"></a></h3>
+<blockquote>
+<div><p>path : None | str
+Location of where to look for the data storing location</p>
+</div></blockquote>
+</section>
+</dd></dl>
+
+</section>
+<section id="module-brainModels.datasets.dummyDataset">
+<span id="brainmodels-datasets-dummydataset-module"></span><h2>brainModels.datasets.dummyDataset module<a class="headerlink" href="#module-brainModels.datasets.dummyDataset" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="brainModels.datasets.dummyDataset.DummyP300Dataset">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">brainModels.datasets.dummyDataset.</span></span><span class="sig-name descname"><span class="pre">DummyP300Dataset</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">event_list</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">('dummy1',</span> <span class="pre">'dummy2')</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_sessions</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">3</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_runs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">3</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_subjects</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">code</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'DummyDataset'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">paradigm</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'erp'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">channels</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">('C3',</span> <span class="pre">'Cz',</span> <span class="pre">'C4')</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sfreq</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">250</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">duration</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">120</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_events</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">60</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stim</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/brainModels/datasets/dummyDataset.html#DummyP300Dataset"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brainModels.datasets.dummyDataset.DummyP300Dataset" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#brainModels.datasets.base.BaseDataset" title="brainModels.datasets.base.BaseDataset"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseDataset</span></code></a></p>
+<p>Dummy Dataset for test purpose.</p>
+<p>By default, the dataset has 3 sessions, 10 subjects, and 3 runs per session.</p>
+<section id="id13">
+<h3>Parameters<a class="headerlink" href="#id13" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>event_list: list or tuple of str</dt><dd><p>List of event to generate, default: (“fake1”, “fake2”, “fake3”)</p>
+</dd>
+<dt>n_sessions: int, default 2</dt><dd><p>Number of session to generate</p>
+</dd>
+<dt>n_runs: int, default 3</dt><dd><p>Number of runs to generate</p>
+</dd>
+<dt>n_subjects: int, default 10</dt><dd><p>Number of subject to generate</p>
+</dd>
+<dt>paradigm: [‘erp’]</dt><dd><p>Defines what sort of dataset this is</p>
+</dd>
+<dt>channels: list or tuple of str</dt><dd><p>List of channels to generate, default (“C3”, “Cz”, “C4”)</p>
+</dd>
+<dt>duration: float or list of float</dt><dd><p>Duration of each run in seconds. If float, same duration for all
+runs. If list, duration for each run.</p>
+</dd>
+<dt>n_events: int or list of int</dt><dd><p>Number of events per run. If int, same number of events
+for all runs. If list, number of events for each run.</p>
+</dd>
+<dt>stim: bool</dt><dd><p>If True, pass events through stim channel.</p>
+</dd>
+<dt>annotations: bool</dt><dd><p>If True, pass events through Annotations.</p>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="brainModels.datasets.dummyDataset.DummyP300Dataset.data_path">
+<span class="sig-name descname"><span class="pre">data_path</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">subject</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">force_update</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">update_path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/brainModels/datasets/dummyDataset.html#DummyP300Dataset.data_path"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brainModels.datasets.dummyDataset.DummyP300Dataset.data_path" title="Link to this definition"></a></dt>
+<dd><p>Get the Local Path of Subject Data</p>
+<p>This function retrieves the local path to a subject’s data.</p>
+<section id="id14">
+<h4>Parameters<a class="headerlink" href="#id14" title="Link to this heading"></a></h4>
+<dl>
+<dt>subject<span class="classifier">int</span></dt><dd><p>The subject number.</p>
+</dd>
+<dt>path<span class="classifier">str | None</span></dt><dd><p>The location to search for the data storage location. If set to None,
+it uses the environment variable or config parameter
+“MNE_DATASETS_(dataset)_PATH.” If it doesn’t exist, it defaults to the
+“~/mne_data” directory. If the dataset isn’t found under the specified
+path, the data is automatically downloaded to that folder.</p>
+<dl class="simple">
+<dt>force_update<span class="classifier">bool</span></dt><dd><p>Force an update of the dataset even if a local copy exists.</p>
+</dd>
+<dt>verbose<span class="classifier">bool, str, int, or None</span></dt><dd><p>If not None, override the default verbosity level (see <code class="xref py py-func docutils literal notranslate"><span class="pre">mne.verbose()</span></code>).</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</section>
+<section id="id15">
+<h4>Returns<a class="headerlink" href="#id15" title="Link to this heading"></a></h4>
+<dl class="simple">
+<dt>path<span class="classifier">list of str</span></dt><dd><p>The local path to the given data file. This path is contained within a
+list of length one for compatibility.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+</section>
+</dd></dl>
+
+</section>
+<section id="module-brainModels.datasets.erpCoreN400">
+<span id="brainmodels-datasets-erpcoren400-module"></span><h2>brainModels.datasets.erpCoreN400 module<a class="headerlink" href="#module-brainModels.datasets.erpCoreN400" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="brainModels.datasets.erpCoreN400.ERPCOREN400">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">brainModels.datasets.erpCoreN400.</span></span><span class="sig-name descname"><span class="pre">ERPCOREN400</span></span><a class="reference internal" href="_modules/brainModels/datasets/erpCoreN400.html#ERPCOREN400"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brainModels.datasets.erpCoreN400.ERPCOREN400" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#brainModels.datasets.base.BaseDataset" title="brainModels.datasets.base.BaseDataset"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseDataset</span></code></a></p>
+<p>N400 dataset from ERP Core.</p>
+<div class="admonition-dataset-summary-name-subj-chan-trials-class-trials-length-sampling-rate-sessions-erp-n400-40-32-5-nt-x-1-t-1s-1024hz-1 admonition">
+<p class="admonition-title">Dataset summary
+================ ======= ======= ================ =============== =============== ===========
+ Name             #Subj   #Chan   #Trials/class    Trials length   Sampling Rate   #Sessions
+================ ======= ======= ================ =============== =============== ===========
+ ERP: N400          40      32        5 NT x 1 T         1s              1024Hz           1
+================ ======= ======= ================ =============== =============== ===========</p>
+<p><strong>Datasets Description</strong></p>
+<p>This dataset included 40 participants, consisting of 25 females and 15 males. 
+The participants were selected from the University of California, Davis community. 
+The mean age of the participants was 21.5 years, with a standard deviation of 2.87. 
+The age range of the participants was between 18 and 30 years. A word pair judgment task 
+was employed to elicit the N400 component in this task. Every experimental trial comprised a red prime 
+word that was subsequently followed by a green target word. Participants were required 
+to indicate whether the target word was semantically related or unrelated to the prime word.</p>
+<blockquote>
+<div><p>References</p>
+</div></blockquote>
+<p>[1] Kappenman, Emily S., et al. “ERP CORE: An open resource for human event-related potential 
+research.” NeuroImage 225 (2021): 117465.</p>
+</div>
+<dl class="py method">
+<dt class="sig sig-object py" id="brainModels.datasets.erpCoreN400.ERPCOREN400.data_path">
+<span class="sig-name descname"><span class="pre">data_path</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">subject</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">force_update</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">update_path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/brainModels/datasets/erpCoreN400.html#ERPCOREN400.data_path"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brainModels.datasets.erpCoreN400.ERPCOREN400.data_path" title="Link to this definition"></a></dt>
+<dd><p>Get the Local Path of Subject Data</p>
+<p>This function retrieves the local path to a subject’s data.</p>
+<section id="id16">
+<h3>Parameters<a class="headerlink" href="#id16" title="Link to this heading"></a></h3>
+<dl>
+<dt>subject<span class="classifier">int</span></dt><dd><p>The subject number.</p>
+</dd>
+<dt>path<span class="classifier">str | None</span></dt><dd><p>The location to search for the data storage location. If set to None,
+it uses the environment variable or config parameter
+“MNE_DATASETS_(dataset)_PATH.” If it doesn’t exist, it defaults to the
+“~/mne_data” directory. If the dataset isn’t found under the specified
+path, the data is automatically downloaded to that folder.</p>
+<dl class="simple">
+<dt>force_update<span class="classifier">bool</span></dt><dd><p>Force an update of the dataset even if a local copy exists.</p>
+</dd>
+<dt>verbose<span class="classifier">bool, str, int, or None</span></dt><dd><p>If not None, override the default verbosity level (see <code class="xref py py-func docutils literal notranslate"><span class="pre">mne.verbose()</span></code>).</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</section>
+<section id="id17">
+<h3>Returns<a class="headerlink" href="#id17" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>path<span class="classifier">list of str</span></dt><dd><p>The local path to the given data file. This path is contained within a
+list of length one for compatibility.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="brainModels.datasets.erpCoreN400.ERPCOREN400.download_dataset">
+<span class="sig-name descname"><span class="pre">download_dataset</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">url</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sign</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">force_update</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/brainModels/datasets/erpCoreN400.html#ERPCOREN400.download_dataset"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brainModels.datasets.erpCoreN400.ERPCOREN400.download_dataset" title="Link to this definition"></a></dt>
+<dd><p>This function has been sourced from the BDS-3 licensed repository at <a class="reference external" href="https://github.com/NeuroTechX/moabb">https://github.com/NeuroTechX/moabb</a></p>
+<section id="id18">
+<h3>References<a class="headerlink" href="#id18" title="Link to this heading"></a></h3>
+<p>[1] Vinay Jayaram and Alexandre Barachant. MOABB: trustworthy algorithm benchmarking for BCIs. 
+Journal of neural engineering 15.6 (2018): 066011. DOI:10.1088/1741-2552</p>
+</section>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-brainModels.datasets.erpCoreP300">
+<span id="brainmodels-datasets-erpcorep300-module"></span><h2>brainModels.datasets.erpCoreP300 module<a class="headerlink" href="#module-brainModels.datasets.erpCoreP300" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="brainModels.datasets.erpCoreP300.ERPCORENP300">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">brainModels.datasets.erpCoreP300.</span></span><span class="sig-name descname"><span class="pre">ERPCORENP300</span></span><a class="reference internal" href="_modules/brainModels/datasets/erpCoreP300.html#ERPCORENP300"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brainModels.datasets.erpCoreP300.ERPCORENP300" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#brainModels.datasets.base.BaseDataset" title="brainModels.datasets.base.BaseDataset"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseDataset</span></code></a></p>
+<p>P300 dataset from ERP Core.</p>
+<div class="admonition-dataset-summary-name-subj-chan-trials-class-trials-length-sampling-rate-sessions-erp-n400-40-32-5-nt-x-1-t-1s-1024hz-1 admonition">
+<p class="admonition-title">Dataset summary
+================ ======= ======= ================ =============== =============== ===========
+ Name             #Subj   #Chan   #Trials/class    Trials length   Sampling Rate   #Sessions
+================ ======= ======= ================ =============== =============== ===========
+ ERP: N400          40      32        5 NT x 1 T         1s              1024Hz           1
+================ ======= ======= ================ =============== =============== ===========</p>
+<p><strong>Datasets Description</strong></p>
+<p>This dataset included 40 participants, consisting of 25 females and 15 males. 
+The participants were selected from the University of California, Davis community. 
+The mean age of the participants was 21.5 years, with a standard deviation of 2.87. 
+The age range of the participants was between 18 and 30 years. A word pair judgment task 
+was employed to elicit the N400 component in this task. Every experimental trial comprised a red prime 
+word that was subsequently followed by a green target word. Participants were required 
+to indicate whether the target word was semantically related or unrelated to the prime word.</p>
+<blockquote>
+<div><p>References</p>
+</div></blockquote>
+<p>[1] Kappenman, Emily S., et al. “ERP CORE: An open resource for human event-related potential 
+research.” NeuroImage 225 (2021): 117465.</p>
+</div>
+<dl class="py method">
+<dt class="sig sig-object py" id="brainModels.datasets.erpCoreP300.ERPCORENP300.data_path">
+<span class="sig-name descname"><span class="pre">data_path</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">subject</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">force_update</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">update_path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/brainModels/datasets/erpCoreP300.html#ERPCORENP300.data_path"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brainModels.datasets.erpCoreP300.ERPCORENP300.data_path" title="Link to this definition"></a></dt>
+<dd><p>Get the Local Path of Subject Data</p>
+<p>This function retrieves the local path to a subject’s data.</p>
+<section id="id19">
+<h3>Parameters<a class="headerlink" href="#id19" title="Link to this heading"></a></h3>
+<dl>
+<dt>subject<span class="classifier">int</span></dt><dd><p>The subject number.</p>
+</dd>
+<dt>path<span class="classifier">str | None</span></dt><dd><p>The location to search for the data storage location. If set to None,
+it uses the environment variable or config parameter
+“MNE_DATASETS_(dataset)_PATH.” If it doesn’t exist, it defaults to the
+“~/mne_data” directory. If the dataset isn’t found under the specified
+path, the data is automatically downloaded to that folder.</p>
+<dl class="simple">
+<dt>force_update<span class="classifier">bool</span></dt><dd><p>Force an update of the dataset even if a local copy exists.</p>
+</dd>
+<dt>verbose<span class="classifier">bool, str, int, or None</span></dt><dd><p>If not None, override the default verbosity level (see <code class="xref py py-func docutils literal notranslate"><span class="pre">mne.verbose()</span></code>).</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</section>
+<section id="id20">
+<h3>Returns<a class="headerlink" href="#id20" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>path<span class="classifier">list of str</span></dt><dd><p>The local path to the given data file. This path is contained within a
+list of length one for compatibility.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="brainModels.datasets.erpCoreP300.ERPCORENP300.download_dataset">
+<span class="sig-name descname"><span class="pre">download_dataset</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">url</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sign</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">force_update</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/brainModels/datasets/erpCoreP300.html#ERPCORENP300.download_dataset"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brainModels.datasets.erpCoreP300.ERPCORENP300.download_dataset" title="Link to this definition"></a></dt>
+<dd><p>This function has been sourced from the BDS-3 licensed repository at <a class="reference external" href="https://github.com/NeuroTechX/moabb">https://github.com/NeuroTechX/moabb</a></p>
+<section id="id21">
+<h3>References<a class="headerlink" href="#id21" title="Link to this heading"></a></h3>
+<p>[1] Vinay Jayaram and Alexandre Barachant. MOABB: trustworthy algorithm benchmarking for BCIs. 
+Journal of neural engineering 15.6 (2018): 066011. DOI:10.1088/1741-2552</p>
+</section>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-brainModels.datasets.huebner_llp">
+<span id="brainmodels-datasets-huebner-llp-module"></span><h2>brainModels.datasets.huebner_llp module<a class="headerlink" href="#module-brainModels.datasets.huebner_llp" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="brainModels.datasets.huebner_llp.Huebner2017">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">brainModels.datasets.huebner_llp.</span></span><span class="sig-name descname"><span class="pre">Huebner2017</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">interval</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">raw_slice_offset</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_blocks_as_sessions</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/brainModels/datasets/huebner_llp.html#Huebner2017"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brainModels.datasets.huebner_llp.Huebner2017" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">_BaseVisualMatrixSpellerDataset</span></code></p>
+<p>Learning from label proportions for a visual matrix speller (ERP) dataset from Hübner et al 2017 <a href="#id47"><span class="problematic" id="id22">[1]_</span></a>.</p>
+<p><strong>Dataset description</strong></p>
+<p>The subjects were asked to spell the sentence: “Franzy jagt im komplett verwahrlosten Taxi quer durch Freiburg”.
+The sentence was chosen because it contains each letter used in German at least once. Each subject spelled this
+sentence three times. The stimulus onset asynchrony (SOA) was 250 ms (corresponding to 15 frames on the LCD screen
+utilized) while the stimulus duration was 100 ms (corresponding to 6 frames on the LCD screen utilized). For each
+character, 68 highlighting events occurred and a total of 63 characters were spelled three times. This resulted in
+a total of 68 ⋅ 63 ⋅ 3 = 12852 EEG epochs per subject. Spelling one character took around 25 s including 4 s for
+cueing the current symbol, 17 s for highlighting and 4 s to provide feedback to the user. Assuming a perfect
+decoding, these timing constraints would allow for a maximum spelling speed of 2.4 characters per minute. Fig 1
+shows the complete experimental structure and how LLP is used to reconstruct average target and non-target ERP
+responses.</p>
+<p>Subjects were placed in a chair at 80 cm distance from a 24-inch flat screen. EEG signals from 31 passive Ag/AgCl
+electrodes (EasyCap) were recorded, which were placed approximately equidistantly according to the extended
+10–20 system, and whose impedances were kept below 20 kΩ. All channels were referenced against the nose and the
+ground was at FCz. The signals were registered by multichannel EEG amplifiers (BrainAmp DC, Brain Products) at a
+sampling rate of 1 kHz. To control for vertical ocular movements and eye blinks, we recorded with an EOG electrode
+placed below the right eye and referenced against the EEG channel Fp2 above the eye. In addition, pulse and
+breathing activity were recorded.</p>
+<section id="id23">
+<h3>Parameters<a class="headerlink" href="#id23" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>interval: array_like</dt><dd><p>range/interval in milliseconds in which the brain response/activity relative to an event/stimulus onset lies in.
+Default is set to [-.2, .7].</p>
+</dd>
+<dt>raw_slice_offset: int, None</dt><dd><p>defines the crop offset in milliseconds before the first and after the last event (target or non-targeet) onset.
+Default None which crops with an offset 2,000 ms.</p>
+</dd>
+</dl>
+</section>
+<section id="id24">
+<h3>References<a class="headerlink" href="#id24" title="Link to this heading"></a></h3>
+<aside class="footnote-list brackets">
+<aside class="footnote brackets" id="id25" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></span>
+<p>Hübner, D., Verhoeven, T., Schmid, K., Müller, K. R., Tangermann, M., &amp; Kindermans, P. J. (2017)
+Learning from label proportions in brain-computer interfaces: Online unsupervised learning with guarantees.
+PLOS ONE 12(4): e0175856.
+<a class="reference external" href="https://doi.org/10.1371/journal.pone.0175856">https://doi.org/10.1371/journal.pone.0175856</a></p>
+</aside>
+</aside>
+<div class="versionadded">
+<p><span class="versionmodified added">New in version 0.4.5.</span></p>
+</div>
+</section>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="brainModels.datasets.huebner_llp.Huebner2018">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">brainModels.datasets.huebner_llp.</span></span><span class="sig-name descname"><span class="pre">Huebner2018</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">interval</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">raw_slice_offset</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_blocks_as_sessions</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/brainModels/datasets/huebner_llp.html#Huebner2018"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brainModels.datasets.huebner_llp.Huebner2018" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">_BaseVisualMatrixSpellerDataset</span></code></p>
+<p>Mixture of LLP and EM for a visual matrix speller (ERP) dataset from Hübner et al 2018 <a href="#id48"><span class="problematic" id="id26">[1]_</span></a>.</p>
+<p>Within a single session, a subject was asked to spell the beginning of a sentence in each of three blocks.The text
+consists of the 35 symbols “Franzy jagt im Taxi quer durch das ”. Each block, one of the three decoding
+algorithms (EM, LLP, MIX) was used in order to guess the attended symbol. The order of the blocks was
+pseudo-randomized over subjects, such that each possible order of the three decoding algorithms was used twice.
+This randomization should reduce systematic biases by order effects or temporal effects, e.g., due to fatigue or
+task-learning.</p>
+<p>A trial describes the process of spelling one character. Each of the 35 trials per block contained 68 highlighting
+events. The stimulus onset asynchrony (SOA) was 250 ms and the stimulus duration was 100 ms leading to an
+interstimulus interval (ISI) of 150 ms.</p>
+<section id="id27">
+<h3>Parameters<a class="headerlink" href="#id27" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>interval: array_like</dt><dd><p>range/interval in milliseconds in which the brain response/activity relative to an event/stimulus onset lies in.
+Default is set to [-.2, .7].</p>
+</dd>
+<dt>raw_slice_offset: int, None</dt><dd><p>defines the crop offset in milliseconds before the first and after the last event (target or non-targeet) onset.
+Default None which crops with an offset 2,000 ms.</p>
+</dd>
+</dl>
+</section>
+<section id="id28">
+<h3>References<a class="headerlink" href="#id28" title="Link to this heading"></a></h3>
+<aside class="footnote-list brackets">
+<aside class="footnote brackets" id="id29" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></span>
+<p>Huebner, D., Verhoeven, T., Mueller, K. R., Kindermans, P. J., &amp; Tangermann, M. (2018).
+Unsupervised learning for brain-computer interfaces based on event-related potentials: Review and online comparison [research frontier].
+IEEE Computational Intelligence Magazine, 13(2), 66-77.
+<a class="reference external" href="https://doi.org/10.1109/MCI.2018.2807039">https://doi.org/10.1109/MCI.2018.2807039</a></p>
+</aside>
+</aside>
+<div class="versionadded">
+<p><span class="versionmodified added">New in version 0.4.5.</span></p>
+</div>
+</section>
+</dd></dl>
+
+</section>
+<section id="module-brainModels.datasets.lee2019">
+<span id="brainmodels-datasets-lee2019-module"></span><h2>brainModels.datasets.lee2019 module<a class="headerlink" href="#module-brainModels.datasets.lee2019" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="brainModels.datasets.lee2019.Lee2019">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">brainModels.datasets.lee2019.</span></span><span class="sig-name descname"><span class="pre">Lee2019</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">train_run</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">test_run</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sessions</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">(1,</span> <span class="pre">2)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">code_suffix</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'ERP'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/brainModels/datasets/lee2019.html#Lee2019"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brainModels.datasets.lee2019.Lee2019" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#brainModels.datasets.base.BaseDataset" title="brainModels.datasets.base.BaseDataset"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseDataset</span></code></a></p>
+<p>Base dataset class for Lee2019</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="brainModels.datasets.lee2019.Lee2019.data_path">
+<span class="sig-name descname"><span class="pre">data_path</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">subject</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">force_update</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">update_path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/brainModels/datasets/lee2019.html#Lee2019.data_path"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brainModels.datasets.lee2019.Lee2019.data_path" title="Link to this definition"></a></dt>
+<dd><p>Get the Local Path of Subject Data</p>
+<p>This function retrieves the local path to a subject’s data.</p>
+<section id="id30">
+<h3>Parameters<a class="headerlink" href="#id30" title="Link to this heading"></a></h3>
+<dl>
+<dt>subject<span class="classifier">int</span></dt><dd><p>The subject number.</p>
+</dd>
+<dt>path<span class="classifier">str | None</span></dt><dd><p>The location to search for the data storage location. If set to None,
+it uses the environment variable or config parameter
+“MNE_DATASETS_(dataset)_PATH.” If it doesn’t exist, it defaults to the
+“~/mne_data” directory. If the dataset isn’t found under the specified
+path, the data is automatically downloaded to that folder.</p>
+<dl class="simple">
+<dt>force_update<span class="classifier">bool</span></dt><dd><p>Force an update of the dataset even if a local copy exists.</p>
+</dd>
+<dt>verbose<span class="classifier">bool, str, int, or None</span></dt><dd><p>If not None, override the default verbosity level (see <code class="xref py py-func docutils literal notranslate"><span class="pre">mne.verbose()</span></code>).</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</section>
+<section id="id31">
+<h3>Returns<a class="headerlink" href="#id31" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>path<span class="classifier">list of str</span></dt><dd><p>The local path to the given data file. This path is contained within a
+list of length one for compatibility.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-brainModels.datasets.mantegna2019">
+<span id="brainmodels-datasets-mantegna2019-module"></span><h2>brainModels.datasets.mantegna2019 module<a class="headerlink" href="#module-brainModels.datasets.mantegna2019" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="brainModels.datasets.mantegna2019.Mantegna2019">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">brainModels.datasets.mantegna2019.</span></span><span class="sig-name descname"><span class="pre">Mantegna2019</span></span><a class="reference internal" href="_modules/brainModels/datasets/mantegna2019.html#Mantegna2019"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brainModels.datasets.mantegna2019.Mantegna2019" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#brainModels.datasets.base.BaseDataset" title="brainModels.datasets.base.BaseDataset"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseDataset</span></code></a></p>
+<p>N400 dataset</p>
+<p><strong>Datasets Description</strong></p>
+<blockquote>
+<div><p>This dataset included 40 participants, consisting of 25 females and 15 males. 
+The participants were selected from the University of California, Davis community. 
+The mean age of the participants was 21.5 years, with a standard deviation of 2.87. 
+The age range of the participants was between 18 and 30 years. A word pair judgment task 
+was employed to elicit the N400 component in this task. Every experimental trial comprised a red prime 
+word that was subsequently followed by a green target word. Participants were required 
+to indicate whether the target word was semantically related or unrelated to the prime word.</p>
+<blockquote>
+<div><p>References</p>
+</div></blockquote>
+<p>[1] Mantegna, Francesco, et al. “Distinguishing integration and prediction accounts of ERP N400 
+modulations in language processing through experimental design.” Neuropsychologia 134 (2019): 107199.</p>
+</div></blockquote>
+<dl class="py method">
+<dt class="sig sig-object py" id="brainModels.datasets.mantegna2019.Mantegna2019.data_path">
+<span class="sig-name descname"><span class="pre">data_path</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">subject</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">force_update</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">update_path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/brainModels/datasets/mantegna2019.html#Mantegna2019.data_path"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brainModels.datasets.mantegna2019.Mantegna2019.data_path" title="Link to this definition"></a></dt>
+<dd><p>Get the Local Path of Subject Data</p>
+<p>This function retrieves the local path to a subject’s data.</p>
+<section id="id32">
+<h3>Parameters<a class="headerlink" href="#id32" title="Link to this heading"></a></h3>
+<dl>
+<dt>subject<span class="classifier">int</span></dt><dd><p>The subject number.</p>
+</dd>
+<dt>path<span class="classifier">str | None</span></dt><dd><p>The location to search for the data storage location. If set to None,
+it uses the environment variable or config parameter
+“MNE_DATASETS_(dataset)_PATH.” If it doesn’t exist, it defaults to the
+“~/mne_data” directory. If the dataset isn’t found under the specified
+path, the data is automatically downloaded to that folder.</p>
+<dl class="simple">
+<dt>force_update<span class="classifier">bool</span></dt><dd><p>Force an update of the dataset even if a local copy exists.</p>
+</dd>
+<dt>verbose<span class="classifier">bool, str, int, or None</span></dt><dd><p>If not None, override the default verbosity level (see <code class="xref py py-func docutils literal notranslate"><span class="pre">mne.verbose()</span></code>).</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</section>
+<section id="id33">
+<h3>Returns<a class="headerlink" href="#id33" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>path<span class="classifier">list of str</span></dt><dd><p>The local path to the given data file. This path is contained within a
+list of length one for compatibility.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="brainModels.datasets.mantegna2019.Mantegna2019.download_dataset">
+<span class="sig-name descname"><span class="pre">download_dataset</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">url</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sign</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">force_update</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/brainModels/datasets/mantegna2019.html#Mantegna2019.download_dataset"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brainModels.datasets.mantegna2019.Mantegna2019.download_dataset" title="Link to this definition"></a></dt>
+<dd><p>This function has been sourced from the BDS-3 licensed repository at <a class="reference external" href="https://github.com/NeuroTechX/moabb">https://github.com/NeuroTechX/moabb</a></p>
+<section id="id34">
+<h3>References<a class="headerlink" href="#id34" title="Link to this heading"></a></h3>
+<p>[1] Vinay Jayaram and Alexandre Barachant. MOABB: trustworthy algorithm benchmarking for BCIs. 
+Journal of neural engineering 15.6 (2018): 066011. DOI:10.1088/1741-2552</p>
+</section>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-brainModels.datasets.sosulski2019">
+<span id="brainmodels-datasets-sosulski2019-module"></span><h2>brainModels.datasets.sosulski2019 module<a class="headerlink" href="#module-brainModels.datasets.sosulski2019" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="brainModels.datasets.sosulski2019.Sosulski2019">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">brainModels.datasets.sosulski2019.</span></span><span class="sig-name descname"><span class="pre">Sosulski2019</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">use_soas_as_sessions</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">load_soa_60</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reject_non_iid</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">interval</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/brainModels/datasets/sosulski2019.html#Sosulski2019"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brainModels.datasets.sosulski2019.Sosulski2019" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#brainModels.datasets.base.BaseDataset" title="brainModels.datasets.base.BaseDataset"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseDataset</span></code></a></p>
+<p>P300 dataset from initial spot study.</p>
+<p>Dataset <a href="#id49"><span class="problematic" id="id35">[1]_</span></a>, study on spatial transfer between SOAs <a class="footnote-reference brackets" href="#id40" id="id36" role="doc-noteref"><span class="fn-bracket">[</span>2<span class="fn-bracket">]</span></a>, actual paradigm / online optimization <a class="footnote-reference brackets" href="#id41" id="id37" role="doc-noteref"><span class="fn-bracket">[</span>3<span class="fn-bracket">]</span></a>.</p>
+<p><strong>Dataset Description</strong></p>
+<p>This dataset contains multiple small trials of an auditory oddball paradigm. The paradigm presented two different
+sinusoidal tones. A low-pitched (500 Hz, 40 ms duration) non-target tone and a high-pitched (1000 Hz,
+40 ms duration) target tone. Subjects were instructed to attend to the high-pitched target tones and ignore the
+low-pitched tones.</p>
+<p>One trial (= one file) consisted of 90 tones, 15 targets and 75 non-targets. The order was pseudo-randomized in a
+way that at least two non-target tones occur between two target tones. Additionally, if you split the 90 tones of
+one trial into consecutive sets of six tones, there will always be exactly one target and five non-target tones
+in each set.</p>
+<p>In the first part of the experiment (run 1), each subject performed 50-70 trials with various different stimulus
+onset asynchronies (SOAs) – i.e. the time between the onset of successive tones – for each trial. In the second
+part (run 2), 4-5 SOAs were played, with blocks of 5 trials having the same SOA. All SOAs were in the range of 60
+ms to 600 ms. Regardless of the experiment part, after a set of five trials, subjects were given the opportunity
+to take a short break to e.g. drink etc.</p>
+<p>Finally, before and after each run, resting data was recorded. One minute with eyes open and one minute with eyes
+closed, i.e. in total four minutes of resting data are available for each subject.</p>
+<p>Data was recorded using a BrainAmp DC (BrainVision) amplifier and a 31 passive electrode EasyCap. The cap was
+placed according to the extended 10-20 electrode layout. The reference electrode was placed on the nose. Before
+recording, the cap was prepared such that impedances on all electrodes were around 20 kOhm. The EEG signal was
+recorded at 1000 Hz.</p>
+<p>The data contains 31 scalp channels, one EOG channel and five miscellaneous non-EEG signal channels. However,
+only scalp EEG and the EOG channel is available in all subjects. The markers in the marker file indicate the
+onset of target tones (21) and non-target tones (1).</p>
+<div class="admonition caution">
+<p class="admonition-title">Caution</p>
+<p>Note that this wrapper currently only loads the second part of the experiment and uses pseudo-sessions
+to achieve the functionality to handle different conditions in MOABB. As a result, the statistical testing
+features of MOABB cannot be used for this dataset.</p>
+</div>
+<section id="id38">
+<h3>References<a class="headerlink" href="#id38" title="Link to this heading"></a></h3>
+<aside class="footnote-list brackets">
+<aside class="footnote brackets" id="id39" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></span>
+<p>Sosulski, J., Tangermann, M.: Electroencephalogram signals recorded from 13 healthy subjects during an
+auditory oddball paradigm under different stimulus onset asynchrony conditions.
+Dataset. DOI: 10.6094/UNIFR/154576</p>
+</aside>
+<aside class="footnote brackets" id="id40" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id36">2</a><span class="fn-bracket">]</span></span>
+<p>Sosulski, J., Tangermann, M.: Spatial filters for auditory evoked potentials transfer between different
+experimental conditions. Graz BCI Conference. 2019.</p>
+</aside>
+<aside class="footnote brackets" id="id41" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id37">3</a><span class="fn-bracket">]</span></span>
+<p>Sosulski, J., Hübner, D., Klein, A., Tangermann, M.:  Online Optimization of Stimulation Speed in
+an Auditory Brain-Computer Interface under Time Constraints. arXiv preprint. 2021.</p>
+</aside>
+</aside>
+</section>
+<section id="id42">
+<h3>Notes<a class="headerlink" href="#id42" title="Link to this heading"></a></h3>
+<div class="versionadded">
+<p><span class="versionmodified added">New in version 0.4.5.</span></p>
+</div>
+<dl class="py method">
+<dt class="sig sig-object py" id="brainModels.datasets.sosulski2019.Sosulski2019.data_path">
+<span class="sig-name descname"><span class="pre">data_path</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">subject</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">force_update</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">update_path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/brainModels/datasets/sosulski2019.html#Sosulski2019.data_path"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brainModels.datasets.sosulski2019.Sosulski2019.data_path" title="Link to this definition"></a></dt>
+<dd><p>Get the Local Path of Subject Data</p>
+<p>This function retrieves the local path to a subject’s data.</p>
+<section id="id43">
+<h4>Parameters<a class="headerlink" href="#id43" title="Link to this heading"></a></h4>
+<dl>
+<dt>subject<span class="classifier">int</span></dt><dd><p>The subject number.</p>
+</dd>
+<dt>path<span class="classifier">str | None</span></dt><dd><p>The location to search for the data storage location. If set to None,
+it uses the environment variable or config parameter
+“MNE_DATASETS_(dataset)_PATH.” If it doesn’t exist, it defaults to the
+“~/mne_data” directory. If the dataset isn’t found under the specified
+path, the data is automatically downloaded to that folder.</p>
+<dl class="simple">
+<dt>force_update<span class="classifier">bool</span></dt><dd><p>Force an update of the dataset even if a local copy exists.</p>
+</dd>
+<dt>verbose<span class="classifier">bool, str, int, or None</span></dt><dd><p>If not None, override the default verbosity level (see <code class="xref py py-func docutils literal notranslate"><span class="pre">mne.verbose()</span></code>).</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</section>
+<section id="id44">
+<h4>Returns<a class="headerlink" href="#id44" title="Link to this heading"></a></h4>
+<dl class="simple">
+<dt>path<span class="classifier">list of str</span></dt><dd><p>The local path to the given data file. This path is contained within a
+list of length one for compatibility.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="brainModels.datasets.sosulski2019.Sosulski2019.filename_trial_info_extraction">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">filename_trial_info_extraction</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filepath</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/brainModels/datasets/sosulski2019.html#Sosulski2019.filename_trial_info_extraction"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brainModels.datasets.sosulski2019.Sosulski2019.filename_trial_info_extraction" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</section>
+</dd></dl>
+
+</section>
+<section id="module-brainModels.datasets.userDataset">
+<span id="brainmodels-datasets-userdataset-module"></span><h2>brainModels.datasets.userDataset module<a class="headerlink" href="#module-brainModels.datasets.userDataset" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="brainModels.datasets.userDataset.USERDATASET">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">brainModels.datasets.userDataset.</span></span><span class="sig-name descname"><span class="pre">USERDATASET</span></span><a class="reference internal" href="_modules/brainModels/datasets/userDataset.html#USERDATASET"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brainModels.datasets.userDataset.USERDATASET" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#brainModels.datasets.base.BaseDataset" title="brainModels.datasets.base.BaseDataset"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseDataset</span></code></a></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="brainModels.datasets.userDataset.USERDATASET.data_path">
+<span class="sig-name descname"><span class="pre">data_path</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">subject</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">force_update</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">update_path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/brainModels/datasets/userDataset.html#USERDATASET.data_path"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brainModels.datasets.userDataset.USERDATASET.data_path" title="Link to this definition"></a></dt>
+<dd><p>Get path to local copy of a subject data</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-brainModels.datasets.utils">
+<span id="brainmodels-datasets-utils-module"></span><h2>brainModels.datasets.utils module<a class="headerlink" href="#module-brainModels.datasets.utils" title="Link to this heading"></a></h2>
+<p>Utils for easy database selection</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="brainModels.datasets.utils.dataset_search">
+<span class="sig-prename descclassname"><span class="pre">brainModels.datasets.utils.</span></span><span class="sig-name descname"><span class="pre">dataset_search</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">paradigm</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">multi_session</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">events</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">has_all_events</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">interval</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_subjects</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">channels</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">()</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/brainModels/datasets/utils.html#dataset_search"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brainModels.datasets.utils.dataset_search" title="Link to this definition"></a></dt>
+<dd><p>Returns a list of datasets that match a given criteria</p>
+<section id="id45">
+<h3>Parameters<a class="headerlink" href="#id45" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>paradigm: str</dt><dd><p>‘p300’, ‘n400’</p>
+</dd>
+<dt>multi_session: bool</dt><dd><p>if True only returns datasets with more than one session per subject.
+If False return all</p>
+</dd>
+<dt>events: list of strings</dt><dd><p>events to select</p>
+</dd>
+<dt>has_all_events: bool</dt><dd><p>skip datasets that don’t have all events in events</p>
+</dd>
+<dt>interval:</dt><dd><p>Length of motor imagery interval, in seconds. Only used in imagery
+paradigm</p>
+</dd>
+<dt>min_subjects: int,</dt><dd><p>minimum subjects in dataset</p>
+</dd>
+<dt>channels: list of str</dt><dd><p>list or set of channels</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+</section>
+<section id="module-brainModels.datasets.won2022">
+<span id="brainmodels-datasets-won2022-module"></span><h2>brainModels.datasets.won2022 module<a class="headerlink" href="#module-brainModels.datasets.won2022" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="brainModels.datasets.won2022.Won2022">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">brainModels.datasets.won2022.</span></span><span class="sig-name descname"><span class="pre">Won2022</span></span><a class="reference internal" href="_modules/brainModels/datasets/won2022.html#Won2022"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brainModels.datasets.won2022.Won2022" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#brainModels.datasets.base.BaseDataset" title="brainModels.datasets.base.BaseDataset"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseDataset</span></code></a></p>
+<p>P300 dataset</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="brainModels.datasets.won2022.Won2022.data_path">
+<span class="sig-name descname"><span class="pre">data_path</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">subject</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">force_update</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">update_path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/brainModels/datasets/won2022.html#Won2022.data_path"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brainModels.datasets.won2022.Won2022.data_path" title="Link to this definition"></a></dt>
+<dd><p>Get path to local copy of a subject data.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="brainModels.datasets.won2022.Won2022.download_dataset">
+<span class="sig-name descname"><span class="pre">download_dataset</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">url</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sign</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">subject_str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">force_update</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/brainModels/datasets/won2022.html#Won2022.download_dataset"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brainModels.datasets.won2022.Won2022.download_dataset" title="Link to this definition"></a></dt>
+<dd><p>Download a file from a given URL to a local folder.</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-brainModels.datasets">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-brainModels.datasets" title="Link to this heading"></a></h2>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="brainModels.analysis.html" class="btn btn-neutral float-left" title="brainModels.analysis package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="brainModels.evaluations.html" class="btn btn-neutral float-right" title="brainModels.evaluations package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Avinash Kumar Chaurasia.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

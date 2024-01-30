@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>brainModels.evaluations.similarity &mdash; BrainModels documentation 1.0.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=19f00094" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../../../_static/documentation_options.js?v=8d563738"></script>
+        <script src="../../../_static/doctools.js?v=888ff710"></script>
+        <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            BrainModels documentation
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../brainModels.html">brainModels package</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">BrainModels documentation</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">brainModels.evaluations.similarity</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for brainModels.evaluations.similarity</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">tqdm</span> <span class="kn">import</span> <span class="n">tqdm</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">tensorflow</span> <span class="k">as</span> <span class="nn">tf</span>
+<span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">defaultdict</span>
+<span class="kn">from</span> <span class="nn">sklearn.model_selection</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">LeaveOneGroupOut</span><span class="p">,</span>
+<span class="p">)</span>
+
+<div class="viewcode-block" id="CalculateSimilarity">
+<a class="viewcode-back" href="../../../brainModels.evaluations.html#brainModels.evaluations.similarity.CalculateSimilarity">[docs]</a>
+<span class="k">class</span> <span class="nc">CalculateSimilarity</span><span class="p">():</span>
+
+    <span class="c1"># This function has been sourced from https://git.scc.kit.edu/ps-chair/brainnet licensed under the Creative Commons</span>
+    <span class="k">def</span> <span class="nf">_close_set_identification</span><span class="p">(</span><span class="n">embedding_network</span><span class="p">,</span> <span class="n">x_train_val</span><span class="p">,</span> <span class="n">y_train_val</span><span class="p">,</span> <span class="n">x_test</span><span class="p">,</span> <span class="n">y_test</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Calculates similarity values for closed-set recognition by comparing each brain embedding in the test set</span>
+<span class="sd">        with all face embeddings in the training set, then computes similarity by calculating euclidean distance </span>
+<span class="sd">        between each pair of embeddings. It creates pairs of faces with labels: 1 for the same individual, 0 for </span>
+<span class="sd">        different individuals.</span>
+
+<span class="sd">        Parameters:</span>
+<span class="sd">        - embedding_network (function): Siamese network to generate brain embeddings.</span>
+<span class="sd">        - x_train_val (numpy.ndarray): Training data for brain embeddings.</span>
+<span class="sd">        - y_train_val (numpy.ndarray): Labels for training data.</span>
+<span class="sd">        - x_test (numpy.ndarray): Test data for brain embeddings.</span>
+<span class="sd">        - y_test (numpy.ndarray): Labels for test data.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">        - resutls (list): List containing similarity values and labels for pairs of brain samples.</span>
+<span class="sd">        - resutls2 (list): List containing similarity values and labels for pairs of brain samples grouped by identity.</span>
+<span class="sd">        - resutls3 (dict): Dictionary containing similarity values and labels for pairs of brain samples grouped by identity.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">resutls</span><span class="o">=</span><span class="p">[]</span>
+        <span class="n">resutls2</span><span class="o">=</span><span class="p">[]</span>
+        <span class="n">resutls3</span><span class="o">=</span><span class="n">defaultdict</span><span class="p">(</span><span class="nb">list</span><span class="p">)</span>
+        <span class="n">calsstrain</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">y_train_val</span><span class="p">)</span>
+        <span class="n">TP</span><span class="p">,</span><span class="n">FP</span><span class="p">,</span><span class="n">TN</span><span class="p">,</span><span class="n">FN</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span>
+        <span class="n">digit_indices</span> <span class="o">=</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">y_train_val</span> <span class="o">==</span> <span class="n">i</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">y_train_val</span><span class="p">)]</span>
+        <span class="c1">#print(&quot;chaurasia&quot;)</span>
+        <span class="n">x_test_1</span> <span class="o">=</span> <span class="n">x_test</span>
+
+        <span class="c1">#print(len(x_train_val),len(x_test))</span>
+        <span class="c1">#anc_et=embedding_network(x_train_val)</span>
+        <span class="n">anc_e</span><span class="o">=</span><span class="n">embedding_network</span><span class="p">(</span><span class="n">x_test</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="nb">min</span><span class="p">(</span><span class="mi">500</span><span class="p">,</span><span class="nb">len</span><span class="p">(</span><span class="n">x_test</span><span class="p">))])</span>
+        <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">x_test</span><span class="p">)</span><span class="o">//</span><span class="mi">500</span><span class="p">):</span>
+            <span class="n">anc_e</span><span class="o">=</span><span class="n">tf</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">values</span> <span class="o">=</span> <span class="p">[</span><span class="n">anc_e</span><span class="p">,</span> <span class="n">embedding_network</span><span class="p">(</span><span class="n">x_test</span><span class="p">[(</span><span class="n">c</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span><span class="o">*</span><span class="mi">500</span><span class="p">:</span><span class="nb">min</span><span class="p">((</span><span class="n">c</span><span class="o">+</span><span class="mi">2</span><span class="p">)</span><span class="o">*</span><span class="mi">500</span><span class="p">,</span><span class="nb">len</span><span class="p">(</span><span class="n">x_test</span><span class="p">))])])</span> 	
+        <span class="n">anc_et</span><span class="o">=</span><span class="n">embedding_network</span><span class="p">(</span><span class="n">x_train_val</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="nb">min</span><span class="p">(</span><span class="mi">500</span><span class="p">,</span><span class="nb">len</span><span class="p">(</span><span class="n">x_train_val</span><span class="p">))])</span>
+        <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">x_train_val</span><span class="p">)</span><span class="o">//</span><span class="mi">500</span><span class="p">):</span>
+            <span class="n">anc_et</span><span class="o">=</span><span class="n">tf</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">values</span> <span class="o">=</span> <span class="p">[</span><span class="n">anc_et</span><span class="p">,</span> <span class="n">embedding_network</span><span class="p">(</span><span class="n">x_train_val</span><span class="p">[(</span><span class="n">c</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span><span class="o">*</span><span class="mi">500</span><span class="p">:</span><span class="nb">min</span><span class="p">((</span><span class="n">c</span><span class="o">+</span><span class="mi">2</span><span class="p">)</span><span class="o">*</span><span class="mi">500</span><span class="p">,</span><span class="nb">len</span><span class="p">(</span><span class="n">x_train_val</span><span class="p">))])])</span> 
+        <span class="nb">print</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">anc_et</span><span class="p">),</span><span class="nb">len</span><span class="p">(</span><span class="n">anc_e</span><span class="p">))</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">tqdm</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">x_test_1</span><span class="p">)),</span> <span class="n">desc</span><span class="o">=</span><span class="s2">&quot;Calculating similarity&quot;</span><span class="p">):</span>
+            <span class="n">prediction</span><span class="o">=</span><span class="p">[]</span>
+            <span class="n">test_e</span><span class="o">=</span><span class="n">embedding_network</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">x_test</span><span class="p">[</span><span class="n">i</span><span class="p">]]))</span>
+            <span class="n">same_in</span><span class="o">=</span><span class="n">digit_indices</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">calsstrain</span> <span class="o">==</span> <span class="n">y_train_val</span><span class="p">[</span><span class="n">i</span><span class="p">])[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]]</span>
+            
+            <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">x_train_val</span><span class="p">)):</span>
+                <span class="n">tempp</span><span class="o">=-</span><span class="mi">1</span><span class="o">*</span><span class="n">euclidean_distance2</span><span class="p">(</span><span class="n">anc_et</span><span class="p">[</span><span class="n">t</span><span class="p">],</span><span class="n">test_e</span><span class="p">)</span><span class="o">.</span><span class="n">numpy</span><span class="p">()[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> 
+                <span class="k">if</span> <span class="n">y_test</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">==</span><span class="n">y_train_val</span><span class="p">[</span><span class="n">t</span><span class="p">]:</span>
+                    <span class="n">resutls</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="n">tempp</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="n">y_test</span><span class="p">[</span><span class="n">i</span><span class="p">],</span><span class="n">y_train_val</span><span class="p">[</span><span class="n">t</span><span class="p">]])</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">resutls</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="n">tempp</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="n">y_test</span><span class="p">[</span><span class="n">i</span><span class="p">],</span><span class="n">y_train_val</span><span class="p">[</span><span class="n">t</span><span class="p">]])</span>
+
+                <span class="n">prediction</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">tempp</span><span class="p">)</span>        
+            <span class="n">prediction</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">prediction</span><span class="p">)</span>
+            
+            <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="n">calsstrain</span><span class="p">:</span>
+                <span class="n">same_in</span><span class="o">=</span><span class="n">digit_indices</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">calsstrain</span> <span class="o">==</span> <span class="n">j</span><span class="p">)[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]]</span>
+                <span class="n">spredict</span><span class="o">=</span><span class="p">((</span><span class="nb">sum</span><span class="p">(</span><span class="n">prediction</span><span class="p">[</span><span class="n">same_in</span><span class="p">]))</span><span class="o">/</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">same_in</span><span class="p">)))</span>            
+                <span class="k">if</span> <span class="n">y_test</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">==</span><span class="n">j</span><span class="p">:</span>
+                    <span class="n">resutls2</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="n">spredict</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="n">y_test</span><span class="p">[</span><span class="n">i</span><span class="p">],</span><span class="n">j</span><span class="p">])</span>
+                    <span class="n">resutls3</span><span class="p">[</span><span class="n">j</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="n">spredict</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="n">y_test</span><span class="p">[</span><span class="n">i</span><span class="p">],</span><span class="n">j</span><span class="p">])</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">resutls2</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="n">spredict</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="n">y_test</span><span class="p">[</span><span class="n">i</span><span class="p">],</span><span class="n">j</span><span class="p">])</span>
+                    <span class="n">resutls3</span><span class="p">[</span><span class="n">j</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="n">spredict</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="n">y_test</span><span class="p">[</span><span class="n">i</span><span class="p">],</span><span class="n">j</span><span class="p">])</span>   
+                <span class="k">if</span> <span class="n">spredict</span><span class="o">&gt;</span><span class="mf">0.85</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">y_test</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">==</span><span class="n">j</span><span class="p">:</span>
+                        <span class="n">TP</span><span class="o">+=</span><span class="mi">1</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">FP</span><span class="o">+=</span><span class="mi">1</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">y_test</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">==</span> <span class="n">j</span><span class="p">:</span>
+                        <span class="n">FN</span><span class="o">+=</span><span class="mi">1</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">TN</span><span class="o">+=</span><span class="mi">1</span>
+        <span class="k">return</span> <span class="n">resutls</span><span class="p">,</span><span class="n">resutls2</span><span class="p">,</span><span class="n">resutls3</span>
+    
+    <span class="k">def</span> <span class="nf">_open_set_verification</span><span class="p">(</span><span class="n">embedding_network</span><span class="p">,</span> <span class="n">x_test</span><span class="p">,</span> <span class="n">y_test</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Calculates similarity values for authentication (verification) by comparing each brain embedding in the test set</span>
+<span class="sd">        with all other brain embeddings in the test. It computes similarity by calculating euclidean disnatncebetween each </span>
+<span class="sd">        pair of embeddings and creates pairs of faces with labels: 1 for the same individual, 0 for different individuals.</span>
+
+<span class="sd">        Parameters:</span>
+<span class="sd">            - embedding_network (function): Siamese network to generate embeddings.</span>
+<span class="sd">            - x_test (numpy.ndarray): Test data for brain embeddings.</span>
+<span class="sd">            - y_test (numpy.ndarray): Labels for test data.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            - resutls (list): List containing similarity values and labels for pairs of brain samples.</span>
+<span class="sd">            - resutls2 (list): List containing similarity values and labels for pairs of brain samples grouped by identity.</span>
+<span class="sd">            - resutls3 (dict): Dictionary containing similarity values and labels for pairs of brain samples grouped by identity.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1">#print(&quot;I am in predict open set function&quot;)</span>
+        <span class="c1"># Compute embeddings for all test samples</span>
+        <span class="n">resutls</span><span class="o">=</span><span class="p">[]</span>
+        <span class="n">resutls2</span><span class="o">=</span><span class="p">[]</span>
+        <span class="n">resutls3</span><span class="o">=</span><span class="n">defaultdict</span><span class="p">(</span><span class="nb">list</span><span class="p">)</span>
+        <span class="n">calss</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">y_test</span><span class="p">)</span>
+        <span class="n">TP</span><span class="p">,</span><span class="n">FP</span><span class="p">,</span><span class="n">TN</span><span class="p">,</span><span class="n">FN</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span>
+        <span class="n">digit_indices</span> <span class="o">=</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">y_test</span> <span class="o">==</span> <span class="n">i</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">y_test</span><span class="p">)]</span>
+        <span class="n">x_test_1</span> <span class="o">=</span> <span class="n">x_test</span>
+        <span class="nb">print</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">x_test</span><span class="p">))</span>
+        <span class="c1">#anc_et=embedding_network(x_train_val)</span>
+        <span class="n">anc_e</span><span class="o">=</span><span class="n">embedding_network</span><span class="p">(</span><span class="n">x_test</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="nb">min</span><span class="p">(</span><span class="mi">500</span><span class="p">,</span><span class="nb">len</span><span class="p">(</span><span class="n">x_test</span><span class="p">))])</span>
+        <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">tqdm</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">x_test</span><span class="p">)</span><span class="o">//</span><span class="mi">500</span><span class="p">),</span> <span class="n">desc</span><span class="o">=</span><span class="s1">&#39;Getting test embedings&#39;</span><span class="p">):</span>
+            <span class="n">anc_e</span><span class="o">=</span><span class="n">tf</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">values</span> <span class="o">=</span> <span class="p">[</span><span class="n">anc_e</span><span class="p">,</span> <span class="n">embedding_network</span><span class="p">(</span><span class="n">x_test</span><span class="p">[(</span><span class="n">c</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span><span class="o">*</span><span class="mi">500</span><span class="p">:</span><span class="nb">min</span><span class="p">((</span><span class="n">c</span><span class="o">+</span><span class="mi">2</span><span class="p">)</span><span class="o">*</span><span class="mi">500</span><span class="p">,</span><span class="nb">len</span><span class="p">(</span><span class="n">x_test</span><span class="p">))])])</span> 	
+        <span class="nb">print</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">x_test</span><span class="p">))</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">tqdm</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">x_test_1</span><span class="p">)),</span> <span class="n">desc</span><span class="o">=</span><span class="s2">&quot;Calculating similarity&quot;</span><span class="p">):</span>
+            <span class="n">temp</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">calss</span> <span class="o">==</span> <span class="n">y_test</span><span class="p">[</span><span class="n">i</span><span class="p">])[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">prediction</span><span class="o">=</span><span class="p">[]</span>
+            <span class="n">same_in</span><span class="o">=</span><span class="n">digit_indices</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">calss</span> <span class="o">==</span> <span class="n">y_test</span><span class="p">[</span><span class="n">i</span><span class="p">])[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]]</span>
+            <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">x_test_1</span><span class="p">)):</span>
+                <span class="n">tempp</span><span class="o">=-</span><span class="mi">1</span><span class="o">*</span><span class="n">euclidean_distance2</span><span class="p">(</span><span class="n">anc_e</span><span class="p">[</span><span class="n">t</span><span class="p">],</span><span class="n">anc_e</span><span class="p">[</span><span class="n">i</span><span class="p">])</span><span class="o">.</span><span class="n">numpy</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span>
+        
+                <span class="k">if</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">same_in</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">t</span><span class="o">==</span><span class="n">i</span><span class="p">:</span>
+                        <span class="k">pass</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">resutls</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="n">tempp</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="n">y_test</span><span class="p">[</span><span class="n">i</span><span class="p">],</span><span class="n">y_test</span><span class="p">[</span><span class="n">t</span><span class="p">]])</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">resutls</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="n">tempp</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="n">y_test</span><span class="p">[</span><span class="n">i</span><span class="p">],</span><span class="n">y_test</span><span class="p">[</span><span class="n">t</span><span class="p">]])</span>    
+                <span class="n">prediction</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">tempp</span><span class="p">)</span>
+            <span class="n">prediction</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">prediction</span><span class="p">)</span>
+            
+            <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="n">calss</span><span class="p">:</span>
+                <span class="n">same_in</span><span class="o">=</span><span class="n">digit_indices</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">calss</span> <span class="o">==</span> <span class="n">j</span><span class="p">)[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]]</span>
+                <span class="n">same_in</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">setdiff1d</span><span class="p">(</span><span class="n">same_in</span><span class="p">,[</span><span class="n">i</span><span class="p">])</span>
+                <span class="n">spredict</span><span class="o">=</span><span class="nb">max</span><span class="p">(</span><span class="n">prediction</span><span class="p">[</span><span class="n">same_in</span><span class="p">])</span>        
+        
+                <span class="k">if</span> <span class="n">y_test</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">==</span><span class="n">j</span><span class="p">:</span>
+                    <span class="n">resutls2</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="n">spredict</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="n">y_test</span><span class="p">[</span><span class="n">i</span><span class="p">],</span><span class="n">j</span><span class="p">])</span>
+                    <span class="n">resutls3</span><span class="p">[</span><span class="n">j</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="n">spredict</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="n">y_test</span><span class="p">[</span><span class="n">i</span><span class="p">],</span><span class="n">j</span><span class="p">])</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">resutls2</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="n">spredict</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="n">y_test</span><span class="p">[</span><span class="n">i</span><span class="p">],</span><span class="n">j</span><span class="p">])</span>
+                    <span class="n">resutls3</span><span class="p">[</span><span class="n">j</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="n">spredict</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="n">y_test</span><span class="p">[</span><span class="n">i</span><span class="p">],</span><span class="n">j</span><span class="p">])</span>
+                        
+                <span class="k">if</span> <span class="n">spredict</span><span class="o">&gt;</span><span class="mf">0.85</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">y_test</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">==</span><span class="n">j</span><span class="p">:</span>
+                        <span class="n">TP</span><span class="o">+=</span><span class="mi">1</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">FP</span><span class="o">+=</span><span class="mi">1</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">y_test</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">==</span> <span class="n">j</span><span class="p">:</span>
+                        <span class="n">FN</span><span class="o">+=</span><span class="mi">1</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">TN</span><span class="o">+=</span><span class="mi">1</span>
+        <span class="k">return</span> <span class="n">resutls</span><span class="p">,</span><span class="n">resutls2</span><span class="p">,</span><span class="n">resutls3</span>
+        
+    <span class="k">def</span> <span class="nf">_multi_session_open_set_verification</span><span class="p">(</span><span class="n">embedding_network</span><span class="p">,</span> <span class="n">eeg_data</span><span class="p">,</span> <span class="n">subjects</span><span class="p">,</span> <span class="n">sessions</span><span class="p">):</span>
+        
+        
+        <span class="k">def</span> <span class="nf">compute_embedding_batch</span><span class="p">(</span><span class="n">x_test_batch</span><span class="p">,</span><span class="n">embedding_network</span><span class="p">):</span>
+            <span class="n">embeddings</span> <span class="o">=</span> <span class="n">embedding_network</span><span class="p">(</span><span class="n">x_test_batch</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="nb">min</span><span class="p">(</span><span class="mi">100</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">x_test_batch</span><span class="p">))])</span>
+
+            <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">x_test_batch</span><span class="p">)</span> <span class="o">//</span> <span class="mi">100</span><span class="p">):</span>
+                <span class="n">embeddings</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">values</span><span class="o">=</span><span class="p">[</span><span class="n">embeddings</span><span class="p">,</span> <span class="n">embedding_network</span><span class="p">(</span><span class="n">x_test_batch</span><span class="p">[(</span><span class="n">c</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span><span class="o">*</span><span class="mi">100</span><span class="p">:</span><span class="nb">min</span><span class="p">((</span><span class="n">c</span><span class="o">+</span><span class="mi">2</span><span class="p">)</span><span class="o">*</span><span class="mi">100</span><span class="p">,</span><span class="nb">len</span><span class="p">(</span><span class="n">x_test_batch</span><span class="p">))])])</span>
+            <span class="nb">print</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">embeddings</span><span class="p">))</span>
+            <span class="n">embeddings</span> <span class="o">=</span> <span class="n">embeddings</span><span class="o">.</span><span class="n">numpy</span><span class="p">()</span>            
+            <span class="k">return</span> <span class="n">embeddings</span>
+
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Performs multi-session open-set verification using EEG data.</span>
+
+<span class="sd">        This function accepts the EEG data, subjects and sessions as input and returns the similarity values for</span>
+<span class="sd">        each pair of brain samples across multiple sessions. It computes similarity by calculating euclidean distance</span>
+<span class="sd">        between each pair of embeddings and creates pairs of faces with labels: 1 for the same individual, 0 for</span>
+<span class="sd">        different individuals. The enrollment session should always be less than the test session.</span>
+
+<span class="sd">        Parameters:</span>
+<span class="sd">            - embedding_network (function): Siamese network to generate embeddings.</span>
+<span class="sd">            - test_eeg_data (numpy.ndarray): Test data for EEG embeddings.</span>
+<span class="sd">            - test_subjects (numpy.ndarray): Labels for test data subjects.</span>
+<span class="sd">            - sessions (numpy.ndarray): Session numbers for the test data.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">        - resutls3 (defaultdict(list)): A dictionary containing similarity values and labels for pairs of brain samples across multiple sessions.</span>
+<span class="sd">            Keys represent subject IDs, and each value is a list of results for that particular subject across different sessions.</span>
+<span class="sd">            Each result entry consists of:</span>
+<span class="sd">                - Similarity score</span>
+<span class="sd">                - Label (1.0 for same subject, 0.0 for different subjects)</span>
+<span class="sd">                - Subject ID</span>
+<span class="sd">                - Current session number</span>
+<span class="sd">                - Session(s) being compared</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">resutls3</span><span class="o">=</span><span class="n">defaultdict</span><span class="p">(</span><span class="nb">list</span><span class="p">)</span>
+        
+        <span class="n">eeg_data</span><span class="o">=</span><span class="n">compute_embedding_batch</span><span class="p">(</span><span class="n">eeg_data</span><span class="p">,</span><span class="n">embedding_network</span><span class="p">)</span>
+
+        <span class="c1"># Iterate over all the sessions in the test data except the last session</span>
+        <span class="k">for</span> <span class="n">enroll_sessions</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">sessions</span><span class="p">))</span><span class="o">-</span><span class="mi">1</span><span class="p">):</span>
+
+            <span class="c1"># Get the session number of the session to be enrolled</span>
+            <span class="n">enroll_session</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">sessions</span><span class="p">)[</span><span class="n">enroll_sessions</span><span class="p">]</span>
+
+            <span class="c1"># Get the indices of the session to be enrolled</span>
+            <span class="n">enroll_indices</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">sessions</span><span class="o">==</span><span class="n">enroll_session</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+
+            <span class="c1"># Get the subjects of the session to be enrolled</span>
+            <span class="n">enroll_subjects</span><span class="o">=</span><span class="n">subjects</span><span class="p">[</span><span class="n">enroll_indices</span><span class="p">]</span>
+
+            <span class="c1"># Get the embeddings of the session to be enrolled</span>
+            <span class="n">enroll_embeddings</span><span class="o">=</span><span class="n">eeg_data</span><span class="p">[</span><span class="n">enroll_indices</span><span class="p">]</span>
+
+            <span class="c1"># Iterate over all the sessions except the session already enrolled</span>
+            <span class="k">for</span> <span class="n">test_sessions</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">enroll_sessions</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">sessions</span><span class="p">))):</span>
+
+                <span class="c1"># Get the session number of the session to be tested</span>
+                <span class="n">test_session</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">sessions</span><span class="p">)[</span><span class="n">test_sessions</span><span class="p">]</span>
+
+                <span class="c1"># Get the indices of the session to be tested</span>
+                <span class="n">test_indices</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">sessions</span><span class="o">==</span><span class="n">test_session</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+
+                <span class="c1"># Get the subjects of the session to be tested</span>
+                <span class="n">test_subjects</span><span class="o">=</span><span class="n">subjects</span><span class="p">[</span><span class="n">test_indices</span><span class="p">]</span>
+
+                <span class="c1"># Get the embeddings of the session to be tested</span>
+                <span class="n">test_embeddings</span><span class="o">=</span><span class="n">eeg_data</span><span class="p">[</span><span class="n">test_indices</span><span class="p">]</span>
+
+
+                <span class="c1"># Iterate over all the brain samples in the session to be tested</span>
+                <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">tqdm</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">test_embeddings</span><span class="p">)),</span> <span class="n">desc</span><span class="o">=</span><span class="s2">&quot;Calculating similarity in multi-session(Open Set)&quot;</span><span class="p">):</span>
+
+                    <span class="n">prediction</span><span class="o">=</span><span class="p">[]</span>
+
+                    <span class="c1"># Iterate over all the brain samples in the session already enrolled</span>
+                    <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">enroll_embeddings</span><span class="p">)):</span>
+
+                        <span class="c1"># Getting the similarity between the test sample from the enrolled session with</span>
+                        <span class="c1"># the brain sample from the testing session </span>
+                        <span class="n">similarity_scores</span><span class="o">=-</span><span class="mi">1</span><span class="o">*</span><span class="n">euclidean_distance2</span><span class="p">(</span><span class="n">enroll_embeddings</span><span class="p">[</span><span class="n">j</span><span class="p">],</span> <span class="n">test_embeddings</span><span class="p">[</span><span class="n">i</span><span class="p">])</span><span class="o">.</span><span class="n">numpy</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span>
+
+                        <span class="c1"># Store the similarity score in the list</span>
+                        <span class="n">prediction</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">similarity_scores</span><span class="p">)</span>
+
+                    <span class="c1"># Convert the predictions list which contains the similarity score into numpy array</span>
+                    <span class="n">prediction</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">prediction</span><span class="p">)</span>
+
+                    <span class="c1"># Iterate over all the subjects in th enrolled session</span>
+                    <span class="k">for</span> <span class="n">sub</span> <span class="ow">in</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">enroll_subjects</span><span class="p">):</span>
+
+                        <span class="c1"># get the indices of the subject in the enrolled session</span>
+                        <span class="n">indices</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">enroll_subjects</span><span class="o">==</span><span class="n">sub</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+
+                        <span class="c1"># get the maximum similarity of that subject</span>
+                        <span class="n">spredict</span><span class="o">=</span><span class="nb">max</span><span class="p">(</span><span class="n">prediction</span><span class="p">[</span><span class="n">indices</span><span class="p">])</span>
+
+                        <span class="c1"># Check if the subject is same in the enrolled session and the session to be compared</span>
+                        <span class="k">if</span><span class="p">(</span><span class="n">test_subjects</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">==</span><span class="n">sub</span><span class="p">):</span>
+
+                            <span class="c1"># If yes, then store similairy score, label 1 , subject ID, Current session number</span>
+                            <span class="n">resutls3</span><span class="p">[</span><span class="n">sub</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="n">spredict</span><span class="p">,</span><span class="mf">1.0</span><span class="p">,</span><span class="n">test_subjects</span><span class="p">[</span><span class="n">i</span><span class="p">],</span><span class="n">sub</span><span class="p">,</span> <span class="n">enroll_session</span><span class="p">,</span><span class="n">test_session</span><span class="p">])</span>
+                        <span class="k">else</span><span class="p">:</span>
+
+                            <span class="c1"># If No, then store similairy score, label 0 , subject ID, Current session number</span>
+                            <span class="n">resutls3</span><span class="p">[</span><span class="n">sub</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="n">spredict</span><span class="p">,</span><span class="mf">0.0</span><span class="p">,</span><span class="n">test_subjects</span><span class="p">[</span><span class="n">i</span><span class="p">],</span><span class="n">sub</span><span class="p">,</span> <span class="n">enroll_session</span><span class="p">,</span><span class="n">test_session</span><span class="p">])</span>
+
+        <span class="k">return</span> <span class="n">resutls3</span>          </div>
+
+                
+<div class="viewcode-block" id="euclidean_distance2">
+<a class="viewcode-back" href="../../../brainModels.evaluations.html#brainModels.evaluations.similarity.euclidean_distance2">[docs]</a>
+<span class="k">def</span> <span class="nf">euclidean_distance2</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Computes the Euclidean distance between two vectors x and y.</span>
+
+<span class="sd">    Parameters:</span>
+<span class="sd">    - x (numpy.ndarray): Input vector x.</span>
+<span class="sd">    - y (numpy.ndarray): Input vector y.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">    - distance (float): Euclidean distance between vectors x and y.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">sum_square</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">math</span><span class="o">.</span><span class="n">reduce_sum</span><span class="p">(</span><span class="n">tf</span><span class="o">.</span><span class="n">math</span><span class="o">.</span><span class="n">square</span><span class="p">(</span><span class="n">x</span> <span class="o">-</span> <span class="n">y</span><span class="p">),</span> <span class="n">axis</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">keepdims</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">tf</span><span class="o">.</span><span class="n">math</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">tf</span><span class="o">.</span><span class="n">math</span><span class="o">.</span><span class="n">maximum</span><span class="p">(</span><span class="n">sum_square</span><span class="p">,</span> <span class="n">tf</span><span class="o">.</span><span class="n">keras</span><span class="o">.</span><span class="n">backend</span><span class="o">.</span><span class="n">epsilon</span><span class="p">()))</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Avinash Kumar Chaurasia.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

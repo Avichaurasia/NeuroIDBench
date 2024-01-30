@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>brainModels.featureExtraction package &mdash; BrainModels documentation 1.0.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=19f00094" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="_static/jquery.js?v=5d32c60e"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="_static/documentation_options.js?v=8d563738"></script>
+        <script src="_static/doctools.js?v=888ff710"></script>
+        <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="brainModels.preprocessing package" href="brainModels.preprocessing.html" />
+    <link rel="prev" title="brainModels.evaluations package" href="brainModels.evaluations.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            BrainModels documentation
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="brainModels.html">brainModels package</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="brainModels.html#subpackages">Subpackages</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="brainModels.analysis.html">brainModels.analysis package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="brainModels.datasets.html">brainModels.datasets package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="brainModels.evaluations.html">brainModels.evaluations package</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">brainModels.featureExtraction package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#submodules">Submodules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-brainModels.featureExtraction.base">brainModels.featureExtraction.base module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-brainModels.featureExtraction.features">brainModels.featureExtraction.features module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-brainModels.featureExtraction.siamese">brainModels.featureExtraction.siamese module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-brainModels.featureExtraction.utils">brainModels.featureExtraction.utils module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-brainModels.featureExtraction">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="brainModels.preprocessing.html">brainModels.preprocessing package</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="brainModels.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="brainModels.html#brainmodels-benchmark-module">brainModels.benchmark module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="brainModels.html#brainmodels-run-module">brainModels.run module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="brainModels.html#module-brainModels.utils">brainModels.utils module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="brainModels.html#module-brainModels">Module contents</a></li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">BrainModels documentation</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="brainModels.html">brainModels package</a></li>
+      <li class="breadcrumb-item active">brainModels.featureExtraction package</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/brainModels.featureExtraction.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="brainmodels-featureextraction-package">
+<h1>brainModels.featureExtraction package<a class="headerlink" href="#brainmodels-featureextraction-package" title="Link to this heading"></a></h1>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Link to this heading"></a></h2>
+</section>
+<section id="module-brainModels.featureExtraction.base">
+<span id="brainmodels-featureextraction-base-module"></span><h2>brainModels.featureExtraction.base module<a class="headerlink" href="#module-brainModels.featureExtraction.base" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="brainModels.featureExtraction.base.Basepipeline">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">brainModels.featureExtraction.base.</span></span><span class="sig-name descname"><span class="pre">Basepipeline</span></span><a class="reference internal" href="_modules/brainModels/featureExtraction/base.html#Basepipeline"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brainModels.featureExtraction.base.Basepipeline" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="brainModels.featureExtraction.base.Basepipeline.get_data">
+<span class="sig-name descname"><span class="pre">get_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dataset</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">subjects_dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">subjects</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">return_epochs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/brainModels/featureExtraction/base.html#Basepipeline.get_data"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brainModels.featureExtraction.base.Basepipeline.get_data" title="Link to this definition"></a></dt>
+<dd><p>Retrieve EEG features and data for a specific dataset and paradigm.</p>
+<dl class="simple">
+<dt>Parameters:</dt><dd><ul class="simple">
+<li><p>dataset (object): An object representing the EEG dataset.</p></li>
+<li><p>paradigm (object): An object representing the specific paradigm.</p></li>
+<li><p>subjects (list, optional): A list of subject IDs to include (default is None, includes all subjects).</p></li>
+<li><p>return_epochs (bool, optional): If True, return EEG epochs (default is False, returns features).</p></li>
+</ul>
+</dd>
+<dt>Returns:</dt><dd><ul class="simple">
+<li><p>data (pd.DataFrame or mne.Epochs): EEG features as a DataFrame or EEG epochs.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="brainModels.featureExtraction.base.Basepipeline.is_valid">
+<span class="sig-name descname"><span class="pre">is_valid</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dataset</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/brainModels/featureExtraction/base.html#Basepipeline.is_valid"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brainModels.featureExtraction.base.Basepipeline.is_valid" title="Link to this definition"></a></dt>
+<dd><p>Verify the dataset is compatible with the paradigm.</p>
+<p>This method is called to verify dataset is compatible with the
+paradigm.</p>
+<p>This method should raise an error if the dataset is not compatible
+with the paradigm. This is for example the case if the
+dataset is an ERP dataset for motor imagery paradigm, or if the
+dataset does not contain any of the required events.</p>
+<section id="parameters">
+<h3>Parameters<a class="headerlink" href="#parameters" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>dataset<span class="classifier">dataset instance</span></dt><dd><p>The dataset to verify.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-brainModels.featureExtraction.features">
+<span id="brainmodels-featureextraction-features-module"></span><h2>brainModels.featureExtraction.features module<a class="headerlink" href="#module-brainModels.featureExtraction.features" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="brainModels.featureExtraction.features.AutoRegressive">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">brainModels.featureExtraction.features.</span></span><span class="sig-name descname"><span class="pre">AutoRegressive</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">order</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">6</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/brainModels/featureExtraction/features.html#AutoRegressive"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brainModels.featureExtraction.features.AutoRegressive" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#brainModels.featureExtraction.base.Basepipeline" title="brainModels.featureExtraction.base.Basepipeline"><code class="xref py py-class docutils literal notranslate"><span class="pre">Basepipeline</span></code></a></p>
+<p>Compute Autoregressive (AR) coefficients from EEG data</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="brainModels.featureExtraction.features.AutoRegressive.is_valid">
+<span class="sig-name descname"><span class="pre">is_valid</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dataset</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/brainModels/featureExtraction/features.html#AutoRegressive.is_valid"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brainModels.featureExtraction.features.AutoRegressive.is_valid" title="Link to this definition"></a></dt>
+<dd><p>Verify the dataset is compatible with the paradigm.</p>
+<p>This method is called to verify dataset is compatible with the
+paradigm.</p>
+<p>This method should raise an error if the dataset is not compatible
+with the paradigm. This is for example the case if the
+dataset is an ERP dataset for motor imagery paradigm, or if the
+dataset does not contain any of the required events.</p>
+<section id="id1">
+<h3>Parameters<a class="headerlink" href="#id1" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>dataset<span class="classifier">dataset instance</span></dt><dd><p>The dataset to verify.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="brainModels.featureExtraction.features.PowerSpectralDensity">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">brainModels.featureExtraction.features.</span></span><span class="sig-name descname"><span class="pre">PowerSpectralDensity</span></span><a class="reference internal" href="_modules/brainModels/featureExtraction/features.html#PowerSpectralDensity"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brainModels.featureExtraction.features.PowerSpectralDensity" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#brainModels.featureExtraction.base.Basepipeline" title="brainModels.featureExtraction.base.Basepipeline"><code class="xref py py-class docutils literal notranslate"><span class="pre">Basepipeline</span></code></a></p>
+<p>Compute Power Spectral Density (PSD) from EEG data</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="brainModels.featureExtraction.features.PowerSpectralDensity.computing_psd">
+<span class="sig-name descname"><span class="pre">computing_psd</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">epochs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/brainModels/featureExtraction/features.html#PowerSpectralDensity.computing_psd"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brainModels.featureExtraction.features.PowerSpectralDensity.computing_psd" title="Link to this definition"></a></dt>
+<dd><p>Compute Power Spectral Density (PSD) of EEG epochs using Welch’s method.</p>
+<dl class="simple">
+<dt>Parameters:</dt><dd><ul class="simple">
+<li><p>epochs (mne.Epochs): The EEG epochs for which PSD will be computed.</p></li>
+</ul>
+</dd>
+<dt>Returns:</dt><dd><ul class="simple">
+<li><p>psd_data (array): Array containing the PSD data.</p></li>
+<li><p>freqs (array): Array containing the corresponding frequency values.</p></li>
+</ul>
+</dd>
+</dl>
+<p>This function calculates the PSD of EEG data using the Welch method. It divides the time
+series data into four time windows with 50% overlap. The PSD is calculated within the frequency
+range from 1 Hz to 50 Hz. The PSD is computed separately for each time window and EEG channel.</p>
+<p>Example usage:
+psd_data, freqs = my_instance.computing_psd(my_epochs)</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="brainModels.featureExtraction.features.PowerSpectralDensity.is_valid">
+<span class="sig-name descname"><span class="pre">is_valid</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dataset</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/brainModels/featureExtraction/features.html#PowerSpectralDensity.is_valid"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brainModels.featureExtraction.features.PowerSpectralDensity.is_valid" title="Link to this definition"></a></dt>
+<dd><p>Verify the dataset is compatible with the paradigm</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-brainModels.featureExtraction.siamese">
+<span id="brainmodels-featureextraction-siamese-module"></span><h2>brainModels.featureExtraction.siamese module<a class="headerlink" href="#module-brainModels.featureExtraction.siamese" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="brainModels.featureExtraction.siamese.Siamese">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">brainModels.featureExtraction.siamese.</span></span><span class="sig-name descname"><span class="pre">Siamese</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">user_siamese_path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">EPOCHS</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">250</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">batch_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">256</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">learning_rate</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.001</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">workers</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">5</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/brainModels/featureExtraction/siamese.html#Siamese"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brainModels.featureExtraction.siamese.Siamese" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>A Siamese Neural Network for EEG-based authentication.</p>
+<dl class="simple">
+<dt>Parameters:</dt><dd><ul class="simple">
+<li><p>EPOCHS (int): The number of training epochs.</p></li>
+<li><p>batch_size (int): The batch size for training.</p></li>
+<li><p>verbose (int): Verbosity mode (0 for silent, 1 for progress bar, 2 for one line per epoch).</p></li>
+<li><p>workers (int): The number of workers to use for data loading.</p></li>
+</ul>
+</dd>
+</dl>
+<p>This class defines a Siamese Neural Network for EEG-based authentication. The network is designed to learn
+representations of EEG data suitable for authentication. It allows customizing the training process, batch size,
+verbosity, random seed, and more.</p>
+<dl class="simple">
+<dt>Methods:</dt><dd><ul class="simple">
+<li><p>is_valid(dataset): Check if the provided dataset is valid for the given paradigm.</p></li>
+</ul>
+</dd>
+<dt>Example usage:</dt><dd><p>siamese = Siamese(EPOCHS=250, batch_size=256, verbose=1, workers=5, random_state=None)
+siamese_model = siamese._siamese_embeddings(no_channels, time_steps)
+siamese_model.fit(training_data, validation_data)</p>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="brainModels.featureExtraction.siamese.Siamese.is_valid">
+<span class="sig-name descname"><span class="pre">is_valid</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dataset</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/brainModels/featureExtraction/siamese.html#Siamese.is_valid"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brainModels.featureExtraction.siamese.Siamese.is_valid" title="Link to this definition"></a></dt>
+<dd><p>Check if a dataset is valid for the given paradigm.</p>
+<p>Parameters:
+- dataset (object): An object representing the EEG dataset.</p>
+<p>Returns:
+- bool: True if the dataset is valid; False otherwise.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="brainModels.featureExtraction.siamese.random">
+<span class="sig-prename descclassname"><span class="pre">brainModels.featureExtraction.siamese.</span></span><span class="sig-name descname"><span class="pre">random</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">x</span> <span class="pre">in</span> <span class="pre">the</span> <span class="pre">interval</span> <span class="pre">[0,</span> <span class="pre">1).</span></span></span><a class="headerlink" href="#brainModels.featureExtraction.siamese.random" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</section>
+<section id="module-brainModels.featureExtraction.utils">
+<span id="brainmodels-featureextraction-utils-module"></span><h2>brainModels.featureExtraction.utils module<a class="headerlink" href="#module-brainModels.featureExtraction.utils" title="Link to this heading"></a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="brainModels.featureExtraction.utils.create_pipeline_from_config">
+<span class="sig-prename descclassname"><span class="pre">brainModels.featureExtraction.utils.</span></span><span class="sig-name descname"><span class="pre">create_pipeline_from_config</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/brainModels/featureExtraction/utils.html#create_pipeline_from_config"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brainModels.featureExtraction.utils.create_pipeline_from_config" title="Link to this definition"></a></dt>
+<dd><p>Create a pipeline from a config file.
+takes a config dict as input and return the corresponding pipeline.
+If the pipeline is a Tensorflow pipeline it convert also the optimizer function and the callbacks.
+Parameters
+———-
+config : Dict.</p>
+<blockquote>
+<div><p>Dict containing the config parameters.</p>
+</div></blockquote>
+<section id="returns">
+<h3>Returns<a class="headerlink" href="#returns" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>pipeline<span class="classifier">Pipeline</span></dt><dd><p>sklearn Pipeline</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="brainModels.featureExtraction.utils.generate_paradigms">
+<span class="sig-prename descclassname"><span class="pre">brainModels.featureExtraction.utils.</span></span><span class="sig-name descname"><span class="pre">generate_paradigms</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pipeline_configs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">context=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">logger=&lt;Logger</span> <span class="pre">brainModels.featureExtraction.utils</span> <span class="pre">(WARNING)&gt;</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/brainModels/featureExtraction/utils.html#generate_paradigms"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brainModels.featureExtraction.utils.generate_paradigms" title="Link to this definition"></a></dt>
+<dd><p>Takes in a dictionary of pipelines configurations as returned by
+parse_pipelines_from_directory and returns a dictionary of unique paradigms with all pipeline
+configurations compatible with that paradigm.
+Parameters
+———-
+pipeline_configs:</p>
+<blockquote>
+<div><p>dictionary of pipeline configurations</p>
+</div></blockquote>
+<dl class="simple">
+<dt>context:</dt><dd><p>TODO:add description</p>
+</dd>
+<dt>logger:</dt><dd><p>logger</p>
+</dd>
+</dl>
+<section id="id2">
+<h3>Returns<a class="headerlink" href="#id2" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>paradigms: dict</dt><dd><p>Dictionary of dictionaries with the unique paradigms and the configuration of the
+pipelines compatible with the paradigm</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="brainModels.featureExtraction.utils.generate_param_grid">
+<span class="sig-prename descclassname"><span class="pre">brainModels.featureExtraction.utils.</span></span><span class="sig-name descname"><span class="pre">generate_param_grid</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pipeline_configs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">context=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">logger=&lt;Logger</span> <span class="pre">brainModels.featureExtraction.utils</span> <span class="pre">(WARNING)&gt;</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/brainModels/featureExtraction/utils.html#generate_param_grid"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brainModels.featureExtraction.utils.generate_param_grid" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="brainModels.featureExtraction.utils.get_paradigm_from_config">
+<span class="sig-prename descclassname"><span class="pre">brainModels.featureExtraction.utils.</span></span><span class="sig-name descname"><span class="pre">get_paradigm_from_config</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pipeline_configs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">context=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">logger=&lt;Logger</span> <span class="pre">brainModels.featureExtraction.utils</span> <span class="pre">(WARNING)&gt;</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/brainModels/featureExtraction/utils.html#get_paradigm_from_config"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brainModels.featureExtraction.utils.get_paradigm_from_config" title="Link to this definition"></a></dt>
+<dd><p>Takes in a pipeline configuration and returns the unique paradigm
+Parameters
+———-
+config: dict</p>
+<blockquote>
+<div><p>pipeline configuration</p>
+</div></blockquote>
+<p>context:</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="brainModels.featureExtraction.utils.parse_pipelines_for_single_dataset">
+<span class="sig-prename descclassname"><span class="pre">brainModels.featureExtraction.utils.</span></span><span class="sig-name descname"><span class="pre">parse_pipelines_for_single_dataset</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dir_path</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/brainModels/featureExtraction/utils.html#parse_pipelines_for_single_dataset"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brainModels.featureExtraction.utils.parse_pipelines_for_single_dataset" title="Link to this definition"></a></dt>
+<dd><p>Takes in the path to a directory with pipeline configuration files and returns a dictionary
+of pipelines.
+Parameters
+———-
+dir_path: str</p>
+<blockquote>
+<div><p>Path to directory containing pipeline config .yml or .py files</p>
+</div></blockquote>
+<section id="id3">
+<h3>Returns<a class="headerlink" href="#id3" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>pipeline_configs: dict</dt><dd><p>Generated pipeline config dictionaries. Each entry has structure:
+‘name’: string
+‘pipeline’: sklearn.BaseEstimator
+‘paradigms’: list of class names that are compatible with said pipeline</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="brainModels.featureExtraction.utils.parse_pipelines_from_directory">
+<span class="sig-prename descclassname"><span class="pre">brainModels.featureExtraction.utils.</span></span><span class="sig-name descname"><span class="pre">parse_pipelines_from_directory</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dir_path</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/brainModels/featureExtraction/utils.html#parse_pipelines_from_directory"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brainModels.featureExtraction.utils.parse_pipelines_from_directory" title="Link to this definition"></a></dt>
+<dd><p>Takes in the path to a directory with pipeline configuration files and returns a dictionary
+of pipelines.
+Parameters
+———-
+dir_path: str</p>
+<blockquote>
+<div><p>Path to directory containing pipeline config .yml or .py files</p>
+</div></blockquote>
+<section id="id4">
+<h3>Returns<a class="headerlink" href="#id4" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>pipeline_configs: dict</dt><dd><p>Generated pipeline config dictionaries. Each entry has structure:
+‘name’: string
+‘pipeline’: sklearn.BaseEstimator
+‘paradigms’: list of class names that are compatible with said pipeline</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+</section>
+<section id="module-brainModels.featureExtraction">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-brainModels.featureExtraction" title="Link to this heading"></a></h2>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="brainModels.evaluations.html" class="btn btn-neutral float-left" title="brainModels.evaluations package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="brainModels.preprocessing.html" class="btn btn-neutral float-right" title="brainModels.preprocessing package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Avinash Kumar Chaurasia.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

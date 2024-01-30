@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>brainModels.analysis.results &mdash; BrainModels documentation 1.0.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=19f00094" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../../../_static/documentation_options.js?v=8d563738"></script>
+        <script src="../../../_static/doctools.js?v=888ff710"></script>
+        <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            BrainModels documentation
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../brainModels.html">brainModels package</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">BrainModels documentation</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">brainModels.analysis.results</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for brainModels.analysis.results</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">hashlib</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">os.path</span> <span class="k">as</span> <span class="nn">osp</span>
+<span class="kn">import</span> <span class="nn">re</span>
+<span class="kn">import</span> <span class="nn">warnings</span>
+<span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">datetime</span>
+<span class="kn">import</span> <span class="nn">h5py</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">from</span> <span class="nn">mne</span> <span class="kn">import</span> <span class="n">get_config</span><span class="p">,</span> <span class="n">set_config</span>
+<span class="kn">from</span> <span class="nn">mne.datasets.utils</span> <span class="kn">import</span> <span class="n">_get_path</span>
+<span class="kn">from</span> <span class="nn">sklearn.base</span> <span class="kn">import</span> <span class="n">BaseEstimator</span>
+<span class="kn">import</span> <span class="nn">h5py</span>
+<span class="kn">import</span> <span class="nn">json</span>
+<span class="kn">from</span> <span class="nn">numpyencoder</span> <span class="kn">import</span> <span class="n">NumpyEncoder</span>
+<span class="kn">import</span> <span class="nn">datetime</span>
+
+<div class="viewcode-block" id="Results">
+<a class="viewcode-back" href="../../../brainModels.analysis.html#brainModels.analysis.results.Results">[docs]</a>
+<span class="k">class</span> <span class="nc">Results</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A class for storing and managing results in JSON format.</span>
+
+<span class="sd">    This class is designed for storing and organizing results generated during experiments. </span>
+<span class="sd">    It provides methods for saving, loading, and processing results as JSON files.</span>
+
+<span class="sd">    Attributes:</span>
+<span class="sd">    - None</span>
+
+<span class="sd">    Methods:</span>
+<span class="sd">    - _add_results(results, results_path, scenario):</span>
+<span class="sd">      Adds results to a JSON file and returns an averaged DataFrame if applicable.</span>
+
+<span class="sd">    - _add_dataframe(results_path, scenario):</span>
+<span class="sd">      Averages results from JSON files and returns them as a DataFrame.</span>
+
+<span class="sd">    Example usage:</span>
+<span class="sd">    ```</span>
+<span class="sd">    results_handler = Results()</span>
+<span class="sd">    average_results = results_handler._add_results(results_data, &#39;results_folder&#39;, &#39;scenario_name&#39;)</span>
+<span class="sd">    ```</span>
+
+<span class="sd">    The Results class is typically used to save and manage the outcome of experiments and provides tools for</span>
+<span class="sd">    aggregating and summarizing results.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">_add_results</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">results</span><span class="p">,</span> <span class="n">results_path</span><span class="p">,</span> <span class="n">scenario</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Add results to a JSON file in the specified results folder.</span>
+
+<span class="sd">        Parameters:</span>
+<span class="sd">        - results: Results data to be stored as a JSON file.</span>
+<span class="sd">        - results_path: The path to the results folder.</span>
+<span class="sd">        - scenario: A scenario identifier used to create the appropriate JSON file.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">        - average_results: A DataFrame of averaged results if multiple JSON files are used.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># if not os.path.exists(results_path):</span>
+        <span class="c1">#     os.makedirs(results_path)</span>
+        <span class="c1"># if (&quot;close_set&quot; in scenario) and (&quot;open_set&quot; in scenario):</span>
+        <span class="c1">#     results_close_set, results_open_set = results</span>
+        <span class="c1">#     with open(os.path.join(results_path, &quot;results_close_set.json&quot;), &#39;w&#39;) as f:</span>
+        <span class="c1">#         json.dump(results_close_set, f, cls=NumpyEncoder)</span>
+
+        <span class="c1">#     with open(os.path.join(results_path, &quot;results_open_set.json&quot;), &#39;w&#39;) as f:</span>
+        <span class="c1">#         json.dump(results_open_set, f, cls=NumpyEncoder)</span>
+        <span class="c1"># else:</span>
+        <span class="c1">#     fname=&quot;results_&quot;+scenario+&quot;.json&quot;</span>
+        <span class="c1">#     with open(os.path.join(results_path, fname), &#39;w&#39;) as f:</span>
+        <span class="c1">#         json.dump(results, f, cls=NumpyEncoder)</span>
+
+        <span class="c1"># getting average results across subjects</span>
+        <span class="c1">#average_results = self._add_dataframe(results_path, scenario)</span>
+
+        <span class="n">flattened_data</span> <span class="o">=</span> <span class="p">[</span><span class="n">item</span> <span class="k">for</span> <span class="n">sublist</span> <span class="ow">in</span> <span class="n">results</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">sublist</span><span class="p">]</span>
+        <span class="n">df_results_close_set</span><span class="o">=</span><span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">flattened_data</span><span class="p">)</span>
+        <span class="n">average_results</span> <span class="o">=</span> <span class="n">df_results_close_set</span>
+        <span class="k">return</span> <span class="n">average_results</span>
+    
+    <span class="k">def</span> <span class="nf">_add_dataframe</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">results_path</span><span class="p">,</span> <span class="n">scenario</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Average results from JSON files and return them as a DataFrame.</span>
+
+<span class="sd">        Parameters:</span>
+<span class="sd">        - results_path: The path to the results folder.</span>
+<span class="sd">        - scenario: A scenario identifier used to find the appropriate JSON files.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">        - df_results: A DataFrame containing the averaged results.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="s2">&quot;close_set&quot;</span> <span class="ow">in</span> <span class="n">scenario</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="s2">&quot;open_set&quot;</span> <span class="ow">in</span> <span class="n">scenario</span><span class="p">):</span>
+            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">results_path</span><span class="p">,</span> <span class="s2">&quot;results_close_set.json&quot;</span><span class="p">),</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+                <span class="n">results_list</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">f</span><span class="p">)</span> 
+            <span class="n">df_results_close_set</span><span class="o">=</span><span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">results_list</span><span class="p">)</span>
+
+            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">results_path</span><span class="p">,</span> <span class="s2">&quot;results_open_set.json&quot;</span><span class="p">),</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+                <span class="n">results_list_open</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">f</span><span class="p">)</span> 
+            <span class="n">df_results_open_set</span><span class="o">=</span><span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">results_list_open</span><span class="p">)</span>
+            <span class="n">df_results</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="n">df_results_close_set</span><span class="p">,</span> <span class="n">df_results_open_set</span><span class="p">],</span> <span class="n">ignore_index</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">fname</span><span class="o">=</span><span class="s2">&quot;results_&quot;</span><span class="o">+</span><span class="n">scenario</span><span class="o">+</span><span class="s2">&quot;.json&quot;</span>
+            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">results_path</span><span class="p">,</span> <span class="n">fname</span><span class="p">),</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+                <span class="n">results_list</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">f</span><span class="p">)</span> 
+
+            <span class="n">flattened_data</span> <span class="o">=</span> <span class="p">[</span><span class="n">item</span> <span class="k">for</span> <span class="n">sublist</span> <span class="ow">in</span> <span class="n">results_list</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">sublist</span><span class="p">]</span>
+            <span class="n">df_results_close_set</span><span class="o">=</span><span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">flattened_data</span><span class="p">)</span>
+            <span class="n">df_results</span> <span class="o">=</span> <span class="n">df_results_close_set</span>
+            <span class="c1">#print(df_results)</span>
+        <span class="k">return</span> <span class="n">df_results</span></div>
+
+
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Avinash Kumar Chaurasia.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

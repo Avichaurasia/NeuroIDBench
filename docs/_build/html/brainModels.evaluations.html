@@ -1,0 +1,636 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>brainModels.evaluations package &mdash; BrainModels documentation 1.0.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=19f00094" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="_static/jquery.js?v=5d32c60e"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="_static/documentation_options.js?v=8d563738"></script>
+        <script src="_static/doctools.js?v=888ff710"></script>
+        <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="brainModels.featureExtraction package" href="brainModels.featureExtraction.html" />
+    <link rel="prev" title="brainModels.datasets package" href="brainModels.datasets.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            BrainModels documentation
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="brainModels.html">brainModels package</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="brainModels.html#subpackages">Subpackages</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="brainModels.analysis.html">brainModels.analysis package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="brainModels.datasets.html">brainModels.datasets package</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">brainModels.evaluations package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#submodules">Submodules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-brainModels.evaluations.base">brainModels.evaluations.base module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-brainModels.evaluations.multi_session_open_set">brainModels.evaluations.multi_session_open_set module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-brainModels.evaluations.multi_sesssion_close_set">brainModels.evaluations.multi_sesssion_close_set module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-brainModels.evaluations.similarity">brainModels.evaluations.similarity module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-brainModels.evaluations.single_session_close_set">brainModels.evaluations.single_session_close_set module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-brainModels.evaluations.single_session_open_set">brainModels.evaluations.single_session_open_set module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-brainModels.evaluations">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="brainModels.featureExtraction.html">brainModels.featureExtraction package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="brainModels.preprocessing.html">brainModels.preprocessing package</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="brainModels.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="brainModels.html#brainmodels-benchmark-module">brainModels.benchmark module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="brainModels.html#brainmodels-run-module">brainModels.run module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="brainModels.html#module-brainModels.utils">brainModels.utils module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="brainModels.html#module-brainModels">Module contents</a></li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">BrainModels documentation</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="brainModels.html">brainModels package</a></li>
+      <li class="breadcrumb-item active">brainModels.evaluations package</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/brainModels.evaluations.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="brainmodels-evaluations-package">
+<h1>brainModels.evaluations package<a class="headerlink" href="#brainmodels-evaluations-package" title="Link to this heading"></a></h1>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Link to this heading"></a></h2>
+</section>
+<section id="module-brainModels.evaluations.base">
+<span id="brainmodels-evaluations-base-module"></span><h2>brainModels.evaluations.base module<a class="headerlink" href="#module-brainModels.evaluations.base" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="brainModels.evaluations.base.BaseEvaluation">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">brainModels.evaluations.base.</span></span><span class="sig-name descname"><span class="pre">BaseEvaluation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">paradigm</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">datasets</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">random_state</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_jobs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">overwrite</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">error_score</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'raise'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">suffix</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hdf5_path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">additional_columns</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">return_epochs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mne_labels</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/brainModels/evaluations/base.html#BaseEvaluation"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brainModels.evaluations.base.BaseEvaluation" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">ABC</span></code></p>
+<p>Base class that defines necessary operations for an evaluation.
+Evaluations determine what the train and test sets are and can implement
+additional data preprocessing steps for more complicated algorithms.
+Parameters
+———-
+paradigm : Paradigm instance</p>
+<blockquote>
+<div><p>The paradigm to use.</p>
+</div></blockquote>
+<dl class="simple">
+<dt>datasets<span class="classifier">List of Dataset instance</span></dt><dd><p>The list of dataset to run the evaluation. If none, the list of
+compatible dataset will be retrieved from the paradigm instance.</p>
+</dd>
+<dt>random_state: int, RandomState instance, default=None</dt><dd><p>If not None, can guarantee same seed for shuffling examples.</p>
+</dd>
+<dt>n_jobs: int, default=1</dt><dd><p>Number of jobs for fitting of pipeline.</p>
+</dd>
+<dt>overwrite: bool, default=False</dt><dd><p>If true, overwrite the results.</p>
+</dd>
+<dt>error_score: “raise” or numeric, default=”raise”</dt><dd><p>Value to assign to the score if an error occurs in estimator fitting. If set to
+‘raise’, the error is raised.</p>
+</dd>
+<dt>suffix: str</dt><dd><p>Suffix for the results file.</p>
+</dd>
+<dt>hdf5_path: str</dt><dd><p>Specific path for storing the results.</p>
+</dd>
+<dt>additional_columns: None</dt><dd><p>Adding information to results.</p>
+</dd>
+<dt>return_epochs: bool, default=False</dt><dd><p>use MNE epoch to train pipelines.</p>
+</dd>
+<dt>return_raws: bool, default=False</dt><dd><p>use MNE raw to train pipelines.</p>
+</dd>
+<dt>mne_labels: bool, default=False</dt><dd><p>if returning MNE epoch, use original dataset label if True</p>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="brainModels.evaluations.base.BaseEvaluation.evaluate">
+<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">evaluate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dataset</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pipelines</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">param_grid</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/brainModels/evaluations/base.html#BaseEvaluation.evaluate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brainModels.evaluations.base.BaseEvaluation.evaluate" title="Link to this definition"></a></dt>
+<dd><p>Evaluate results on a single dataset.
+This method return a generator. each results item is a dict with
+the following convension:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">res</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;time&#39;</span><span class="p">:</span> <span class="n">Duration</span> <span class="n">of</span> <span class="n">the</span> <span class="n">training</span> <span class="p">,</span>
+       <span class="s1">&#39;dataset&#39;</span><span class="p">:</span> <span class="n">dataset</span> <span class="nb">id</span><span class="p">,</span>
+       <span class="s1">&#39;subject&#39;</span><span class="p">:</span> <span class="n">subject</span> <span class="nb">id</span><span class="p">,</span>
+       <span class="s1">&#39;session&#39;</span><span class="p">:</span> <span class="n">session</span> <span class="nb">id</span><span class="p">,</span>
+       <span class="s1">&#39;score&#39;</span><span class="p">:</span> <span class="n">score</span><span class="p">,</span>
+       <span class="s1">&#39;n_samples&#39;</span><span class="p">:</span> <span class="n">number</span> <span class="n">of</span> <span class="n">training</span> <span class="n">examples</span><span class="p">,</span>
+       <span class="s1">&#39;n_channels&#39;</span><span class="p">:</span> <span class="n">number</span> <span class="n">of</span> <span class="n">channel</span><span class="p">,</span>
+       <span class="s1">&#39;pipeline&#39;</span><span class="p">:</span> <span class="n">pipeline</span> <span class="n">name</span><span class="p">}</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="brainModels.evaluations.base.BaseEvaluation.get_results">
+<span class="sig-name descname"><span class="pre">get_results</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/brainModels/evaluations/base.html#BaseEvaluation.get_results"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brainModels.evaluations.base.BaseEvaluation.get_results" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="brainModels.evaluations.base.BaseEvaluation.is_valid">
+<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">is_valid</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dataset</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/brainModels/evaluations/base.html#BaseEvaluation.is_valid"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brainModels.evaluations.base.BaseEvaluation.is_valid" title="Link to this definition"></a></dt>
+<dd><p>Verify the dataset is compatible with evaluation.
+This method is called to verify dataset given in the constructor
+are compatible with the evaluation context.
+This method should return false if the dataset does not match the
+evaluation. This is for example the case if the dataset does not
+contain enought session for a cross-session eval.
+Parameters
+———-
+dataset : dataset instance</p>
+<blockquote>
+<div><p>The dataset to verify.</p>
+</div></blockquote>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="brainModels.evaluations.base.BaseEvaluation.process">
+<span class="sig-name descname"><span class="pre">process</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pipelines</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">param_grid</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/brainModels/evaluations/base.html#BaseEvaluation.process"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brainModels.evaluations.base.BaseEvaluation.process" title="Link to this definition"></a></dt>
+<dd><p>Runs all pipelines on all datasets.
+This function will apply all provided pipelines and return a dataframe
+containing the results of the evaluation.
+Parameters
+———-
+pipelines : dict of pipeline instance.</p>
+<blockquote>
+<div><p>A dict containing the sklearn pipeline to evaluate.</p>
+</div></blockquote>
+<dl class="simple">
+<dt>param_grid<span class="classifier">dict of str</span></dt><dd><p>The key of the dictionary must be the same as the associated pipeline.</p>
+</dd>
+</dl>
+<section id="returns">
+<h3>Returns<a class="headerlink" href="#returns" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>results: pd.DataFrame</dt><dd><p>A dataframe containing the results.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-brainModels.evaluations.multi_session_open_set">
+<span id="brainmodels-evaluations-multi-session-open-set-module"></span><h2>brainModels.evaluations.multi_session_open_set module<a class="headerlink" href="#module-brainModels.evaluations.multi_session_open_set" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="brainModels.evaluations.multi_session_open_set.MultiSessionOpenSet">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">brainModels.evaluations.multi_session_open_set.</span></span><span class="sig-name descname"><span class="pre">MultiSessionOpenSet</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n_perms</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">list</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">tuple</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data_size</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">return_close_set</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">return_open_set</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/brainModels/evaluations/multi_session_open_set.html#MultiSessionOpenSet"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brainModels.evaluations.multi_session_open_set.MultiSessionOpenSet" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#brainModels.evaluations.base.BaseEvaluation" title="brainModels.evaluations.base.BaseEvaluation"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseEvaluation</span></code></a></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="brainModels.evaluations.multi_session_open_set.MultiSessionOpenSet.deep_learning_method">
+<span class="sig-name descname"><span class="pre">deep_learning_method</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dataset</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">metadata</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">key</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">features</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/brainModels/evaluations/multi_session_open_set.html#MultiSessionOpenSet.deep_learning_method"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brainModels.evaluations.multi_session_open_set.MultiSessionOpenSet.deep_learning_method" title="Link to this definition"></a></dt>
+<dd><p>Perform deep learning-based evaluation on provided datasets using Siamese networks.</p>
+<dl class="simple">
+<dt>Parameters:</dt><dd><p>dataset (Dataset): The dataset to be evaluated.
+pipelines (dict): Dictionary containing Siamese networks for evaluation.</p>
+</dd>
+<dt>Returns:</dt><dd><p>list: List containing evaluation results for the Siamese networks.</p>
+</dd>
+</dl>
+<p>This method conducts within-session evaluation of Siamese networks for provided datasets. It retrieves necessary data
+from the dataset and organizes the results for both open and close set evaluations. For each session in the metadata,
+it iterates through the provided pipelines (Siamese networks) and performs training and evaluation using the
+‘_siamese_training’ method. The results are saved in ‘d1_dicr1.pkl’, ‘d1_dicr2.pkl’, and ‘d1_dicr3.pkl’ files for
+each session within the ‘open_set’ directory. Evaluation metrics including AUC, EER, FRR_1_FAR, TPR, and the number of
+samples are recorded for each pipeline and session, then appended to ‘results_close_set’ for subsequent analysis.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="brainModels.evaluations.multi_session_open_set.MultiSessionOpenSet.evaluate">
+<span class="sig-name descname"><span class="pre">evaluate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dataset</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pipelines</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/brainModels/evaluations/multi_session_open_set.html#MultiSessionOpenSet.evaluate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brainModels.evaluations.multi_session_open_set.MultiSessionOpenSet.evaluate" title="Link to this definition"></a></dt>
+<dd><p>Evaluate a dataset using a set of pipelines.</p>
+<dl>
+<dt>Parameters:</dt><dd><ul>
+<li><p>dataset: The dataset for evaluation.</p></li>
+<li><dl>
+<dt>pipelines (dict): A dictionary containing authentication and feature methods as keys</dt><dd><p>and their corresponding features as values.
+For example: {‘AR+PSD+LR’: [AutoRegressive(order=6), PowerSpectralDensity(), LogisticRegression()],</p>
+<blockquote>
+<div><p>‘AR+PSD+SVM’: [AutoRegressive(order=6), PowerSpectralDensity(), SVC()],
+‘Siamese’: Siamese()}</p>
+</div></blockquote>
+</dd>
+</dl>
+</li>
+</ul>
+</dd>
+<dt>Returns:</dt><dd><ul class="simple">
+<li><p>results: Evaluation results.</p></li>
+<li><p>results_path: Path to save the results.</p></li>
+<li><p>scenario: Evaluation scenario (Open-set).</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="brainModels.evaluations.multi_session_open_set.MultiSessionOpenSet.is_valid">
+<span class="sig-name descname"><span class="pre">is_valid</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dataset</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/brainModels/evaluations/multi_session_open_set.html#MultiSessionOpenSet.is_valid"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brainModels.evaluations.multi_session_open_set.MultiSessionOpenSet.is_valid" title="Link to this definition"></a></dt>
+<dd><p>Verify the dataset is compatible with evaluation.
+This method is called to verify dataset given in the constructor
+are compatible with the evaluation context.
+This method should return false if the dataset does not match the
+evaluation. This is for example the case if the dataset does not
+contain enought session for a cross-session eval.
+Parameters
+———-
+dataset : dataset instance</p>
+<blockquote>
+<div><p>The dataset to verify.</p>
+</div></blockquote>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="brainModels.evaluations.multi_session_open_set.MultiSessionOpenSet.traditional_authentication_methods">
+<span class="sig-name descname"><span class="pre">traditional_authentication_methods</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dataset</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">subject_dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">key</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">features</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/brainModels/evaluations/multi_session_open_set.html#MultiSessionOpenSet.traditional_authentication_methods"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brainModels.evaluations.multi_session_open_set.MultiSessionOpenSet.traditional_authentication_methods" title="Link to this definition"></a></dt>
+<dd><p>Perform Traditional Authentication Methods for Single Session Open-Set Evaluation.</p>
+<dl class="simple">
+<dt>parameters:</dt><dd><p>dataset (Dataset): The dataset to be evaluated.
+subject_dict (dict): A dictionary containing subject information.
+key (str): The key identifier for the authentication method.
+features (list): A list of features used for authentication.</p>
+</dd>
+<dt>Returns:</dt><dd><p>list: A list of dictionaries containing evaluation metrics for each subject’s session.</p>
+</dd>
+</dl>
+<p>This method executes traditional authentication methods for single-session open-set evaluation. It prepares the data
+for evaluation and iterates through each subject in the dataset. For each subject, it assigns label 1 to the sessions
+belonging to that subject and label 0 to the rest. The method then authenticates each session for the subject using
+the provided features and gathers evaluation metrics. Metrics include accuracy, AUC, EER, TPR, among others. It also
+identifies and evaluates sessions with rejected subjects, determining performance against imposter subjects, labels, 
+and features. Evaluation metrics are collected and returned in a list of dictionaries, containing detailed results 
+for each subject’s session.</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-brainModels.evaluations.multi_sesssion_close_set">
+<span id="brainmodels-evaluations-multi-sesssion-close-set-module"></span><h2>brainModels.evaluations.multi_sesssion_close_set module<a class="headerlink" href="#module-brainModels.evaluations.multi_sesssion_close_set" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="brainModels.evaluations.multi_sesssion_close_set.MultiSessionCloseSet">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">brainModels.evaluations.multi_sesssion_close_set.</span></span><span class="sig-name descname"><span class="pre">MultiSessionCloseSet</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n_perms</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">list</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">tuple</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data_size</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">return_close_set</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/brainModels/evaluations/multi_sesssion_close_set.html#MultiSessionCloseSet"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brainModels.evaluations.multi_sesssion_close_set.MultiSessionCloseSet" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#brainModels.evaluations.base.BaseEvaluation" title="brainModels.evaluations.base.BaseEvaluation"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseEvaluation</span></code></a></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="brainModels.evaluations.multi_sesssion_close_set.MultiSessionCloseSet.evaluate">
+<span class="sig-name descname"><span class="pre">evaluate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dataset</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pipelines</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/brainModels/evaluations/multi_sesssion_close_set.html#MultiSessionCloseSet.evaluate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brainModels.evaluations.multi_sesssion_close_set.MultiSessionCloseSet.evaluate" title="Link to this definition"></a></dt>
+<dd><p>Evaluate a dataset using a set of pipelines.</p>
+<dl>
+<dt>Parameters:</dt><dd><ul>
+<li><p>dataset: The dataset for evaluation.</p></li>
+<li><dl>
+<dt>pipelines (dict): A dictionary containing authentication and feature methods as keys</dt><dd><p>and their corresponding features as values.
+For example: {‘AR+PSD+LR’: [AutoRegressive(order=6), PowerSpectralDensity(), LogisticRegression()],</p>
+<blockquote>
+<div><dl class="simple">
+<dt>‘AR+PSD+SVM’: [AutoRegressive(order=6), PowerSpectralDensity(), SVC()],</dt><dd><p>‘Siamese’: Siamese()}</p>
+</dd>
+</dl>
+</div></blockquote>
+</dd>
+</dl>
+</li>
+</ul>
+</dd>
+<dt>Returns:</dt><dd><ul class="simple">
+<li><p>results: Evaluation results.</p></li>
+<li><p>results_path: Path to save the results.</p></li>
+<li><p>scenario: Evaluation scenario (close-set).</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="brainModels.evaluations.multi_sesssion_close_set.MultiSessionCloseSet.is_valid">
+<span class="sig-name descname"><span class="pre">is_valid</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dataset</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/brainModels/evaluations/multi_sesssion_close_set.html#MultiSessionCloseSet.is_valid"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brainModels.evaluations.multi_sesssion_close_set.MultiSessionCloseSet.is_valid" title="Link to this definition"></a></dt>
+<dd><p>Verify the dataset is compatible with evaluation.
+This method is called to verify dataset given in the constructor
+are compatible with the evaluation context.
+This method should return false if the dataset does not match the
+evaluation. This is for example the case if the dataset does not
+contain enought session for a cross-session eval.
+Parameters
+———-
+dataset : dataset instance</p>
+<blockquote>
+<div><p>The dataset to verify.</p>
+</div></blockquote>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="brainModels.evaluations.multi_sesssion_close_set.MultiSessionCloseSet.traditional_authentication_methods">
+<span class="sig-name descname"><span class="pre">traditional_authentication_methods</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dataset</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">subject_dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">key</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">features</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/brainModels/evaluations/multi_sesssion_close_set.html#MultiSessionCloseSet.traditional_authentication_methods"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brainModels.evaluations.multi_sesssion_close_set.MultiSessionCloseSet.traditional_authentication_methods" title="Link to this definition"></a></dt>
+<dd><p>Perform traditional authentication methods for single-session close-set evaluation.</p>
+<dl class="simple">
+<dt>Parameters:</dt><dd><p>dataset (Dataset): The dataset to be evaluated.
+subject_dict (dict): A dictionary containing subject information.
+key (str): The key identifier for the authentication method.
+features (list): A list of features used for authentication.</p>
+</dd>
+<dt>Returns:</dt><dd><p>list: A list of dictionaries containing evaluation metrics for each subject’s session.</p>
+</dd>
+<dt>Description:</dt><dd><p>This method executes traditional authentication methods for single-session close-set evaluation.
+It prepares the data for evaluation and iterates through each subject in the dataset. For each 
+subject, it assigns label 1 to the sessions belonging to the subject being authenticated and 
+label 0 to the rest. The method then authenticates each subject using the provided features and gathers 
+evaluation metrics. Metrics include accuracy, AUC, EER, TPR, among others.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-brainModels.evaluations.similarity">
+<span id="brainmodels-evaluations-similarity-module"></span><h2>brainModels.evaluations.similarity module<a class="headerlink" href="#module-brainModels.evaluations.similarity" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="brainModels.evaluations.similarity.CalculateSimilarity">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">brainModels.evaluations.similarity.</span></span><span class="sig-name descname"><span class="pre">CalculateSimilarity</span></span><a class="reference internal" href="_modules/brainModels/evaluations/similarity.html#CalculateSimilarity"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brainModels.evaluations.similarity.CalculateSimilarity" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="brainModels.evaluations.similarity.euclidean_distance2">
+<span class="sig-prename descclassname"><span class="pre">brainModels.evaluations.similarity.</span></span><span class="sig-name descname"><span class="pre">euclidean_distance2</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/brainModels/evaluations/similarity.html#euclidean_distance2"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brainModels.evaluations.similarity.euclidean_distance2" title="Link to this definition"></a></dt>
+<dd><p>Computes the Euclidean distance between two vectors x and y.</p>
+<p>Parameters:
+- x (numpy.ndarray): Input vector x.
+- y (numpy.ndarray): Input vector y.</p>
+<p>Returns:
+- distance (float): Euclidean distance between vectors x and y.</p>
+</dd></dl>
+
+</section>
+<section id="module-brainModels.evaluations.single_session_close_set">
+<span id="brainmodels-evaluations-single-session-close-set-module"></span><h2>brainModels.evaluations.single_session_close_set module<a class="headerlink" href="#module-brainModels.evaluations.single_session_close_set" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="brainModels.evaluations.single_session_close_set.SingleSessionCloseSet">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">brainModels.evaluations.single_session_close_set.</span></span><span class="sig-name descname"><span class="pre">SingleSessionCloseSet</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n_perms</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">list</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">tuple</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data_size</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">return_close_set</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/brainModels/evaluations/single_session_close_set.html#SingleSessionCloseSet"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brainModels.evaluations.single_session_close_set.SingleSessionCloseSet" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#brainModels.evaluations.base.BaseEvaluation" title="brainModels.evaluations.base.BaseEvaluation"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseEvaluation</span></code></a></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="brainModels.evaluations.single_session_close_set.SingleSessionCloseSet.deep_learning_method">
+<span class="sig-name descname"><span class="pre">deep_learning_method</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dataset</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">metadata</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">key</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">features</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/brainModels/evaluations/single_session_close_set.html#SingleSessionCloseSet.deep_learning_method"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brainModels.evaluations.single_session_close_set.SingleSessionCloseSet.deep_learning_method" title="Link to this definition"></a></dt>
+<dd><p>Perform authentication for single-session evaluation using Siamese networks.</p>
+<dl class="simple">
+<dt>Parameters:</dt><dd><p>dataset (Dataset): The dataset being used for evaluation.
+X (numpy.ndarray): The input features for evaluation.
+metadata (pandas.DataFrame): Metadata associated with the input features.
+key (str): Identifier for the specific evaluation pipeline.
+features (list): List of features used for evaluation.</p>
+</dd>
+<dt>Returns:</dt><dd><p>list: List of dictionaries containing evaluation results for each subject and session.</p>
+</dd>
+</dl>
+<p>This method utilizes Siamese networks for within-session evaluation in the context of biometric
+authentication. It involves creating and training Siamese networks to compute various authentication 
+metrics such as AUC, EER, FRR_1_FAR, and TPR for each subject and session combination in the dataset.
+The results are stored as dictionaries containing evaluation details like evaluation type, dataset, 
+pipeline used, subject, session, and corresponding evaluation metrics. The function returns a list of 
+dictionaries, each containing evaluation results for a particular subject and session.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="brainModels.evaluations.single_session_close_set.SingleSessionCloseSet.evaluate">
+<span class="sig-name descname"><span class="pre">evaluate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dataset</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pipelines</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/brainModels/evaluations/single_session_close_set.html#SingleSessionCloseSet.evaluate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brainModels.evaluations.single_session_close_set.SingleSessionCloseSet.evaluate" title="Link to this definition"></a></dt>
+<dd><p>Evaluate a dataset using a set of pipelines.</p>
+<dl>
+<dt>Parameters:</dt><dd><ul>
+<li><p>dataset: The dataset for evaluation.</p></li>
+<li><dl>
+<dt>pipelines (dict): A dictionary containing authentication and feature methods as keys</dt><dd><p>and their corresponding features as values.
+For example: {‘AR+PSD+LR’: [AutoRegressive(order=6), PowerSpectralDensity(), LogisticRegression()],</p>
+<blockquote>
+<div><dl class="simple">
+<dt>‘AR+PSD+SVM’: [AutoRegressive(order=6), PowerSpectralDensity(), SVC()],</dt><dd><p>‘Siamese’: Siamese()}</p>
+</dd>
+</dl>
+</div></blockquote>
+</dd>
+</dl>
+</li>
+</ul>
+</dd>
+<dt>Returns:</dt><dd><ul class="simple">
+<li><p>results: Evaluation results.</p></li>
+<li><p>results_path: Path to save the results.</p></li>
+<li><p>scenario: Evaluation scenario (close-set).</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="brainModels.evaluations.single_session_close_set.SingleSessionCloseSet.is_valid">
+<span class="sig-name descname"><span class="pre">is_valid</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dataset</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/brainModels/evaluations/single_session_close_set.html#SingleSessionCloseSet.is_valid"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brainModels.evaluations.single_session_close_set.SingleSessionCloseSet.is_valid" title="Link to this definition"></a></dt>
+<dd><p>Check if a dataset is valid for evaluation.</p>
+<dl class="simple">
+<dt>Parameters:</dt><dd><ul class="simple">
+<li><p>dataset: The dataset for evaluation.</p></li>
+</ul>
+</dd>
+<dt>Returns:</dt><dd><ul class="simple">
+<li><p>True if the dataset is valid, otherwise False.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="brainModels.evaluations.single_session_close_set.SingleSessionCloseSet.traditional_authentication_methods">
+<span class="sig-name descname"><span class="pre">traditional_authentication_methods</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dataset</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">subject_dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">key</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">features</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/brainModels/evaluations/single_session_close_set.html#SingleSessionCloseSet.traditional_authentication_methods"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brainModels.evaluations.single_session_close_set.SingleSessionCloseSet.traditional_authentication_methods" title="Link to this definition"></a></dt>
+<dd><p>Perform traditional authentication methods for single-session close-set evaluation.</p>
+<dl class="simple">
+<dt>Parameters:</dt><dd><p>dataset (Dataset): The dataset to be evaluated.
+subject_dict (dict): A dictionary containing subject information.
+key (str): The key identifier for the authentication method.
+features (list): A list of features used for authentication.</p>
+</dd>
+<dt>Returns:</dt><dd><p>list: A list of dictionaries containing evaluation metrics for each subject’s session.</p>
+</dd>
+<dt>Description:</dt><dd><p>This method executes traditional authentication methods for single-session close-set evaluation.
+It prepares the data for evaluation and iterates through each subject in the dataset. For each 
+subject, it assigns label 1 to the sessions belonging to the subject being authenticated and 
+label 0 to the rest. The method then authenticates each subject using the provided features and gathers 
+evaluation metrics. Metrics include accuracy, AUC, EER, TPR, among others.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-brainModels.evaluations.single_session_open_set">
+<span id="brainmodels-evaluations-single-session-open-set-module"></span><h2>brainModels.evaluations.single_session_open_set module<a class="headerlink" href="#module-brainModels.evaluations.single_session_open_set" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="brainModels.evaluations.single_session_open_set.SingleSessionOpenSet">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">brainModels.evaluations.single_session_open_set.</span></span><span class="sig-name descname"><span class="pre">SingleSessionOpenSet</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n_perms</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">list</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">tuple</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data_size</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">return_close_set</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">return_open_set</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/brainModels/evaluations/single_session_open_set.html#SingleSessionOpenSet"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brainModels.evaluations.single_session_open_set.SingleSessionOpenSet" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#brainModels.evaluations.base.BaseEvaluation" title="brainModels.evaluations.base.BaseEvaluation"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseEvaluation</span></code></a></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="brainModels.evaluations.single_session_open_set.SingleSessionOpenSet.deep_learning_method">
+<span class="sig-name descname"><span class="pre">deep_learning_method</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dataset</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">metadata</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">key</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">features</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/brainModels/evaluations/single_session_open_set.html#SingleSessionOpenSet.deep_learning_method"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brainModels.evaluations.single_session_open_set.SingleSessionOpenSet.deep_learning_method" title="Link to this definition"></a></dt>
+<dd><p>Perform deep learning-based evaluation on provided datasets using Siamese networks.</p>
+<dl class="simple">
+<dt>Parameters:</dt><dd><p>dataset (Dataset): The dataset to be evaluated.
+pipelines (dict): Dictionary containing Siamese networks for evaluation.</p>
+</dd>
+<dt>Returns:</dt><dd><p>list: List containing evaluation results for the Siamese networks.</p>
+</dd>
+</dl>
+<p>This method conducts within-session evaluation of Siamese networks for provided datasets. It retrieves necessary data
+from the dataset and organizes the results for both open and close set evaluations. For each session in the metadata,
+it iterates through the provided pipelines (Siamese networks) and performs training and evaluation using the
+‘_siamese_training’ method. The results are saved in ‘d1_dicr1.pkl’, ‘d1_dicr2.pkl’, and ‘d1_dicr3.pkl’ files for
+each session within the ‘open_set’ directory. Evaluation metrics including AUC, EER, FRR_1_FAR, TPR, and the number of
+samples are recorded for each pipeline and session, then appended to ‘results_close_set’ for subsequent analysis.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="brainModels.evaluations.single_session_open_set.SingleSessionOpenSet.evaluate">
+<span class="sig-name descname"><span class="pre">evaluate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dataset</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pipelines</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/brainModels/evaluations/single_session_open_set.html#SingleSessionOpenSet.evaluate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brainModels.evaluations.single_session_open_set.SingleSessionOpenSet.evaluate" title="Link to this definition"></a></dt>
+<dd><p>Evaluate a dataset using a set of pipelines.</p>
+<dl>
+<dt>Parameters:</dt><dd><ul>
+<li><p>dataset: The dataset for evaluation.</p></li>
+<li><dl>
+<dt>pipelines (dict): A dictionary containing authentication and feature methods as keys</dt><dd><p>and their corresponding features as values.
+For example: {‘AR+PSD+LR’: [AutoRegressive(order=6), PowerSpectralDensity(), LogisticRegression()],</p>
+<blockquote>
+<div><p>‘AR+PSD+SVM’: [AutoRegressive(order=6), PowerSpectralDensity(), SVC()],
+‘Siamese’: Siamese()}</p>
+</div></blockquote>
+</dd>
+</dl>
+</li>
+</ul>
+</dd>
+<dt>Returns:</dt><dd><ul class="simple">
+<li><p>results: Evaluation results.</p></li>
+<li><p>results_path: Path to save the results.</p></li>
+<li><p>scenario: Evaluation scenario (Open-set).</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="brainModels.evaluations.single_session_open_set.SingleSessionOpenSet.is_valid">
+<span class="sig-name descname"><span class="pre">is_valid</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dataset</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/brainModels/evaluations/single_session_open_set.html#SingleSessionOpenSet.is_valid"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brainModels.evaluations.single_session_open_set.SingleSessionOpenSet.is_valid" title="Link to this definition"></a></dt>
+<dd><p>Check if a dataset is valid for evaluation.</p>
+<dl class="simple">
+<dt>Parameters:</dt><dd><ul class="simple">
+<li><p>dataset: The dataset for evaluation.</p></li>
+</ul>
+</dd>
+<dt>Returns:</dt><dd><ul class="simple">
+<li><p>True if the dataset is valid, otherwise False.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="brainModels.evaluations.single_session_open_set.SingleSessionOpenSet.traditional_authentication_methods">
+<span class="sig-name descname"><span class="pre">traditional_authentication_methods</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dataset</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">subject_dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">key</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">features</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/brainModels/evaluations/single_session_open_set.html#SingleSessionOpenSet.traditional_authentication_methods"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brainModels.evaluations.single_session_open_set.SingleSessionOpenSet.traditional_authentication_methods" title="Link to this definition"></a></dt>
+<dd><p>Perform Traditional Authentication Methods for Single Session Open-Set Evaluation.</p>
+<dl class="simple">
+<dt>parameters:</dt><dd><p>dataset (Dataset): The dataset to be evaluated.
+subject_dict (dict): A dictionary containing subject information.
+key (str): The key identifier for the authentication method.
+features (list): A list of features used for authentication.</p>
+</dd>
+<dt>Returns:</dt><dd><p>list: A list of dictionaries containing evaluation metrics for each subject’s session.</p>
+</dd>
+</dl>
+<p>This method executes traditional authentication methods for single-session open-set evaluation. It prepares the data
+for evaluation and iterates through each subject in the dataset. For each subject, it assigns label 1 to the sessions
+belonging to that subject and label 0 to the rest. The method then authenticates each session for the subject using
+the provided features and gathers evaluation metrics. Metrics include accuracy, AUC, EER, TPR, among others. It also
+identifies and evaluates sessions with rejected subjects, determining performance against imposter subjects, labels, 
+and features. Evaluation metrics are collected and returned in a list of dictionaries, containing detailed results 
+for each subject’s session.</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-brainModels.evaluations">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-brainModels.evaluations" title="Link to this heading"></a></h2>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="brainModels.datasets.html" class="btn btn-neutral float-left" title="brainModels.datasets package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="brainModels.featureExtraction.html" class="btn btn-neutral float-right" title="brainModels.featureExtraction package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Avinash Kumar Chaurasia.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

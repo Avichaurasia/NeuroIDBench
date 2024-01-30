@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>brainModels.preprocessing package &mdash; BrainModels documentation 1.0.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=19f00094" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="_static/jquery.js?v=5d32c60e"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="_static/documentation_options.js?v=8d563738"></script>
+        <script src="_static/doctools.js?v=888ff710"></script>
+        <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="prev" title="brainModels.featureExtraction package" href="brainModels.featureExtraction.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            BrainModels documentation
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="brainModels.html">brainModels package</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="brainModels.html#subpackages">Subpackages</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="brainModels.analysis.html">brainModels.analysis package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="brainModels.datasets.html">brainModels.datasets package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="brainModels.evaluations.html">brainModels.evaluations package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="brainModels.featureExtraction.html">brainModels.featureExtraction package</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">brainModels.preprocessing package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#submodules">Submodules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-brainModels.preprocessing.base">brainModels.preprocessing.base module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-brainModels.preprocessing.erp">brainModels.preprocessing.erp module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-brainModels.preprocessing">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="brainModels.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="brainModels.html#brainmodels-benchmark-module">brainModels.benchmark module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="brainModels.html#brainmodels-run-module">brainModels.run module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="brainModels.html#module-brainModels.utils">brainModels.utils module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="brainModels.html#module-brainModels">Module contents</a></li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">BrainModels documentation</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="brainModels.html">brainModels package</a></li>
+      <li class="breadcrumb-item active">brainModels.preprocessing package</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/brainModels.preprocessing.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="brainmodels-preprocessing-package">
+<h1>brainModels.preprocessing package<a class="headerlink" href="#brainmodels-preprocessing-package" title="Link to this heading"></a></h1>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Link to this heading"></a></h2>
+</section>
+<section id="module-brainModels.preprocessing.base">
+<span id="brainmodels-preprocessing-base-module"></span><h2>brainModels.preprocessing.base module<a class="headerlink" href="#module-brainModels.preprocessing.base" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="brainModels.preprocessing.base.BaseParadigm">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">brainModels.preprocessing.base.</span></span><span class="sig-name descname"><span class="pre">BaseParadigm</span></span><a class="reference internal" href="_modules/brainModels/preprocessing/base.html#BaseParadigm"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brainModels.preprocessing.base.BaseParadigm" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Base Paradigm.</p>
+<dl class="py property">
+<dt class="sig sig-object py" id="brainModels.preprocessing.base.BaseParadigm.datasets">
+<em class="property"><span class="pre">abstract</span><span class="w"> </span><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">datasets</span></span><a class="headerlink" href="#brainModels.preprocessing.base.BaseParadigm.datasets" title="Link to this definition"></a></dt>
+<dd><p>Property that define the list of compatible datasets</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="brainModels.preprocessing.base.BaseParadigm.get_data">
+<span class="sig-name descname"><span class="pre">get_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dataset</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">subjects</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">return_epochs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/brainModels/preprocessing/base.html#BaseParadigm.get_data"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brainModels.preprocessing.base.BaseParadigm.get_data" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="brainModels.preprocessing.base.BaseParadigm.is_valid">
+<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">is_valid</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dataset</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/brainModels/preprocessing/base.html#BaseParadigm.is_valid"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brainModels.preprocessing.base.BaseParadigm.is_valid" title="Link to this definition"></a></dt>
+<dd><p>Verify the dataset is compatible with the paradigm.</p>
+<p>This method is called to verify dataset is compatible with the
+paradigm.</p>
+<p>This method should raise an error if the dataset is not compatible
+with the paradigm. This is for example the case if the
+dataset is an ERP dataset for motor imagery paradigm, or if the
+dataset does not contain any of the required events.</p>
+<section id="parameters">
+<h3>Parameters<a class="headerlink" href="#parameters" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>dataset<span class="classifier">dataset instance</span></dt><dd><p>The dataset to verify.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="brainModels.preprocessing.base.BaseParadigm.prepare_process">
+<span class="sig-name descname"><span class="pre">prepare_process</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dataset</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/brainModels/preprocessing/base.html#BaseParadigm.prepare_process"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brainModels.preprocessing.base.BaseParadigm.prepare_process" title="Link to this definition"></a></dt>
+<dd><p>Prepare processing of raw files</p>
+<blockquote>
+<div><p>This function allows to set parameter of the paradigm class prior to
+the preprocessing (process_raw). Does nothing by default and could be
+overloaded if needed.</p>
+<dl class="simple">
+<dt>dataset<span class="classifier">dataset instance</span></dt><dd><p>The dataset corresponding to the raw file. mainly use to access
+dataset specific i</p>
+</dd>
+</dl>
+</div></blockquote>
+<p>nformation.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="brainModels.preprocessing.base.BaseParadigm.process_raw">
+<span class="sig-name descname"><span class="pre">process_raw</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">raw</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">events</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dataset</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">return_epochs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/brainModels/preprocessing/base.html#BaseParadigm.process_raw"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brainModels.preprocessing.base.BaseParadigm.process_raw" title="Link to this definition"></a></dt>
+<dd><p>Process one raw data file.</p>
+<p>This function apply the preprocessing and eventual epoching on the
+individual run, and return the data, labels and a dataframe with
+metadata.</p>
+<p>metadata is a dataframe with as many row as the length of the data
+and labels.</p>
+<section id="id1">
+<h3>Parameters<a class="headerlink" href="#id1" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>raw: mne.Raw instance</dt><dd><p>the raw EEG data.</p>
+</dd>
+<dt>dataset<span class="classifier">dataset instance</span></dt><dd><p>The dataset corresponding to the raw file. mainly use to access
+dataset specific information.</p>
+</dd>
+<dt>return_epochs: boolean</dt><dd><p>This flag specifies whether to return only the data array or the
+complete processed mne.Epochs</p>
+</dd>
+<dt>return_raws: boolean</dt><dd><p>To return raw files and events, to ensure compatibility with braindecode.
+Mutually exclusive with return_epochs</p>
+</dd>
+</dl>
+</section>
+<section id="returns">
+<h3>returns<a class="headerlink" href="#returns" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>X<span class="classifier">Union[np.ndarray, mne.Epochs]</span></dt><dd><p>the data that will be used as features for the model
+Note: if return_epochs=True,  this is mne.Epochs
+if return_epochs=False, this is np.ndarray</p>
+</dd>
+<dt>labels: np.ndarray</dt><dd><p>the labels for training / evaluating the model</p>
+</dd>
+<dt>metadata: pd.DataFrame</dt><dd><p>A dataframe containing the metadata</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="brainModels.preprocessing.base.BaseParadigm.scoring">
+<em class="property"><span class="pre">abstract</span><span class="w"> </span><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">scoring</span></span><a class="headerlink" href="#brainModels.preprocessing.base.BaseParadigm.scoring" title="Link to this definition"></a></dt>
+<dd><p>Property that defines scoring metric (e.g. ROC-AUC or accuracy
+or f-score), given as a sklearn-compatible string or a compatible
+sklearn scorer.</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-brainModels.preprocessing.erp">
+<span id="brainmodels-preprocessing-erp-module"></span><h2>brainModels.preprocessing.erp module<a class="headerlink" href="#module-brainModels.preprocessing.erp" title="Link to this heading"></a></h2>
+<p>ERP Paradigms</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="brainModels.preprocessing.erp.BaseERP">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">brainModels.preprocessing.erp.</span></span><span class="sig-name descname"><span class="pre">BaseERP</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filters</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">([1,</span> <span class="pre">50],)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">events</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tmin</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tmax</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">baseline</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">(None,</span> <span class="pre">0)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">channels</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">resample</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reject</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/brainModels/preprocessing/erp.html#BaseERP"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brainModels.preprocessing.erp.BaseERP" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#brainModels.preprocessing.base.BaseParadigm" title="brainModels.preprocessing.base.BaseParadigm"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseParadigm</span></code></a></p>
+<p>Base P300 paradigm.</p>
+<p>Please use one of the child classes</p>
+<section id="id2">
+<h3>Parameters<a class="headerlink" href="#id2" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>filters: list of list (defaults [[7, 35]])</dt><dd><p>bank of bandpass filter to apply.</p>
+</dd>
+<dt>events: List of str | None (default None)</dt><dd><p>event to use for epoching. If None, default to all events defined in
+the dataset.</p>
+</dd>
+<dt>tmin: float (default 0.0)</dt><dd><p>Start time (in second) of the epoch, relative to the dataset specific
+task interval e.g. tmin = 1 would mean the epoch will start 1 second
+after the beginning of the task as defined by the dataset.</p>
+</dd>
+<dt>tmax: float | None, (default None)</dt><dd><p>End time (in second) of the epoch, relative to the beginning of the
+dataset specific task interval. tmax = 5 would mean the epoch will end
+5 second after the beginning of the task as defined in the dataset. If
+None, use the dataset value.</p>
+</dd>
+<dt>baseline: None | tuple of length 2</dt><dd><p>The time interval to consider as “baseline” when applying baseline
+correction. If None, do not apply baseline correction.
+If a tuple (a, b), the interval is between a and b (in seconds),
+including the endpoints.
+Correction is applied by computing the mean of the baseline period
+and subtracting it from the data (see mne.Epochs)</p>
+</dd>
+<dt>channels: list of str | None (default None)</dt><dd><p>list of channel to select. If None, use all EEG channels available in
+the dataset.</p>
+</dd>
+<dt>resample: float | None (default None)</dt><dd><p>If not None, resample the eeg data with the sampling rate provided.</p>
+</dd>
+</dl>
+<dl class="py property">
+<dt class="sig sig-object py" id="brainModels.preprocessing.erp.BaseERP.datasets">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">datasets</span></span><a class="headerlink" href="#brainModels.preprocessing.erp.BaseERP.datasets" title="Link to this definition"></a></dt>
+<dd><p>Property that define the list of compatible datasets</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="brainModels.preprocessing.erp.BaseERP.is_valid">
+<span class="sig-name descname"><span class="pre">is_valid</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dataset</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/brainModels/preprocessing/erp.html#BaseERP.is_valid"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brainModels.preprocessing.erp.BaseERP.is_valid" title="Link to this definition"></a></dt>
+<dd><p>Verify the dataset is compatible with the paradigm.</p>
+<p>This method is called to verify dataset is compatible with the
+paradigm.</p>
+<p>This method should raise an error if the dataset is not compatible
+with the paradigm. This is for example the case if the
+dataset is an ERP dataset for motor imagery paradigm, or if the
+dataset does not contain any of the required events.</p>
+<section id="id3">
+<h4>Parameters<a class="headerlink" href="#id3" title="Link to this heading"></a></h4>
+<dl class="simple">
+<dt>dataset<span class="classifier">dataset instance</span></dt><dd><p>The dataset to verify.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="brainModels.preprocessing.erp.BaseERP.scoring">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">scoring</span></span><a class="headerlink" href="#brainModels.preprocessing.erp.BaseERP.scoring" title="Link to this definition"></a></dt>
+<dd><p>Property that defines scoring metric (e.g. ROC-AUC or accuracy
+or f-score), given as a sklearn-compatible string or a compatible
+sklearn scorer.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="brainModels.preprocessing.erp.BaseERP.used_events">
+<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">used_events</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dataset</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/brainModels/preprocessing/erp.html#BaseERP.used_events"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brainModels.preprocessing.erp.BaseERP.used_events" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</section>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="brainModels.preprocessing.erp.ERP">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">brainModels.preprocessing.erp.</span></span><span class="sig-name descname"><span class="pre">ERP</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/brainModels/preprocessing/erp.html#ERP"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brainModels.preprocessing.erp.ERP" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#brainModels.preprocessing.erp.SinglePass" title="brainModels.preprocessing.erp.SinglePass"><code class="xref py py-class docutils literal notranslate"><span class="pre">SinglePass</span></code></a></p>
+<p>P300 for Target/NonTarget classification</p>
+<p>Metric is ‘roc_auc’</p>
+<dl class="py property">
+<dt class="sig sig-object py" id="brainModels.preprocessing.erp.ERP.scoring">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">scoring</span></span><a class="headerlink" href="#brainModels.preprocessing.erp.ERP.scoring" title="Link to this definition"></a></dt>
+<dd><p>Property that defines scoring metric (e.g. ROC-AUC or accuracy
+or f-score), given as a sklearn-compatible string or a compatible
+sklearn scorer.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="brainModels.preprocessing.erp.ERP.used_events">
+<span class="sig-name descname"><span class="pre">used_events</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dataset</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/brainModels/preprocessing/erp.html#ERP.used_events"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brainModels.preprocessing.erp.ERP.used_events" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="brainModels.preprocessing.erp.SinglePass">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">brainModels.preprocessing.erp.</span></span><span class="sig-name descname"><span class="pre">SinglePass</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fmin</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fmax</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">50</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/brainModels/preprocessing/erp.html#SinglePass"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brainModels.preprocessing.erp.SinglePass" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#brainModels.preprocessing.erp.BaseERP" title="brainModels.preprocessing.erp.BaseERP"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseERP</span></code></a></p>
+<p>Single Bandpass filter P300</p>
+<p>P300 paradigm with only one bandpass filter (default 1 to 24 Hz)</p>
+<section id="id4">
+<h3>Parameters<a class="headerlink" href="#id4" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>fmin: float (default 1)</dt><dd><p>cutoff frequency (Hz) for the high pass filter</p>
+</dd>
+<dt>fmax: float (default 24)</dt><dd><p>cutoff frequency (Hz) for the low pass filter</p>
+</dd>
+<dt>events: List of str | None (default None)</dt><dd><p>event to use for epoching. If None, default to all events defined in
+the dataset.</p>
+</dd>
+<dt>tmin: float (default 0.0)</dt><dd><p>Start time (in second) of the epoch, relative to the dataset specific
+task interval e.g. tmin = 1 would mean the epoch will start 1 second
+after the beginning of the task as defined by the dataset.</p>
+</dd>
+<dt>tmax: float | None, (default None)</dt><dd><p>End time (in second) of the epoch, relative to the beginning of the
+dataset specific task interval. tmax = 5 would mean the epoch will end
+5 second after the beginning of the task as defined in the dataset. If
+None, use the dataset value.</p>
+</dd>
+<dt>baseline: None | tuple of length 2</dt><dd><p>The time interval to consider as “baseline” when applying baseline
+correction. If None, do not apply baseline correction.
+If a tuple (a, b), the interval is between a and b (in seconds),
+including the endpoints.
+Correction is applied by computing the mean of the baseline period
+and subtracting it from the data (see mne.Epochs)</p>
+</dd>
+<dt>channels: list of str | None (default None)</dt><dd><p>list of channel to select. If None, use all EEG channels available in
+the dataset.</p>
+</dd>
+<dt>resample: float | None (default None)</dt><dd><p>If not None, resample the eeg data with the sampling rate provided.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+</section>
+<section id="module-brainModels.preprocessing">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-brainModels.preprocessing" title="Link to this heading"></a></h2>
+<p>A paradigm defines how the raw data will be converted to trials ready to be
+processed by a decoding algorithm. This is a function of the paradigm used</p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="brainModels.featureExtraction.html" class="btn btn-neutral float-left" title="brainModels.featureExtraction package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Avinash Kumar Chaurasia.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

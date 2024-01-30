@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>brainModels.analysis package &mdash; BrainModels documentation 1.0.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=19f00094" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="_static/jquery.js?v=5d32c60e"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="_static/documentation_options.js?v=8d563738"></script>
+        <script src="_static/doctools.js?v=888ff710"></script>
+        <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="brainModels.datasets package" href="brainModels.datasets.html" />
+    <link rel="prev" title="brainModels package" href="brainModels.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            BrainModels documentation
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="brainModels.html">brainModels package</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="brainModels.html#subpackages">Subpackages</a><ul class="current">
+<li class="toctree-l3 current"><a class="current reference internal" href="#">brainModels.analysis package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#submodules">Submodules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-brainModels.analysis.metrics">brainModels.analysis.metrics module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-brainModels.analysis.plotting">brainModels.analysis.plotting module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-brainModels.analysis.results">brainModels.analysis.results module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-brainModels.analysis">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="brainModels.datasets.html">brainModels.datasets package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="brainModels.evaluations.html">brainModels.evaluations package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="brainModels.featureExtraction.html">brainModels.featureExtraction package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="brainModels.preprocessing.html">brainModels.preprocessing package</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="brainModels.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="brainModels.html#brainmodels-benchmark-module">brainModels.benchmark module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="brainModels.html#brainmodels-run-module">brainModels.run module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="brainModels.html#module-brainModels.utils">brainModels.utils module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="brainModels.html#module-brainModels">Module contents</a></li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">BrainModels documentation</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="brainModels.html">brainModels package</a></li>
+      <li class="breadcrumb-item active">brainModels.analysis package</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/brainModels.analysis.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="brainmodels-analysis-package">
+<h1>brainModels.analysis package<a class="headerlink" href="#brainmodels-analysis-package" title="Link to this heading"></a></h1>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Link to this heading"></a></h2>
+</section>
+<section id="module-brainModels.analysis.metrics">
+<span id="brainmodels-analysis-metrics-module"></span><h2>brainModels.analysis.metrics module<a class="headerlink" href="#module-brainModels.analysis.metrics" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="brainModels.analysis.metrics.Scores">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">brainModels.analysis.metrics.</span></span><span class="sig-name descname"><span class="pre">Scores</span></span><a class="reference internal" href="_modules/brainModels/analysis/metrics.html#Scores"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brainModels.analysis.metrics.Scores" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+</dd></dl>
+
+</section>
+<section id="module-brainModels.analysis.plotting">
+<span id="brainmodels-analysis-plotting-module"></span><h2>brainModels.analysis.plotting module<a class="headerlink" href="#module-brainModels.analysis.plotting" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="brainModels.analysis.plotting.Plots">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">brainModels.analysis.plotting.</span></span><span class="sig-name descname"><span class="pre">Plots</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">plot_path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/brainModels/analysis/plotting.html#Plots"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brainModels.analysis.plotting.Plots" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>A class for generating and saving various plots and visualizations.</p>
+<p>This class provides methods for creating and saving different types of plots, such as ROC curves, EER curves,
+and other visualizations related to evaluations. It also handles the organization of plot files in specified
+directories.</p>
+<p>Attributes:
+- plot_path: The path where plot files are saved.</p>
+<p>Methods:
+- _plot_erp():</p>
+<blockquote>
+<div><p>A method for plotting event-related potentials (ERP). [This method currently lacks a specific implementation.]</p>
+</div></blockquote>
+<ul class="simple">
+<li><p>_roc_curve_single_dataset(data=None, evaluation_type=None, dataset=None):
+Generate and save ROC curves for a single dataset and evaluation type.</p></li>
+<li><p>_eer_single_dataset(data=None, evaluation_type=None, dataset=None):
+Generate and save EER (Equal Error Rate) curves for a single dataset and evaluation type.</p></li>
+<li><p>_eer_graph_single_dataset_across_evaluations(data=None):
+Generate and save EER graphs for a single dataset across multiple evaluation types.</p></li>
+</ul>
+</dd></dl>
+
+</section>
+<section id="module-brainModels.analysis.results">
+<span id="brainmodels-analysis-results-module"></span><h2>brainModels.analysis.results module<a class="headerlink" href="#module-brainModels.analysis.results" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="brainModels.analysis.results.Results">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">brainModels.analysis.results.</span></span><span class="sig-name descname"><span class="pre">Results</span></span><a class="reference internal" href="_modules/brainModels/analysis/results.html#Results"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brainModels.analysis.results.Results" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>A class for storing and managing results in JSON format.</p>
+<p>This class is designed for storing and organizing results generated during experiments. 
+It provides methods for saving, loading, and processing results as JSON files.</p>
+<p>Attributes:
+- None</p>
+<p>Methods:
+- _add_results(results, results_path, scenario):</p>
+<blockquote>
+<div><p>Adds results to a JSON file and returns an averaged DataFrame if applicable.</p>
+</div></blockquote>
+<ul class="simple">
+<li><p>_add_dataframe(results_path, scenario):
+Averages results from JSON files and returns them as a DataFrame.</p></li>
+</ul>
+<p>Example usage:
+<code class="docutils literal notranslate"><span class="pre">`</span>
+<span class="pre">results_handler</span> <span class="pre">=</span> <span class="pre">Results()</span>
+<span class="pre">average_results</span> <span class="pre">=</span> <span class="pre">results_handler._add_results(results_data,</span> <span class="pre">'results_folder',</span> <span class="pre">'scenario_name')</span>
+<span class="pre">`</span></code></p>
+<p>The Results class is typically used to save and manage the outcome of experiments and provides tools for
+aggregating and summarizing results.</p>
+</dd></dl>
+
+</section>
+<section id="module-brainModels.analysis">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-brainModels.analysis" title="Link to this heading"></a></h2>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="brainModels.html" class="btn btn-neutral float-left" title="brainModels package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="brainModels.datasets.html" class="btn btn-neutral float-right" title="brainModels.datasets package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Avinash Kumar Chaurasia.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
