@@ -2,9 +2,9 @@ import numpy as np
 from sklearn.discriminant_analysis import LinearDiscriminantAnalysis as LDA
 from sklearn.pipeline import make_pipeline
 from sklearn.svm import SVC
-print("Running benchmark")
-from preprocessing import ERP
-from featureExtraction import (
+#print("Running benchmark")
+from brainModels.preprocessing import ERP
+from brainModels.featureExtraction import (
     parse_pipelines_from_directory,
     generate_paradigms,
     parse_pipelines_for_single_dataset,
@@ -18,11 +18,11 @@ from pathlib import Path
 import numpy as np
 import yaml
 import pandas as pd
-from evaluations import (SingleSessionCloseSet, SingleSessionOpenSet)
+from brainModels.evaluations import (SingleSessionCloseSet, SingleSessionOpenSet)
 log = logging.getLogger(__name__)
 
 def benchmark(subjects=None,
-              pipelines="../configuration_files/",
+              pipelines="./configuration_files/",
               single_session_evaluations=None,
               multi_session_evaluations=None,
               paradigms=None,
@@ -77,7 +77,7 @@ def benchmark(subjects=None,
     context_params["paradigm"] = {}
     df_eval = []
     dataset=prdgms['dataset']
-    print(type(ERP))
+    #print(type(ERP))
     p=ERP()
     log.debug(context_params['paradigm'])  
     if (dataset.n_sessions==1):

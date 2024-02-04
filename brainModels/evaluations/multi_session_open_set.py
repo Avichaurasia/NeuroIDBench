@@ -499,7 +499,7 @@ class MultiSessionOpenSet(BaseEvaluation):
         #print("type of metadata", type(metadata))
         results_pipeline=[]
         for key, features in pipelines.items():   
-            if (key.upper()=='SIAMESE'):
+            if (key.upper()=='TNN'):
 
                 # If the key is Siamese, then we use the deep learning method
                 results=self.deep_learning_method(X, dataset, metadata, key, features)

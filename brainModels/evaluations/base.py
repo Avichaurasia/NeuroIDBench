@@ -66,7 +66,7 @@ class BaseEvaluation(ABC):
         self.mne_labels = mne_labels
 
         # check paradigm
-        print("I am in base class of evualtion package", isinstance(datasets, BaseDataset))
+        # print("I am in base class of evualtion package", isinstance(datasets, BaseDataset))
         if not isinstance(paradigm, BaseParadigm):
             raise (ValueError("paradigm must be an Paradigm instance"))
         self.paradigm = paradigm

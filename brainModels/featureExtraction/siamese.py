@@ -17,7 +17,7 @@ import seaborn as sns
 from .base import Basepipeline
 import importlib.util
 
-class Siamese():
+class TwinNeuralNetwork():
     """
     A Siamese Neural Network for EEG-based authentication.
 
@@ -41,7 +41,7 @@ class Siamese():
     """
     def __init__(
         self,
-        user_siamese_path=None,
+        user_tnn_path=None,
         EPOCHS=250,
         batch_size=256,
         learning_rate=0.001,
@@ -50,7 +50,7 @@ class Siamese():
         **kwargs,
     ):
         super().__init__(**kwargs)
-        self.user_siamese_path=user_siamese_path
+        self.user_tnn_path=user_tnn_path
         self.EPOCHS = EPOCHS
         self.batch_size = batch_size
         self.learning_rate=learning_rate
@@ -152,7 +152,7 @@ class Siamese():
 
         """
             
-        module_path=self.user_siamese_path
+        module_path=self.user_tnn_path
 
         # Specify the name of the function you want to import
         function_name = '_siamese_embeddings'

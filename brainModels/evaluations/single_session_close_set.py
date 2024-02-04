@@ -426,7 +426,7 @@ class SingleSessionCloseSet(BaseEvaluation):
         #     X, subject_dict, metadata=self.paradigm.get_data(dataset)
         results_pipeline=[]
         for key, features in pipelines.items():   
-            if (key.upper()=='SIAMESE'):
+            if (key.upper()=='TNN'):
                 
                 #print("Avinash")
                 # If the key is Siamese, then we use the deep learning method

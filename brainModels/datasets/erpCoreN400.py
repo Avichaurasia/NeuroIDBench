@@ -22,7 +22,7 @@ import pooch
 from pooch import file_hash, retrieve
 from requests.exceptions import HTTPError
 from . import download as dl
-from brainModels.datasets.base import BaseDataset
+from ..datasets.base import BaseDataset
 from collections import OrderedDict
 from mne.utils import _url_to_local_path, verbose
 import shutil

@@ -1,7 +1,8 @@
 import numpy as np
 import sys
-sys.path.append("../")
-from benchmark import benchmark
+# sys.path.append("./")
+from brainModels.benchmark import benchmark
+#from benchmark import benchmark
 
 if __name__ == "__main__":
     #print("Running benchmark")

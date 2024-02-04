@@ -377,7 +377,7 @@ class SingleSessionOpenSet(BaseEvaluation):
         """
         results_open_set=[]
         data=self._prepare_data(dataset, features, subject_dict)
-        print("Total sample size without any epochs rejection", len(data))
+        #print("Total sample size without any epochs rejection", len(data))
         #print("number of nan values", data.isna().sum())
         for subject in tqdm(np.unique(data.subject), desc=f"{key}-SingleSessionOpenSet"):
             df_subj=data.copy(deep=True)
@@ -465,7 +465,7 @@ class SingleSessionOpenSet(BaseEvaluation):
             raise AssertionError("Dataset should have at least 4 subjects")
         results_pipeline=[]
         for key, features in pipelines.items():   
-            if (key.upper()=='SIAMESE'):
+            if (key.upper()=='TNN'):
 
                 # If the key is Siamese, then we use the deep learning method
                 results=self.deep_learning_method(X, dataset, metadata, key, features)
