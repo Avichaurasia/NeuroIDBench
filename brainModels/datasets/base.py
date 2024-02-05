@@ -24,11 +24,9 @@ class BaseDataset(metaclass=abc.ABCMeta):
         events: dict of strings
             String codes representing events that match labels in the stimulus channel.
             For ERP codes, you can include:
-            - 'Target'
-            - 'NonTarget'
-            - 'Congruent'
-            - 'Incongruent'
-
+            - 'Standard'
+            - 'Deviant'
+           
         code: string
             A unique identifier for the dataset, which is used in all plots.
             The code should be in CamelCase.
@@ -36,8 +34,8 @@ class BaseDataset(metaclass=abc.ABCMeta):
         interval: list with 2 entries
             ERP interval as defined in the dataset description
 
-        paradigm: ['p300','n400']
-            Defines the type of dataset. It can be either 'p300' or 'n400'.
+        paradigm: ['erp']
+            Defines the type of dataset.
 
         doi: DOI for dataset, optional (for now)
         """
@@ -56,7 +54,6 @@ class BaseDataset(metaclass=abc.ABCMeta):
         self.baseline_correction=baseline_correction
 
     def get_data(self, subjects=None):
-
 
         """
         Retrieve Data for a List of Subjects

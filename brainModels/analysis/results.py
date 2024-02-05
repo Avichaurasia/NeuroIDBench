@@ -13,7 +13,6 @@ from sklearn.base import BaseEstimator
 import h5py
 import json
 from numpyencoder import NumpyEncoder
-import datetime
 
 class Results():
     """
@@ -43,7 +42,7 @@ class Results():
 
     """
 
-    def _add_results(self, results, results_path, scenario):
+    def _add_results(self, dataset, results, results_path, scenario):
         """
         Add results to a JSON file in the specified results folder.
 
@@ -56,29 +55,26 @@ class Results():
         - average_results: A DataFrame of averaged results if multiple JSON files are used.
         """
 
-        # if not os.path.exists(results_path):
-        #     os.makedirs(results_path)
-        # if ("close_set" in scenario) and ("open_set" in scenario):
-        #     results_close_set, results_open_set = results
-        #     with open(os.path.join(results_path, "results_close_set.json"), 'w') as f:
-        #         json.dump(results_close_set, f, cls=NumpyEncoder)
+        if not os.path.exists(results_path):
+            os.makedirs(results_path)
+        if ("close_set" in scenario) and ("open_set" in scenario):
+            results_close_set, results_open_set = results
+            with open(os.path.join(results_path, "results_close_set.json"), 'w') as f:
+                json.dump(results_close_set, f, cls=NumpyEncoder)
 
-        #     with open(os.path.join(results_path, "results_open_set.json"), 'w') as f:
-        #         json.dump(results_open_set, f, cls=NumpyEncoder)
-        # else:
-        #     fname="results_"+scenario+".json"
-        #     with open(os.path.join(results_path, fname), 'w') as f:
-        #         json.dump(results, f, cls=NumpyEncoder)
+            with open(os.path.join(results_path, "results_open_set.json"), 'w') as f:
+                json.dump(results_open_set, f, cls=NumpyEncoder)
+        
+        else:
+            fname="results_"+scenario+".json"
+            with open(os.path.join(results_path, fname), 'w') as f:
+                json.dump(results, f, cls=NumpyEncoder)
 
-        # getting average results across subjects
-        #average_results = self._add_dataframe(results_path, scenario)
-
-        flattened_data = [item for sublist in results for item in sublist]
-        df_results_close_set=pd.DataFrame(flattened_data)
-        average_results = df_results_close_set
+        #getting average results across subjects
+        average_results = self._add_dataframe(fname, results_path, scenario)
         return average_results
     
-    def _add_dataframe(self, results_path, scenario):
+    def _add_dataframe(self, fname, results_path, scenario):
         """
         Average results from JSON files and return them as a DataFrame.
 
@@ -100,14 +96,12 @@ class Results():
             df_results_open_set=pd.DataFrame(results_list_open)
             df_results = pd.concat([df_results_close_set, df_results_open_set], ignore_index=True)
         else:
-            fname="results_"+scenario+".json"
             with open(os.path.join(results_path, fname), 'r') as f:
                 results_list = json.load(f) 
 
             flattened_data = [item for sublist in results_list for item in sublist]
             df_results_close_set=pd.DataFrame(flattened_data)
             df_results = df_results_close_set
-            #print(df_results)
         return df_results
 
 

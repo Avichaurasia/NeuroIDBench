@@ -34,7 +34,7 @@ from brainModels.evaluations.single_session_close_set import SingleSessionCloseS
 from brainModels.evaluations.single_session_open_set import SingleSessionOpenSet
 #from brainModels.evaluations.multi_session_open_set import MultiSessionOpenSet
 #from brainModels.evaluations.multi_session_open_set_copy import MultiSessionOpenSet
-from brainModels.featureExtraction.siamese import Siamese
+from brainModels.featureExtraction.twinNeural import TwinNeuralNetwork
 from brainModels.datasets.lee2019 import Lee2019
 import os
 
@@ -48,7 +48,7 @@ def _evaluate():
         paradigm_n400=ERP()
 
         pipeline={}
-        pipeline['siamese']=make_pipeline(Siamese(batch_size=192, EPOCHS=100))
+        pipeline['siamese']=make_pipeline(TwinNeuralNetwork(batch_size=192, EPOCHS=100))
         open_set=SingleSessionOpenSet(paradigm=paradigm_n400, datasets=data, overwrite=False)
         results=open_set.process(pipeline)
 

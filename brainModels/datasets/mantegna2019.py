@@ -107,7 +107,18 @@ class Mantegna2019(BaseDataset):
         return dlpath
    
     def _get_single_subject_data(self, subject):
-        """return data for a single subject"""
+        """return data for a single subejct
+
+        Parameters:
+        ----------
+        subject: int
+            subject number
+
+        Returns:
+        -------
+        sessions: dict
+            dictionary containing the data for a single subject in the format of {session_name: {run_name: (raw, events)}}  
+        """
 
         file_path_list = self.data_path(subject)
         sessions = {}
@@ -129,6 +140,20 @@ class Mantegna2019(BaseDataset):
     def data_path(self, subject, path=None, force_update=False,
                   update_path=None, verbose=None): 
         
+        """Get path to local copy of a subject data
+
+        Parameters:
+        ----------
+        subject: int
+            subject number
+            path: path to the directory where the data should be downloaded
+        
+        Returns:
+        -------
+        subject_paths: list
+            list of paths to the local copy of the subject data
+        """
+        
         if subject not in self.subject_list:
             raise ValueError("Invalid subject number")
         else:
@@ -144,7 +169,6 @@ class Mantegna2019(BaseDataset):
         path_zip = self.download_dataset(url, "Mantegna2019")
         self.dataset_path=os.path.dirname(Path(path_zip))
         subject_dir = Path(path_zip.strip(zip_filename))/main_directory
-        #print("")
         if not subject_dir.exists():
             with z.ZipFile(path_zip, "r") as zip_ref:
                 zip_ref.extractall(subject_dir)

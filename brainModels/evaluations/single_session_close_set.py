@@ -27,6 +27,8 @@ from collections import OrderedDict
 from sklearn.utils import shuffle
 import mne
 import tensorflow as tf
+import warnings
+warnings.filterwarnings('ignore')
 import pickle
 import importlib
 from .similarity import CalculateSimilarity
@@ -180,7 +182,7 @@ class SingleSessionCloseSet(BaseEvaluation):
                 result=np.array(result)
                 true_lables=np.array(result[:,1])
                 predicted_scores=np.array(result[:,0])
-                eer, frr_1_far, frr_01_far, frr_001_far=score._calculate_siamese_scores(true_lables, predicted_scores)
+                eer, frr_1_far, frr_01_far, frr_001_far, inter_tpr, auc=score._calculate_siamese_scores(true_lables, predicted_scores)
                 res_close_set = {
                 'evaluation': 'Single Session',
                     "eval Type": "Close Set",
@@ -191,13 +193,10 @@ class SingleSessionCloseSet(BaseEvaluation):
                     "frr_1_far": frr_1_far,
                     "frr_0.1_far": frr_01_far,
                     "frr_0.01_far": frr_001_far,
-                    #"accuracy": mean_accuracy,
-                    #"auc": auc,
+                    "auc": auc,
                     "eer": eer,
-                    #"tpr": inter_tpr,
-                    #"std_auc": std_auc,
+                    "tpr": inter_tpr,
                     "n_samples": len(X_)  # not training sample
-                    #"n_channels": data.columns.size
                     }
                 #print(res_close_set)
                 results_close_set.append(res_close_set)
@@ -268,22 +267,17 @@ class SingleSessionCloseSet(BaseEvaluation):
             #print("complete y_pred_proba", model.predict_proba(X_test))
             y_pred_proba=model.predict_proba(X_test)[:,-1]
 
-            #print("y_pred_proba", y_pred_proba)
-
-            # calculating auc, eer, eer_threshold, fpr, tpr, thresholds for each k-fold
-            #auc, eer, eer_theshold, inter_tpr, tpr, fnr, frr_1_far=score._calculate_scores(y_pred_proba,y_test, mean_fpr)
-
-            eer, frr_1_far, frr_01_far, frr_001_far=score._calculate_scores(y_pred_proba,y_test, mean_fpr)
+            eer, frr_1_far, frr_01_far, frr_001_far, auc, inter_tpr=score._calculate_scores(y_pred_proba,y_test, mean_fpr)
             #accuracy_list.append(accuracy_score(y_test,y_pred))
-            #auc_list.append(auc)
+            auc_list.append(auc)
             eer_list.append(eer)
-            #tpr_list.append(inter_tpr)
+            tpr_list.append(inter_tpr)
             #fnr_list.append(fnr)
             frr_1_far_list.append(frr_1_far)
             frr_01_far_list.append(frr_01_far)
             frr_001_far_list.append(frr_001_far)
 
-        average_scores=score._calculate_average_scores(eer_list, frr_1_far_list, frr_01_far_list, frr_001_far_list)
+        average_scores=score._calculate_average_scores(eer_list, frr_1_far_list, frr_01_far_list, frr_001_far_list, auc_list, tpr_list, mean_fpr)
         return average_scores
 
 
@@ -307,9 +301,6 @@ class SingleSessionCloseSet(BaseEvaluation):
         df_final=pd.DataFrame()
         for feat in range(0, len(features)-1):
             df=features[feat].get_data(dataset, subject_dict)
-
-            #print("length of features", len(df))
-            #print("subject sample count", df['Subject'].value_counts())
             df_final = pd.concat([df_final, df], axis=1)
 
         if df_final.columns.duplicated().any():
@@ -347,8 +338,6 @@ class SingleSessionCloseSet(BaseEvaluation):
         """ 
         results_close_set=[]
         data=self._prepare_data(dataset, features, subject_dict)
-        #data=self._valid_subject_samples(data)
-        #print("length of data", data)
         for subject in tqdm(np.unique(data.subject), desc=f"{key}-SingleSessionCloseSet"):
             df_subj=data.copy(deep=True)
 
@@ -370,8 +359,7 @@ class SingleSessionCloseSet(BaseEvaluation):
                 #     continue
                 
                 close_set_scores=self._authenticate_single_subject_close_set(X,labels, features)
-                #mean_accuracy, mean_auc, mean_eer, mean_tpr, tprs_upper, tprr_lower, std_auc, mean_frr_1_far=close_set_scores
-                mean_eer, mean_frr_1_far, mean_frr_01_far, mean_frr_001_far=close_set_scores
+                mean_eer, mean_frr_1_far, mean_frr_01_far, mean_frr_001_far, mean_tpr, mean_auc =close_set_scores
                 res_close_set = {
                 # "time": duration / 5.0,  # 5 fold CV
                 'evaluation': 'Single Session',
@@ -384,19 +372,15 @@ class SingleSessionCloseSet(BaseEvaluation):
                 "frr_0.1_far": mean_frr_01_far,
                 "frr_0.01_far": mean_frr_001_far,
                 #"accuracy": mean_accuracy,
-                #"auc": mean_auc,
+                "auc": mean_auc,
                 "eer": mean_eer,
-                #"tpr": mean_tpr,
-                #"tprs_upper": tprs_upper,
-                #"tprs_lower": tprr_lower,
-                #"std_auc": std_auc,
+                "tpr": mean_tpr,
                 "n_samples": len(df_subj)
                 #"n_samples": len(data)  # not training sample
                 #"n_channels": data.columns.size
                     }
                 #print(res_close_set)
                 results_close_set.append(res_close_set)
-        #print(results_close_set)
         return results_close_set
 
     def _evaluate(self, dataset, pipelines):
@@ -418,17 +402,10 @@ class SingleSessionCloseSet(BaseEvaluation):
         """
         
         X, subject_dict, metadata=self.paradigm.get_data(dataset)
-
-        # if (dataset.code=='Lee2019_ERP'):
-        #     X, subject_dict, metadata=self.paradigm.lee_get_data(dataset)
-
-        # else:
-        #     X, subject_dict, metadata=self.paradigm.get_data(dataset)
         results_pipeline=[]
         for key, features in pipelines.items():   
-            if (key.upper()=='TNN'):
+            if (key.upper()=='SIAMESE'):
                 
-                #print("Avinash")
                 # If the key is Siamese, then we use the deep learning method
                 results=self.deep_learning_method(X, dataset, metadata, key, features)
                 results_pipeline.append(results) 

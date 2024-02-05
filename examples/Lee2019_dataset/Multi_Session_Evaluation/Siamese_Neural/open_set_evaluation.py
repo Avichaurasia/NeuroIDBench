@@ -7,7 +7,7 @@ import numpy as np
 import pandas as pd
 from brainModels.datasets.lee2019 import Lee2019
 from brainModels.preprocessing.erp import ERP
-from brainModels.featureExtraction.siamese import Siamese
+from brainModels.featureExtraction.twinNeural import TwinNeuralNetwork
 from brainModels.datasets import utils
 from autoreject import AutoReject, get_rejection_threshold
 from sklearn.pipeline import make_pipeline
@@ -33,7 +33,7 @@ def _evaluate():
     
     # Intializing the pipelines
     pipeline={}
-    pipeline['siamese']=make_pipeline(Siamese(batch_size=192, EPOCHS=100))
+    pipeline['siamese']=make_pipeline(TwinNeuralNetwork(batch_size=192, EPOCHS=100))
     evaluation=MultiSessionOpenSet(paradigm=paradigm, datasets=lee)
     results=evaluation.process(pipeline)
     

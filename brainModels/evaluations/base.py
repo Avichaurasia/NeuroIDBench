@@ -2,9 +2,11 @@ import logging
 from abc import ABC, abstractmethod
 import os
 from sklearn.base import BaseEstimator
-from brainModels.datasets import BaseDataset
-from brainModels.preprocessing import BaseParadigm
-from brainModels.analysis import Results
+from ..datasets import BaseDataset
+from ..preprocessing import BaseParadigm
+from ..analysis import Results
+import warnings
+warnings.filterwarnings('ignore')
 import pandas as pd
 import numpy as np
 
@@ -66,7 +68,6 @@ class BaseEvaluation(ABC):
         self.mne_labels = mne_labels
 
         # check paradigm
-        # print("I am in base class of evualtion package", isinstance(datasets, BaseDataset))
         if not isinstance(paradigm, BaseParadigm):
             raise (ValueError("paradigm must be an Paradigm instance"))
         self.paradigm = paradigm
@@ -138,19 +139,16 @@ class BaseEvaluation(ABC):
         for _, pipeline in pipelines.items():
             if not (isinstance(pipeline, BaseEstimator)):
                 raise (ValueError("pipelines must only contains Pipelines " "instance"))
-        #df_final=pd.DataFrame()
         df_list=[]
         for dataset in self.datasets:
-            #df_temp=pd.DataFrame()
             log.info("Processing dataset: {}".format(dataset.code))
             results, results_path, scenario= self.evaluate(dataset, pipelines)
 
             # Return the results as a dataframe
-            get_results=self.results._add_results(results, results_path, scenario)
+            get_results=self.results._add_results(dataset, results, results_path, scenario)
 
             # Appending the results of each dataset to the list
             df_list.append(get_results)
-            #dataframe=df_temp.append(get_results, ignore_index=True)
 
         # Concatenating the results of all datasets
         df_final = pd.concat(df_list, ignore_index=True)

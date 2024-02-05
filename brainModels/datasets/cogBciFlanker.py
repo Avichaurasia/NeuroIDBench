@@ -77,7 +77,18 @@ class COGBCIFLANKER(BaseDataset):
             baseline_correction=True,
             )
     def _get_single_subject_data(self, subject):
-        """return data for a single subject"""
+        """return data for a single subejct
+
+        Parameters:
+        ----------
+        subject: int
+            subject number
+
+        Returns:
+        -------
+        sessions: dict
+            dictionary containing the data for a single subject in the format of {session_name: {run_name: (raw, events)}}  
+        """
         
         file_path_list = self.data_path(subject)
         sessions = {}
@@ -157,6 +168,20 @@ class COGBCIFLANKER(BaseDataset):
     
     def data_path(self, subject, path=None, force_update=False,
                   update_path=None, verbose=None): 
+        
+        """Get path to local copy of a subject data
+
+        Parameters:
+        ----------
+        subject: int
+            subject number
+            path: path to the directory where the data should be downloaded
+        
+        Returns:
+        -------
+        subject_paths: list
+            list of paths to the local copy of the subject data
+        """
         
         if subject not in self.subject_list:
             raise ValueError("Invalid subject number")

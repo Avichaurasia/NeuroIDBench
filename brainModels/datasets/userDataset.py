@@ -15,6 +15,29 @@ import logging
 log = logging.getLogger(__name__)
 
 class USERDATASET(BaseDataset): 
+
+    """
+    User Dataset
+
+    .. admonition:: Dataset summary
+
+    This is the interface developed to allow users to load their own dataset.
+    The dataset should be organized in the following way:
+    - A main directory containing subdirectories for each subject
+    - Each subject directory should contain subdirectories for each session
+    - Each session directory should contain the raw data files for that session
+    - The raw data files should be in a standarized format that MNE can read (e.g. .fif) 
+
+    Parameters
+    ----------
+    dataset_path: str
+        Local System Path to the main directory containing the dataset
+    rejection_threshold: float
+        Threshold for rejection of bad channels
+    baseline_correction: bool
+        Whether to apply baseline correction to the data
+    """
+
     def __init__(self):
         super().__init__(
             subjects=list(range(1, 1001)),
@@ -30,7 +53,20 @@ class USERDATASET(BaseDataset):
             )
     
     def _get_single_subject_data(self, subject):
-        """return data for a single subject and session"""
+        """
+        Function to get single subject data
+
+        Parameters:
+        ----------
+        subject: int
+            subject number
+
+        Returns:
+        -------
+        sessions: dict
+            dictionary containing the data for a single subject in the format of {session_name: {run_name: (raw, events)}}
+
+        """
         
         file_path_list = self.data_path(subject)
         sessions = {}
@@ -53,13 +89,25 @@ class USERDATASET(BaseDataset):
                         except ValueError:
                             log.warning(f"No matching annotations in {raw.filenames}")
                             return
-                    #events = mne.find_events(raw, shortest_event=0, verbose=False)
                     sessions[session][run]=raw, events
         return sessions
          
     def data_path(self, subject, path=None, force_update=False,
                   update_path=None, verbose=None): 
-        "Get path to local copy of a subject data"
+        """
+        
+        Function to get the path to the data files for a given subject
+
+        Parameters:
+        ----------
+        subject: int
+            subject number
+            
+        Returns:
+        -------
+        subject_paths: dict
+            dictionary containing the paths to the local copy of the subject data
+        """
 
         if subject not in self.subject_list:
             raise ValueError("Invalid subject number")  

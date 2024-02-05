@@ -9,9 +9,7 @@ from .base import BaseDataset
 import mne
 import os
 
-#Lee2019_URL = "ftp://parrot.genomics.cn/gigadb/pub/10.5524/100001_101000/100542/"
 Lee2019_URL = "https://ftp.cngb.org/pub/gigadb/pub/10.5524/100001_101000/100542/"
-
 
 class Lee2019(BaseDataset):
     """Base dataset class for Lee2019"""
@@ -45,8 +43,26 @@ class Lee2019(BaseDataset):
     _scalings = dict(eeg=1e-6, emg=1e-6, stim=1)  # to load the signal in Volts
     
     def _make_raw_array(self, signal, ch_names, ch_type, sfreq, verbose=False):
+        """create mne raw array from data
+
+        Parameters:
+        ----------
+        signal: np.ndarray
+            signal data
+            ch_names: list
+            list of channel names
+            ch_type: str
+            channel type
+            sfreq: float
+            sampling frequency
+            verbose: bool
+
+        Returns:
+        -------
+        raw: mne.io.Raw
+            raw data
+        """
         ch_names = [np.squeeze(c).item() for c in np.ravel(ch_names)]
-        #print("len of channels: ", len(ch_names))
         if len(ch_names) != signal.shape[1]:
             raise ValueError
         info = create_info(
@@ -57,19 +73,27 @@ class Lee2019(BaseDataset):
         return raw
 
     def _get_single_run(self, data):
+        """return data for a single run
+
+        Parameters:
+        ----------
+        data: dict
+            dictionary containing the data for a single run
+
+        Returns:
+        -------
+        raw: mne.io.Raw
+            raw data
+        """
+
         sfreq = data["fs"].item()
         file_mapping = {c.item(): int(v.item()) for v, c in data["class"]}
         #self._check_mapping(file_mapping)
-
-        
-
+    
         # Create RawArray
         raw = self._make_raw_array(data["x"], data["chan"], "eeg", sfreq)
         montage = make_standard_montage("standard_1005")
         raw.set_montage(montage)
-
-        # Create EMG channels
-        #emg_raw = self._make_raw_array(data["EMG"], data["EMG_index"], "emg", sfreq)
 
         # Create stim chan
         event_times_in_samples = data["t"].squeeze()
@@ -87,7 +111,18 @@ class Lee2019(BaseDataset):
         return raw, events
     
     def _get_single_subject_data(self, subject):
-        """return data for a single subejct"""
+        """return data for a single subejct
+
+        Parameters:
+        ----------
+        subject: int
+            subject number
+
+        Returns:
+        -------
+        sessions: dict
+            dictionary containing the data for a single subject in the format of {session_name: {run_name: (raw, events)}}  
+        """
 
         sessions = {}
         file_path_list = self.data_path(subject)
@@ -109,6 +144,20 @@ class Lee2019(BaseDataset):
     def data_path(
         self, subject, path=None, force_update=False, update_path=None, verbose=None
     ):
+        """Get path to local copy of a subject data
+
+        Parameters:
+        ----------
+        subject: int
+            subject number
+            path: path to the directory where the data should be downloaded
+        
+        Returns:
+        -------
+        subject_paths: list
+            list of paths to the local copy of the subject data
+        """
+
         if subject not in self.subject_list:
             raise (ValueError("Invalid subject number"))
 
@@ -119,7 +168,6 @@ class Lee2019(BaseDataset):
             )
             data_path = dl.data_dl(url, self.code, path, force_update, verbose)
             self.dataset_path=os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(data_path))))))
-            #print(data_path)
             subject_paths.append(data_path)
 
         return subject_paths

@@ -110,7 +110,18 @@ class DummyP300Dataset(BaseDataset):
     # Function to get single subject data
             
     def _get_single_subject_data(self, subject):
-        """return data for a single subject"""
+        """return data for a single subject
+        Parameters:
+        ----------
+        subject: int
+            subject number
+
+        Returns:
+        -------
+        sessions: dict
+            dictionary containing the data for a single subject in the format of {session_name: {run_name: (raw, events)}}
+
+        """
         sessions = {}
         for session in range(1, self.n_sessions + 1):
             session_name = "session_" + str(session)

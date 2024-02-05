@@ -8,9 +8,19 @@ from pyeer.eer_info import get_eer_stats
 import pandas as pd
 
 class Scores():
-    def _calculate_average_scores(eer_list, frr_1_far_list, frr_01_frr_list, frr_001_frr_list):
+    def _calculate_average_scores(eer_list, frr_1_far_list, frr_01_frr_list, frr_001_frr_list, auc_list, tpr_list, mean_fpr):
         """Calculating average scores like mean accuracy, mean auc, mean eer, mean tpr, tpr_upper, tpr_lower, std_auc
         for all k-folds. The average scores are calculated for each subject"""
+
+        # Averaging mean TPR
+        mean_tpr=np.mean(tpr_list,axis=0)
+        mean_tpr[-1] = 1.0
+
+        # Average AUC
+        mean_auc = metrics.auc(mean_fpr, mean_tpr)
+
+        # Standard deviation of AUC
+        std_auc=np.std(auc_list, axis=0)
 
         # Average EER
         mean_eer=np.mean(eer_list, axis=0)
@@ -19,7 +29,7 @@ class Scores():
         mean_frr_1_far=np.mean(frr_1_far_list, axis=0)
         mean_frr_01_far=np.mean(frr_01_frr_list, axis=0)
         mean_frr_001_far=np.mean(frr_001_frr_list, axis=0)
-        return (mean_eer, mean_frr_1_far, mean_frr_01_far, mean_frr_001_far)
+        return (mean_eer, mean_frr_1_far, mean_frr_01_far, mean_frr_001_far, mean_tpr, mean_auc)
         
     def _calculate_scores(y_prob, y_test, mean_fpr):
         """Calculating scores like tpr, fpr, eer, inter_tpd for each k-fold"""
@@ -30,25 +40,24 @@ class Scores():
         inter_tpr=np.interp(mean_fpr, fpr, tpr)
         inter_tpr[0] = 0.0
 
-        # Calculating Area under Curve for each k-fold
-        #auc=metrics.auc(fpr, tpr)
+        #Calculating Area under Curve for each k-fold
+        auc=metrics.auc(fpr, tpr)
         
         # Calculating Equal Error Rate for each k-fold
         eer = brentq(lambda x : 1. - x - interp1d(mean_fpr, inter_tpr)(x), 0., 1.)
 
         # Threshold for Equal Error Rate
-        #eer_thresh = interp1d(fpr, thresholds)(eer)
         frr_1_far = 1-inter_tpr[1000]
         frr_01_far = 1-inter_tpr[100]
         frr_001_far = 1-inter_tpr[10]
-        return (eer, frr_1_far, frr_01_far, frr_001_far)     
+        return (eer, frr_1_far, frr_01_far, frr_001_far, auc, inter_tpr)     
     
     def _calculate_siamese_scores(true_lables, predicted_scores):
         mean_fpr=np.linspace(0, 1, 100000)
         fpr, tpr, thresholds=metrics.roc_curve(true_lables, predicted_scores, pos_label=1)
         inter_tpr=np.interp(mean_fpr, fpr, tpr)
         inter_tpr[0]=0.0
-        #auc=metrics.auc(fpr, tpr)
+        auc=metrics.auc(fpr, tpr)
         eer = brentq(lambda x : 1. - x - interp1d(mean_fpr, inter_tpr)(x), 0., 1.)
         frr_1_far = 1-inter_tpr[1000]
         frr_01_far = 1-inter_tpr[100]
@@ -65,7 +74,7 @@ class Scores():
         # # False Rejection rate at 1% False Acceptance rate
         # fmr100= stats_a.fmr100
         # fmr1000= stats_a.fmr1000
-        return (eer, frr_1_far, frr_01_far, frr_001_far)  
+        return (eer, frr_1_far, frr_01_far, frr_001_far, inter_tpr, auc)  
     
     
 

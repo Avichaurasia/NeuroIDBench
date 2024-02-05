@@ -136,20 +136,15 @@ class MultiSessionCloseSet(BaseEvaluation):
                 y_pred=model.predict(X_test)
                 y_pred_proba=model.predict_proba(X_test)[:,-1]
 
-                # calculating auc, eer, eer_threshold, fpr, tpr, thresholds for each k-fold
-                #auc, eer, eer_theshold, inter_tpr, tpr, fnr, frr_1_far=score._calculate_scores(y_pred_proba,y_test, mean_fpr)
-
-                eer, frr_1_far, frr_01_far, frr_001_far=score._calculate_scores(y_pred_proba,y_test, mean_fpr)
-                #accuracy_list.append(accuracy_score(y_test,y_pred))
-                #auc_list.append(auc)
+                eer, frr_1_far, frr_01_far, frr_001_far , auc, inter_tpr=score._calculate_scores(y_pred_proba,y_test, mean_fpr)
+                auc_list.append(auc)
                 eer_list.append(eer)
-                #tpr_list.append(inter_tpr)
-                #fnr_list.append(fnr)
+                tpr_list.append(inter_tpr)
                 frr_1_far_list.append(frr_1_far)
                 frr_01_far_list.append(frr_01_far)
                 frr_001_far_list.append(frr_001_far)
 
-        average_scores=score._calculate_average_scores(eer_list, frr_1_far_list, frr_01_far_list, frr_001_far_list)
+        average_scores=score._calculate_average_scores(eer_list, frr_1_far_list, frr_01_far_list, frr_001_far_list, auc_list, tpr_list, mean_fpr)
         return average_scores
 
 
@@ -173,9 +168,6 @@ class MultiSessionCloseSet(BaseEvaluation):
         df_final=pd.DataFrame()
         for feat in range(0, len(features)-1):
             df=features[feat].get_data(dataset, subject_dict)
-
-            #print("length of features", len(df))
-            #print("subject sample count", df['Subject'].value_counts())
             df_final = pd.concat([df_final, df], axis=1)
 
         if df_final.columns.duplicated().any():
@@ -235,7 +227,7 @@ class MultiSessionCloseSet(BaseEvaluation):
             close_set_scores=self._authenticate_single_subject_close_set(X,labels, subject_ids, features, session_groups=session_groups)
             #mean_accuracy, mean_auc, mean_eer, mean_tpr, tprs_upper, tprr_lower, std_auc, mean_frr_1_far=close_set_scores
 
-            mean_eer, mean_frr_1_far, mean_frr_01_far, mean_frr_001_far=close_set_scores
+            mean_eer, mean_frr_1_far, mean_frr_01_far, mean_frr_001_far, mean_tpr, mean_auc=close_set_scores
             res_close_set = {
             # "time": duration / 5.0,  # 5 fold CV
             'evaluation': 'Multi Session',
@@ -243,24 +235,16 @@ class MultiSessionCloseSet(BaseEvaluation):
             "dataset": dataset.code,
             "pipeline": key,
             "subject": subject,
-            #"session": session,
             "frr_1_far": mean_frr_1_far,
             "frr_0.1_far": mean_frr_01_far,
             "frr_0.01_far": mean_frr_001_far,
-            #"accuracy": mean_accuracy,
-           # "auc": mean_auc,
+           "auc": mean_auc,
             "eer": mean_eer,
-           # "tpr": mean_tpr,
-            #"tprs_upper": tprs_upper,
-            #"tprs_lower": tprr_lower,
-           # "std_auc": std_auc,
+           "tpr": mean_tpr,
             "n_samples": len(df_subj)
-            #"n_samples": len(data)  # not training sample
-            #"n_channels": data.columns.size
                 }
             #print(res_close_set)
             results_close_set.append(res_close_set)
-    #print(results_close_set)
         return results_close_set
 
     def _evaluate(self, dataset, pipelines):
@@ -282,21 +266,14 @@ class MultiSessionCloseSet(BaseEvaluation):
         """
 
         X, subject_dict, metadata=self.paradigm.get_data(dataset)
-
-        # if (dataset.code=='Lee2019_ERP'):
-        #     X, subject_dict, metadata=self.paradigm.lee_get_data(dataset)
-
-        # else:
-        #     X, subject_dict, metadata=self.paradigm.get_data(dataset)
         results_pipeline=[]
         for key, features in pipelines.items():   
             if (key.upper()=='TNN'):
                 
-                # #print("Avinash")
-                # # If the key is Siamese, then we use the deep learning method
-                # results=self.deep_learning_method(X, dataset, metadata, key, features)
-                # results_pipeline.append(results) 
-                raise AssertionError("TNN pipeline is not supported for multi-session evaluation in close-set scenario")
+                #print("Avinash")
+                # If the key is Siamese, then we use the deep learning method
+                results=self.deep_learning_method(X, dataset, metadata, key, features)
+                results_pipeline.append(results) 
             else:
 
                 # If the key is not Siamese, then we use the traditional authentication methods
@@ -355,29 +332,7 @@ class MultiSessionCloseSet(BaseEvaluation):
         # Filter out rows with invalid subject and session combinations
         metadata = metadata[~metadata.set_index(['subject', 'session']).index.isin(invalid_subject_sessions.set_index(['subject', 'session']).index)]  
         return metadata
-    
-    # def _valid_subject_session(self, df, subject, session):
-    
-    #     """
-    #     Check if a subject has the required session for single-session evaluation.
-
-    #     Parameters:
-    #         - df: The data for the subject.
-    #         - subject: The subject to be evaluated.
-    #         - session: The session to be evaluated.
-
-    #     Returns:
-    #         - valid: A boolean indicating if the subject has the required session.
-    #     """
-
-    #     df_subject=df[df['subject']==subject]
-    #     sessions=df_subject.session.values
-    #     if (session not in sessions):
-    #         return False
-        
-    #     else:
-    #         return True
-        
+         
     def _valid_sessions(self, df, subject, dataset):
         df_subject=df[df['subject']==subject]
         #print(df_subject['session'].unique())

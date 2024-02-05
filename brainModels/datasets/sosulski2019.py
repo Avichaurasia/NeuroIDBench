@@ -2,17 +2,14 @@ import glob
 import os
 import re
 import zipfile
-
 import mne
 from pathlib import Path
 from . import download as dl
 from .base import BaseDataset
 
-
 SPOT_PILOT_P300_URL = (
     "https://freidok.uni-freiburg.de/fedora/objects/freidok:154576/datastreams"
 )
-
 
 class Sosulski2019(BaseDataset):
     """P300 dataset from initial spot study.
@@ -141,7 +138,19 @@ class Sosulski2019(BaseDataset):
         return raw, events
 
     def _get_single_subject_data(self, subject):
-        """return data for a single subject"""
+
+        """return data for a single subejct
+
+        Parameters:
+        ----------
+        subject: int
+            subject number
+
+        Returns:
+        -------
+        sessions: dict
+            dictionary containing the data for a single subject in the format of {session_name: {run_name: (raw, events)}}  
+        """
 
         file_path_list = self.data_path(subject)
         sessions = {}
@@ -152,9 +161,6 @@ class Sosulski2019(BaseDataset):
             # trial = file_exp_info["trial"]
             if soa == 60 and not self.load_soa_60:
                 continue
-            # if self.use_soas_as_sessions:
-            #     session_name = f"session_1_soa_{soa}"
-            # else:
             session_name = "session_1"
 
             if session_name not in sessions.keys():
@@ -168,6 +174,21 @@ class Sosulski2019(BaseDataset):
     def data_path(
         self, subject, path=None, force_update=False, update_path=None, verbose=None
     ):
+        
+        """Get path to local copy of a subject data
+
+        Parameters:
+        ----------
+        subject: int
+            subject number
+            path: path to the directory where the data should be downloaded
+        
+        Returns:
+        -------
+        subject_paths: list
+            list of paths to the local copy of the subject data
+        """
+
         if subject not in self.subject_list:
             raise (ValueError("Invalid subject number"))
 

@@ -3,11 +3,8 @@ Utils for easy database selection
 """
 
 import inspect
-
 import brainModels.datasets as db
 from .base import BaseDataset
-
-
 
 dataset_list = []
 for ds in inspect.getmembers(db, inspect.isclass):
@@ -53,7 +50,6 @@ def dataset_search(  # noqa: C901
         list or set of channels
     """
 
-    #print("avinash")
     channels = set(channels)
     out_data = []
     if events is not None and has_all_events:
@@ -95,7 +91,6 @@ def dataset_search(  # noqa: C901
                         skip_dataset = True
         if keep_event_dict and not skip_dataset:
             if len(channels) > 0:
-                #print("before dataset", d)
                 s1 = d.get_data([1])[1]
                 sess1 = s1[list(s1.keys())[0]]
                 raw = sess1[list(sess1.keys())[0]]
@@ -103,7 +98,6 @@ def dataset_search(  # noqa: C901
                 if channels <= set(raw.info["ch_names"]):
                     out_data.append(d)
             else:
-                #print("after dataset", d)
                 out_data.append(d)
     return out_data
 

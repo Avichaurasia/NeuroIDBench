@@ -1,5 +1,4 @@
-from ..evaluations import BaseEvaluation
-from brainModels.analysis.results import Results as res
+from ..analysis.results import Results as res
 import matplotlib.pyplot as plt
 import numpy as np
 from matplotlib.ticker import ScalarFormatter, AutoMinorLocator
@@ -8,6 +7,7 @@ warnings.filterwarnings('ignore')
 import logging
 import os
 from mne import get_config, set_config
+import pandas as pd
 from mne.datasets.utils import _get_path
 import seaborn as sns
 
@@ -55,7 +55,9 @@ class Plots():
             self.plot_path = plot_path
         
     
-    def _roc_curve_single_dataset(self, data=None, evaluation_type=None, dataset=None):
+    #def _roc_curves(self, data=None, evaluation_type=None, dataset=None):
+    
+    def _plot_roc(self, data):
 
         """
         Generate and save ROC curves for a single dataset and evaluation type.
@@ -70,50 +72,53 @@ class Plots():
         
         """
 
-        file_path=os.path.join(self.plot_path, "Single_dataset_Roc_curves")
-        if not os.path.exists(file_path):
-            os.makedirs(file_path)
-
-        grouped_df = data.groupby(['dataset', 'pipeline']).agg({
-            'accuracy': 'mean',
-            'auc': 'mean',
-            'eer': 'mean',
-            'tpr': lambda x: np.mean(np.vstack(x), axis=0),  # average across numpy arrays
-            'tprs_lower': lambda x: np.mean(np.vstack(x), axis=0),  # average across numpy arrays
-            'tprs_upper': lambda x: np.mean(np.vstack(x), axis=0),  # average across numpy arrays
-            'std_auc': 'mean',
-            'n_samples': 'mean'
+        # Assert if data is not a DataFrame
+        if not isinstance(data, pd.DataFrame):
+            raise ValueError("data must be a DataFrame")
+        
+        grouped_df = data.groupby(['evaluation','eval Type','dataset', 'pipeline']).agg({
+           'tpr': lambda x: np.mean(np.vstack(x), axis=0),
+            'auc': lambda x: f'{np.mean(x):.3f} ± {np.std(x):.3f}',
              }).reset_index()
         
-        fig, ax = plt.subplots(figsize=(9,6))
-        for i in range(len(grouped_df)):
-            name = grouped_df['pipeline'][i]
-            fpr=np.linspace(0, 1, 100)
-            auc = grouped_df['auc'][i]
-            std_auc=grouped_df['std_auc'][i]
-            tpr = grouped_df['tpr'][i]
-            
-            # Plot the ROC curve
-            ax.plot(fpr, tpr,label=name+" "+r'(AUC = %0.3f $\pm$ %0.3f)' % (auc, std_auc),
-                    lw=2, alpha=.8)
-            
-            # Add labels and legend
-            plt.title("ROC Curve: "+evaluation_type,fontsize=12)
-            plt.xlabel('False Positive Rate', fontsize=12)
-            plt.ylabel('True Positive Rate', fontsize=12)
-            ax.yaxis.set_major_formatter(ScalarFormatter())
-            ax.yaxis.major.formatter._useMathText = True
-            ax.legend(frameon=True, loc='best',ncol=1, handlelength=2, framealpha=1, edgecolor="0.8", fancybox=False)
-            plt.tight_layout()
-            plt.grid(True, ls="--", lw=0.8)
-        plt.plot([0, 1], [0, 1], "k--", color='b',label="chance level (AUC = 0.5)")
-        fname=os.path.join(file_path, dataset.code+"_"+evaluation_type+'.pdf')
-        plt.savefig(fname, dpi=300, bbox_inches='tight')
+        # Get the unique pipelines names
+        grouped_df.rename(columns={'eval Type':'Scenario'}, inplace=True)
+        grouped_df['pipeline'] = grouped_df['pipeline'].apply(lambda x: x.split('+')[-1])        
+        evaluation_type = grouped_df['evaluation'].values[0]     
+        #fig, ax = plt.subplots(figsize=(9,6))
+
         
-    def _eer_single_dataset(self, data=None, evaluation_type=None, dataset=None):
+        for scenario in grouped_df['Scenario'].unique():
+            fig, ax = plt.subplots(figsize=(6,5))
+            scenario_df=grouped_df[grouped_df['Scenario']==scenario]
+            scenario_df=scenario_df.reset_index()
+            #display(grouped_df)
+            for i in range(len(scenario_df)):
+                name = scenario_df['pipeline'][i]
+                fpr=np.linspace(0, 1, 100000)
+                auc = scenario_df['auc'][i]
+                dataset=scenario_df['dataset'][i]
+                tpr = scenario_df['tpr'][i]
+
+                # Plot the ROC curve
+                ax.plot(fpr, tpr,label=name+" "+"(AUC = "+auc+")", 
+                        lw=2, alpha=.6)
+                # Add labels and legend
+                plt.title("ROC: "+dataset.replace(" ","").upper()+" ("+scenario+")",fontsize=14)
+                plt.xlabel('FMR', fontsize=14)
+                plt.ylabel('1-FNMR', fontsize=14)
+                ax.yaxis.set_major_formatter(ScalarFormatter())
+                ax.yaxis.major.formatter._useMathText = True
+                ax.legend(frameon=True, loc='best',ncol=1, handlelength=3, framealpha=1, edgecolor="0.8", fancybox=False)
+                plt.tight_layout()
+                plt.grid(True, ls="--", lw=0.8)
+            plt.plot([0, 1], [0, 1], "k--", color='b',label="chance level (AUC = 0.5)")
+            plt.show()   
+        
+    def _plot_eer(self, data):
 
         """
-        Generate and save EER (Equal Error Rate) curves for a single dataset and evaluation type.
+        Generate the EER (Equal Error Rate) curves for a single dataset.
 
         parameters:
         - data: Data containing evaluation results.
@@ -124,125 +129,39 @@ class Plots():
         - None
         """
 
-        file_path=os.path.join(self.plot_path, "Single_dataset_EER_curves")
-        if not os.path.exists(file_path):
-            os.makedirs(file_path)
-
-        grouped_df = data.groupby(['dataset', 'pipeline']).agg({
-            'accuracy': 'mean',
-            'auc': 'mean',
-            'eer': 'mean',
-            'tpr': lambda x: np.mean(np.vstack(x), axis=0),  # average across numpy arrays
-            'tprs_lower': lambda x: np.mean(np.vstack(x), axis=0),  # average across numpy arrays
-            'tprs_upper': lambda x: np.mean(np.vstack(x), axis=0),  # average across numpy arrays
-            'std_auc':'mean',
-            'n_samples': 'mean'
+        grouped_df = data.groupby(['evaluation','eval Type','dataset', 'pipeline']).agg({
+            'eer': 'mean'
              }).reset_index()
         
         # Convert eer to %eer for plotting
         grouped_df['eer'] = grouped_df['eer']*100
 
-        # Plotting the bar graph for %eer across pipelines with %eer on x-axis, pipelines on y-axis and %eer 
-        # as bar height with maximum and minimum values
-        fig, ax = plt.subplots(figsize=(9,6))
-        for i in range(len(grouped_df)):
-            name = grouped_df['pipeline'][i]
-            eer = grouped_df['eer'][i]
-            # Plot the EER curve
-            ax.barh(name, eer, color='b', lw=2, alpha=.8)
-            # Add labels and legend
-            plt.title("EER Curve: "+evaluation_type,fontsize=12)
-            plt.xlabel('Percentage EER', fontsize=12)
-            plt.ylabel('Pipelines', fontsize=12)
-            ax.xaxis.set_major_formatter(ScalarFormatter())
-            ax.xaxis.major.formatter._useMathText = True
-            ax.legend(frameon=True, loc='best',ncol=1, handlelength=2, framealpha=1, edgecolor="0.8", fancybox=False)
-            plt.tight_layout()
-            plt.grid(True, ls="--", lw=0.8)
-        fname=os.path.join(file_path, dataset.code+"_"+evaluation_type+'.pdf')
-        plt.savefig(fname, dpi=300, bbox_inches='tight')
+        # Extracting just the algorithm name
+        grouped_df['pipeline'] = grouped_df['pipeline'].apply(lambda x: x.split('+')[-1])
 
+        # Pivot the DataFrame to plot bars for close-set and open-set EER
+        pivot_df = grouped_df.pivot(index='pipeline', columns='eval Type', values='eer')
+
+        # Plotting the bar chart
+        ax = pivot_df.plot(kind='bar', figsize=(10, 6))
+
+        # Adding values on top of bars
+        # Adding values on top of bars with adjusted text size
+        for p in ax.patches:
+            ax.annotate(f"{p.get_height():.2f}", (p.get_x() * 1.010, p.get_height() * 1.010), fontsize=8)
+            
+        plt.xlabel('Algorithm')
+        plt.ylabel('%EER')
+        plt.title('EER: dataset '+grouped_df['dataset'][0].replace(" ","").upper())
+        plt.legend(title='Scenario')
+        plt.grid(True, ls="--", lw=0.8)
+        plt.xticks(rotation=45)
+        plt.tight_layout()
+        plt.show()
+
+       
     
-    def _eer_graph_single_dataset_across_evaluations(self, data=None):
-
-        """
-        Generate and save EER graphs for a single dataset across multiple evaluation types.
-
-        Parameters:
-        - data: Data containing evaluation results for different evaluation types (e.g., close-set and open-set).
-
-        Returns:
-        - None
-        """
-
-        eer_path=os.path.join(self.plot_path, "EER_across_evaluations")
-        if not os.path.exists(eer_path):
-            os.makedirs(eer_path)
-
-        # Raise value error if evaluation_type is not a list of length 2
-        if not isinstance(data, list) or len(data)>1:
-            raise ValueError("data must be a list")
-        
-        else:
-            # Get the eer values for the two evaluation types
-            close_set_df = data[0].groupby(['dataset', 'pipeline']).agg({
-                'accuracy': 'mean',
-                'auc': 'mean',
-                'eer': 'mean',
-                'tpr': lambda x: np.mean(np.vstack(x), axis=0),  # average across numpy arrays
-                'tprs_lower': lambda x: np.mean(np.vstack(x), axis=0),  # average across numpy arrays
-                'tprs_upper': lambda x: np.mean(np.vstack(x), axis=0),  # average across numpy arrays
-                'std_auc':'mean',
-                'n_samples': 'mean'
-                }).reset_index()
-            
-            open_set_df = data[1].groupby(['dataset', 'pipeline']).agg({
-                'accuracy': 'mean',
-                'auc': 'mean',
-                'eer': 'mean',
-                'tpr': lambda x: np.mean(np.vstack(x), axis=0),  # average across numpy arrays
-                'tprs_lower': lambda x: np.mean(np.vstack(x), axis=0),  # average across numpy arrays
-                'tprs_upper': lambda x: np.mean(np.vstack(x), axis=0),  # average across numpy arrays
-                'std_auc':'mean',
-                'n_samples': 'mean'
-                }).reset_index()
-            
-            # Convert eer to %eer for plotting
-            close_set_df['eer'] = close_set_df['eer']*100
-            open_set_df['eer'] = open_set_df['eer']*100   
-
-            # create a list of 12 pipelines for both open-set and close-set
-            pipelines = list(close_set_df['pipeline'].unique()[:12])
-
-            # get the EER values for the open-set pipelines
-            eer_open = open_set_df['eer'].iloc[:12]
-            dataset_name=close_set_df['dataset'].unique()[0]
-
-            # get the EER values for the close-set pipelines
-            eer_close = close_set_df['eer'].iloc[:12]
-
-            # set the width of the bars
-            bar_width = 0.35
-
-            # set the position of the bars on the x-axis
-            r1 = np.arange(len(pipelines))
-            r2 = [x + bar_width for x in r1]
-
-            # plot the bars for open-set and close-set
-            fig, ax = plt.subplots(figsize=(10, 6))
-            ax.bar(r1, eer_open, color='b', width=bar_width, edgecolor='white', label='Open-set')
-            ax.bar(r2, eer_close, color='g', width=bar_width, edgecolor='white', label='Close-set')
-
-            # add labels and title
-            plt.title("Percentage EER: "+dataset_name, fontsize=12)
-            plt.xlabel('Pipelines', fontsize=12)
-            plt.xticks([r + bar_width / 2 for r in range(len(pipelines))], pipelines, fontsize=10, rotation=45, ha='right')
-            plt.ylabel('Percentage EER', fontsize=12)
-
-            # add legend
-            plt.legend()
-            fname=os.path.join(eer_path, dataset_name+"_"+"_EER_"+".pdf")
-            plt.savefig(fname, dpi=300, bbox_inches='tight')
+    
         
     
     

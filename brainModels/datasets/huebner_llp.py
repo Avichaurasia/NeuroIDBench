@@ -5,7 +5,6 @@ from pathlib import Path
 import os
 import mne
 import numpy as np
-
 from . import download as dl
 from .base import BaseDataset
 
@@ -68,11 +67,6 @@ class _BaseVisualMatrixSpellerDataset(BaseDataset, ABC):
                 raw_slice_offset=self.raw_slice_offset,
                 verbose=None,
             )
-
-            # if self.use_blocks_as_sessions:
-            #     session_name = f"{session_name}_block_{block_idx}"
-            # else:
-            #     session_name = f"{session_name}"
 
             session_name = "session_1"
             if session_name not in sessions.keys():
@@ -265,6 +259,24 @@ def _read_raw_llp_study_data(vhdr_fname, raw_slice_offset, verbose=None):
 
 
 def _create_annotations_from(marker_arr, onset_arr, raw_bvr):
+    """
+    Create annotations from the marker array and onset array.
+
+    Parameters
+    ----------
+    marker_arr: np.ndarray
+        the marker array.
+    onset_arr: np.ndarray
+        the onset array.
+    raw_bvr: mne.io.Raw
+        the raw BVR data.
+
+    Returns
+    -------
+    mne.Annotations
+        the annotations of the EEG recording.
+        
+    """
     default_bvr_marker_duration = raw_bvr.annotations[0]["duration"]
 
     onset = onset_arr / 1e3  # convert onset in seconds to ms
@@ -277,6 +289,20 @@ def _create_annotations_from(marker_arr, onset_arr, raw_bvr):
 
 
 def _parse_events(raw_bvr):
+
+    """
+    parse the events from the raw BVR data.
+
+    Parameters
+    ----------
+    raw_bvr: mne.io.Raw
+
+    Returns
+    -------
+    np.ndarray
+        the events of the EEG recording.
+
+    """
     stimulus_pattern = re.compile("(Stimulus/S|Optic/O) *([0-9]+)")
 
     def parse_marker(desc):
@@ -295,11 +321,40 @@ def _parse_events(raw_bvr):
 
 
 def _find_single_trial_start_end_idx(events):
+    """
+    Find the indices of the single trial start and end events.
+
+    Parameters
+    ----------
+    events: np.ndarray
+        the events of the EEG recording.
+
+    Returns
+    -------
+    list
+        list of onsets of the single trials.
+    
+    """
     trial_start_end_markers = [21, 22, 10]
     return np.where(np.isin(events[:, 2], trial_start_end_markers))[0]
 
 
 def _extract_target_non_target_description(events):
+
+    """
+    Extract the target and non-target description from the events.
+
+    Parameters
+    ----------
+    events: np.ndarray
+        the events of the EEG recording.
+
+    Returns
+    -------
+    list
+        list of onsets of the single trials.
+    
+    """
     single_trial_start_end_idx = _find_single_trial_start_end_idx(events)
 
     n_events = single_trial_start_end_idx.size - 1
@@ -330,6 +385,19 @@ def _extract_target_non_target_description(events):
 
 
 def _find_epoch_onset(epoch_events):
+    """
+    Find the onset of a single trial.
+
+    Parameters
+    ----------
+    epoch_events: np.ndarray
+        the events of a single trial.
+
+    Returns
+    -------
+    the onset time of the trial.
+    
+    """
     optical_idx = epoch_events[:, 2] == OPTICAL_MARKER_CODE
     stimulus_onset_time = epoch_events[optical_idx, 0]
 
@@ -350,5 +418,20 @@ def _find_epoch_onset(epoch_events):
 
 
 def _single_trial_contains_target(trial_events):
+
+    """
+    Check if a single trial contains a target event.
+
+    Parameters
+    ----------
+    trial_events: np.ndarray
+        the events of a single trial.
+
+    Returns
+    -------
+    bool
+        True if the trial contains a target event.
+    
+    """
     trial_markers = trial_events[:, 2]
     return np.any((trial_markers > 100) & (trial_markers <= 142))

@@ -104,14 +104,10 @@ class MultiSessionOpenSet(BaseEvaluation):
             print("subjects in train", np.unique(y_train))
             print("subjects in test", np.unique(y_test))
             train_sessions, test_sessions=sessions[train_index], sessions[test_index]
-            # print("sessions in train", np.unique(train_sessions))
-            # print("sessions in train", np.unique(test_sessions))
-
 
             scaler = StandardScaler()
             x_train = scaler.fit_transform(x_train.reshape((x_train.shape[0], -1))).reshape(x_train.shape)
             x_test = scaler.transform(x_test.reshape((x_test.shape[0], -1))).reshape(x_test.shape)
-            #tf.keras.backend.clear_session()
             if (siamese.user_siamese_path is None):
 
                 # If the user siamese path is not provided, then we utilize the default siamese network
@@ -204,22 +200,19 @@ class MultiSessionOpenSet(BaseEvaluation):
             predicted_scores=np.array(result[:,0])
             predicted_scores=predicted_scores.astype(np.float64)
             # print("predicted scores", predicted_scores)
-            eer, frr_1_far, frr_01_far, frr_001_far=score._calculate_siamese_scores(true_lables, predicted_scores)
+            eer, frr_1_far, frr_01_far, frr_001_far, inter_tpr, auc=score._calculate_siamese_scores(true_lables, predicted_scores)
             res_open_set = {
             'evaluation': 'Multi Session',
                 "eval Type": "Open Set",
                 "dataset": dataset.code,
                 "pipeline": key,
                 "subject": sub,
-                #"session": session,
                 "frr_1_far": frr_1_far,
                 "frr_0.1_far": frr_01_far,
                 "frr_0.01_far": frr_001_far,
-                #"accuracy": mean_accuracy,
-               # "auc": auc,
+               "auc": auc,
                 "eer": eer,
-                #"tpr": inter_tpr,
-                #"std_auc": std_auc,
+                "tpr": inter_tpr,
                 "n_samples": len(X_)  # not training sample
                 #"n_channels": data.columns.size
                 }
@@ -342,17 +335,17 @@ class MultiSessionOpenSet(BaseEvaluation):
 
                 # calculating auc, eer, eer_threshold, fpr, tpr, thresholds for each k-fold
                 #auc, eer, eer_theshold, inter_tpr, tpr, fnr, frr_1_far=score._calculate_scores(y_pred_proba,y_test, mean_fpr)
-                eer, frr_1_far, frr_01_far, frr_001_far=score._calculate_scores(y_pred_proba,y_test, mean_fpr)
+                eer, frr_1_far, frr_01_far, frr_001_far, auc, inter_tpr=score._calculate_scores(y_pred_proba,y_test, mean_fpr)
                 #accuracy_list.append(accuracy_score(y_test,y_pred))
-                #auc_list.append(auc)
+                auc_list.append(auc)
                 eer_list.append(eer)
-                #tpr_list.append(inter_tpr)
+                tpr_list.append(inter_tpr)
                 #fnr_list.append(fnr)
                 frr_1_far_list.append(frr_1_far)
                 frr_01_far_list.append(frr_01_far)
                 frr_001_far_list.append(frr_001_far)
 
-        average_scores=score._calculate_average_scores(eer_list, frr_1_far_list, frr_01_far_list, frr_001_far_list)
+        average_scores=score._calculate_average_scores(eer_list, frr_1_far_list, frr_01_far_list, frr_001_far_list, auc_list, tpr_list, mean_fpr)
         return average_scores
 
         # print("=======================================================================================================")
@@ -379,9 +372,6 @@ class MultiSessionOpenSet(BaseEvaluation):
         df_final=pd.DataFrame()
         for feat in range(0, len(features)-1):
             df=features[feat].get_data(dataset, subject_dict)
-
-            #print("length of features", len(df))
-            #print("subject sample count", df['Subject'].value_counts())
             df_final = pd.concat([df_final, df], axis=1)
 
         if df_final.columns.duplicated().any():
@@ -441,7 +431,7 @@ class MultiSessionOpenSet(BaseEvaluation):
                 
             open_set_scores=self._authenticate_single_subject_open_set(X,labels, subject_ids, features, session_groups=session_groups)
             #mean_accuracy, mean_auc, mean_eer, mean_tpr, tprs_upper, tprr_lower, std_auc, mean_frr_1_far=open_set_scores
-            mean_eer, mean_frr_1_far, mean_frr_01_far, mean_frr_001_far=open_set_scores
+            mean_eer, mean_frr_1_far, mean_frr_01_far, mean_frr_001_far, mean_tpr, mean_auc=open_set_scores
 
             res_open_set = {
             # "time": duration / 5.0,  # 5 fold CV
@@ -455,15 +445,10 @@ class MultiSessionOpenSet(BaseEvaluation):
             "frr_0.1_far": mean_frr_01_far,
             "frr_0.01_far": mean_frr_001_far,
             #"accuracy": mean_accuracy,
-            #"auc": mean_auc,
+            "auc": mean_auc,
             "eer": mean_eer,
-            #"tpr": mean_tpr,
-            #"tprs_upper": tprs_upper,
-            #"tprs_lower": tprr_lower,
-            #"std_auc": std_auc,
+            "tpr": mean_tpr,
             "n_samples": len(df_subj)
-            #"n_samples": len(data)  # not training sample
-            #"n_channels": data.columns.size
                 }
             results_open_set.append(res_open_set)
 
@@ -491,15 +476,9 @@ class MultiSessionOpenSet(BaseEvaluation):
         if not self._valid_number_of_subjects(metadata):
             raise AssertionError("Dataset should have at least 4 subjects")
         
-        # if (dataset.code=='Lee2019_ERP'):
-        #     X, subject_dict, metadata=self.paradigm.lee_get_data(dataset)
-
-        # else:
-        #     X, subject_dict, metadata=self.paradigm.get_data(dataset)
-        #print("type of metadata", type(metadata))
         results_pipeline=[]
         for key, features in pipelines.items():   
-            if (key.upper()=='TNN'):
+            if (key.upper()=='SIAMESE'):
 
                 # If the key is Siamese, then we use the deep learning method
                 results=self.deep_learning_method(X, dataset, metadata, key, features)
@@ -563,28 +542,6 @@ class MultiSessionOpenSet(BaseEvaluation):
         # Filter out rows with invalid subject and session combinations
         metadata = metadata[~metadata.set_index(['subject', 'session']).index.isin(invalid_subject_sessions.set_index(['subject', 'session']).index)]  
         return metadata
-    
-    # def _valid_subject_session(self, df, subject, session):
-    
-    #     """
-    #     Check if a subject has the required session for single-session evaluation.
-
-    #     Parameters:
-    #         - df: The data for the subject.
-    #         - subject: The subject to be evaluated.
-    #         - session: The session to be evaluated.
-
-    #     Returns:
-    #         - valid: A boolean indicating if the subject has the required session.
-    #     """
-
-    #     df_subject=df[df['subject']==subject]
-    #     sessions=df_subject.session.values
-    #     if (session not in sessions):
-    #         return False
-        
-    #     else:
-    #         return True
         
     def _valid_sessions(self, df, subject, dataset):
         df_subject=df[df['subject']==subject]

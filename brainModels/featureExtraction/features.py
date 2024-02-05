@@ -209,7 +209,6 @@ class PowerSpectralDensity(Basepipeline):
                 #data_step = [features]
                 df_list.append(features)
         df_psd=pd.DataFrame(df_list)
-        #print(df_psd)
         return df_psd
     
     

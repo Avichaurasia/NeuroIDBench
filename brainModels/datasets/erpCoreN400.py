@@ -22,7 +22,7 @@ import pooch
 from pooch import file_hash, retrieve
 from requests.exceptions import HTTPError
 from . import download as dl
-from ..datasets.base import BaseDataset
+from .base import BaseDataset
 from collections import OrderedDict
 from mne.utils import _url_to_local_path, verbose
 import shutil
@@ -115,7 +115,18 @@ class ERPCOREN400(BaseDataset):
         return dlpath
 
     def _get_single_subject_data(self, subject):
-        """return data for a single subject"""
+        """return data for a single subejct
+
+        Parameters:
+        ----------
+        subject: int
+            subject number
+
+        Returns:
+        -------
+        sessions: dict
+            dictionary containing the data for a single subject in the format of {session_name: {run_name: (raw, events)}}  
+        """
 
         file_path_list = self.data_path(subject)
         sessions = {}
@@ -126,11 +137,6 @@ class ERPCOREN400(BaseDataset):
         raw.rename_channels(dict(FP1 = 'Fp1', FP2 = 'Fp2'))
         raw.drop_channels(['HEOG_left', 'HEOG_right', 'VEOG_lower'])
         raw.set_montage('standard_1020')
-
-        # events, event_ids = mne.events_from_annotations(raw,verbose=False)
-
-        # print("event id's", event_ids)
-        # print("events", events)
 
         description_dict = {'111' : 'Prime/Related/L1',
              '112' : 'Prime/Related/L2',
@@ -165,6 +171,20 @@ class ERPCOREN400(BaseDataset):
     
     def data_path(self, subject, path=None, force_update=False,
                   update_path=None, verbose=None): 
+           
+        """Get path to local copy of a subject data
+
+        Parameters:
+        ----------
+        subject: int
+            subject number
+            path: path to the directory where the data should be downloaded
+        
+        Returns:
+        -------
+        subject_paths: list
+            list of paths to the local copy of the subject data
+        """
         
         if subject not in self.subject_list:
             raise ValueError("Invalid subject number") 

@@ -5,9 +5,6 @@ import logging
 import mne
 import numpy as np
 import pandas as pd
-#from brainmodels.paradigms.base_old import BaseParadigm
-#from deeb.paradigms.erp import N400
-#from brainmodels.paradigms.n400 import N400
 from brainModels.preprocessing.erp import ERP
 from brainModels.datasets.brainInvaders15a import BrainInvaders2015a
 from brainModels.datasets.mantegna2019 import Mantegna2019
@@ -56,9 +53,6 @@ def _evaluate():
 
 
 if __name__ == '__main__':
-#    package = 'deeb.Evaluation'  # Change to your package/module name
-#    for importer, modname, ispkg in pkgutil.walk_packages(path=['/Users/avinashkumarchaurasia/Desktop/deeb/deeb/Evaluation'], prefix=package + '.'):
-#         print('Found submodule %s (is a package: %s)' % (modname, ispkg))
     print(sys.path)
     result= _evaluate()
     

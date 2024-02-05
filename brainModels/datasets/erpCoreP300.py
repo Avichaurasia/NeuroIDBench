@@ -39,7 +39,7 @@ class ERPCORENP300(BaseDataset):
         ================ ======= ======= ================ =============== =============== ===========
          Name             #Subj   #Chan   #Trials/class    Trials length   Sampling Rate   #Sessions
         ================ ======= ======= ================ =============== =============== ===========
-         ERP: N400          40      32        5 NT x 1 T         1s              1024Hz           1
+         ERPCORE: P300      40      32        5 NT x 1 T         1s              1024Hz           1
         ================ ======= ======= ================ =============== =============== ===========
 
         **Datasets Description**
@@ -47,18 +47,18 @@ class ERPCORENP300(BaseDataset):
         This dataset included 40 participants, consisting of 25 females and 15 males. 
         The participants were selected from the University of California, Davis community. 
         The mean age of the participants was 21.5 years, with a standard deviation of 2.87. 
-        The age range of the participants was between 18 and 30 years. A word pair judgment task 
-        was employed to elicit the N400 component in this task. Every experimental trial comprised a red prime 
-        word that was subsequently followed by a green target word. Participants were required 
-        to indicate whether the target word was semantically related or unrelated to the prime word.
+        The age range of the participants was between 18 and 30 years. This ERP task Utilized an active 
+        visual oddball task to evoke the P300 response. Randomly presented letters A, B, C, D, and E
+        with equal probabilities (p = .2 for each letter). Designated one letter as the target 
+        for a block, and participants identified whether each stimulus was the target or a 
+        non-target. This approach maintained a constant target probability of .2, with the 
+        same physical stimulus serving as a target in some blocks and a non-target in others..
 
          References
         ----------
 
         [1] Kappenman, Emily S., et al. "ERP CORE: An open resource for human event-related potential 
         research." NeuroImage 225 (2021): 117465.
-
-
 
     """
 
@@ -115,7 +115,18 @@ class ERPCORENP300(BaseDataset):
         return dlpath
 
     def _get_single_subject_data(self, subject):
-        """return data for a single subject"""
+        """return data for a single subejct
+
+        Parameters:
+        ----------
+        subject: int
+            subject number
+
+        Returns:
+        -------
+        sessions: dict
+            dictionary containing the data for a single subject in the format of {session_name: {run_name: (raw, events)}}  
+        """
 
         file_path_list = self.data_path(subject)
         sessions = {}
@@ -147,7 +158,21 @@ class ERPCORENP300(BaseDataset):
         return sessions
     
     def data_path(self, subject, path=None, force_update=False,
-                  update_path=None, verbose=None): 
+                  update_path=None, verbose=None):  
+        
+        """Get path to local copy of a subject data
+
+        Parameters:
+        ----------
+        subject: int
+            subject number
+            path: path to the directory where the data should be downloaded
+        
+        Returns:
+        -------
+        subject_paths: list
+            list of paths to the local copy of the subject data
+        """
         
         if subject not in self.subject_list:
             raise ValueError("Invalid subject number") 

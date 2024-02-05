@@ -73,7 +73,19 @@ class BrainInvaders2015a(BaseDataset):
             )
         
     def _get_single_subject_data(self, subject):
-        """return data for a single subject and session"""
+        """return data for a single subject and session
+
+        parameters
+        ----------
+        subject: int
+            the subject number
+
+        Returns
+        -------
+        dict
+            The data of the subject
+        
+        """
         
         file_path_list = self.data_path(subject)
         all_sessions_data=[]
@@ -112,7 +124,20 @@ class BrainInvaders2015a(BaseDataset):
     
     def data_path(self, subject, path=None, force_update=False,
                   update_path=None, verbose=None): 
-        "Get path to local copy of a subject data"
+        """Get path to local copy of a subject data
+
+        Parameters
+        ----------
+        subject: int
+            subject number
+            path: str | None
+
+        Returns
+        -------
+        list
+            List of paths to the subject data
+        
+        """
 
         if subject not in self.subject_list:
             raise ValueError("Invalid subject number")

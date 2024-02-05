@@ -8,7 +8,7 @@ import pandas as pd
 from brainModels.datasets.lee2019 import Lee2019
 from brainModels.preprocessing.erp import ERP
 from brainModels.datasets.erpCoreN400 import ERPCOREN400
-from brainModels.featureExtraction.siamese import Siamese
+from brainModels.featureExtraction.twinNeural import Siamese
 from brainModels.datasets import utils
 from autoreject import AutoReject, get_rejection_threshold
 from sklearn.pipeline import make_pipeline
