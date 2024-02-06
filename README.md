@@ -1,13 +1,13 @@
 # BrainModels
 
-<div align="center">
+<!-- <div align="center">
 <img src="/images/logo.png" alt="My Logo" width="400" height="380">
-</div>
+</div> -->
 
 
 [![Pandas Latest Release](https://img.shields.io/pypi/v/pandas.svg)](https://pypi.org/project/pandas/) [![MNE Latest Release - MNE](https://img.shields.io/pypi/v/mne.svg)](https://pypi.org/project/mne/) [![PyPI - Keras](https://img.shields.io/badge/Keras-latest-red.svg)](https://pypi.org/project/keras/)
 
-<details>
+<!-- <details>
 <summary><strong>📘 Short Summary of Thesis</strong></summary>
 
 Brainwaves present a compelling avenue for secure person authentication because they are inherently unobservable externally and capable of facilitating liveness detection. Harnessing brainwave’s unique and individualistic attributes, they have found extensive utility in various authentication applications. Nonetheless, the domain of brainwave authentication research has witnessed an upsurge in diverse experimental setups and the meticulous fine-tuning of parameters to optimize authentication methodologies. The substantial diversity in their methods poses a significant obstacle in assessing and measuring authentic research advancements. 
@@ -17,9 +17,9 @@ To address this multifaceted issue, this thesis introduces a versatile and robus
 Our extensive assessment encompassed a variety of state-of-the-art authentication algorithms, including Logistic Regression, Linear Discriminant Analysis, Support Vector Machine, Naive Bayes, K-Nearest Neighbours, Random Forest, and advanced deep learning methods like Siamese Neural Networks. Our evaluation approach incorporated both within-session (single-session) and cross-session (multi-session) analysis, covering threat cases like close-set (seen attacker) and open-set (unseen attacker) scenarios to ensure the tool’s versatility in different contexts. 
 
 In within-session evaluation, our framework showcased outstanding performance for several classifiers, particularly Siamese Networks, which achieved an Equal Error Rate of 1.60% in the unseen attacker scenario. Additionally, our benchmarking framework’s adaptability is a notable asset, allowing researchers to tailor pre-processing, feature extraction, and authentication parameters to suit their specific requirements.
-</details>
+</details> -->
 
-This repository serves as a comprehensive resource for my master's thesis, "Brainwave-Based User Authentication Models". It encompasses the entire implementation codebase along with a collection of illustrative examples for conducting benchmarking experiments using this powerful tool. Please note that while this repository is a valuable resource for code and methodologies, it does not include the proprietary or sensitive data utilized in our thesis.
+This repository serves as a comprehensive resource for BrainModels. It encompasses the entire implementation codebase along with a collection of illustrative examples for conducting benchmarking experiments using this powerful tool. Please note that while this repository is a valuable resource for code and methodologies, it does not include the proprietary or sensitive data utilized in our thesis.
 
 The thesis was written at the IT Security group at Paderborn University. It was supervised by Patricia Arias Cabarcos, who also leads the group. Further, the implementation aspects of this benchmarking tool was supervised by Matin Fallahi, a reserach associate at Kalrsruhe Insistute of Technology, Germany.  
 
@@ -193,12 +193,12 @@ dataset:
 
   pipelines:
 
-  "Siamese":
-    - name : Siamese
+  "TNN":
+    - name : TwinNeuralNetwork
     from: featureExtraction
     parameters:
-        EPOCHS: 10 
-        batch_size: 256 
+        EPOCHS: 100 
+        batch_size: 192 
         verbose: 1 
         workers: 1  
 ```
@@ -239,8 +239,8 @@ dataset:
         class_weight: "balanced" 
         probability: True
 
-   "Siamese":
-    - name : Siamese
+   "TNN":
+    - name : TwinNeuralNetwork
     from: featureExtraction
     parameters:
         EPOCHS: 10 
@@ -351,8 +351,8 @@ pipelines:
         class_weight: "balanced"
         probability: True
 
-  "Siamese": 
-    - name : Siamese
+  "TNN": 
+    - name : TwinNeuralNetwork
       from: featureExtraction
       parameters: 
         EPOCHS: 10
@@ -470,11 +470,11 @@ dataset:
 
 pipelines:
 
-  "Siamese": 
-    - name : Siamese
+  "TNN": 
+    - name : TwinNeuralNetwork
       from:  featureExtraction
       parameters: 
-        user_siamese_path: "/scratch/hpc-prf-bbam/avinashk/mne_data/User_method/siamese_method.py"
+        user_tnn_path: "/scratch/hpc-prf-bbam/avinashk/mne_data/User_method/siamese_method.py"
         EPOCHS: 10
         batch_size: 256
         verbose: 1
