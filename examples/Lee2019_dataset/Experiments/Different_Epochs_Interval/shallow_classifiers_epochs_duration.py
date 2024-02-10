@@ -1,5 +1,4 @@
 import sys
-sys.path.append('/scratch/hpc-prf-bbam/avinashk/Brain-Models/')
 import abc
 import logging
 import mne
@@ -46,14 +45,9 @@ def _evaluate():
         pipeline={}
         pipeline['AR+PSD+SVM']=make_pipeline(AutoRegressive(order=1), PowerSpectralDensity(), SVC(kernel='rbf', class_weight="balanced", probability=True))
         pipeline['AR+PSD+LR']=make_pipeline(AutoRegressive(order=1),PowerSpectralDensity(), LogisticRegression(class_weight="balanced"))
-        # #pipeline['PSD+LR']=make_pipeline(AutoRegressive(order=6), PowerSpectralDensity(), LogisticRegression())
         pipeline['AR+PSD+LDA']=make_pipeline(AutoRegressive(order=1),PowerSpectralDensity(), LDA(solver='lsqr', shrinkage='auto'))
-        #pipeline['siamese']=make_pipeline(Siamese(user_siamese_path='/scratch/hpc-prf-bbam/avinashk/mne_data/User_method/siamese_method.py'))
-        # #pipeline['PSD+LDA']=make_pipeline(AutoRegressive(order=6), PowerSpectralDensity(), LDA(solver='lsqr', shrinkage='auto'))
         pipeline['AR+PSD+NB']=make_pipeline(AutoRegressive(order=1),PowerSpectralDensity(), GaussianNB())
-        # #pipeline['PSD+NB']=make_pipeline(AutoRegressive(order=6), PowerSpectralDensity(), GaussianNB())
         pipeline['AR+PSD+KNN']=make_pipeline(AutoRegressive(order=1),PowerSpectralDensity(), KNeighborsClassifier())
-        # #pipeline['PSD+KNN']=make_pipeline(AutoRegressive(order=6), PowerSpectralDensity(), KNeighborsClassifier(n_neighbors=3))
         pipeline['AR+PSD+RF']=make_pipeline(AutoRegressive(order=1),PowerSpectralDensity(), RandomForestClassifier(class_weight="balanced"))
         open_set=SingleSessionOpenSet(paradigm=paradigm_n400, datasets=data, overwrite=False)
         results=open_set.process(pipeline)

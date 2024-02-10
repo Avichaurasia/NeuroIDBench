@@ -1,5 +1,4 @@
 import sys
-sys.path.append('/scratch/hpc-prf-bbam/avinashk/Brain-Models/')
 import abc
 import logging
 import mne
@@ -32,8 +31,6 @@ from sklearn.neighbors import KNeighborsClassifier
 from sklearn.ensemble import RandomForestClassifier
 from brainModels.evaluations.single_session_close_set import SingleSessionCloseSet
 from brainModels.evaluations.single_session_open_set import SingleSessionOpenSet
-#from brainModels.evaluations.multi_session_open_set import MultiSessionOpenSet
-#from brainModels.evaluations.multi_session_open_set_copy import MultiSessionOpenSet
 from brainModels.featureExtraction.twinNeural import TwinNeuralNetwork
 from brainModels.datasets.lee2019 import Lee2019
 import os

@@ -1,5 +1,5 @@
 import sys
-sys.path.append('/Users/avinashkumarchaurasia/Desktop/project/BrainModels/')
+sys.path.append("./")
 import abc
 import logging
 import mne
@@ -10,7 +10,6 @@ from brainModels.datasets.erpCoreN400 import ERPCOREN400
 from brainModels.preprocessing.erp import ERP
 from brainModels.featureExtraction.twinNeural import TwinNeuralNetwork
 from brainModels.datasets import utils
-from autoreject import AutoReject, get_rejection_threshold
 from sklearn.pipeline import make_pipeline
 from sklearn.preprocessing import StandardScaler 
 from sklearn.discriminant_analysis import LinearDiscriminantAnalysis as LDA
@@ -32,25 +31,11 @@ def _evaluate():
     lee=Lee2019()
     erpcore=ERPCOREN400
     paradigm=ERP()
-    #erp_core.rejection_threshold=200e-6
-    #print("Rejection threshold:", erp_core.rejection_threshold)
-    #print(dir(n400))
-    #data, subject_dict, _=paradigm_n400.get_data(erp_core)
-    
+
     # Intializing the pipelines
     pipeline={}
-    # pipeline['AR+PSD+LR']=make_pipeline(AutoRegressive(order=6), PowerSpectralDensity(), LogisticRegression())
-    # # #pipeline['PSD+LR']=make_pipeline(AutoRegressive(order=6), PowerSpectralDensity(), LogisticRegression())
-    # pipeline['AR+PSD+LDA']=make_pipeline(AutoRegressive(order=6), PowerSpectralDensity(), LDA(solver='lsqr', shrinkage='auto'))
-    pipeline['siamese']=make_pipeline(TwinNeuralNetwork(batch_size=192, EPOCHS=100, learning_rate=0.0001))
-    # #pipeline['PSD+LDA']=make_pipeline(AutoRegressive(order=6), PowerSpectralDensity(), LDA(solver='lsqr', shrinkage='auto'))
-    #pipeline['AR+PSD+NB']=make_pipeline(AutoRegressive(order=6), PowerSpectralDensity(), GaussianNB())
-    # #pipeline['PSD+NB']=make_pipeline(AutoRegressive(order=6), PowerSpectralDensity(), GaussianNB())
-    # pipeline['AR+PSD+KNN']=make_pipeline(AutoRegressive(order=6), PowerSpectralDensity(), KNeighborsClassifier(n_neighbors=3))
-    # #pipeline['PSD+KNN']=make_pipeline(AutoRegressive(order=6), PowerSpectralDensity(), KNeighborsClassifier(n_neighbors=3))
-    # pipeline['AR+PSD+RF']=make_pipeline(AutoRegressive(order=6), PowerSpectralDensity(), RandomForestClassifier())
-    #pipeline['PSD+RF']=make_pipeline(AutoRegressive(order=6), PowerSpectralDensity(), RandomForestClassifier(n_estimators=100))
- 
+    pipeline['TNN']=make_pipeline(TwinNeuralNetwork(batch_size=192, EPOCHS=100, learning_rate=0.0001))
+    
     evaluation=SingleSessionCloseSet(paradigm=paradigm, datasets=erpcore)
     results=evaluation.process(pipeline)
 

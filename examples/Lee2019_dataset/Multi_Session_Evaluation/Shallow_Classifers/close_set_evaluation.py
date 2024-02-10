@@ -1,5 +1,4 @@
 import sys
-sys.path.append('/Users/avinashkumarchaurasia/Desktop/project/BrainModels/')
 import abc
 import logging
 import mne
@@ -31,26 +30,10 @@ def _evaluate():
 
     lee=Lee2019()
     paradigm=ERP()
-    #erp_core.rejection_threshold=200e-6
-    #print("Rejection threshold:", erp_core.rejection_threshold)
-    #print(dir(n400))
-    #data, subject_dict, _=paradigm_n400.get_data(erp_core)
     
     # Intializing the pipelines
     pipeline={}
     pipeline['AR+SVM']=make_pipeline(AutoRegressive(order=6), SVC(kernel='rbf', probability=True))
-    # pipeline['AR+PSD+LR']=make_pipeline(AutoRegressive(order=6), PowerSpectralDensity(), LogisticRegression())
-    # # #pipeline['PSD+LR']=make_pipeline(AutoRegressive(order=6), PowerSpectralDensity(), LogisticRegression())
-    # pipeline['AR+PSD+LDA']=make_pipeline(AutoRegressive(order=6), PowerSpectralDensity(), LDA(solver='lsqr', shrinkage='auto'))
-    #pipeline['siamese']=make_pipeline(Siamese())
-    # #pipeline['PSD+LDA']=make_pipeline(AutoRegressive(order=6), PowerSpectralDensity(), LDA(solver='lsqr', shrinkage='auto'))
-    #pipeline['AR+PSD+NB']=make_pipeline(AutoRegressive(order=6), PowerSpectralDensity(), GaussianNB())
-    # #pipeline['PSD+NB']=make_pipeline(AutoRegressive(order=6), PowerSpectralDensity(), GaussianNB())
-    # pipeline['AR+PSD+KNN']=make_pipeline(AutoRegressive(order=6), PowerSpectralDensity(), KNeighborsClassifier(n_neighbors=3))
-    # #pipeline['PSD+KNN']=make_pipeline(AutoRegressive(order=6), PowerSpectralDensity(), KNeighborsClassifier(n_neighbors=3))
-    # pipeline['AR+PSD+RF']=make_pipeline(AutoRegressive(order=6), PowerSpectralDensity(), RandomForestClassifier())
-    #pipeline['PSD+RF']=make_pipeline(AutoRegressive(order=6), PowerSpectralDensity(), RandomForestClassifier(n_estimators=100))
- 
     evaluation=MultiSessionCloseSet(paradigm=paradigm, datasets=lee)
     results=evaluation.process(pipeline)
 
@@ -65,9 +48,6 @@ def _evaluate():
 
 
 if __name__ == '__main__':
-#    package = 'deeb.Evaluation'  # Change to your package/module name
-#    for importer, modname, ispkg in pkgutil.walk_packages(path=['/Users/avinashkumarchaurasia/Desktop/deeb/deeb/Evaluation'], prefix=package + '.'):
-#         print('Found submodule %s (is a package: %s)' % (modname, ispkg))
    result= _evaluate()
    print(result)
 

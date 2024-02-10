@@ -1,5 +1,4 @@
 import sys
-sys.path.append('/Users/avinashkumarchaurasia/Desktop/project/BrainModels/')
 import abc
 import logging
 import mne
@@ -34,17 +33,7 @@ def _evaluate():
     brain=BrainInvaders2015a()
     mantegna=Mantegna2019()
 
-    # # Selecting the first 3 subjects from the Won2022 dataset
-    # won.subject_list = won.subject_list[0:10]
-
-    # Selecting the first 5 subjects from the brainInvaders2015a dataset
-    #brain.subject_list = brain.subject_list[0:10]
-
-    # selecting the first 3 subjects from the Mantegna dataset
-    #mantegna.subject_list = mantegna.subject_list[0:10]
-
     # Initializing the p300 paradigm
-    #paradigm_p300=P300()
     paradigm_n400=ERP()
 
     # Getting the pre-prpcessed data for the p300 paradigm

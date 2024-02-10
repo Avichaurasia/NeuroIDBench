@@ -1,13 +1,9 @@
 import sys
-sys.path.append('/scratch/hpc-prf-bbam/avinashk/Brain-Models/')
 import abc
 import logging
 import mne
 import numpy as np
 import pandas as pd
-#from brainmodels.paradigms.base_old import BaseParadigm
-#from deeb.paradigms.erp import N400
-#from brainmodels.paradigms.n400 import N400
 from brainModels.preprocessing.erp import ERP
 from brainModels.datasets.brainInvaders15a import BrainInvaders2015a
 from brainModels.datasets.mantegna2019 import Mantegna2019
@@ -48,7 +44,7 @@ def _evaluate():
         paradigm_n400=ERP()
 
         pipeline={}
-        pipeline['siamese']=make_pipeline(TwinNeuralNetwork(batch_size=192, EPOCHS=100))
+        pipeline['TNN']=make_pipeline(TwinNeuralNetwork(batch_size=192, EPOCHS=100))
         open_set=SingleSessionOpenSet(paradigm=paradigm_n400, datasets=data, overwrite=False)
         results=open_set.process(pipeline)
 

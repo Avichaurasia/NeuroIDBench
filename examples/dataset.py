@@ -1,5 +1,4 @@
 import sys
-sys.path.append('/Users/avinashkumarchaurasia/Desktop/project/BrainModels/')
 import abc
 import logging
 import mne
@@ -41,9 +40,6 @@ def _evaluate():
 
 
 if __name__ == '__main__':
-#    package = 'deeb.Evaluation'  # Change to your package/module name
-#    for importer, modname, ispkg in pkgutil.walk_packages(path=['/Users/avinashkumarchaurasia/Desktop/deeb/deeb/Evaluation'], prefix=package + '.'):
-#         print('Found submodule %s (is a package: %s)' % (modname, ispkg))
    result= _evaluate()
    print(result)
 

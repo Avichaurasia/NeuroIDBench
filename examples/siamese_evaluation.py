@@ -1,5 +1,4 @@
 import sys
-sys.path.append('/Users/avinashkumarchaurasia/Master_Thesis/deeb/deeb')
 import abc
 import logging
 import mne
@@ -30,7 +29,6 @@ import os
 
 def _evaluate():
     # Intiaizing the datasets
-    #print(os.environ)
     won = Won2022()
     brain=BrainInvaders2015a()
     mantegna=Mantegna2019()
