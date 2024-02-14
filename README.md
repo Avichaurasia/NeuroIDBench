@@ -21,7 +21,7 @@ In within-session evaluation, our framework showcased outstanding performance fo
 
 This repository serves as a comprehensive resource for BrainModels. It encompasses the entire implementation codebase along with a collection of illustrative examples for conducting benchmarking experiments using this powerful tool. Please note that while this repository is a valuable resource for code and methodologies, it does not include the proprietary or sensitive data utilized in our thesis.
 
-The thesis was written at the IT Security group at Paderborn University. It was supervised by Patricia Arias Cabarcos, who also leads the group. Further, the implementation aspects of this benchmarking tool was supervised by Matin Fallahi, a reserach associate at Kalrsruhe Insistute of Technology, Germany.  
+The thesis was written at the [IT Security](https://en.cs.uni-paderborn.de/its) group at Paderborn University, Germany. It was supervised by [Patricia Arias Cabarcos](https://twitter.com/patriAriasC), who also leads the group. Further, the implementation aspects of this benchmarking tool was supervised by M.Sc Matin Fallahi, a reserach associate at Kalrsruhe Insistute of Technology, Germany.  
 
 ## Installation
 
@@ -254,8 +254,12 @@ is set 200 microvolts for dropping aritifcats. Here, the pipeline consisiting of
 
 Launch the automation Script: 
 
-Launch the python file run.py
-with command "python run.py". This python file will internally automation script benchmark.py. The  script parses the above configuration file and streamlines all the tasks related to data preprocessing, feature extraction, and classification for a single dataset. It conducts benchmarking assessments across multiple
+Launch the python file run.py with the following command. 
+```bash
+python brainModels/run.py
+```
+
+This python file will internally automation script benchmark.py. The  script parses the above configuration file and streamlines all the tasks related to data preprocessing, feature extraction, and classification for a single dataset. It conducts benchmarking assessments across multiple
 classifiers for the specified dataset
 
 # Benchmarking Architecture and Main Concepts
@@ -310,7 +314,7 @@ Following steps needs to be followed to add new EEG data.
 2. Once the raw EEG data is converted into mne. Save the state of MNE object into .fif format. 
     The mne data should be saved in hierarchy of folders like "sujectID"--> "Sesssion number" --> "Run number" --> EEG_data.fif.
     For example: Assume an EEG dataset comprises of 2 subjects. Each subject has performed EEG task across 2 sessions
-    and each session contains two runs. Then the mne data should be saved in the following ways: 
+    and each session contains two runs. First create a folder with name <b>User_data</b> on your local system. This folder should contain the MNE data of users. Then the mne data should be saved inside <b>User_data</b> folder in the following way: 
 
     <b>Subject 1</b>: 
     "Subject_1" --> "Session_1" --> "Run_1" --> EEG_data.fif, 
@@ -331,7 +335,7 @@ dataset:
   - name: UserDataset
     from: brainModels.datasets
     parameters: 
-      dataset_path: '/Users/avinashkumarchaurasia/mne_data/New_data/dataset'
+      dataset_path: '<local_system_to_folder_User_data>'
     
 pipelines:
 
@@ -377,9 +381,9 @@ pipelines:
         class_weight: "balanced"
 ```
 
-This benchmarking pipeline reads the MNE data from the custom path "/Users/avinashkumarchaurasia/mne_data/Matin/dataset".
-and create a dataset instance. Afterwards, the pipeline consisiting of traditional algorithm such as SVM and 
-deep learning method like Siamese Neural Networks is made.  
+This benchmarking pipeline reads the MNE data from the folder User_data and create a dataset instance. 
+Afterwards, the pipeline consisiting of traditional algorithm such as SVM and  deep learning method 
+like Siamese Neural Networks is made.  
 
 4. Launch the python file run.py from terminal which has a main method and internally calls the automation script for benchmark.py 
 
@@ -425,11 +429,9 @@ def _siamese_embeddings(no_channels, time_steps):
   x = tf.keras.layers.Conv2D(128, (1, 15), activation=activef, kernel_initializer='lecun_normal')(input)
   x = tf.keras.layers.AveragePooling2D(pool_size=(1, 2))(x)
   x = tf.keras.layers.Dropout(0.3)(x)
-  #x = keras.layers.MaxPooling2D(pool_size=(1, 4))(x)
   x = tf.keras.layers.Conv2D(32, (1, 15), activation=activef, kernel_initializer='lecun_normal')(x)
   x = tf.keras.layers.AveragePooling2D(pool_size=(1, 2))(x)
   x = tf.keras.layers.Dropout(0.3)(x)
-  #x = keras.layers.AveragePooling2D(pool_size=(1, 5))(x)
   x = tf.keras.layers.Conv2D(16, (1, 15), activation=activef, kernel_initializer='lecun_normal')(x)
   x = tf.keras.layers.AveragePooling2D(pool_size=(1,2))(x)
   x = tf.keras.layers.Dropout(0.3)(x)
@@ -450,7 +452,7 @@ def _siamese_embeddings(no_channels, time_steps):
   
 ```
 
-This function is written inside a .py named "siamese_method.py" and stored locally anywhere on the machine.
+This function is written inside a .py named "TNN.py" and stored locally anywhere on the machine.
 
 2. Edit the single_dataset.yml with the below configurations:
 
@@ -474,14 +476,14 @@ pipelines:
     - name : TwinNeuralNetwork
       from:  brainModels.featureExtraction
       parameters: 
-        user_tnn_path: "/scratch/hpc-prf-bbam/avinashk/mne_data/User_method/siamese_method.py"
+        user_tnn_path: "<local_system_path_to_TNN.py>"
         EPOCHS: 10
         batch_size: 256
         verbose: 1
         workers: 1
 ```
 
-In the above configuration, user_siamese_path is the path to python file containing the customized Siamse method.
+In the above configuration, user_tnn_path is the path to python file containing the customized Siamse method.
 This benchmarking pipeline performs benchmarking on EEG data of ERPCOREN400 with the researchers customized 
 Siamese method. If the reseracher has its own EEG data, then they can follow the instructions mentioned in the above section
 to add new EEG data and then can evaulate their EEG data on their own Siamese method.
