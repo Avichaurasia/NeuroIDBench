@@ -85,14 +85,14 @@ Benchmarking pipeline using the dataset’s default parameters and auto-regressi
 name: "BrainInvaders2015a"
 
 dataset: 
-  - name: BrainInvaders2015a
+  - name: brainModels.BrainInvaders2015a
     from: datasets
 
 pipelines:
 
   "AR+PSD+SVM": 
     - name: AutoRegressive
-      from: featureExtraction
+      from: brainModels.featureExtraction
 
     - name: SVC
       from: sklearn.svm
@@ -113,7 +113,7 @@ Benchmarking pipeline by setting parmeters for the dataset, AR features with AR 
 name: "BrainInvaders2015a"
 
 dataset: 
-  - name: BrainInvaders2015a
+  - name: brainModels.BrainInvaders2015a
     from: datasets
     parameters:
         subjects: 10
@@ -124,7 +124,7 @@ dataset:
 
   "AR+SVM":
     - name: AutoRegressive 
-      from: featureExtraction 
+      from: brainModels.featureExtraction 
       parameters:
         order: 5
 
@@ -147,7 +147,7 @@ Benchamrking pipeline for dataset BrainInvaders15a with AR and PSD features with
 name: "BrainInvaders2015a"
 
 dataset: 
-  - name: BrainInvaders2015a
+  - name: brainModels.BrainInvaders2015a
     from: datasets
     parameters:
         subjects: 10
@@ -159,12 +159,12 @@ dataset:
   
   "AR+SVM":
     - name: AutoRegressive 
-      from: featureExtraction
+      from: brainModels.featureExtraction
       parameters:
         order: 5
 
     - name: PowerSpectralDensity 
-      from: featureExtraction
+      from: brainModels.featureExtraction
 
     - name: SVC
       from: sklearn.svm 
@@ -184,7 +184,7 @@ Benchamrking pipeline for dataset BrainInvaders15a with Siamese Networks
 name: "BrainInvaders2015a"
 
 dataset: 
-  - name: BrainInvaders2015a
+  - name: brainModels.BrainInvaders2015a
     from: datasets
     parameters:
         subjects: 10
@@ -195,7 +195,7 @@ dataset:
 
   "TNN":
     - name : TwinNeuralNetwork
-    from: featureExtraction
+    from: brainModels.featureExtraction
     parameters:
         EPOCHS: 100 
         batch_size: 192 
@@ -214,7 +214,7 @@ Benchamrking pipeline for dataset BrainInvaders15a with traditional and deep lea
 name: "BrainInvaders2015a"
 
 dataset: 
-  - name: BrainInvaders2015a
+  - name: brainModels.BrainInvaders2015a
     from: datasets
     parameters:
         subjects: 10
@@ -225,12 +225,12 @@ dataset:
 
    "AR+SVM":
     - name: AutoRegressive 
-      from: featureExtraction 
+      from: brainModels.featureExtraction 
       parameters:
         order: 5
 
     - name: PowerSpectralDensity 
-      from: featureExtraction
+      from: brainModels.featureExtraction
 
     - name: SVC
       from: sklearn.svm 
@@ -329,7 +329,7 @@ name: "User"
 
 dataset: 
   - name: UserDataset
-    from: datasets
+    from: brainModels.datasets
     parameters: 
       dataset_path: '/Users/avinashkumarchaurasia/mne_data/New_data/dataset'
     
@@ -337,12 +337,12 @@ pipelines:
 
   "AR+PSD+SVM": 
     - name: AutoRegressive
-      from: featureExtraction
+      from: brainModels.featureExtraction
       parameters: 
         order: 6
         
     - name: PowerSpectralDensity
-      from: featureExtraction
+      from: brainModels.featureExtraction
         
     - name: SVC
       from: sklearn.svm
@@ -353,7 +353,7 @@ pipelines:
 
   "TNN": 
     - name : TwinNeuralNetwork
-      from: featureExtraction
+      from: brainModels.featureExtraction
       parameters: 
         EPOCHS: 10
         batch_size: 256
@@ -363,12 +363,12 @@ pipelines:
   
   "AR+PSD+RF": 
   - name: AutoRegressive
-    from: featureExtraction
+    from: brainModels.featureExtraction
     parameters: 
       order: 6
     
   - name: PowerSpectralDensity
-    from: featureExtraction
+    from: brainModels.featureExtraction
       
   - name: RandomForestClassifier
   
@@ -461,7 +461,7 @@ name: "ERPCORE400"
 
 dataset: 
   - name: ERPCOREN400
-    from: datasets
+    from: brainModels.datasets
     parameters: 
       subjects: 10
       interval: [-0.1, 0.9]
@@ -472,7 +472,7 @@ pipelines:
 
   "TNN": 
     - name : TwinNeuralNetwork
-      from:  featureExtraction
+      from:  brainModels.featureExtraction
       parameters: 
         user_tnn_path: "/scratch/hpc-prf-bbam/avinashk/mne_data/User_method/siamese_method.py"
         EPOCHS: 10
