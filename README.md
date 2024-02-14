@@ -488,6 +488,13 @@ to add new EEG data and then can evaulate their EEG data on their own Siamese me
 
 4. Launch the python file run.py from terminal which has a main method and internally calls the automation script benchmark.py.
 
+# References
+
+[1] V. Jayaram, A. Barachant, Moabb: trustworthy algorithm benchmarking for bcis, Journal of neural engineering 15 (6) (2018) 
+    066011
+
+[2]  M. Fallahi, T. Strufe, P. Arias-Cabarcos, Brainnet: Improving brainwavebased biometric recognition with siamese networks, in: 2023 IEEE International Conference on Pervasive Computing and Communications (PerCom), IEEE, 2023, pp. 53–60
+
 
 
 
