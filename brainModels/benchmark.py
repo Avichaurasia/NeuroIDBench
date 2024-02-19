@@ -18,7 +18,7 @@ from pathlib import Path
 import numpy as np
 import yaml
 import pandas as pd
-from brainModels.evaluations import (SingleSessionCloseSet, SingleSessionOpenSet)
+from brainModels.evaluations import (SingleSessionCloseSet, SingleSessionOpenSet, multi_session_open_set)
 log = logging.getLogger(__name__)
 
 def benchmark(subjects=None,
@@ -61,7 +61,8 @@ def benchmark(subjects=None,
         multi_session_evaluations=['Single_Session_Close_Set', 'Single_Session_Open_Set', 'multi_Session_Close_Set', 'multi_Session_Open_Set']
 
     eval_type={'Single_Session_Close_Set':SingleSessionCloseSet,
-               'Single_Session_Open_Set':SingleSessionOpenSet}
+               'Single_Session_Open_Set':SingleSessionOpenSet,
+               'multi_Session_Open_Set':multi_session_open_set}
     
     output = Path(output)
     if not osp.isdir(output):

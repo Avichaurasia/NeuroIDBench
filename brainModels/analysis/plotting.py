@@ -122,7 +122,7 @@ class Plots():
 
         parameters:
         - data: Data containing evaluation results.
-        - evaluation_type: A string specifying the type of evaluation (e.g., 'close-set' or 'open-set').
+        - evaluation_type: A string specifying the type of evaluation (e.g., 'known attacker' or 'unknown attacker').
         - dataset: The name of the dataset for labeling the plot.
 
         Returns:
@@ -158,6 +158,56 @@ class Plots():
         plt.xticks(rotation=45)
         plt.tight_layout()
         plt.show()
+
+    def _plot_eer_across_datasets(self, data):
+        """
+        Generate the EER graphs for multiple datasets.
+
+        Parameters:
+        - data: Data containing evaluation results of multiple datasets.
+        - evaluation_type: A string specifying the type of evaluation (e.g., 'known attacker' or 'unknown attacker').
+
+        Returns:
+        - None
+        """
+
+        grouped_df = data.groupby(['evaluation','eval Type','dataset', 'pipeline']).agg({
+            'eer': 'mean'
+             }).reset_index()
+        
+        # Write code to generate EER graphs for multiple datasets
+        grouped_df['eer'] = grouped_df['eer']*100
+        grouped_df['pipeline'] = grouped_df['pipeline'].apply(lambda x: x.split('+')[-1])
+        pivot_df = grouped_df.pivot(index='pipeline', columns='dataset', values='eer')
+        ax = pivot_df.plot(kind='bar', figsize=(10, 6))
+        for p in ax.patches:
+            ax.annotate(f"{p.get_height():.2f}", (p.get_x() * 1.010, p.get_height() * 1.010), fontsize=8)
+        plt.xlabel('Algorithm')
+        plt.ylabel('%EER')
+        plt.title('EER: across datasets')
+        plt.legend(title='Dataset')
+        plt.grid(True, ls="--", lw=0.8)
+        plt.xticks(rotation=45)
+        plt.tight_layout()
+        plt.show()
+
+    def _plot_roc_across_datasets(self, data):
+
+        """
+        Generate and save ROC curves for multiple datasets.
+
+        Parameters:
+        - data: Data containing evaluation results of multiple datasets.
+        - evaluation_type: A string specifying the type of evaluation (e.g., 'known attacker' or 'unknown attacker').
+        - dataset: The name of the dataset for labeling the plot.
+
+        Returns:
+        - None
+        """
+
+        
+
+
 
        
     
