@@ -21,7 +21,7 @@ In within-session evaluation, our framework showcased outstanding performance fo
 
 This repository serves as a comprehensive resource for BrainModels. It encompasses the entire implementation codebase along with a collection of illustrative examples for conducting benchmarking experiments using this powerful tool. Please note that while this repository is a valuable resource for code and methodologies, it does not include the proprietary or sensitive data utilized in our thesis.
 
-The thesis was written at the [IT Security](https://en.cs.uni-paderborn.de/its) group at Paderborn University, Germany. It was supervised by [Patricia Arias Cabarcos](https://twitter.com/patriAriasC), who also leads the group. Further, the implementation aspects of this benchmarking tool was supervised by M.Sc Matin Fallahi, a reserach associate at Kalrsruhe Insistute of Technology, Germany. 
+The thesis was written at the [IT Security](https://en.cs.uni-paderborn.de/its) group at Paderborn University, Germany. It was supervised by [Patricia Arias Cabarcos](https://twitter.com/patriAriasC), who also leads the group. Further, the implementation aspects of this benchmarking tool was supervised by M.Sc [Matin Fallahi](https://ps.tm.kit.edu/english/21_318.php), a reserach associate at Kalrsruhe Insistute of Technology, Germany. 
 
 ## BrainModels Architecture
 
@@ -29,34 +29,33 @@ The thesis was written at the [IT Security](https://en.cs.uni-paderborn.de/its) 
 <img src="/images/Architecture.png" alt="Architecture" width="800" height="380">
 </div>
 
-There are four main concepts for this framework: datasets, paradigm, pipeline, Evalaution. Furthermore, 
+There are four main concepts for this framework: datasets, PreProcessing, FeatureExtraction, Evalautions. Furthermore, 
 we provide statistical and visualization tools to streamline the process.
 
-## Datasets: 
+### Datasets: 
 
 This module offers abstract access to open datasets. It entails downloading open datasets from the internet and 
 providing effective data management.
 
-## PreProcesing: 
+### PreProcesing: 
 
 The purpose of this module is to conduct pre-processing on the unprocessed EEG data. 
 Datasets exhibit distinct characteristics based on ERP paradigms such as P300 and N400. Nevertheless, both conditions 
 elicit ERP responses after the individual’s exposure to unexpected stimuli. Consequently, the datasets for the P300 
 and N400 paradigms undergo pre-processing using identical parameters.
 
-## FeatureExtraction: 
+### FeatureExtraction: 
 
 This module extracts features from data that has been pre-processed. These characteristics are extracted in the time 
 domain using Auto Regressive Coeffecients and in the frequency domain using Power Spectral Density. Furthermore, this module
 also provides Siamese Network Architecture.  
 
-## Evaluations: 
+### Evaluations: 
 
-Evaluation defines the different authentication strategy which involves within-session(single session recordings) evalaution 
-and cross-session (multi-session recordings) evalaution under both close-set and open-set attack scenarios. 
-Results for within-session and cross-session are presented with metrics like EER, AUC, FRR at 1% FAR.
+Evaluation defines the different authentication strategy which involves single session evalaution 
+and multi-session evalaution under both known and unknown attack scenarios. 
 
-## Analysis
+### Analysis
 
 Once an evaluation has been run, the raw results are returned as a DataFrame. The results such as ROC-Curve or EER can be 
 visualized by calling functions from this module. 
@@ -118,13 +117,11 @@ conda activate master_thesis
 
 Edit the configuration File: 
 
-Some of the examples for configuring yaml for developing automated authentication pipelines
-can be found [here](CONFIGURATION.md).
-
+<!-- Some of the examples for configuring yaml for developing automated authentication pipelines
+can be found [here](CONFIGURATION.md). -->
 Upon activating the Conda environment, navigate to the designated project directory. 
 A file named single_dataset.yml can be located within the "configuration_files" folder. 
-The single_dataset.yml file is adjusted based on the exemplified configurations
-in the following sections.
+The single_dataset.yml file is adjusted based on the [exemplified](CONFIGURATION.md) configurations. 
 
 <!-- ### Example 1: 
 Benchmarking pipeline using the dataset’s default parameters and auto-regressive features with SVM classification
