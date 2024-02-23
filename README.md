@@ -123,6 +123,13 @@ Upon activating the Conda environment, navigate to the designated project direct
 A file named single_dataset.yml can be located within the "configuration_files" folder. 
 The single_dataset.yml file is adjusted based on the [exemplified](CONFIGURATION.md) configurations. 
 
+## Examples of executing the project through jupyter notebboks
+
+We offer the flexibility of creating automated authentication pipelines. A
+dditionally, you can explore examples of evaluating across various datasets and schemes 
+in our Jupyter Notebook [examples](Jupyter_Notebooks).
+
+
 <!-- ### Example 1: 
 Benchmarking pipeline using the dataset’s default parameters and auto-regressive features with SVM classification
 
