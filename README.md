@@ -127,7 +127,7 @@ The single_dataset.yml file is adjusted based on the [exemplified](CONFIGURATION
 
 We offer the flexibility of creating automated authentication pipelines. A
 dditionally, you can explore examples of evaluating across various datasets and schemes 
-in our [Jupyter Notebook examples](./Jupyter_Notebooks/).
+in our [Jupyter Notebook examples](./Juypter_Notebooks/).
 
 
 <!-- ### Example 1: 
