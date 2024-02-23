@@ -191,19 +191,19 @@ class Plots():
         plt.tight_layout()
         plt.show()
 
-    def _plot_roc_across_datasets(self, data):
+    # def _plot_roc_across_datasets(self, data):
 
-        """
-        Generate and save ROC curves for multiple datasets.
+    #     """
+    #     Generate and save ROC curves for multiple datasets.
 
-        Parameters:
-        - data: Data containing evaluation results of multiple datasets.
-        - evaluation_type: A string specifying the type of evaluation (e.g., 'known attacker' or 'unknown attacker').
-        - dataset: The name of the dataset for labeling the plot.
+    #     Parameters:
+    #     - data: Data containing evaluation results of multiple datasets.
+    #     - evaluation_type: A string specifying the type of evaluation (e.g., 'known attacker' or 'unknown attacker').
+    #     - dataset: The name of the dataset for labeling the plot.
 
-        Returns:
-        - None
-        """
+    #     Returns:
+    #     - None
+    #     """
 
         
 
