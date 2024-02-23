@@ -1,11 +1,10 @@
 # BrainModels
 
-<div align="center">
-<img src="/images/brainModels.png" alt="My Logo" width="400" height="380">
-</div>
-
-
 [![Pandas Latest Release](https://img.shields.io/pypi/v/pandas.svg)](https://pypi.org/project/pandas/) [![MNE Latest Release - MNE](https://img.shields.io/pypi/v/mne.svg)](https://pypi.org/project/mne/) [![PyPI - Keras](https://img.shields.io/badge/Keras-latest-red.svg)](https://pypi.org/project/keras/)
+
+<div align="center">
+<img src="/images/brainModels.png" alt="My Logo" width="600" height="350">
+</div>
 
 <!-- <details>
 <summary><strong>📘 Short Summary of Thesis</strong></summary>
