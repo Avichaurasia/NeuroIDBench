@@ -150,21 +150,8 @@ class MultiSessionOpenSet(BaseEvaluation):
         each session within the 'open_set' directory. Evaluation metrics including AUC, EER, FRR_1_FAR, TPR, and the number of
         samples are recorded for each pipeline and session, then appended to 'results_close_set' for subsequent analysis.
         """
-        #X, _, metadata=self.paradigm.get_data(dataset)
-        # results_saving_path=os.path.join(
-        #     dataset.dataset_path,
-        #     "Results",
-        #     "SiameseMultiSessionEvaluation"
-        # )
-        # if not os.path.exists(results_saving_path):
-        #     os.makedirs(results_saving_path)
    
-        metadata=metadata[metadata['event_id']=="Deviant"]
-        # print("total samples after rejection threshold", len(metadata))
-        # for i in range(1,30):
-        #     print("subject", i, metadata[metadata['subject']==i]['session'].value_counts())
-        # #print("after rejection threshold", metadata[['subject', 'session']].value_counts())
-            
+        metadata=metadata[metadata['event_id']=="Deviant"]    
         metadata=self._valid_subject_samples(metadata)
         #print("subjects and sessions", metadata[['subject', 'session']].value_counts())
         target_index=metadata['event_id'].index.tolist()
@@ -177,19 +164,7 @@ class MultiSessionOpenSet(BaseEvaluation):
         X_=data
         y_=y
         open_dicr3=self._siamese_training(X_, y_, siamese, groups)
-        #open_set_path=os.path.join(results_saving_path,"open_set")
-        # if not os.path.exists(open_set_path):
-        #     os.makedirs(open_set_path)
-
-        # # with open(os.path.join(open_set_path, "d1_dicr1.pkl"), 'wb') as f:
-        # #     pickle.dump(open_dicr1, f)
-
-        # # with open(os.path.join(open_set_path, "d1_dicr2.pkl"), 'wb') as f:
-        # #     pickle.dump(open_dicr2, f)
-
-        # with open(os.path.join(open_set_path, "d1_dicr3.pkl"), 'wb') as f:
-        #     pickle.dump(open_dicr3, f)
-
+        
         for sub in open_dicr3.keys():
             #print("subject ", sub)
             result=open_dicr3[sub]
@@ -199,7 +174,6 @@ class MultiSessionOpenSet(BaseEvaluation):
             true_lables=true_lables.astype(np.float64)
             predicted_scores=np.array(result[:,0])
             predicted_scores=predicted_scores.astype(np.float64)
-            # print("predicted scores", predicted_scores)
             eer, frr_1_far, frr_01_far, frr_001_far, inter_tpr, auc=score._calculate_siamese_scores(true_lables, predicted_scores)
             res_open_set = {
             'evaluation': 'Multi Session',
@@ -384,9 +358,6 @@ class MultiSessionOpenSet(BaseEvaluation):
         
         # Filter out rows with invalid subject and session combinations
         df_final = df_final[~df_final.set_index(['subject', 'session']).index.isin(invalid_subject_sessions.set_index(['subject', 'session']).index)]
-        #print(df_final[['session', 'Subject']].value_counts())
-
-        #print(df[['session', 'Subject']].value_counts())
 
         return df_final
     
@@ -478,7 +449,7 @@ class MultiSessionOpenSet(BaseEvaluation):
         
         results_pipeline=[]
         for key, features in pipelines.items():   
-            if (key.upper()=='SIAMESE'):
+            if (key.upper()=='TNN'):
 
                 # If the key is Siamese, then we use the deep learning method
                 results=self.deep_learning_method(X, dataset, metadata, key, features)

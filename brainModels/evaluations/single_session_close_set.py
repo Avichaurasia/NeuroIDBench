@@ -164,18 +164,6 @@ class SingleSessionCloseSet(BaseEvaluation):
             X_=data[ix]
             y_=y[ix]
             close_dicr1, close_dicr2, close_dicr3=self._siamese_training(X_, y_, siamese)
-            # close_set_path=os.path.join(results_saving_path,"close_set")
-            # if not os.path.exists(close_set_path):
-            #     os.makedirs(close_set_path)
-
-            # with open(os.path.join(close_set_path, "d1_dicr1.pkl"), 'wb') as f:
-            #     pickle.dump(close_dicr1, f)
-
-            # with open(os.path.join(close_set_path, "d1_dicr2.pkl"), 'wb') as f:
-            #     pickle.dump(close_dicr2, f)
-
-            # with open(os.path.join(close_set_path, "d1_dicr3.pkl"), 'wb') as f:
-            #     pickle.dump(close_dicr3, f)
 
             for sub in close_dicr3.keys():
                 result=close_dicr3[sub]
@@ -404,7 +392,7 @@ class SingleSessionCloseSet(BaseEvaluation):
         X, subject_dict, metadata=self.paradigm.get_data(dataset)
         results_pipeline=[]
         for key, features in pipelines.items():   
-            if (key.upper()=='SIAMESE'):
+            if (key.upper()=='TNN'):
                 
                 # If the key is Siamese, then we use the deep learning method
                 results=self.deep_learning_method(X, dataset, metadata, key, features)
