@@ -508,7 +508,26 @@ to add new EEG data and then can evaulate their EEG data on their own Siamese me
 [1] V. Jayaram, A. Barachant, Moabb: trustworthy algorithm benchmarking for bcis, Journal of neural engineering 15 (6) (2018) 
     066011
 
-[2]  M. Fallahi, T. Strufe, P. Arias-Cabarcos, Brainnet: Improving brainwavebased biometric recognition with siamese networks, in: 2023 IEEE International Conference on Pervasive Computing and Communications (PerCom), IEEE, 2023, pp. 53–60
+[2] M. Fallahi, T. Strufe, P. Arias-Cabarcos, Brainnet: Improving brainwavebased biometric recognition with siamese networks, in: 2023 IEEE International Conference on Pervasive Computing and Communications (PerCom), IEEE, 2023, pp. 53–60
+
+[3] Korczowski, L., Cederhout, M., Andreev, A., Cattan, G., Rodrigues, P. L. C., Gautheret, V., & Congedo, M. (2019). Brain Invaders calibration-less P300-based BCI with modulation of flash duration Dataset (BI2015a) https://hal.archives-ouvertes.fr/hal-02172347
+
+[4] Hinss, Marcel F., et al. "Open multi-session and multi-task EEG cognitive Dataset  for passive brain-computer Interface Applications." Scientific Data 10.1 (2023): 85.
+
+[5] Kappenman, Emily S., et al. "ERP CORE: An open resource for human event-related potential  research." NeuroImage 225 (2021): 117465.
+
+[6] Hübner, D., Verhoeven, T., Schmid, K., Müller, K. R., Tangermann, M., & Kindermans, P. J. (2017) Learning from label proportions in brain-computer interfaces: Online unsupervised learning with guarantees. PLOS ONE 12(4): e0175856.
+https://doi.org/10.1371/journal.pone.0175856
+
+[7] Mantegna, Francesco, et al. "Distinguishing integration and prediction accounts of ERP N400  modulations in language processing through experimental design." Neuropsychologia 134 (2019): 107199.
+
+[8] Sosulski, J., Tangermann, M.: Electroencephalogram signals recorded from 13 healthy subjects during an auditory oddball paradigm under different stimulus onset asynchrony conditions. Dataset. DOI: 10.6094/UNIFR/154576
+
+[9] K. Won, M. Kwon, M. Ahn, S. C. Jun, Eeg dataset for rsvp and p300 speller brain-computer interfaces, Scientific Data 9 (1) (2022) 388.
+
+[10] Lee, M. H., Kwon, O. Y., Kim, Y. J., Kim, H. K., Lee, Y. E., Williamson, J., … Lee, S. W. (2019). EEG dataset and OpenBMI
+toolbox for three BCI paradigms: An investigation into BCI illiteracy. GigaScience, 8(5), 1–16.
+https://doi.org/10.1093/gigascience/giz002
 
 
 

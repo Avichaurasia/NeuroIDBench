@@ -9,6 +9,15 @@ from .base import BaseDataset
 import mne
 import os
 
+"""
+The implementation of this dataset has been sourced from the BDS-3 licensed repository at https://github.com/NeuroTechX/moabb
+
+References
+----------
+[1] Vinay Jayaram and Alexandre Barachant. MOABB: trustworthy algorithm benchmarking for BCIs. 
+Journal of neural engineering 15.6 (2018): 066011. DOI:10.1088/1741-2552
+        """
+
 Lee2019_URL = "https://ftp.cngb.org/pub/gigadb/pub/10.5524/100001_101000/100542/"
 
 class Lee2019(BaseDataset):

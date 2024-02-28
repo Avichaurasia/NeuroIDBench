@@ -8,6 +8,15 @@ import numpy as np
 from . import download as dl
 from .base import BaseDataset
 
+"""
+The implementation of this dataset has been sourced from the BDS-3 licensed repository at https://github.com/NeuroTechX/moabb
+
+References
+----------
+[1] Vinay Jayaram and Alexandre Barachant. MOABB: trustworthy algorithm benchmarking for BCIs. 
+Journal of neural engineering 15.6 (2018): 066011. DOI:10.1088/1741-2552
+        """
+
 
 VSPELL_BASE_URL = "https://zenodo.org/record/"
 VISUAL_SPELLER_LLP_URL = VSPELL_BASE_URL + "5831826/files/"

@@ -7,6 +7,16 @@ from pathlib import Path
 from . import download as dl
 from .base import BaseDataset
 
+
+"""
+The implementation of this dataset has been sourced from the BDS-3 licensed repository at https://github.com/NeuroTechX/moabb
+
+References
+----------
+[1] Vinay Jayaram and Alexandre Barachant. MOABB: trustworthy algorithm benchmarking for BCIs. 
+Journal of neural engineering 15.6 (2018): 066011. DOI:10.1088/1741-2552
+        """
+
 SPOT_PILOT_P300_URL = (
     "https://freidok.uni-freiburg.de/fedora/objects/freidok:154576/datastreams"
 )
