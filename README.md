@@ -503,6 +503,17 @@ to add new EEG data and then can evaulate their EEG data on their own Siamese me
 
 4. Launch the python file run.py from terminal which has a main method and internally calls the automation script benchmark.py.
 
+# Cite
+
+```bash
+@article{chaurasia2024neurobench,
+  title={NeuroBench: An Open-Source Benchmark Framework for the Standardization of Methodology in Brainwave-based Authentication Research},
+  author={Chaurasia, Avinash Kumar and Fallahi, Matin and Strufe, Thorsten and Terh{\"o}rst, Philipp and Cabarcos, Patricia Arias},
+  journal={arXiv preprint arXiv:2402.08656},
+  year={2024}
+}
+```
+
 # References
 
 [1] V. Jayaram, A. Barachant, Moabb: trustworthy algorithm benchmarking for bcis, Journal of neural engineering 15 (6) (2018) 
