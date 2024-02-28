@@ -59,9 +59,6 @@ class MultiSessionOpenSet(BaseEvaluation):
         #paradigm=None,
         **kwargs
     ):
-        # self.dataset = dataset
-        # self.paradigm = paradigm
-        #self.paradigm = paradigm
         self.n_perms = n_perms
         self.data_size = data_size
         self.return_close_set = return_close_set
@@ -213,11 +210,10 @@ class MultiSessionOpenSet(BaseEvaluation):
             dict: Tuple containing the average authentication scores across the k-fold
                   for each subject.
 
-        This method evaluates the authentication performance for a single subject in a close-set scenario.
-        It uses RepeatedStratifiedKFold cross-validation to split the data into training and test sets.
-        The function normalizes the data, trains the model, predicts test set results, and calculates
-        various authentication metrics (such as accuracy, AUC, EER, FPR, TPR) for each fold in the cross-validation.
-        The average scores for accuracy, AUC, EER, and FRR_1_FAR are then computed and returned as a dictionary.
+        This method performs authentication for a single subject in a multi-session dataset using the open-set scenario.
+        It iterates through each session in the dataset and authenticates the subject using the provided features. 
+        Sessions with lower indices are used for training, while sessions with higher indices are used for testing.
+        The method then calculates the average scores across the k-fold for each session and returns the results in a dictionary.    
         """
         accuracy_list=[]
         auc_list=[]
@@ -375,13 +371,11 @@ class MultiSessionOpenSet(BaseEvaluation):
         Returns:
             list: A list of dictionaries containing evaluation metrics for each subject's session.
 
-        This method executes traditional authentication methods for single-session open-set evaluation. It prepares the data
-        for evaluation and iterates through each subject in the dataset. For each subject, it assigns label 1 to the sessions
-        belonging to that subject and label 0 to the rest. The method then authenticates each session for the subject using
-        the provided features and gathers evaluation metrics. Metrics include accuracy, AUC, EER, TPR, among others. It also
-        identifies and evaluates sessions with rejected subjects, determining performance against imposter subjects, labels, 
-        and features. Evaluation metrics are collected and returned in a list of dictionaries, containing detailed results 
-        for each subject's session.
+        This method performs traditional authentication methods for single session open-set evaluation. It retrieves
+        necessary data from the dataset and organizes the results for each subject's session. It iterates through each 
+        subject and assigns label 0 to all subjects. It then updates the label to 1 for the subject being authenticated.
+        Method _authenticate_single_subject_open_set is called to perform the authentication for each subject's session.
+        The results are saved in a list of dictionaries containing evaluation metrics for each subject's session.
         """
         results_open_set=[]
         data=self._prepare_data(dataset, features, subject_dict)
@@ -515,6 +509,16 @@ class MultiSessionOpenSet(BaseEvaluation):
         return metadata
         
     def _valid_sessions(self, df, subject, dataset):
+
+        """
+        This function checks if each subject has the same number of sessions.
+
+        Parameters:
+        - df: DataFrame containing metadata.
+
+        Returns:
+        - True: If each subject has the same number of sessions.
+        """
         df_subject=df[df['subject']==subject]
         if (len(df_subject['session'].unique())!=dataset.n_sessions):
             return False
@@ -523,6 +527,15 @@ class MultiSessionOpenSet(BaseEvaluation):
         
     
     def _valid_number_of_subjects(self, metadata):
+        """
+        This function checks if the dataset has at least 4 subjects.
+
+        Parameters:
+        - metadata: DataFrame containing metadata.
+
+        Returns:
+        - True: If the dataset has at least 4 subjects.
+        """
         if(len(metadata.subject.unique())<4):
             return False
         else:
@@ -530,6 +543,15 @@ class MultiSessionOpenSet(BaseEvaluation):
 
     
     def is_valid(self, dataset):
+        """
+        This function checks if the dataset is appropriate for multi session evaluation.
+
+        Parameters:
+        - dataset: The dataset for evaluation.
+
+        Returns:
+        - True: If the dataset is appropriate for multi session evaluation.
+        """
         return dataset.n_sessions > 1
 
 

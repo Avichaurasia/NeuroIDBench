@@ -57,8 +57,6 @@ class Basepipeline(metaclass=ABCMeta):
             raise AssertionError(message)
         
         # Get the pre-processed data for the dataset
-        #X, subjects_dict , metadata = paradigm.get_data(
-         #       dataset, return_epochs)
         data=self._get_features(subjects_dict, dataset)
         return data
  

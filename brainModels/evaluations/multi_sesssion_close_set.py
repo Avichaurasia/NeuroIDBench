@@ -79,10 +79,9 @@ class MultiSessionCloseSet(BaseEvaluation):
                   for each subject.
 
         This method evaluates the authentication performance for a single subject in a close-set scenario.
-        It uses RepeatedStratifiedKFold cross-validation to split the data into training and test sets.
-        The function normalizes the data, trains the model, predicts test set results, and calculates
-        various authentication metrics (such as accuracy, AUC, EER, FPR, TPR) for each fold in the cross-validation.
-        The average scores for accuracy, AUC, EER, and FRR_1_FAR are then computed and returned as a dictionary.
+        It uses a one vs all strategy to authenticate the subject using the provided features and pipeline.
+        Earlier sesions are used for enrollment and later sessions are used for testing.
+        EEG data of whole session is used for training and testing.
         """
         accuracy_list=[]
         auc_list=[]
@@ -334,8 +333,17 @@ class MultiSessionCloseSet(BaseEvaluation):
         return metadata
          
     def _valid_sessions(self, df, subject, dataset):
+
+        """
+        This function checks if each subject has the same number of sessions.
+
+        Parameters:
+        - df: DataFrame containing metadata.
+
+        Returns:
+        - True: If each subject has the same number of sessions.
+        """
         df_subject=df[df['subject']==subject]
-        #print(df_subject['session'].unique())
         if (len(df_subject['session'].unique())!=dataset.n_sessions):
             return False
         else:
@@ -343,6 +351,15 @@ class MultiSessionCloseSet(BaseEvaluation):
 
     
     def is_valid(self, dataset):
+        """
+        This function checks if the dataset is appropriate for multi session evaluation.
+
+        Parameters:
+        - dataset: The dataset for evaluation.
+
+        Returns:
+        - True: If the dataset is appropriate for multi session evaluation.
+        """
         return dataset.n_sessions > 1
 
 

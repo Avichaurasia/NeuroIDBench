@@ -101,7 +101,6 @@ class CalculateSimilarity():
 
         """
 
-        #print("I am in predict open set function")
         # Compute embeddings for all test samples
         resutls=[]
         resutls2=[]

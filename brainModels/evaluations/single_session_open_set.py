@@ -145,15 +145,7 @@ class SingleSessionOpenSet(BaseEvaluation):
         each session within the 'open_set' directory. Evaluation metrics including AUC, EER, FRR_1_FAR, TPR, and the number of
         samples are recorded for each pipeline and session, then appended to 'results_close_set' for subsequent analysis.
         """
-        #X, _, metadata=self.paradigm.get_data(dataset)
-        # results_saving_path=os.path.join(
-        #     dataset.dataset_path,
-        #     "Results",
-        #     "SiameseWithinSessionEvaluation"
-        # )
-        # if not os.path.exists(results_saving_path):
-        #     os.makedirs(results_saving_path)
-
+        
         metadata=metadata[metadata['event_id']=="Deviant"]
         metadata=self._valid_subject_samples(metadata)
         target_index=metadata['event_id'].index.tolist()
@@ -167,19 +159,6 @@ class SingleSessionOpenSet(BaseEvaluation):
             X_=data[ix]
             y_=y[ix]
             open_dicr3=self._siamese_training(X_, y_, siamese)
-            #close_set_path=os.path.join(results_saving_path,"open_set")
-            # if not os.path.exists(close_set_path):
-            #     os.makedirs(close_set_path)
-
-            # with open(os.path.join(close_set_path, "d1_dicr1.pkl"), 'wb') as f:
-            #     pickle.dump(close_dicr1, f)
-
-            # with open(os.path.join(close_set_path, "d1_dicr2.pkl"), 'wb') as f:
-            #     pickle.dump(close_dicr2, f)
-
-            # with open(os.path.join(close_set_path, "d1_dicr3.pkl"), 'wb') as f:
-            #     pickle.dump(close_dicr3, f)
-
             for sub in open_dicr3.keys():
                 result=open_dicr3[sub]
                 result=np.array(result)
