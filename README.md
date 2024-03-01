@@ -19,8 +19,8 @@ Moreover, a reaearch paper was written as an extension of the master thesis. The
 - [BrainModels Architecture](#BrainModels-Architecture)
 - [Installation](#installation)
 - [Running](#Running)
-- [How to Add new EEG data for benchmarking?](#How-to-Add-new-EEG-data-for-benchmarking?)
-- [How to integrate researchers customized Twin neural network into the tool?](How-to-integrate-researchers-customized-Twin-Neural-Network-into-the-tool?)
+- [Add new EEG data](#Add-new-EEG-data)
+- [Evaluate your own Twin Neural Network](#Evaluate-your-own-Twin-Neural-Network)
 - [Cite our work](#cite-our-work)
 - [References]{#References}
 
@@ -132,7 +132,7 @@ results for the single dataset.
 
 Examples of evaluating across various datasets and schemes can be found in our [Jupyter Notebook examples](./Jupypter_Notebooks/).
 
-## How to Add new EEG data for benchmarking?
+## Add new EEG data
 
 Reserachers can utilize this tool to perform benchmarking and evalaute their approach. 
 However,there are certain pre-requisities that need to be fuflfilled to add new EEG data to this tool.
@@ -219,7 +219,7 @@ like Siamese Neural Networks is made.
 4. Launch the python file run.py from terminal which has a main method and internally calls the automation script for benchmark.py 
 
 
-## How to integrate researchers customized Twin neural network into the tool?
+## Evaluate your own Twin Neural Network
 
 Reserachers can also evaluate their own approach of Siamese Neural Network(SNN). This benchmarking tool
 faciliates the reserachers to write their own customized SNN method in a python file, store it locally
