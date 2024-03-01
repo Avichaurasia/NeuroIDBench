@@ -6,22 +6,24 @@
 <img src="/images/brainModels.png" alt="My Logo" width="500" height="350">
 </div>
 
-<!-- <details>
-<summary><strong>📘 Short Summary of Thesis</strong></summary>
-
-Brainwaves present a compelling avenue for secure person authentication because they are inherently unobservable externally and capable of facilitating liveness detection. Harnessing brainwave’s unique and individualistic attributes, they have found extensive utility in various authentication applications. Nonetheless, the domain of brainwave authentication research has witnessed an upsurge in diverse experimental setups and the meticulous fine-tuning of parameters to optimize authentication methodologies. The substantial diversity in their methods poses a significant obstacle in assessing and measuring authentic research advancements. 
-
-To address this multifaceted issue, this thesis introduces a versatile and robust benchmarking framework tailored explicitly for brainwave authentication systems. This framework draws upon the resources of four publicly accessible medical-grade brainwave datasets. It is worth mentioning that our study encompasses a substantial sample size consisting of 195 participants. The number of participants in our study is noteworthy, particularly when compared to the customary approach in brainwave authentication research, which typically involves a participant pool about one-fifth the size of our study.
-
-Our extensive assessment encompassed a variety of state-of-the-art authentication algorithms, including Logistic Regression, Linear Discriminant Analysis, Support Vector Machine, Naive Bayes, K-Nearest Neighbours, Random Forest, and advanced deep learning methods like Siamese Neural Networks. Our evaluation approach incorporated both within-session (single-session) and cross-session (multi-session) analysis, covering threat cases like close-set (seen attacker) and open-set (unseen attacker) scenarios to ensure the tool’s versatility in different contexts. 
-
-In within-session evaluation, our framework showcased outstanding performance for several classifiers, particularly Siamese Networks, which achieved an Equal Error Rate of 1.60% in the unseen attacker scenario. Additionally, our benchmarking framework’s adaptability is a notable asset, allowing researchers to tailor pre-processing, feature extraction, and authentication parameters to suit their specific requirements.
-</details> -->
 </br>
 
 This repository serves as a comprehensive resource for BrainModels. It encompasses the entire implementation codebase along with a collection of illustrative examples for conducting benchmarking experiments using this powerful tool. Please note that while this repository is a valuable resource for code and methodologies, it does not include the proprietary or sensitive data utilized in our thesis.
 
-The thesis was written at the [IT Security](https://en.cs.uni-paderborn.de/its) group at Paderborn University, Germany. It was supervised by [Patricia Arias Cabarcos](https://twitter.com/patriAriasC), who also leads the group. Further, the implementation aspects of this benchmarking tool was supervised by M.Sc [Matin Fallahi](https://ps.tm.kit.edu/english/21_318.php), a reserach associate at Kalrsruhe Insistute of Technology, Germany. 
+The respository was intially created as part of the master thesis conducted by M.Sc [Avinash Kumar Chaurasia](https://avichaurasia.github.io/). It was written at the [IT Security](https://en.cs.uni-paderborn.de/its) group at Paderborn University, Germany under the supervision of Prof. Dr. [Patricia Arias Cabarcos](https://twitter.com/patriAriasC), who also leads the group. Further, the implementation aspects of this benchmarking tool was supervised by M.Sc [Matin Fallahi](https://ps.tm.kit.edu/english/21_318.php), a reserach associate at Kalrsruhe Insistute of Technology, Germany. 
+
+Moreover, a reaearch paper was written as an extension of the master thesis. The paper was submitted to the [Journal of Information Security and Applications](https://www.sciencedirect.com/journal/journal-of-information-security-and-applications) on 31st January 2024. While the paper undergoes review, Pre-Print of the paper can be found at [Arxiv](https://arxiv.org/abs/2402.08656).  
+
+## Table of Contents
+
+- [BrainModels Architecture](#BrainModels-Architecture)
+- [Installation](#installation)
+- [Running](#Running)
+- [Results][#Results]
+- [How to Add new EEG data for benchmarking?](#How-to-Add-new-EEG-data-for-benchmarking?)
+- [How to integrate researchers customized Twin neural network into the tool?](How-to-integrate-researchers-customized-Twin-Neural-Network-into-the-tool?)
+- [Cite our work](#cite-our-work)
+- [References]{#References}
 
 ## BrainModels Architecture
 
@@ -113,7 +115,9 @@ Activate the conda environment using the following command:
 conda activate master_thesis
 ```
 
-## Yaml Configuration Files
+## Running 
+
+The tool can be run by two ways:
 
 Edit the configuration File: 
 
@@ -123,198 +127,15 @@ Upon activating the Conda environment, navigate to the designated project direct
 A file named single_dataset.yml can be located within the "configuration_files" folder. 
 The single_dataset.yml file is adjusted based on the [exemplified](CONFIGURATION.md) configurations. 
 
-## Examples of executing the project through jupyter notebboks
+Examples of executing the project through jupyter notebooks
 
 We offer the flexibility of creating automated authentication pipelines. A
 dditionally, you can explore examples of evaluating across various datasets and schemes 
 in our [Jupyter Notebook examples](./Jupypter_Notebooks/).
 
+## Results
 
-<!-- ### Example 1: 
-Benchmarking pipeline using the dataset’s default parameters and auto-regressive features with SVM classification
-
-```bash
-name: "BrainInvaders2015a"
-
-dataset: 
-  - name: brainModels.BrainInvaders2015a
-    from: datasets
-
-pipelines:
-
-  "AR+PSD+SVM": 
-    - name: AutoRegressive
-      from: brainModels.featureExtraction
-
-    - name: SVC
-      from: sklearn.svm
-      parameters: 
-        kernel: 'rbf'
-        class_weight: "balanced"
-        probability: True
-```
-
-This benchmarking pipeline consists of default dataset's parameters which means EEG data of all the subjects are utlized in this pipeline.
-Further, default epochs interval is set [-0.2, 0.8], rejection_threshold is None. AR features with default order 6 and SVM with kernel 'rbf',
-constitutes the pipeline. 
-
-### Example 2: 
-Benchmarking pipeline by setting parmeters for the dataset, AR features with AR order 6 and algorithm SVM with kernel 'rbf'
-
-```bash
-name: "BrainInvaders2015a"
-
-dataset: 
-  - name: brainModels.BrainInvaders2015a
-    from: datasets
-    parameters:
-        subjects: 10
-        interval: [-0.1, 0.9] 
-        rejection_threshold: 200
-
-  pipelines: 
-
-  "AR+SVM":
-    - name: AutoRegressive 
-      from: brainModels.featureExtraction 
-      parameters:
-        order: 5
-
-    - name: SVC
-      from: sklearn.svm 
-      parameters:
-        kernel: ’rbf’ 
-        class_weight: "balanced" 
-        probability: True
-```
-
-This benchmarking pipeline first set parameters for the datasets such as EEG data of only 10 subjects will be utlized, epochs rejection threshol
-is set 200 microvolts for dropping aritifcats. AR features with order 5 and SVM with kernel 'rbf' depicts the parameters for the feature extraction
-and authentication algorithm. 
-
-### Example 3: 
-Benchamrking pipeline for dataset BrainInvaders15a with AR and PSD features with classifier SVM. 
-
-```bash
-name: "BrainInvaders2015a"
-
-dataset: 
-  - name: brainModels.BrainInvaders2015a
-    from: datasets
-    parameters:
-        subjects: 10
-        interval: [-0.1, 0.9] 
-        rejection_threshold: 200
-
-
-  pipelines: 
-  
-  "AR+SVM":
-    - name: AutoRegressive 
-      from: brainModels.featureExtraction
-      parameters:
-        order: 5
-
-    - name: PowerSpectralDensity 
-      from: brainModels.featureExtraction
-
-    - name: SVC
-      from: sklearn.svm 
-      parameters:
-        kernel: ’rbf’ 
-        class_weight: "balanced" 
-        probability: True
-```
-
-This benchmarking pipeline first set parameters for the datasets such as EEG data of only 10 subjects will be utlized, epochs rejection threshol
-is set 200 microvolts for dropping aritifcats. AR and PSD features with SVM is utilized to form the sklearn pipeline. 
-
-### Example 4: 
-Benchamrking pipeline for dataset BrainInvaders15a with Siamese Networks
-
-```bash
-name: "BrainInvaders2015a"
-
-dataset: 
-  - name: brainModels.BrainInvaders2015a
-    from: datasets
-    parameters:
-        subjects: 10
-        interval: [-0.1, 0.9] 
-        rejection_threshold: 200
-
-  pipelines:
-
-  "TNN":
-    - name : TwinNeuralNetwork
-    from: brainModels.featureExtraction
-    parameters:
-        EPOCHS: 100 
-        batch_size: 192 
-        verbose: 1 
-        workers: 1  
-```
-
-This benchmarking pipeline first set parameters for the datasets such as EEG data of only 10 subjects will be utlized, epochs rejection threshol
-is set 200 microvolts for dropping aritifcats. Here, Siamese neural Network pipeline with parameters such EPOCHS=10, batch_size=256 is set for 
-training the neural network.
-
-### Example 5: 
-Benchamrking pipeline for dataset BrainInvaders15a with traditional and deep learning methods
-
-```bash
-name: "BrainInvaders2015a"
-
-dataset: 
-  - name: brainModels.BrainInvaders2015a
-    from: datasets
-    parameters:
-        subjects: 10
-        interval: [-0.1, 0.9] 
-        rejection_threshold: 200
-
-  pipelines:
-
-   "AR+SVM":
-    - name: AutoRegressive 
-      from: brainModels.featureExtraction 
-      parameters:
-        order: 5
-
-    - name: PowerSpectralDensity 
-      from: brainModels.featureExtraction
-
-    - name: SVC
-      from: sklearn.svm 
-      parameters:
-        kernel: ’rbf’ 
-        class_weight: "balanced" 
-        probability: True
-
-   "TNN":
-    - name : TwinNeuralNetwork
-    from: featureExtraction
-    parameters:
-        EPOCHS: 10 
-        batch_size: 256 
-        verbose: 1 
-        workers: 1  
-```
-
-This benchmarking pipeline first set parameters for the datasets such as EEG data of only 10 subjects will be utlized, epochs rejection threshol
-is set 200 microvolts for dropping aritifcats. Here, the pipeline consisiting of traditional algorithm such as SVM and deep learning method like Siamese Neural Networks is made.  
-
-Launch the automation Script: 
-
-Launch the python file run.py with the following command. 
-```bash
-python brainModels/run.py
-```
-
-This python file will internally automation script benchmark.py. The  script parses the above configuration file and streamlines all the tasks related to data preprocessing, feature extraction, and classification for a single dataset. It conducts benchmarking assessments across multiple
-classifiers for the specified dataset -->
-
-# How to Add new EEG data for benchmarking?
+## How to Add new EEG data for benchmarking?
 
 Reserachers can utilize this tool to perform benchmarking and evalaute their approach. 
 However,there are certain pre-requisities that need to be fuflfilled to add new EEG data to this tool.
@@ -401,7 +222,7 @@ like Siamese Neural Networks is made.
 4. Launch the python file run.py from terminal which has a main method and internally calls the automation script for benchmark.py 
 
 
-# How to integrate researchers customized siamese neural network into the tool?
+## How to integrate researchers customized siamese neural network into the tool?
 
 Reserachers can also evaluate their own approach of Siamese Neural Network(SNN). This benchmarking tool
 faciliates the reserachers to write their own customized SNN method in a python file, store it locally
@@ -503,7 +324,7 @@ to add new EEG data and then can evaulate their EEG data on their own Siamese me
 
 4. Launch the python file run.py from terminal which has a main method and internally calls the automation script benchmark.py.
 
-# Cite
+## Cite our work
 
 ```bash
 @article{chaurasia2024neurobench,
@@ -514,7 +335,7 @@ to add new EEG data and then can evaulate their EEG data on their own Siamese me
 }
 ```
 
-# References
+## References
 
 [1] V. Jayaram, A. Barachant, Moabb: trustworthy algorithm benchmarking for bcis, Journal of neural engineering 15 (6) (2018) 
     066011
