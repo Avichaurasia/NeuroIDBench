@@ -19,7 +19,6 @@ Moreover, a reaearch paper was written as an extension of the master thesis. The
 - [BrainModels Architecture](#BrainModels-Architecture)
 - [Installation](#installation)
 - [Running](#Running)
-- [Results][#Results]
 - [How to Add new EEG data for benchmarking?](#How-to-Add-new-EEG-data-for-benchmarking?)
 - [How to integrate researchers customized Twin neural network into the tool?](How-to-integrate-researchers-customized-Twin-Neural-Network-into-the-tool?)
 - [Cite our work](#cite-our-work)
@@ -119,21 +118,19 @@ conda activate master_thesis
 
 The tool can be run by two ways:
 
-Edit the configuration File: 
+1. Running the tool through automated creation of authentication pipelines
 
 <!-- Some of the examples for configuring yaml for developing automated authentication pipelines
 can be found [here](CONFIGURATION.md). -->
 Upon activating the Conda environment, navigate to the designated project directory. 
 A file named single_dataset.yml can be located within the "configuration_files" folder. 
-The single_dataset.yml file is adjusted based on the [exemplified](CONFIGURATION.md) configurations. 
+The single_dataset.yml file is adjusted based on the [exemplified](CONFIGURATION.md) configurations.
+The YAML configuration files can be utilized to perform automated benchmarking and reproduce the 
+results for the single dataset.
 
-Examples of executing the project through jupyter notebooks
+2. Running the tool through jupyter notebooks
 
-We offer the flexibility of creating automated authentication pipelines. A
-dditionally, you can explore examples of evaluating across various datasets and schemes 
-in our [Jupyter Notebook examples](./Jupypter_Notebooks/).
-
-## Results
+Examples of evaluating across various datasets and schemes can be found in our [Jupyter Notebook examples](./Jupypter_Notebooks/).
 
 ## How to Add new EEG data for benchmarking?
 
@@ -222,7 +219,7 @@ like Siamese Neural Networks is made.
 4. Launch the python file run.py from terminal which has a main method and internally calls the automation script for benchmark.py 
 
 
-## How to integrate researchers customized siamese neural network into the tool?
+## How to integrate researchers customized Twin neural network into the tool?
 
 Reserachers can also evaluate their own approach of Siamese Neural Network(SNN). This benchmarking tool
 faciliates the reserachers to write their own customized SNN method in a python file, store it locally
