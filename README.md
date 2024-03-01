@@ -22,7 +22,7 @@ Moreover, a reaearch paper was written as an extension of the master thesis. The
 - [Add new EEG data](#Add-new-EEG-data)
 - [Evaluate your own Twin Neural Network](#Evaluate-your-own-Twin-Neural-Network)
 - [Cite our work](#cite-our-work)
-- [References]{#References}
+- [References](#References)
 
 ## BrainModels Architecture
 
