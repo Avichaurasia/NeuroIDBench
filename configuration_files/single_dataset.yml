@@ -1,13 +1,12 @@
-name: "UserDataset"
+name: "ERPCOREN400"
 
 dataset: 
-  - name: ERPCOREN400
+  - name: ERPCORENP300
     from: brainModels.datasets
     parameters: 
       subjects: 10
       interval: [-0.1, 0.9]
       rejection_threshold: 200
-
 
 pipelines:
 
@@ -26,13 +25,12 @@ pipelines:
         kernel: 'rbf'
         class_weight: "balanced"
         probability: True
-
+        C: 1.0
 
   # "TNN": 
   # - name : TwinNeuralNetwork
   #   from: brainModels.featureExtraction
   #   parameters: 
-  #     #user_siamese_path: "configuration_files/siamese.yml"
   #     EPOCHS: 10
   #     batch_size: 256
   #     verbose: 1
