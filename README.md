@@ -135,7 +135,12 @@ Examples of evaluating across various datasets and schemes can be found in our [
 ## Results
 
 <div align="center">
-<img src="/Plots/Single_Session_Evaluation/Single_Session_Evaluation.pdf" alt="Single Session Evaluation under known and unknown attacker scenarios" width="800" height="380">
+<img src="/Plots/Single_Session_Evaluation/Single_Session_Evaluation.png" alt="Single Session Evaluation under known and unknown attacker scenarios" width="800" height="380">
+</div>
+
+
+<div align="center">
+<img src="/Plots/Multi_Session_Evaluation/Multi_Session_Evaluation.png" alt="Single Session Evaluation under known and unknown attacker scenarios" width="800" height="380">
 </div>
 
 
