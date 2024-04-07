@@ -1,8 +1,8 @@
 import numpy as np
 import sys
 sys.path.append("./")
-from brainModels.benchmark import benchmark
-from brainModels.analysis import Plots
+from neuroIDBench.benchmark import benchmark
+from neuroIDBench.analysis import Plots
 #from benchmark import benchmark
 
 if __name__ == "__main__":

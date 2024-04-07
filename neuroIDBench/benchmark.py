@@ -3,8 +3,8 @@ from sklearn.discriminant_analysis import LinearDiscriminantAnalysis as LDA
 from sklearn.pipeline import make_pipeline
 from sklearn.svm import SVC
 #print("Running benchmark")
-from brainModels.preprocessing import ERP
-from brainModels.featureExtraction import (
+from neuroIDBench.preprocessing import ERP
+from neuroIDBench.featureExtraction import (
     parse_pipelines_from_directory,
     generate_paradigms,
     parse_pipelines_for_single_dataset,
@@ -18,7 +18,7 @@ from pathlib import Path
 import numpy as np
 import yaml
 import pandas as pd
-from brainModels.evaluations import (SingleSessionCloseSet, SingleSessionOpenSet, multi_session_open_set)
+from neuroIDBench.evaluations import (SingleSessionCloseSet, SingleSessionOpenSet, multi_session_open_set)
 log = logging.getLogger(__name__)
 
 def benchmark(subjects=None,

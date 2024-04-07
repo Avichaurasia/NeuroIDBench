@@ -4,7 +4,7 @@ import mne
 import numpy as np
 import sys
 sys.path.append("../")
-from brainModels.datasets import (BrainInvaders2015a, ERPCOREN400, COGBCIFLANKER, Mantegna2019)
+from neuroIDBench.datasets import (BrainInvaders2015a, ERPCOREN400, COGBCIFLANKER, Mantegna2019)
 #from ..datasets import (BrainInvaders2015a, ERPCOREN400, COGBCIFLANKER, Mantegna2019)
 
 

@@ -8,11 +8,11 @@ import numpy as np
 import pytest
 import sys
 sys.path.append("../")
-import brainModels.datasets as db
-from brainModels.datasets import BrainInvaders2015a, ERPCOREN400, erpCoreP300
-from brainModels.datasets.base import BaseDataset
-from brainModels.datasets.utils import dataset_list
-from brainModels.preprocessing import ERP
+import neuroIDBench.datasets as db
+from neuroIDBench.datasets import BrainInvaders2015a, ERPCOREN400, erpCoreP300
+from neuroIDBench.datasets.base import BaseDataset
+from neuroIDBench.datasets.utils import dataset_list
+from neuroIDBench.preprocessing import ERP
 
 _ = mne.set_log_level("CRITICAL")
 

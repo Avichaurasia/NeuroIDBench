@@ -4,19 +4,19 @@ import logging
 import mne
 import numpy as np
 import pandas as pd
-from brainModels.preprocessing.erp import ERP
-from brainModels.datasets.brainInvaders15a import BrainInvaders2015a
-from brainModels.datasets.mantegna2019 import Mantegna2019
-from brainModels.datasets.cogBciFlanker import COGBCIFLANKER
-from brainModels.datasets.lee2019 import Lee2019
+from neuroIDBench.preprocessing.erp import ERP
+from neuroIDBench.datasets.brainInvaders15a import BrainInvaders2015a
+from neuroIDBench.datasets.mantegna2019 import Mantegna2019
+from neuroIDBench.datasets.cogBciFlanker import COGBCIFLANKER
+from neuroIDBench.datasets.lee2019 import Lee2019
 #from brainmodels.datasets.draschkow2018 import Draschkow2018
-from brainModels.datasets.won2022 import Won2022
-from brainModels.featureExtraction.features import AutoRegressive 
-from brainModels.featureExtraction.features import PowerSpectralDensity 
+from neuroIDBench.datasets.won2022 import Won2022
+from neuroIDBench.featureExtraction.features import AutoRegressive 
+from neuroIDBench.featureExtraction.features import PowerSpectralDensity 
 #from deeb.pipelines.siamese_old import Siamese
-from brainModels.featureExtraction.base import Basepipeline
+from neuroIDBench.featureExtraction.base import Basepipeline
 #from deeb.evaluation.evaluation import CloseSetEvaluation, OpenSetEvaluation
-from brainModels.datasets import utils
+from neuroIDBench.datasets import utils
 from autoreject import AutoReject, get_rejection_threshold
 from sklearn.pipeline import make_pipeline
 from sklearn.preprocessing import StandardScaler 
@@ -26,12 +26,12 @@ from sklearn.svm import SVC
 from sklearn.linear_model import LogisticRegression
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.ensemble import RandomForestClassifier
-from brainModels.evaluations.single_session_close_set import SingleSessionCloseSet
-from brainModels.evaluations.single_session_open_set import SingleSessionOpenSet
+from neuroIDBench.evaluations.single_session_close_set import SingleSessionCloseSet
+from neuroIDBench.evaluations.single_session_open_set import SingleSessionOpenSet
 #from brainModels.evaluations.multi_session_open_set import MultiSessionOpenSet
 #from brainModels.evaluations.multi_session_open_set_copy import MultiSessionOpenSet
-from brainModels.featureExtraction.twinNeural import TwinNeuralNetwork
-from brainModels.datasets.lee2019 import Lee2019
+from neuroIDBench.featureExtraction.twinNeural import TwinNeuralNetwork
+from neuroIDBench.datasets.lee2019 import Lee2019
 import os
 
 def _evaluate():

@@ -5,26 +5,26 @@ import mne
 import numpy as np
 import pandas as pd
 #from deeb.paradigms.base_old import BaseParadigm
-from brainModels.preprocessing.erp import ERP
-from brainModels.datasets.brainInvaders15a import BrainInvaders2015a
-from brainModels.datasets.mantegna2019 import Mantegna2019
+from neuroIDBench.preprocessing.erp import ERP
+from neuroIDBench.datasets.brainInvaders15a import BrainInvaders2015a
+from neuroIDBench.datasets.mantegna2019 import Mantegna2019
 #from deeb.datasets.draschkow2018 import Draschkow2018
-from brainModels.datasets.won2022 import Won2022
-from brainModels.datasets.cogBciFlanker import COGBCIFLANKER
-from brainModels.featureExtraction.features import AutoRegressive as AR
-from brainModels.featureExtraction.features import PowerSpectralDensity
+from neuroIDBench.datasets.won2022 import Won2022
+from neuroIDBench.datasets.cogBciFlanker import COGBCIFLANKER
+from neuroIDBench.featureExtraction.features import AutoRegressive as AR
+from neuroIDBench.featureExtraction.features import PowerSpectralDensity
 #from deeb.pipelines.siamese_old import Siamese
-from brainModels.featureExtraction.base import Basepipeline
+from neuroIDBench.featureExtraction.base import Basepipeline
 #from deeb.evaluation.siamese_evaluation import Siamese_WithinSessionEvaluation
 #from deeb.Evaluation.siamese_cross import Siamese_CrossSessionEvaluation
-from brainModels.datasets import utils
+from neuroIDBench.datasets import utils
 from autoreject import AutoReject, get_rejection_threshold
 from sklearn.pipeline import make_pipeline
 from sklearn.preprocessing import StandardScaler 
-from brainModels.featureExtraction.twinNeural import TwinNeuralNetwork
-from brainModels.evaluations.single_session_open_set import SingleSessionOpenSet
+from neuroIDBench.featureExtraction.twinNeural import TwinNeuralNetwork
+from neuroIDBench.evaluations.single_session_open_set import SingleSessionOpenSet
 
-from brainModels.analysis.plotting import Plots 
+from neuroIDBench.analysis.plotting import Plots 
 import os
 
 def _evaluate():

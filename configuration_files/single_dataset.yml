@@ -1,7 +1,7 @@
 name: "ERPCOREN400"
 
 dataset: 
-  - name: ERPCORENP300
+  - name: Mantegna2019
     from: brainModels.datasets
     parameters: 
       subjects: 10

@@ -4,22 +4,22 @@ import logging
 import mne
 import numpy as np
 import pandas as pd
-from brainModels.datasets.lee2019 import Lee2019
-from brainModels.preprocessing.erp import ERP
-from brainModels.datasets.erpCoreN400 import ERPCOREN400
-from brainModels.featureExtraction.twinNeural import Siamese
-from brainModels.datasets import utils
+from neuroIDBench.datasets.lee2019 import Lee2019
+from neuroIDBench.preprocessing.erp import ERP
+from neuroIDBench.datasets.erpCoreN400 import ERPCOREN400
+from neuroIDBench.featureExtraction.twinNeural import Siamese
+from neuroIDBench.datasets import utils
 from autoreject import AutoReject, get_rejection_threshold
 from sklearn.pipeline import make_pipeline
 from sklearn.preprocessing import StandardScaler 
 from sklearn.discriminant_analysis import LinearDiscriminantAnalysis as LDA
-from brainModels.evaluations.single_session_close_set import SingleSessionCloseSet
+from neuroIDBench.evaluations.single_session_close_set import SingleSessionCloseSet
 from sklearn.linear_model import LogisticRegression
 from sklearn.naive_bayes import GaussianNB
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.svm import SVC                                                                                 
 from sklearn.ensemble import RandomForestClassifier
-from brainModels.analysis.plotting import Plots 
+from neuroIDBench.analysis.plotting import Plots 
 import os
 import pkgutil
 

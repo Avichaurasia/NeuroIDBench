@@ -3,7 +3,7 @@ Utils for easy database selection
 """
 
 import inspect
-import brainModels.datasets as db
+import neuroIDBench.datasets as db
 from .base import BaseDataset
 
 dataset_list = []

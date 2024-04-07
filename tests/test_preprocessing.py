@@ -10,11 +10,11 @@ import sys
 from mne import BaseEpochs
 from mne.io import BaseRaw
 sys.path.append("../")
-import brainModels.datasets as db
-from brainModels.datasets import BrainInvaders2015a, ERPCOREN400, erpCoreP300, dummyDataset
-from brainModels.datasets.base import BaseDataset
-from brainModels.datasets.utils import dataset_list
-from brainModels.preprocessing import BaseERP, ERP
+import neuroIDBench.datasets as db
+from neuroIDBench.datasets import BrainInvaders2015a, ERPCOREN400, erpCoreP300, dummyDataset
+from neuroIDBench.datasets.base import BaseDataset
+from neuroIDBench.datasets.utils import dataset_list
+from neuroIDBench.preprocessing import BaseERP, ERP
 
 _ = mne.set_log_level("CRITICAL")
 
