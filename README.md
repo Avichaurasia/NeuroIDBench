@@ -19,7 +19,7 @@ Moreover, a reaearch paper was written as an extension of the master thesis. The
 - [BrainModels Architecture](#BrainModels-Architecture)
 - [Installation](#installation)
 - [Running](#Running)
-- [Add new EEG data](ADD_DATA.md)
+- [Add new EEG data](NEWDATA.md)
 - [Evaluate your own Twin Neural Network](RESEARCHERMETHOD.md)
 - [Cite our work](#cite-our-work)
 - [References](#References)
@@ -131,6 +131,14 @@ results for the single dataset.
 2. Running the tool through jupyter notebooks
 
 Examples of evaluating across various datasets and schemes can be found in our [Jupyter Notebook examples](./Jupypter_Notebooks/).
+
+## Results
+
+<div align="center">
+<img src="/Plots/Single_Session_Evaluation/Single_Session_Evaluation.pdf" alt="Single Session Evaluation under known and unknown attacker scenarios" width="800" height="380">
+</div>
+
+
 
 ## Cite our work
 
