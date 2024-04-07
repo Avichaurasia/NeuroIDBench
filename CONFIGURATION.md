@@ -5,14 +5,14 @@ Benchmarking pipeline using the dataset’s default parameters and auto-regressi
 name: "BrainInvaders2015a"
 
 dataset: 
-  - name: brainModels.BrainInvaders2015a
-    from: datasets
+  - name: BrainInvaders2015a
+    from: neuroIDBench.datasets
 
 pipelines:
 
   "AR+PSD+SVM": 
     - name: AutoRegressive
-      from: brainModels.featureExtraction
+      from: neuroIDBench.featureExtraction
 
     - name: SVC
       from: sklearn.svm
@@ -33,8 +33,8 @@ Benchmarking pipeline by setting parmeters for the dataset, AR features with AR 
 name: "BrainInvaders2015a"
 
 dataset: 
-  - name: brainModels.BrainInvaders2015a
-    from: datasets
+  - name: BrainInvaders2015a
+    from: neuroIDBench.datasets
     parameters:
         subjects: 10
         interval: [-0.1, 0.9] 
@@ -44,7 +44,7 @@ dataset:
 
   "AR+SVM":
     - name: AutoRegressive 
-      from: brainModels.featureExtraction 
+      from: neuroIDBench.featureExtraction 
       parameters:
         order: 5
 
@@ -67,8 +67,8 @@ Benchamrking pipeline for dataset BrainInvaders15a with AR and PSD features with
 name: "BrainInvaders2015a"
 
 dataset: 
-  - name: brainModels.BrainInvaders2015a
-    from: datasets
+  - name: BrainInvaders2015a
+    from: neuroIDBench.datasets
     parameters:
         subjects: 10
         interval: [-0.1, 0.9] 
@@ -79,12 +79,12 @@ dataset:
   
   "AR+SVM":
     - name: AutoRegressive 
-      from: brainModels.featureExtraction
+      from: neuroIDBench.featureExtraction
       parameters:
         order: 5
 
     - name: PowerSpectralDensity 
-      from: brainModels.featureExtraction
+      from: neuroIDBench.featureExtraction
 
     - name: SVC
       from: sklearn.svm 
@@ -104,8 +104,8 @@ Benchamrking pipeline for dataset BrainInvaders15a with Siamese Networks
 name: "BrainInvaders2015a"
 
 dataset: 
-  - name: brainModels.BrainInvaders2015a
-    from: datasets
+  - name: BrainInvaders2015a
+    from: neuroIDBench.datasets
     parameters:
         subjects: 10
         interval: [-0.1, 0.9] 
@@ -115,7 +115,7 @@ dataset:
 
   "TNN":
     - name : TwinNeuralNetwork
-    from: brainModels.featureExtraction
+    from: neuroIDBench.featureExtraction
     parameters:
         EPOCHS: 100 
         batch_size: 192 
@@ -134,8 +134,8 @@ Benchamrking pipeline for dataset BrainInvaders15a with traditional and deep lea
 name: "BrainInvaders2015a"
 
 dataset: 
-  - name: brainModels.BrainInvaders2015a
-    from: datasets
+  - name: BrainInvaders2015a
+    from: neuroIDBench.datasets
     parameters:
         subjects: 10
         interval: [-0.1, 0.9] 
@@ -145,12 +145,12 @@ dataset:
 
    "AR+SVM":
     - name: AutoRegressive 
-      from: brainModels.featureExtraction 
+      from: neuroIDBench.featureExtraction 
       parameters:
         order: 5
 
     - name: PowerSpectralDensity 
-      from: brainModels.featureExtraction
+      from: neuroIDBench.featureExtraction
 
     - name: SVC
       from: sklearn.svm 
@@ -176,7 +176,7 @@ Launch the automation Script:
 
 Launch the python file run.py with the following command. 
 ```bash
-python brainModels/run.py
+python neuroIDBench/run.py
 ```
 
 
