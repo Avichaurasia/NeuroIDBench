@@ -169,7 +169,7 @@ We explored Power Spectral Density (PSD) and Autoregressive (AR) models of diffe
 classifiers. A
 
 <div align="center">
-<img src="/Plots/Experiment_feature_Extraction/Feature_Extraction.png" alt="Multi Session Evaluation unknown attacker scenarios" width="800" height="450">
+<img src="/Plots/Experiment_feature_Extraction/Feature_Extraction.png" alt="Multi Session Evaluation unknown attacker scenarios" width="800" height="550">
 </div>
 
 
