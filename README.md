@@ -155,6 +155,25 @@ In multi-session evaluation, the training and testing of features extend across 
 The results indicate a significant increase in EER compared to the single-session results. Notably, LDA and LR, which were not among the best perform-
 ers in the single-session scenario, show more promising results in the multi-session context. 
 
+### Effects on performace due to EEG Sampple Duration 
+
+We explored various sample durations, specifically [1.0, 1.2, 1.4, 1.6, 1.8, 2.0] seconds and their effects on the performace of various classifiers.
+
+<div align="center">
+<img src="/Plots/Experiment_Pre_Processing/Epochs_Interval/Epochs_Duration.png" alt="Multi Session Evaluation unknown attacker scenarios" width="800" height="320">
+</div>
+
+### Effects on performace due to Feature Extraction Parameters
+
+We explored Power Spectral Density (PSD) and Autoregressive (AR) models of different orders as feature extraction methods typically employed in shallow classifiers. Figure 6 illustrates the EER for various configurations of feature extraction across different classifiers. The findings suggest that the combination of PSD with AR of order 1 yields superior performance compared to other combinations. Following this, PSD features alone demonstrate promising results, whereas AR on its own fails to show stable and robust outcomes. Interestingly, in the BrainInvaders15a dataset, the AR of order 1 outperformed most classifiers. In the ERPCORE P300 dataset, PSD was the predominant feature leading to superior performance across most
+classifiers. A
+
+<div align="center">
+<img src="/Plots/Experiment_feature_Extraction/Feature_Extraction.png" alt="Multi Session Evaluation unknown attacker scenarios" width="800" height="320">
+</div>
+
+
+
 ## Cite our work
 
 ```bash
