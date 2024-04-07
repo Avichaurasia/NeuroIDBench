@@ -149,7 +149,7 @@ The results reveal that the mean EER across datasets degraded by 58.44% for KNN,
 In multi-session evaluation, the training and testing of features extend across multiple sessions, encompassing data collected over various time periods or from different users. This evaluation method offers a comprehensive assessment of the system's performance over time and across different user cohorts. By incorporating data from multiple sessions, the model's ability to generalize across diverse conditions and adapt to evolving user patterns is evaluated. Multi-session evaluation is particularly valuable for assessing the long-term reliability and robustness of EEG-based authentication systems, as it accounts for variability in user behavior and data collection conditions across different sessions.
 
 <div align="center">
-<img src="/Plots/Multi_Session_Evalaution/Multi_Session_Evaluation.png" alt="Multi Session Evaluation unknown attacker scenarios" width="800" height="320">
+<img src="/Plots/Multi_Session_Evalaution/Multi_Session_Evaluation.png" alt="Multi Session Evaluation unknown attacker scenarios" width="650" height="320">
 </div>
 
 The results indicate a significant increase in EER compared to the single-session results. Notably, LDA and LR, which were not among the best perform-
