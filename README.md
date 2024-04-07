@@ -134,16 +134,26 @@ Examples of evaluating across various datasets and schemes can be found in our [
 
 ## Results
 
+### Single Session Evaluation
+
+In the single-session evaluation, feature training and testing utilize recorded data from a singular session. This evaluation is conducted under both known and unknown attacker scenarios. In the known attacker scenario, attackers are assumed to be part of the system. Conversely, the unknown attacker scenario mirrors a more realistic environment, where attackers are external to the system. This presents a greater challenge for the model, as it must accurately identify attackers whose EEG data was not included during the training phase.
+
 <div align="center">
-<img src="/Plots/Single_Session_Evaluation/Single_Session_Evaluation.png" alt="Single Session Evaluation under known and unknown attacker scenarios" width="800" height="200">
+<img src="/Plots/Single_Session_Evaluation/Single_Session_Evaluation.png" alt="Single Session Evaluation under known and unknown attacker scenarios" width="800" height="250">
 </div>
 
+The results reveal that the mean EER across datasets degraded by 58.44% for KNN, 275.60% for LDA, 383.91% for LR, 5.83% for NB, 75.94% for RF, 66.61% for SVM, and 75.88% for the Twin neural network approach. Notably, in some cases, the EER increased several-fold.
+
+### Multi Session Evaluation
+
+In multi-session evaluation, the training and testing of features extend across multiple sessions, encompassing data collected over various time periods or from different users. This evaluation method offers a comprehensive assessment of the system's performance over time and across different user cohorts. By incorporating data from multiple sessions, the model's ability to generalize across diverse conditions and adapt to evolving user patterns is evaluated. Multi-session evaluation is particularly valuable for assessing the long-term reliability and robustness of EEG-based authentication systems, as it accounts for variability in user behavior and data collection conditions across different sessions.
 
 <div align="center">
-<img src="/Plots/Multi_Session_Evalaution/Multi_Session_Evaluation.png" alt="Multi Session Evaluation unknown attacker scenarios" width="800" height="200">
+<img src="/Plots/Multi_Session_Evalaution/Multi_Session_Evaluation.png" alt="Multi Session Evaluation unknown attacker scenarios" width="800" height="320">
 </div>
 
-
+The results indicate a significant increase in EER compared to the single-session results. Notably, LDA and LR, which were not among the best perform-
+ers in the single-session scenario, show more promising results in the multi-session context. 
 
 ## Cite our work
 
