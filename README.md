@@ -148,7 +148,7 @@ Examples of evaluating across various datasets and schemes can be found in our [
 <b> Multi Session Authentication</b>: In multi-session evaluation, the training and testing of features extend across multiple sessions, encompassing data collected over various time periods or from different users. This evaluation method offers a comprehensive assessment of the system's performance over time and across different user cohorts. By incorporating data from multiple sessions, the model's ability to generalize across diverse conditions and adapt to evolving user patterns is evaluated. Multi-session evaluation is particularly valuable for assessing the long-term reliability and robustness of EEG-based authentication systems, as it accounts for variability in user behavior and data collection conditions across different sessions.
 
 <div align="center">
-<img src="/Plots/Evalaution.png" alt="Multi Session Evaluation unknown attacker scenarios" width="500" height="600">
+<img src="/Plots/Evalaution.png" alt="Multi Session Evaluation unknown attacker scenarios" width="600" height="600">
 </div>
 
 <!-- The results of single single authentication reveal that the mean EER across datasets degraded by 58.44% for KNN, 275.60% for LDA, 383.91% for LR, 5.83% for NB, 75.94% for RF, 66.61% for SVM, and 75.88% for the Twin neural network approach. Notably, in some cases, the EER increased several-fold.
