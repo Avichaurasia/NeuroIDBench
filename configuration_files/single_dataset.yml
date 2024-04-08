@@ -1,8 +1,8 @@
 name: "ERPCOREN400"
 
 dataset: 
-  - name: Mantegna2019
-    from: brainModels.datasets
+  - name: ERPCOREN400
+    from: neuroIDBench.datasets
     parameters: 
       subjects: 10
       interval: [-0.1, 0.9]
@@ -12,12 +12,12 @@ pipelines:
 
   "AR+PSD+SVM": 
     - name: AutoRegressive
-      from: brainModels.featureExtraction
+      from: neuroIDBench.featureExtraction
       parameters: 
         order: 6
         
     - name: PowerSpectralDensity
-      from: brainModels.featureExtraction
+      from: neuroIDBench.featureExtraction
         
     - name: SVC
       from: sklearn.svm
@@ -39,12 +39,12 @@ pipelines:
   
   "AR+PSD+KNN": 
   - name: AutoRegressive
-    from: brainModels.featureExtraction
+    from: neuroIDBench.featureExtraction
     parameters: 
       order: 6
     
   - name: PowerSpectralDensity
-    from: brainModels.featureExtraction
+    from: neuroIDBench.featureExtraction
       
   - name: KNeighborsClassifier
     from: sklearn.neighbors

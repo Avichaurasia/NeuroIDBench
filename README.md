@@ -16,7 +16,7 @@ Moreover, a reaearch paper was written as an extension of the master thesis. The
 
 ## Table of Contents
 
-- [NeuroIDBench Architecture](#BrainModels-Architecture)
+- [NeuroIDBench Architecture](#NeuroIDBench-Architecture)
 - [Installation](#installation)
 - [Running](#Running)
 - [Add new EEG data](NEWDATA.md)
@@ -97,7 +97,7 @@ tensorflow_addons
 To install these dependencies, please use the following command:
 
 ```bash
-conda env create -f BrainModels/environment.yml
+conda env create -f NeuroIDBench/environment.yml
 ```
 
 we can also utilize requirement.txt to create the virtual environment by using the pip
