@@ -1,6 +1,6 @@
 # NeuroIDBench
 
-[![Pandas Latest Release](https://img.shields.io/pypi/v/pandas.svg)](https://pypi.org/project/pandas/) [![MNE Latest Release - MNE](https://img.shields.io/pypi/v/mne.svg)](https://pypi.org/project/mne/) [![PyPI - Keras](https://img.shields.io/badge/Keras-latest-red.svg)](https://pypi.org/project/keras/)
+<!-- [![Pandas Latest Release](https://img.shields.io/pypi/v/pandas.svg)](https://pypi.org/project/pandas/) [![MNE Latest Release - MNE](https://img.shields.io/pypi/v/mne.svg)](https://pypi.org/project/mne/) [![PyPI - Keras](https://img.shields.io/badge/Keras-latest-red.svg)](https://pypi.org/project/keras/) -->
 
 <!-- <div align="center">
 <img src="/images/brainModels.png" alt="My Logo" width="500" height="350">
@@ -8,7 +8,7 @@
 
 </br> -->
 
-This repository serves as a comprehensive resource for BrainModels. It encompasses the entire implementation codebase along with a collection of illustrative examples for conducting benchmarking experiments using this powerful tool. Please note that while this repository is a valuable resource for code and methodologies, it does not include the proprietary or sensitive data utilized in our thesis.
+This repository serves as a comprehensive resource for NeuroIDBench. It encompasses the entire implementation codebase along with a collection of illustrative examples for conducting benchmarking experiments using this powerful tool. Please note that while this repository is a valuable resource for code and methodologies, it does not include the proprietary or sensitive data utilized in our thesis.
 
 The respository was intially created as part of the master thesis conducted by M.Sc [Avinash Kumar Chaurasia](https://avichaurasia.github.io/). It was written at the [IT Security](https://en.cs.uni-paderborn.de/its) group at Paderborn University, Germany under the supervision of Prof. Dr. [Patricia Arias Cabarcos](https://twitter.com/patriAriasC), who also leads the group. Further, the implementation aspects of this benchmarking tool was supervised by M.Sc [Matin Fallahi](https://ps.tm.kit.edu/english/21_318.php), a reserach associate at Kalrsruhe Insistute of Technology, Germany. 
 
@@ -16,11 +16,12 @@ Moreover, a reaearch paper was written as an extension of the master thesis. The
 
 ## Table of Contents
 
-- [BrainModels Architecture](#BrainModels-Architecture)
+- [NeuroIDBench Architecture](#BrainModels-Architecture)
 - [Installation](#installation)
 - [Running](#Running)
 - [Add new EEG data](NEWDATA.md)
 - [Evaluate your own Twin Neural Network](RESEARCHERMETHOD.md)
+- [Results](#results)
 - [Cite our work](#cite-our-work)
 - [References](#References)
 
@@ -147,7 +148,7 @@ Examples of evaluating across various datasets and schemes can be found in our [
 <b> Multi Session Authentication</b>: In multi-session evaluation, the training and testing of features extend across multiple sessions, encompassing data collected over various time periods or from different users. This evaluation method offers a comprehensive assessment of the system's performance over time and across different user cohorts. By incorporating data from multiple sessions, the model's ability to generalize across diverse conditions and adapt to evolving user patterns is evaluated. Multi-session evaluation is particularly valuable for assessing the long-term reliability and robustness of EEG-based authentication systems, as it accounts for variability in user behavior and data collection conditions across different sessions.
 
 <div align="center">
-<img src="/Plots/Evalaution.png" alt="Multi Session Evaluation unknown attacker scenarios" width="650" height="500">
+<img src="/Plots/Evalaution.png" alt="Multi Session Evaluation unknown attacker scenarios" width="800" height="600">
 </div>
 
 <!-- The results of single single authentication reveal that the mean EER across datasets degraded by 58.44% for KNN, 275.60% for LDA, 383.91% for LR, 5.83% for NB, 75.94% for RF, 66.61% for SVM, and 75.88% for the Twin neural network approach. Notably, in some cases, the EER increased several-fold.
@@ -155,15 +156,17 @@ Examples of evaluating across various datasets and schemes can be found in our [
 The results indicate a significant increase in EER compared to the single-session results. Notably, LDA and LR, which were not among the best perform-
 ers in the single-session scenario, show more promising results in the multi-session context.  -->
 
-### Effects on performace due to EEG Sample Duration 
+### Pre-processing Parameters Impact
 
-We explored various sample durations, specifically [1.0, 1.2, 1.4, 1.6, 1.8, 2.0] seconds and their effects on the performace of various classifiers.
+<b>Brain Sample Duration</b>: We investigated the impact of different sample durations, ranging from 1.0 seconds to 2.0 seconds in increments of 0.2 seconds, on the performance of multiple classifiers. Our analysis delved into how these varying sample durations influenced the effectiveness of the classifiers in achieving accurate predictions.
 
 <div align="center">
 <img src="/Plots/Experiment_Pre_Processing/Epochs_Interval/Epochs_Duration.png" alt="Multi Session Evaluation unknown attacker scenarios" width="800" height="380">
 </div>
 
-### Effects on performace due to Feature Extraction Parameters
+
+
+### Effects of Time and Frequency Domain Features
 
 We also explored some of the most commonly used feature extraction methods in brainwave authentication such as Power Spectral Density (PSD) and Autoregressive (AR) models of different orders as feature extraction methods typically employed in shallow classifiers. Figure 6 illustrates the EER for various configurations of feature extraction across different classifiers. The findings suggest that the combination of PSD with AR of order 1 yields superior performance compared to other combinations. Following this, PSD features alone demonstrate promising results, whereas AR on its own fails to show stable and robust outcomes. Interestingly, in the BrainInvaders15a dataset, the AR of order 1 outperformed most classifiers. In the ERPCORE P300 dataset, PSD was the predominant feature leading to superior performance across most
 classifiers. A
