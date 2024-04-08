@@ -68,7 +68,7 @@ visualized by calling functions from this module.
 Get the project by cloning from github
 
 ```bash
-git clone https://github.com/NeuroBench/neurobench.git
+git clone https://github.com/Avichaurasia/NeuroIDBench.git
 ```
 
 To run this project, several dependencies need to be installed. 
