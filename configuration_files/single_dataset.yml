@@ -1,10 +1,10 @@
-name: "ERPCOREN400"
+name: "BrainInvaders2015a"
 
 dataset: 
-  - name: ERPCOREN400
+  - name: BrainInvaders2015a
     from: neuroIDBench.datasets
     parameters: 
-      subjects: 10
+      subjects: 5
       interval: [-0.1, 0.9]
       rejection_threshold: 200
 

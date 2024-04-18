@@ -97,14 +97,14 @@ tensorflow_addons
 To install these dependencies, please use the following command:
 
 ```bash
-conda env create -f NeuroIDBench/environment.yml
+conda env create -f environment.yml
 ```
 
 we can also utilize requirement.txt to create the virtual environment by using the pip
 command
 
 ```bash
-python -m venv venv
+python -m venv 
 source venv/bin/activate
 pip install -r requirements.txt
 ```

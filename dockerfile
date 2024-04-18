@@ -28,7 +28,7 @@ RUN pip install --no-binary=h5py h5py
 RUN pip install -r new_requirements.txt
 
 # Change the working directory to /app/brainModels
-WORKDIR /app/
+WORKDIR /app/neuroIDBench
 
 RUN lsb_release -a
 
