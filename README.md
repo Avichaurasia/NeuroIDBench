@@ -100,19 +100,19 @@ To install these dependencies, please use the following command:
 conda env create -f environment.yml
 ```
 
-we can also utilize requirement.txt to create the virtual environment by using the pip
+<!-- we can also utilize requirement.txt to create the virtual environment by using the pip
 command
 
 ```bash
 python -m venv 
 source venv/bin/activate
 pip install -r requirements.txt
-```
+``` -->
 
 Activate the conda environment using the following command:
 
 ```bash
-conda activate master_thesis
+conda activate neuroIDBench
 ```
 
 ## Running 
@@ -172,7 +172,7 @@ We also explored some of the most commonly used feature extraction methods in br
 classifiers. A
 
 <div align="center">
-<img src="/Plots/Experiment_feature_Extraction/Feature_Extraction.png" alt="Multi Session Evaluation unknown attacker scenarios" width="800" height="550">
+<img src="/Plots/Experiment_feature_Extraction/Feature_Extraction.png" alt="Multi Session Evaluation unknown attacker scenarios" width="600" height="550">
 </div>
 
 

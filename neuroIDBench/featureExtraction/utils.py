@@ -37,8 +37,8 @@ def create_pipeline_from_config(config):
             if "parameters" in component.keys():
                 params = component["parameters"]
 
-                if "user_siamese_path" in component["parameters"].keys():
-                    params["user_siamese_path"] = component["parameters"]["user_siamese_path"]
+                if "user_tnn_path" in component["parameters"].keys():
+                    params["user_tnn_path"] = component["parameters"]["user_tnn_path"]
                     
                 if "optimizer" in component["parameters"].keys():
                     for optm in component["parameters"]["optimizer"]:

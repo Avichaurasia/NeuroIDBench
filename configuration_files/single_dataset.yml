@@ -1,55 +1,55 @@
 name: "BrainInvaders2015a"
 
 dataset: 
-  - name: BrainInvaders2015a
+  - name: ERPCORENP300
     from: neuroIDBench.datasets
     parameters: 
       subjects: 5
       interval: [-0.1, 0.9]
-      rejection_threshold: 200
+     # rejection_threshold: 200
 
 pipelines:
 
-  "AR+PSD+SVM": 
-    - name: AutoRegressive
-      from: neuroIDBench.featureExtraction
-      parameters: 
-        order: 6
+  # "AR+PSD+SVM": 
+  #   - name: AutoRegressive
+  #     from: neuroIDBench.featureExtraction
+  #     parameters: 
+  #       order: 6
         
-    - name: PowerSpectralDensity
-      from: neuroIDBench.featureExtraction
+  #   - name: PowerSpectralDensity
+  #     from: neuroIDBench.featureExtraction
         
-    - name: SVC
-      from: sklearn.svm
-      parameters: 
-        kernel: 'rbf'
-        class_weight: "balanced"
-        probability: True
-        C: 1.0
+  #   - name: SVC
+  #     from: sklearn.svm
+  #     parameters: 
+  #       kernel: 'rbf'
+  #       class_weight: "balanced"
+  #       probability: True
+  #       C: 1.0
 
-  # "TNN": 
-  # - name : TwinNeuralNetwork
-  #   from: brainModels.featureExtraction
-  #   parameters: 
-  #     EPOCHS: 10
-  #     batch_size: 256
-  #     verbose: 1
-  #     workers: 1
-
-  
-  "AR+PSD+KNN": 
-  - name: AutoRegressive
+  "TNN": 
+  - name : TwinNeuralNetwork
     from: neuroIDBench.featureExtraction
     parameters: 
-      order: 6
+      EPOCHS: 10
+      batch_size: 256
+      verbose: 1
+      workers: 1
+
+  
+  # "AR+PSD+KNN": 
+  # - name: AutoRegressive
+  #   from: neuroIDBench.featureExtraction
+  #   parameters: 
+  #     order: 6
     
-  - name: PowerSpectralDensity
-    from: neuroIDBench.featureExtraction
+  # - name: PowerSpectralDensity
+  #   from: neuroIDBench.featureExtraction
       
-  - name: KNeighborsClassifier
-    from: sklearn.neighbors
-    # parameters: 
-    #     class_weight: "balanced"
+  # - name: KNeighborsClassifier
+  #   from: sklearn.neighbors
+  #   # parameters: 
+  #   #     class_weight: "balanced"
 
     
  

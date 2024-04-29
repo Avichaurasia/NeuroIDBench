@@ -95,7 +95,7 @@ class SingleSessionCloseSet(BaseEvaluation):
             x_train = scaler.fit_transform(x_train.reshape((x_train.shape[0], -1))).reshape(x_train.shape)
             x_test = scaler.transform(x_test.reshape((x_test.shape[0], -1))).reshape(x_test.shape)
             #tf.keras.backend.clear_session()
-            if (siamese.user_siamese_path is None):
+            if (siamese.user_tnn_path is None):
 
                 # If the user siamese path is not provided, then we utilize the default siamese network
                 model=siamese._siamese_embeddings(x_train.shape[1], x_train.shape[2])
@@ -135,7 +135,7 @@ class SingleSessionCloseSet(BaseEvaluation):
         Returns:
             list: List of dictionaries containing evaluation results for each subject and session.
 
-        This method utilizes Siamese networks for within-session evaluation in the context of biometric
+        This method utilizes Siamese networks for Single-session evaluation in the context of biometric
         authentication. It involves creating and training Siamese networks to compute various authentication 
         metrics such as AUC, EER, FRR_1_FAR, and TPR for each subject and session combination in the dataset.
         The results are stored as dictionaries containing evaluation details like evaluation type, dataset, 
@@ -318,7 +318,7 @@ class SingleSessionCloseSet(BaseEvaluation):
 
 
         Description:
-            This method executes traditional authentication methods for single-session close-set evaluation.
+            This method executes traditional authentication methods for single-session in close-set evaluation.
             It prepares the data for evaluation and iterates through each subject in the dataset. For each 
             subject, it assigns label 1 to the sessions belonging to the subject being authenticated and 
             label 0 to the rest. The method then authenticates each subject using the provided features and gathers 

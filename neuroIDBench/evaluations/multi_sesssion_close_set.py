@@ -269,11 +269,11 @@ class MultiSessionCloseSet(BaseEvaluation):
         for key, features in pipelines.items():   
             if (key.upper()=='TNN'):
                 
-                #print("Avinash")
-                # If the key is Siamese, then we use the deep learning method
-                results=self.deep_learning_method(X, dataset, metadata, key, features)
-                results_pipeline.append(results) 
-            else:
+            #     #print("Avinash")
+            #     # If the key is Siamese, then we use the deep learning method
+            #     results=self.deep_learning_method(X, dataset, metadata, key, features)
+            #     results_pipeline.append(results) 
+            # else:
 
                 # If the key is not Siamese, then we use the traditional authentication methods
                 results=self.traditional_authentication_methods(dataset, subject_dict, key, features)

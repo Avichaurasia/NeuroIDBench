@@ -101,7 +101,7 @@ class SingleSessionOpenSet(BaseEvaluation):
             x_train = scaler.fit_transform(x_train.reshape((x_train.shape[0], -1))).reshape(x_train.shape)
             x_test = scaler.transform(x_test.reshape((x_test.shape[0], -1))).reshape(x_test.shape)
             #tf.keras.backend.clear_session()
-            if (siamese.user_siamese_path is None):
+            if (siamese.user_tnn_path is None):
 
                 # If the user siamese path is not provided, then we utilize the default siamese network
                 model=siamese._siamese_embeddings(x_train.shape[1], x_train.shape[2])
