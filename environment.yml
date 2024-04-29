@@ -98,5 +98,4 @@ dependencies:
       - werkzeug==3.0.2
       - wrapt==1.14.1
       - zipp==3.18.1
-#prefix: miniconda3/envs/neuroIDBench
-prefix: C:\Users\indupriya\miniconda3\envs\neuroIDBench
+
