@@ -55,8 +55,6 @@ class MultiSessionOpenSet(BaseEvaluation):
         # dataset=None,
         return_close_set=True,
         return_open_set=True,
-        # paradigm=None,
-        #paradigm=None,
         **kwargs
     ):
         self.n_perms = n_perms

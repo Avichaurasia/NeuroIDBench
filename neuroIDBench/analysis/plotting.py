@@ -53,10 +53,7 @@ class Plots():
                 os.makedirs(self.plot_path)
         else:
             self.plot_path = plot_path
-        
-    
-    #def _roc_curves(self, data=None, evaluation_type=None, dataset=None):
-    
+            
     def _plot_roc(self, data):
 
         """
@@ -92,7 +89,6 @@ class Plots():
             fig, ax = plt.subplots(figsize=(6,5))
             scenario_df=grouped_df[grouped_df['Scenario']==scenario]
             scenario_df=scenario_df.reset_index()
-            #display(grouped_df)
             for i in range(len(scenario_df)):
                 name = scenario_df['pipeline'][i]
                 fpr=np.linspace(0, 1, 100000)
@@ -175,7 +171,6 @@ class Plots():
             'eer': 'mean'
              }).reset_index()
         
-        # Write code to generate EER graphs for multiple datasets
         grouped_df['eer'] = grouped_df['eer']*100
         grouped_df['pipeline'] = grouped_df['pipeline'].apply(lambda x: x.split('+')[-1])
         pivot_df = grouped_df.pivot(index='pipeline', columns='dataset', values='eer')
