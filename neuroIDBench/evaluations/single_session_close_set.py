@@ -186,7 +186,6 @@ class SingleSessionCloseSet(BaseEvaluation):
                     "tpr": inter_tpr,
                     "n_samples": len(X_)  # not training sample
                     }
-                #print(res_close_set)
                 results_close_set.append(res_close_set)
 
         return results_close_set
@@ -252,7 +251,6 @@ class SingleSessionCloseSet(BaseEvaluation):
             # Predicting the test set result
             y_pred=model.predict(X_test)
 
-            #print("complete y_pred_proba", model.predict_proba(X_test))
             y_pred_proba=model.predict_proba(X_test)[:,-1]
 
             eer, frr_1_far, frr_01_far, frr_001_far, auc, inter_tpr=score._calculate_scores(y_pred_proba,y_test, mean_fpr)
@@ -339,7 +337,6 @@ class SingleSessionCloseSet(BaseEvaluation):
                     continue
 
                 df_session= df_subj[df_subj.session==session]
-                #print("labels for session", df_session['Label'].value_counts())
                 labels=np.array(df_session['Label'])
                 X=np.array(df_session.drop(['Label','Event_id','subject','session'],axis=1))
 
@@ -367,7 +364,6 @@ class SingleSessionCloseSet(BaseEvaluation):
                 #"n_samples": len(data)  # not training sample
                 #"n_channels": data.columns.size
                     }
-                #print(res_close_set)
                 results_close_set.append(res_close_set)
         return results_close_set
 

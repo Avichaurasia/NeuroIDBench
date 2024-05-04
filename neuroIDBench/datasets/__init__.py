@@ -10,5 +10,4 @@ from .sosulski2019 import Sosulski2019
 from .huebner_llp import Huebner2017, Huebner2018
 from .erpCoreP300 import ERPCORENP300
 from .utils import dataset_search
-#from .draschkow2018 import Draschkow2018
 

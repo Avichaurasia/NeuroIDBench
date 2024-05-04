@@ -98,8 +98,6 @@ class MultiSessionOpenSet(BaseEvaluation):
         mean_fpr=np.linspace(0, 1, 100000)
         for train_index, test_index in groupfold.split(data, y, groups=y):
             x_train, x_test, y_train, y_test =data[train_index],data[test_index],y[train_index],y[test_index]
-            print("subjects in train", np.unique(y_train))
-            print("subjects in test", np.unique(y_test))
             train_sessions, test_sessions=sessions[train_index], sessions[test_index]
 
             scaler = StandardScaler()
@@ -150,7 +148,6 @@ class MultiSessionOpenSet(BaseEvaluation):
    
         metadata=metadata[metadata['event_id']=="Deviant"]    
         metadata=self._valid_subject_samples(metadata)
-        #print("subjects and sessions", metadata[['subject', 'session']].value_counts())
         target_index=metadata['event_id'].index.tolist()
         data=X[target_index]
         y=np.array(metadata["subject"])
@@ -163,7 +160,6 @@ class MultiSessionOpenSet(BaseEvaluation):
         open_dicr3=self._siamese_training(X_, y_, siamese, groups)
         
         for sub in open_dicr3.keys():
-            #print("subject ", sub)
             result=open_dicr3[sub]
             result=np.array(result)
 
@@ -233,7 +229,6 @@ class MultiSessionOpenSet(BaseEvaluation):
 
             # Get the session number of the session to be enrolled
             enroll_session=np.unique(session_groups)[enroll_sessions]
-            #print("Train session", enroll_session)
 
             # Get the indices of the session to be enrolled
             enroll_indices=np.where(session_groups==enroll_session)[0]
@@ -244,14 +239,12 @@ class MultiSessionOpenSet(BaseEvaluation):
             auth_subject = np.unique(train_session_subjects[train_session_labels == 1])
             rej_subjects = np.unique(train_session_subjects[train_session_labels == 0])
             np.random.shuffle(rej_subjects)
-            #print("All imposters", rej_subjects)
 
             # Select 75% of rejected subjects for training and 25% for testing
             n_train_rej = int(np.ceil(0.75 * len(rej_subjects)))
 
             
             train_rej_subjects = rej_subjects[:n_train_rej]
-            #print("imposters for training", rej_subjects)
 
             test_rej_subjects = rej_subjects[n_train_rej:]
 
@@ -262,7 +255,6 @@ class MultiSessionOpenSet(BaseEvaluation):
             # Get indices for subjects for training
             train_indices = np.isin(train_session_subjects, train_subjects)
 
-            #print("Training subjects", np.unique(train_session_subjects[train_indices]))
 
             X_train=train_session_eeg_data[train_indices]
             y_train=train_session_labels[train_indices]
@@ -282,7 +274,6 @@ class MultiSessionOpenSet(BaseEvaluation):
                 # Get the session number of the session to be tested
                 test_session=np.unique(session_groups)[test_sessions]
 
-                #print("test session", test_session)
 
                 # Get the indices of the session to be tested
                 test_session_indices=np.where(session_groups==test_session)[0]
@@ -294,7 +285,6 @@ class MultiSessionOpenSet(BaseEvaluation):
                 # Get indices for subjects for training
                 test_indices = np.isin(test_session_subjects, test_subjects)
                 
-                #print("Testing subjects", np.unique(test_session_subjects[test_indices]))
                 X_test=test_session_eeg_data[test_indices]
                 y_test=test_session_labels[test_indices]
                 X_test=sc.transform(X_test)
@@ -318,9 +308,6 @@ class MultiSessionOpenSet(BaseEvaluation):
         average_scores=score._calculate_average_scores(eer_list, frr_1_far_list, frr_01_far_list, frr_001_far_list, auc_list, tpr_list, mean_fpr)
         return average_scores
 
-        # print("=======================================================================================================")
-        # print("========================================================================================================")
-        #return average_scores
    
     def _prepare_data(self, dataset, features, subject_dict):
         """Prepares and combines data from various features for the given dataset.

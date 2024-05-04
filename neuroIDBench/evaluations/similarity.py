@@ -35,10 +35,8 @@ class CalculateSimilarity():
         calsstrain=np.unique(y_train_val)
         TP,FP,TN,FN=0,0,0,0
         digit_indices = [np.where(y_train_val == i)[0] for i in np.unique(y_train_val)]
-        #print("chaurasia")
         x_test_1 = x_test
 
-        #print(len(x_train_val),len(x_test))
         #anc_et=embedding_network(x_train_val)
         anc_e=embedding_network(x_test[0:min(500,len(x_test))])
         for c in range(len(x_test)//500):
@@ -46,7 +44,6 @@ class CalculateSimilarity():
         anc_et=embedding_network(x_train_val[0:min(500,len(x_train_val))])
         for c in range(len(x_train_val)//500):
             anc_et=tf.concat(axis=0, values = [anc_et, embedding_network(x_train_val[(c+1)*500:min((c+2)*500,len(x_train_val))])]) 
-        print(len(anc_et),len(anc_e))
         for i in tqdm(range(len(x_test_1)), desc="Calculating similarity"):
             prediction=[]
             test_e=embedding_network(np.array([x_test[i]]))
@@ -109,12 +106,10 @@ class CalculateSimilarity():
         TP,FP,TN,FN=0,0,0,0
         digit_indices = [np.where(y_test == i)[0] for i in np.unique(y_test)]
         x_test_1 = x_test
-        print(len(x_test))
         #anc_et=embedding_network(x_train_val)
         anc_e=embedding_network(x_test[0:min(500,len(x_test))])
         for c in tqdm(range(len(x_test)//500), desc='Getting test embedings'):
             anc_e=tf.concat(axis=0, values = [anc_e, embedding_network(x_test[(c+1)*500:min((c+2)*500,len(x_test))])]) 	
-        print(len(x_test))
         for i in tqdm(range(len(x_test_1)), desc="Calculating similarity"):
             temp=np.where(calss == y_test[i])[0][0]
             prediction=[]
@@ -164,7 +159,7 @@ class CalculateSimilarity():
 
             for c in range(len(x_test_batch) // 100):
                 embeddings = tf.concat(axis=0, values=[embeddings, embedding_network(x_test_batch[(c+1)*100:min((c+2)*100,len(x_test_batch))])])
-            print(type(embeddings))
+            #print(type(embeddings))
             embeddings = embeddings.numpy()            
             return embeddings
 

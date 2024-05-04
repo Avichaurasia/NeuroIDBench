@@ -100,8 +100,6 @@ class MultiSessionCloseSet(BaseEvaluation):
             # Get the session number of the session to be enrolled
             enroll_session=np.unique(session_groups)[enroll_sessions]
 
-            #print("enroll session", enroll_session)
-
             # Get the indices of the session to be enrolled
             enroll_indices=np.where(session_groups==enroll_session)[0]
 
@@ -121,8 +119,6 @@ class MultiSessionCloseSet(BaseEvaluation):
 
                 # Get the session number of the session to be tested
                 test_session=np.unique(session_groups)[test_sessions]
-
-                #print("test session", test_session)
 
                 # Get the indices of the session to be tested
                 test_indices=np.where(session_groups==test_session)[0]
@@ -179,10 +175,6 @@ class MultiSessionCloseSet(BaseEvaluation):
         
         # Filter out rows with invalid subject and session combinations
         df_final = df_final[~df_final.set_index(['subject', 'session']).index.isin(invalid_subject_sessions.set_index(['subject', 'session']).index)]
-        #print(df_final[['session', 'Subject']].value_counts())
-
-        #print(df[['session', 'Subject']].value_counts())
-
         return df_final
     
     def traditional_authentication_methods(self, dataset, subject_dict, key, features): 
@@ -242,7 +234,6 @@ class MultiSessionCloseSet(BaseEvaluation):
            "tpr": mean_tpr,
             "n_samples": len(df_subj)
                 }
-            #print(res_close_set)
             results_close_set.append(res_close_set)
         return results_close_set
 
@@ -269,7 +260,6 @@ class MultiSessionCloseSet(BaseEvaluation):
         for key, features in pipelines.items():   
             if (key.upper()=='TNN'):
                 
-            #     #print("Avinash")
             #     # If the key is Siamese, then we use the deep learning method
             #     results=self.deep_learning_method(X, dataset, metadata, key, features)
             #     results_pipeline.append(results) 

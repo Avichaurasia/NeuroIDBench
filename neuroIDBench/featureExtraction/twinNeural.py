@@ -159,11 +159,9 @@ class TwinNeuralNetwork():
 
         # Create a module spec
         spec = importlib.util.spec_from_file_location("custom_module", module_path)
-        #print("sepc", spec)
 
         # Import the module
         module = importlib.util.module_from_spec(spec)
-        #print("module", module)
         spec.loader.exec_module(module)
 
         # Get the function from the module

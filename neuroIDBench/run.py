@@ -3,10 +3,8 @@ import sys
 sys.path.append("./")
 from neuroIDBench.benchmark import benchmark
 from neuroIDBench.analysis import Plots
-#from benchmark import benchmark
 
 if __name__ == "__main__":
-    #print("Running benchmark")
     result=benchmark()
 
     
