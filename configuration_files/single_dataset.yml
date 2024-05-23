@@ -1,10 +1,10 @@
-name: "BrainInvaders2015a"
+name: "Mantegna2019"
 
 dataset: 
-  - name: ERPCORENP300
+  - name: Mantegna2019
     from: neuroIDBench.datasets
     parameters: 
-      subjects: 5
+      subjects: 10
       interval: [-0.1, 0.9]
      # rejection_threshold: 200
 
